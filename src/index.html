@@ -1,13 +1,97 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>VehicleRental</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+<html class="scroll-smooth dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DrivePremium | Luxury Vehicle Rentals</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              surface: '#0b1326',
+              'surface-dim': '#0b1326',
+              'surface-bright': '#31394d',
+              'surface-container-lowest': '#060e20',
+              'surface-container-low': '#131b2e',
+              'surface-container': '#1d263b',
+              'surface-container-high': '#283046',
+              'surface-container-highest': '#333b52',
+              'on-surface': '#e1e2e9',
+              'on-surface-variant': '#c4c6d0',
+              outline: '#8e9099',
+              'outline-variant': '#44474f',
+              primary: '#0066ff',
+              'on-primary': '#ffffff',
+              'primary-container': '#0044ab',
+              'on-primary-container': '#d8e2ff',
+              secondary: '#fd761a',
+              'on-secondary': '#ffffff',
+              'secondary-container': '#5c2400',
+              'on-secondary-container': '#ffdbca',
+              tertiary: '#adc6ff',
+              'on-tertiary': '#002e69',
+              'tertiary-container': '#004395',
+              'on-tertiary-container': '#d8e2ff',
+              error: '#ffb4ab',
+              'on-error': '#690005',
+              'error-container': '#93000a',
+              'on-error-container': '#ffdad6',
+              background: '#0b1326',
+              'on-background': '#e1e2e9'
+            },
+            borderRadius: {
+              DEFAULT: '0.25rem',
+              lg: '0.5rem',
+              xl: '0.75rem',
+              full: '9999px'
+            },
+            spacing: {
+              gutter: '24px',
+              'margin-desktop': '40px',
+              unit: '8px',
+              'container-max': '1280px',
+              'margin-mobile': '16px'
+            },
+            fontFamily: {
+              'headline-md': ['Hanken Grotesk'],
+              'label-sm': ['Hanken Grotesk'],
+              'body-lg': ['Hanken Grotesk'],
+              'display-lg': ['Hanken Grotesk'],
+              'body-md': ['Hanken Grotesk'],
+              'display-lg-mobile': ['Hanken Grotesk']
+            },
+            fontSize: {
+              'headline-md': ['24px', { lineHeight: '32px', letterSpacing: '-0.01em', fontWeight: '600' }],
+              'label-sm': ['14px', { lineHeight: '20px', letterSpacing: '0.05em', fontWeight: '600' }],
+              'body-lg': ['18px', { lineHeight: '28px', fontWeight: '400' }],
+              'display-lg': ['48px', { lineHeight: '56px', letterSpacing: '-0.02em', fontWeight: '700' }],
+              'body-md': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+              'display-lg-mobile': ['36px', { lineHeight: '44px', letterSpacing: '-0.02em', fontWeight: '700' }]
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .hero-gradient {
+        background: linear-gradient(rgba(6, 14, 32, 0.4), rgba(6, 14, 32, 0.85));
+      }
+      .vehicle-card-shadow {
+        box-shadow: 0px 10px 20px -5px rgba(0, 0, 0, 0.5);
+      }
+    </style>
+  </head>
+  <body class="overflow-x-hidden bg-background font-body-md text-on-surface">
+    <app-root></app-root>
+  </body>
 </html>
