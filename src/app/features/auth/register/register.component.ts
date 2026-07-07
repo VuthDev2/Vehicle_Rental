@@ -14,100 +14,181 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   template: `
-    <div class="flex min-h-[calc(100vh-80px)] items-center justify-center bg-background px-4 py-12">
-      <div class="w-full max-w-md">
-        <div class="mb-8 text-center">
-          <div class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/15">
-            <span class="material-symbols-outlined text-3xl text-primary">person_add</span>
-          </div>
-          <h1 class="text-2xl font-bold text-on-surface">Create your account</h1>
-          <p class="mt-1 text-sm text-on-surface-variant">Join Cambo Rent and start booking today</p>
+    <div class="min-h-[calc(100vh-80px)] flex items-stretch">
+
+      <!-- Left Panel — Branding (hidden on mobile) -->
+      <div class="hidden lg:flex lg:w-[45%] relative overflow-hidden flex-col justify-between p-12"
+           style="background: linear-gradient(135deg, #0e1527 0%, #13152b 100%);">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+          <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-20 blur-3xl"
+               style="background: #8b5cf6;"></div>
+          <div class="absolute -bottom-32 -left-32 w-96 h-96 rounded-full opacity-15 blur-3xl"
+               style="background: #10b981;"></div>
         </div>
 
-        <div class="rounded-2xl border border-outline-variant/30 bg-surface-container-low p-8 shadow-2xl shadow-black/20">
+        <div class="relative z-10">
+          <div class="flex items-center gap-3 mb-16">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                 style="background: linear-gradient(135deg, #10b981, #059669);">
+              <span class="material-symbols-outlined text-white text-xl">directions_car</span>
+            </div>
+            <span class="text-lg font-black text-white">Cambo Rent</span>
+          </div>
+
+          <h2 class="text-4xl font-black text-white leading-tight mb-4">
+            Join thousands of<br />
+            <span style="color: #10b981;">happy renters</span><br />
+            across Cambodia
+          </h2>
+          <p class="text-base leading-relaxed mb-12" style="color: #64748b;">
+            Create your free account in 60 seconds and start browsing our premium fleet of cars, motorcycles, and bikes.
+          </p>
+
+          <!-- Benefits -->
+          <div class="grid grid-cols-2 gap-4">
+            @for (benefit of benefits; track benefit.title) {
+              <div class="rounded-2xl p-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                <span class="material-symbols-outlined text-2xl mb-2 block" [style.color]="benefit.color">{{ benefit.icon }}</span>
+                <p class="text-sm font-bold text-white mb-0.5">{{ benefit.title }}</p>
+                <p class="text-xs" style="color: #64748b;">{{ benefit.desc }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="relative z-10 mt-8">
+          <div class="flex items-center gap-3">
+            <div class="flex">
+              @for (av of avatars; track av) {
+                <div class="w-8 h-8 rounded-full border-2 -ml-2 first:ml-0 flex items-center justify-center text-white text-xs font-bold"
+                     [style.background]="av.bg" [style.border-color]="'#0e1527'">{{ av.letter }}</div>
+              }
+            </div>
+            <p class="text-sm" style="color: #94a3b8;">
+              <strong class="text-white">10,000+</strong> customers trust Cambo Rent
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel — Form -->
+      <div class="flex-1 flex items-center justify-center px-6 py-12" style="background: #0a0f1e;">
+        <div class="w-full max-w-md">
+
+          <!-- Mobile logo -->
+          <div class="flex lg:hidden items-center gap-2 mb-8">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center"
+                 style="background: linear-gradient(135deg, #10b981, #059669);">
+              <span class="material-symbols-outlined text-white text-lg">directions_car</span>
+            </div>
+            <span class="text-base font-black text-white">Cambo Rent</span>
+          </div>
+
+          <div class="mb-8">
+            <h1 class="text-3xl font-black text-white mb-2">Create Account</h1>
+            <p class="text-sm" style="color: #64748b;">Already have an account?
+              <a routerLink="/login" class="font-semibold ml-1" style="color: #10b981;">Sign in →</a>
+            </p>
+          </div>
+
+          <!-- Error -->
           @if (error()) {
-            <div class="mb-6 flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
-              <span class="material-symbols-outlined text-sm">error</span>
+            <div class="mb-6 flex items-center gap-3 rounded-xl p-4 text-sm animate-fade-in"
+                 style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #f87171;">
+              <span class="material-symbols-outlined text-lg flex-shrink-0">error</span>
               {{ error() }}
             </div>
           }
 
+          <!-- Form -->
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+
+            <!-- Name -->
             <div>
-              <label class="mb-2 block text-sm font-semibold text-on-surface" for="name">Full Name</label>
+              <label for="name" class="block text-sm font-semibold mb-2" style="color: #94a3b8;">Full Name</label>
               <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">person</span>
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">person</span>
                 <input id="name" type="text" formControlName="name" placeholder="Your full name"
-                  class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-10 pr-4 text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+                       class="input-field pl-11" />
               </div>
               @if (form.get('name')?.invalid && form.get('name')?.touched) {
-                <p class="mt-1 text-xs text-red-400">Name is required.</p>
+                <p class="mt-1.5 text-xs" style="color: #f87171;">Name is required.</p>
               }
             </div>
 
+            <!-- Email -->
             <div>
-              <label class="mb-2 block text-sm font-semibold text-on-surface" for="email">Email address</label>
+              <label for="email" class="block text-sm font-semibold mb-2" style="color: #94a3b8;">Email Address</label>
               <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">email</span>
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">mail</span>
                 <input id="email" type="email" formControlName="email" placeholder="you@example.com"
-                  class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-10 pr-4 text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+                       class="input-field pl-11" />
               </div>
               @if (form.get('email')?.invalid && form.get('email')?.touched) {
-                <p class="mt-1 text-xs text-red-400">Valid email is required.</p>
+                <p class="mt-1.5 text-xs" style="color: #f87171;">Valid email is required.</p>
               }
             </div>
 
+            <!-- Phone -->
             <div>
-              <label class="mb-2 block text-sm font-semibold text-on-surface" for="phone">Phone Number</label>
+              <label for="phone" class="block text-sm font-semibold mb-2" style="color: #94a3b8;">
+                Phone Number <span class="font-normal" style="color: #475569;">(optional)</span>
+              </label>
               <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">phone</span>
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">phone</span>
                 <input id="phone" type="tel" formControlName="phone" placeholder="+855 12 345 678"
-                  class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-10 pr-4 text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+                       class="input-field pl-11" />
               </div>
             </div>
 
+            <!-- Password -->
             <div>
-              <label class="mb-2 block text-sm font-semibold text-on-surface" for="password">Password</label>
+              <label for="password" class="block text-sm font-semibold mb-2" style="color: #94a3b8;">Password</label>
               <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">lock</span>
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">lock</span>
                 <input id="password" [type]="showPass() ? 'text' : 'password'" formControlName="password" placeholder="Min 6 characters"
-                  class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-10 pr-12 text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
-                <button type="button" (click)="showPass.set(!showPass())" class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface">
+                       class="input-field pl-11 pr-12" />
+                <button type="button" (click)="showPass.set(!showPass())"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 transition-colors"
+                        style="color: #475569;">
                   <span class="material-symbols-outlined text-xl">{{ showPass() ? 'visibility_off' : 'visibility' }}</span>
                 </button>
               </div>
               @if (form.get('password')?.invalid && form.get('password')?.touched) {
-                <p class="mt-1 text-xs text-red-400">Password must be at least 6 characters.</p>
+                <p class="mt-1.5 text-xs" style="color: #f87171;">Password must be at least 6 characters.</p>
               }
             </div>
 
+            <!-- Confirm Password -->
             <div>
-              <label class="mb-2 block text-sm font-semibold text-on-surface" for="confirm">Confirm Password</label>
+              <label for="confirm" class="block text-sm font-semibold mb-2" style="color: #94a3b8;">Confirm Password</label>
               <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">lock_reset</span>
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">lock_reset</span>
                 <input id="confirm" type="password" formControlName="confirmPassword" placeholder="Repeat your password"
-                  class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-10 pr-4 text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+                       class="input-field pl-11" />
               </div>
               @if (form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched) {
-                <p class="mt-1 text-xs text-red-400">Passwords do not match.</p>
+                <p class="mt-1.5 text-xs" style="color: #f87171;">Passwords do not match.</p>
               }
             </div>
 
+            <!-- Submit -->
             <button type="submit" [disabled]="loading() || form.invalid"
-              class="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 font-bold text-on-primary shadow-lg shadow-primary/20 transition-all hover:brightness-110 disabled:opacity-50">
+                    class="btn-primary w-full py-4 mt-2 text-base disabled:opacity-50 disabled:cursor-not-allowed">
               @if (loading()) {
                 <span class="material-symbols-outlined animate-spin text-xl">progress_activity</span>
                 Creating account...
               } @else {
                 <span class="material-symbols-outlined text-xl">person_add</span>
-                Create Account
+                Create Free Account
               }
             </button>
           </form>
 
-          <p class="mt-6 text-center text-sm text-on-surface-variant">
-            Already have an account?
-            <a routerLink="/login" class="font-semibold text-primary hover:underline">Sign in →</a>
+          <p class="mt-6 text-center text-xs" style="color: #475569;">
+            By registering you agree to our
+            <span class="cursor-pointer" style="color: #64748b;">Terms of Service</span> and
+            <span class="cursor-pointer" style="color: #64748b;">Privacy Policy</span>.
           </p>
         </div>
       </div>
@@ -122,6 +203,20 @@ export class RegisterComponent {
   readonly loading = signal(false);
   readonly error = signal('');
   readonly showPass = signal(false);
+
+  readonly benefits = [
+    { icon: 'directions_car', title: 'Huge Fleet', desc: '500+ vehicles available', color: '#10b981' },
+    { icon: 'local_offer', title: 'Best Prices', desc: 'Transparent, no hidden fees', color: '#3b82f6' },
+    { icon: 'support_agent', title: '24/7 Support', desc: 'Always here to help', color: '#f59e0b' },
+    { icon: 'verified_user', title: 'Safe & Insured', desc: 'Full coverage on all rentals', color: '#8b5cf6' },
+  ];
+
+  readonly avatars = [
+    { letter: 'S', bg: 'linear-gradient(135deg, #10b981, #059669)' },
+    { letter: 'K', bg: 'linear-gradient(135deg, #3b82f6, #2563eb)' },
+    { letter: 'M', bg: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' },
+    { letter: 'P', bg: 'linear-gradient(135deg, #f59e0b, #d97706)' },
+  ];
 
   readonly form = this.fb.group({
     name: ['', Validators.required],

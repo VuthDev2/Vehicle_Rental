@@ -1,98 +1,214 @@
-import { Component, HostListener, inject } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Component, HostListener, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-public-layout',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   template: `
-    <main class="app-shell min-h-screen bg-background text-on-surface">
-      <header class="fixed top-0 z-50 w-full border-b border-outline-variant/25 transition-all duration-300 backdrop-blur-md"
-        [class.bg-surface-container-lowest]="scrolled"
-        [style.background]="scrolled ? 'rgba(6,14,32,0.97)' : 'rgba(6,14,32,0.8)'">
-        <nav class="mx-auto flex h-20 w-full max-w-container-max items-center justify-between px-margin-desktop">
-          <div class="flex items-center gap-8">
-            <a class="flex items-center gap-3" routerLink="/">
-              <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-on-primary shadow-lg shadow-primary/30">
-                <span class="material-symbols-outlined text-xl">directions_car</span>
-              </span>
-              <div class="flex flex-col leading-tight">
-                <span class="text-base font-bold tracking-tight text-on-surface">Cambo Rent</span>
-                <span class="text-[10px] font-semibold uppercase tracking-widest text-primary">Vehicle Rentals</span>
-              </div>
-            </a>
-            <div class="hidden items-center gap-6 lg:flex">
-              <a class="text-sm font-semibold text-on-surface-variant transition-colors hover:text-primary" routerLink="/vehicles">Browse Vehicles</a>
-              <a class="text-sm font-semibold text-on-surface-variant transition-colors hover:text-primary" routerLink="/about">About</a>
-              <a class="text-sm font-semibold text-on-surface-variant transition-colors hover:text-primary" routerLink="/contact">Contact</a>
+    <div class="min-h-screen flex flex-col" style="background: #0a0f1e; color: #f1f5f9;">
+
+      <!-- ======================== NAVBAR ======================== -->
+      <header
+        class="fixed top-0 z-50 w-full transition-all duration-300"
+        [style.background]="scrolled ? 'rgba(10,15,30,0.97)' : 'transparent'"
+        [style.border-bottom]="scrolled ? '1px solid rgba(255,255,255,0.07)' : 'none'"
+        [style.box-shadow]="scrolled ? '0 4px 30px rgba(0,0,0,0.3)' : 'none'"
+        [style.backdrop-filter]="scrolled ? 'blur(20px)' : 'none'">
+
+        <nav class="max-w-[1280px] mx-auto px-[clamp(20px,5vw,72px)] h-20 flex items-center justify-between">
+
+          <!-- Logo -->
+          <a routerLink="/" class="flex items-center gap-3 flex-shrink-0">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+                 style="background: linear-gradient(135deg, #10b981, #059669);">
+              <span class="material-symbols-outlined text-white text-xl">directions_car</span>
             </div>
+            <div class="flex flex-col leading-tight">
+              <span class="text-base font-black text-white">Cambo Rent</span>
+              <span class="text-[10px] font-bold uppercase tracking-widest" style="color: #10b981;">Vehicle Rentals</span>
+            </div>
+          </a>
+
+          <!-- Desktop Nav Links -->
+          <div class="hidden md:flex items-center gap-1">
+            <a routerLink="/"
+               routerLinkActive="text-emerald-400"
+               [routerLinkActiveOptions]="{exact: true}"
+               class="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/5"
+               style="color: #94a3b8;">Home</a>
+            <a routerLink="/about"
+               class="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/5"
+               style="color: #94a3b8;">About</a>
+            <a routerLink="/contact"
+               class="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/5"
+               style="color: #94a3b8;">Contact</a>
           </div>
 
-          <div class="flex items-center gap-3">
+          <!-- Auth Actions (Desktop) -->
+          <div class="hidden md:flex items-center gap-3">
             @if (auth.isAuthenticated()) {
-              <span class="hidden rounded-full border border-outline-variant/50 bg-surface-container-high px-4 py-2 text-sm font-semibold text-on-surface sm:block">
-                <span class="material-symbols-outlined text-sm text-primary">person</span>
-                {{ auth.user()?.name }}
+              <span class="px-4 py-2 rounded-xl text-sm font-semibold"
+                    style="background: rgba(255,255,255,0.06); color: #f1f5f9;">
+                👋 {{ auth.user()?.name }}
               </span>
               @if (auth.role() === 'admin') {
-                <a class="rounded-full border border-outline-variant/60 px-5 py-2 text-sm font-semibold text-on-surface transition-all hover:border-primary hover:text-primary" routerLink="/admin/dashboard">Admin Panel</a>
+                <a routerLink="/admin/dashboard"
+                   class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
+                   style="background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.25);">
+                  Admin Panel
+                </a>
               } @else {
-                <a class="rounded-full border border-outline-variant/60 px-5 py-2 text-sm font-semibold text-on-surface transition-all hover:border-primary hover:text-primary" routerLink="/customer/dashboard">My Bookings</a>
+                <a routerLink="/customer/dashboard"
+                   class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
+                   style="background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">
+                  My Account
+                </a>
               }
-              <button class="rounded-full bg-surface-container-high px-5 py-2 text-sm font-semibold text-on-surface transition-all hover:bg-surface-container-highest" type="button" (click)="logout()">Logout</button>
+              <button (click)="logout()"
+                      class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                      style="background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.15);">
+                Logout
+              </button>
             } @else {
-              <a class="px-5 py-2 text-sm font-semibold text-on-surface transition-all hover:text-primary" routerLink="/login">Login</a>
-              <a class="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-on-primary shadow-lg shadow-primary/20 transition-all hover:brightness-110" routerLink="/register">Get Started</a>
+              <a routerLink="/login"
+                 class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                 style="color: #94a3b8; border: 1px solid rgba(255,255,255,0.1);">
+                Sign In
+              </a>
+              <a routerLink="/register" class="btn-primary py-2.5 px-6 text-sm">
+                Get Started
+              </a>
             }
           </div>
+
+          <!-- Mobile Menu Toggle -->
+          <button (click)="mobileOpen.set(!mobileOpen())"
+                  class="md:hidden w-10 h-10 rounded-xl flex items-center justify-center transition-all"
+                  style="background: rgba(255,255,255,0.06);">
+            <span class="material-symbols-outlined text-white">{{ mobileOpen() ? 'close' : 'menu' }}</span>
+          </button>
         </nav>
+
+        <!-- Mobile Menu -->
+        @if (mobileOpen()) {
+          <div class="md:hidden border-t animate-fade-in"
+               style="background: rgba(10,15,30,0.98); border-color: rgba(255,255,255,0.07);">
+            <div class="px-6 py-4 flex flex-col gap-2">
+              <a routerLink="/" (click)="mobileOpen.set(false)"
+                 class="px-4 py-3 rounded-xl text-sm font-semibold"
+                 style="color: #94a3b8;">🏠 Home</a>
+              <a routerLink="/about" (click)="mobileOpen.set(false)"
+                 class="px-4 py-3 rounded-xl text-sm font-semibold"
+                 style="color: #94a3b8;">ℹ️ About</a>
+              <a routerLink="/contact" (click)="mobileOpen.set(false)"
+                 class="px-4 py-3 rounded-xl text-sm font-semibold"
+                 style="color: #94a3b8;">📞 Contact</a>
+              <div class="border-t my-2" style="border-color: rgba(255,255,255,0.07);"></div>
+              @if (auth.isAuthenticated()) {
+                @if (auth.role() === 'admin') {
+                  <a routerLink="/admin/dashboard" (click)="mobileOpen.set(false)"
+                     class="btn-admin py-3 rounded-xl text-sm">Admin Panel</a>
+                } @else {
+                  <a routerLink="/customer/dashboard" (click)="mobileOpen.set(false)"
+                     class="btn-primary py-3 rounded-xl text-sm">My Account</a>
+                }
+                <button (click)="logout(); mobileOpen.set(false)"
+                        class="py-3 rounded-xl text-sm font-semibold text-center"
+                        style="background: rgba(239,68,68,0.1); color: #f87171;">
+                  Logout
+                </button>
+              } @else {
+                <a routerLink="/login" (click)="mobileOpen.set(false)"
+                   class="py-3 rounded-xl text-sm font-semibold text-center"
+                   style="background: rgba(255,255,255,0.06); color: #f1f5f9;">Sign In</a>
+                <a routerLink="/register" (click)="mobileOpen.set(false)"
+                   class="btn-primary py-3 rounded-xl text-sm text-center">Create Account</a>
+              }
+            </div>
+          </div>
+        }
       </header>
 
-      <div class="page-shell pt-20">
+      <!-- Page Content -->
+      <div class="flex-1 pt-20">
         <router-outlet />
       </div>
 
-      <footer class="border-t border-outline-variant/20 bg-surface-container-lowest">
-        <div class="mx-auto max-w-container-max px-margin-desktop py-12">
-          <div class="grid grid-cols-1 gap-8 md:grid-cols-4">
+      <!-- ======================== FOOTER ======================== -->
+      <footer style="background: #0e1527; border-top: 1px solid rgba(255,255,255,0.06);">
+        <div class="max-w-[1280px] mx-auto px-[clamp(20px,5vw,72px)] py-16">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+
+            <!-- Brand -->
             <div class="md:col-span-2">
-              <div class="mb-4 flex items-center gap-3">
-                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-on-primary">
-                  <span class="material-symbols-outlined text-lg">directions_car</span>
-                </span>
-                <span class="text-base font-bold text-on-surface">Cambo Rent</span>
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                     style="background: linear-gradient(135deg, #10b981, #059669);">
+                  <span class="material-symbols-outlined text-white text-xl">directions_car</span>
+                </div>
+                <span class="text-lg font-black text-white">Cambo Rent</span>
               </div>
-              <p class="max-w-sm text-sm text-on-surface-variant">Your trusted vehicle rental partner in Cambodia. Premium fleet, transparent pricing, and 24/7 support.</p>
+              <p class="text-sm leading-relaxed max-w-xs" style="color: #94a3b8;">
+                Your trusted vehicle rental partner in Cambodia. Cars, motorcycles, and bikes —
+                premium fleet with transparent pricing and 24/7 support.
+              </p>
+              <div class="flex gap-3 mt-6">
+                @for (social of socials; track social.icon) {
+                  <div class="w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all hover:-translate-y-0.5"
+                       style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);">
+                    <span class="material-symbols-outlined text-base" style="color: #94a3b8;">{{ social.icon }}</span>
+                  </div>
+                }
+              </div>
             </div>
+
+            <!-- Links -->
             <div>
-              <h4 class="mb-3 text-sm font-bold uppercase tracking-widest text-on-surface">Quick Links</h4>
-              <div class="flex flex-col gap-2 text-sm text-on-surface-variant">
-                <a class="hover:text-primary transition-colors" routerLink="/vehicles">Browse Vehicles</a>
-                <a class="hover:text-primary transition-colors" routerLink="/about">About Us</a>
-                <a class="hover:text-primary transition-colors" routerLink="/contact">Contact</a>
+              <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4">Quick Links</h4>
+              <div class="flex flex-col gap-3">
+                <a routerLink="/" class="text-sm transition-colors hover:text-emerald-400" style="color: #94a3b8;">Home</a>
+                <a routerLink="/about" class="text-sm transition-colors hover:text-emerald-400" style="color: #94a3b8;">About Us</a>
+                <a routerLink="/contact" class="text-sm transition-colors hover:text-emerald-400" style="color: #94a3b8;">Contact</a>
+                <a routerLink="/login" class="text-sm transition-colors hover:text-emerald-400" style="color: #94a3b8;">Sign In</a>
+                <a routerLink="/register" class="text-sm transition-colors hover:text-emerald-400" style="color: #94a3b8;">Register</a>
               </div>
             </div>
+
+            <!-- Contact -->
             <div>
-              <h4 class="mb-3 text-sm font-bold uppercase tracking-widest text-on-surface">Support</h4>
-              <div class="flex flex-col gap-2 text-sm text-on-surface-variant">
-                <span>📞 +855 12 345 678</span>
-                <span>📧 info&#64;camborent.com</span>
-                <span>📍 Phnom Penh, Cambodia</span>
+              <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4">Contact Us</h4>
+              <div class="flex flex-col gap-3">
+                @for (contact of contacts; track contact.value) {
+                  <div class="flex items-center gap-2 text-sm" style="color: #94a3b8;">
+                    <span class="material-symbols-outlined text-base" style="color: #10b981;">{{ contact.icon }}</span>
+                    {{ contact.value }}
+                  </div>
+                }
               </div>
             </div>
+
           </div>
-          <div class="mt-8 border-t border-outline-variant/20 pt-6 text-center text-sm text-on-surface-variant">
-            © 2026 Cambo Rent. All rights reserved.
+
+          <!-- Bottom bar -->
+          <div class="pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4"
+               style="border-color: rgba(255,255,255,0.06);">
+            <p class="text-sm" style="color: #475569;">© 2026 Cambo Rent. All rights reserved.</p>
+            <div class="flex gap-6">
+              <span class="text-sm cursor-pointer hover:text-emerald-400 transition-colors" style="color: #475569;">Privacy Policy</span>
+              <span class="text-sm cursor-pointer hover:text-emerald-400 transition-colors" style="color: #475569;">Terms of Service</span>
+            </div>
           </div>
         </div>
       </footer>
-    </main>
+    </div>
   `,
 })
 export class PublicLayoutComponent {
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   scrolled = false;
+  mobileOpen = signal(false);
 
   @HostListener('window:scroll')
   onScroll(): void {
@@ -102,4 +218,17 @@ export class PublicLayoutComponent {
   logout(): void {
     this.auth.logout();
   }
+
+  readonly socials = [
+    { icon: 'facebook' },
+    { icon: 'language' },
+    { icon: 'phone' },
+  ];
+
+  readonly contacts = [
+    { icon: 'call', value: '+855 12 345 678' },
+    { icon: 'mail', value: 'info@camborent.com' },
+    { icon: 'location_on', value: 'Phnom Penh, Cambodia' },
+    { icon: 'schedule', value: 'Open 24/7' },
+  ];
 }

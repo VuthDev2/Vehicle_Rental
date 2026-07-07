@@ -5,10 +5,11 @@ const bcrypt = require('bcryptjs');
 
 const ADMIN_NAME = 'Vuthhh';
 const ADMIN_EMAIL = 'ravuthkry129@gmail.com';
-const ADMIN_PASSWORD = 'vuth123';
+const ADMIN_PASSWORD = 'vuth123??';
 
-const MONGO_URI =
-  'mongodb+srv://krysaravuth25_db_user:vuth123%3F%3F@cluster0.sihb0xt.mongodb.net/cambo_rent?appName=Cluster0&compressors=zlib';
+
+
+const MONGO_URI = process.env.MONGO_URI;
 
 const userSchema = new mongoose.Schema(
   {
@@ -28,7 +29,7 @@ const User = mongoose.model('User', userSchema);
 async function seedAdmin() {
   try {
     await mongoose.connect(MONGO_URI);
-    console.log('✅ Connected to MongoDB');
+    console.log(' Connected to MongoDB');
 
     // Remove existing admin with the same email if any
     await User.deleteOne({ email: ADMIN_EMAIL });
@@ -43,7 +44,7 @@ async function seedAdmin() {
     });
 
     console.log('');
-    console.log('🎉 Admin user created successfully!');
+    console.log(' Admin user created successfully!');
     console.log('──────────────────────────────────');
     console.log(`   Name  : ${admin.name}`);
     console.log(`   Email : ${admin.email}`);
@@ -52,7 +53,7 @@ async function seedAdmin() {
     console.log('──────────────────────────────────');
     console.log('You can now log in with those credentials.');
   } catch (err) {
-    console.error('❌ Seed error:', err.message);
+    console.error(' Seed error:', err.message);
   } finally {
     await mongoose.disconnect();
     process.exit(0);
