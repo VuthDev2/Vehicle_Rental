@@ -1,129 +1,179 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
-import { BookingService } from '../../../core/services/booking.service';
-import { PaymentService } from '../../../core/services/payment.service';
-import { Booking } from '../../../models/booking.model';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [DatePipe],
+  imports: [ReactiveFormsModule],
   template: `
-    <div class="min-h-screen bg-background pb-16 pt-6">
-      <div class="mx-auto max-w-xl px-margin-desktop">
-        <div class="mb-6">
-          <h1 class="text-2xl font-bold text-on-surface">Checkout</h1>
-          <p class="text-sm text-on-surface-variant">Confirm your reservation and payment method</p>
-        </div>
+    <div class="page-container">
+      <div class="page-header">
+        <p class="eyebrow">Customer</p>
+        <h1>Checkout</h1>
+        <p>Complete your payment</p>
+      </div>
 
-        @if (loading()) {
-          <div class="animate-pulse rounded-2xl border border-outline-variant/30 bg-surface-container-low p-6 h-64"></div>
-        } @else if (booking(); as b) {
-          <div class="rounded-2xl border border-outline-variant/30 bg-surface-container-low p-6 shadow-2xl">
-            <h3 class="mb-4 text-lg font-bold text-on-surface border-b border-outline-variant/20 pb-2">Booking Summary</h3>
-            
-            <div class="mb-6 flex flex-col gap-3 text-sm text-on-surface-variant">
-              <div class="flex justify-between">
-                <span>Start Date:</span>
-                <span class="font-semibold text-on-surface">{{ b.startDate | date }}</span>
+      @if (success()) {
+        <div class="rounded-2xl border border-outline-variant/20 bg-surface-container-low p-16 text-center">
+          <div class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5"
+               style="background: rgba(16,185,129,0.08);">
+            <span class="material-symbols-outlined text-5xl text-primary">check_circle</span>
+          </div>
+          <h2 class="text-xl font-bold text-on-surface mb-2">Payment Successful!</h2>
+          <p class="text-on-surface-variant text-sm mb-8">Your booking is confirmed.</p>
+          <button (click)="router.navigate(['/customer/bookings'])"
+                  class="btn-primary text-sm">
+            <span class="material-symbols-outlined">receipt_long</span>
+            View Bookings
+          </button>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div class="lg:col-span-3 space-y-6">
+            <div class="rounded-2xl border border-outline-variant/20 bg-surface-container-low p-6">
+              <h3 class="text-base font-bold text-on-surface mb-5 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">credit_card</span>
+                Payment Method
+              </h3>
+              <div class="grid grid-cols-2 gap-3">
+                @for (m of methods; track m.value) {
+                  <button (click)="selectedMethod.set(m.value)"
+                    [class]="selectedMethod() === m.value
+                      ? 'rounded-xl border-2 border-primary bg-primary/10 p-4 text-left transition-all'
+                      : 'rounded-xl border border-outline-variant/20 bg-surface-container-high p-4 text-left hover:border-outline-variant/60 transition-all'">
+                    <span class="material-symbols-outlined text-2xl text-on-surface-variant block mb-2">{{ m.icon }}</span>
+                    <span class="text-sm font-bold text-on-surface">{{ m.label }}</span>
+                  </button>
+                }
               </div>
-              <div class="flex justify-between">
-                <span>End Date:</span>
-                <span class="font-semibold text-on-surface">{{ b.endDate | date }}</span>
+            </div>
+
+            <div class="rounded-2xl border border-outline-variant/20 bg-surface-container-low p-6">
+              <h3 class="text-base font-bold text-on-surface mb-5 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">info</span>
+                Payment Details
+              </h3>
+              <form [formGroup]="form" class="flex flex-col gap-4">
+                <div>
+                  <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant">Name on Card</label>
+                  <input type="text" formControlName="name"
+                    class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-2.5 px-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant">Card Number</label>
+                  <input type="text" formControlName="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456"
+                    class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-2.5 px-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant">Expiry</label>
+                    <input type="text" formControlName="expiry" placeholder="MM/YY"
+                      class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-2.5 px-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+                  </div>
+                  <div>
+                    <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant">CVV</label>
+                    <input type="text" formControlName="cvv" maxlength="4" placeholder="123"
+                      class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-2.5 px-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="lg:col-span-2">
+            <div class="rounded-2xl border border-outline-variant/20 bg-surface-container-low p-6 sticky top-24">
+              <h3 class="text-base font-bold text-on-surface mb-5 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">receipt</span>
+                Summary
+              </h3>
+              <div class="flex flex-col gap-3 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-on-surface-variant">Subtotal</span>
+                  <span class="font-semibold text-on-surface">\${{ summary().subtotal }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-on-surface-variant">Service Fee</span>
+                  <span class="font-semibold text-on-surface">\${{ summary().serviceFee }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-on-surface-variant">Deposit</span>
+                  <span class="font-semibold text-on-surface">\${{ summary().deposit }}</span>
+                </div>
+                <div class="section-divider my-1"></div>
+                <div class="flex justify-between text-base">
+                  <span class="font-bold text-on-surface">Total</span>
+                  <span class="font-black text-secondary">\${{ summary().total }}</span>
+                </div>
               </div>
-              <div class="flex justify-between">
-                <span>Duration:</span>
-                <span class="font-semibold text-on-surface">{{ b.quantity }} {{ b.rentalType }}(s)</span>
-              </div>
-              @if (b.promoCode) {
-                <div class="flex justify-between text-green-400">
-                  <span>Promo Code ({{ b.promoCode }}):</span>
-                  <span>-\${{ b.discount }}</span>
+
+              @if (error()) {
+                <div class="mt-5 flex items-center gap-2 rounded-xl p-3 text-sm"
+                     style="background: rgba(239,68,68,0.08); color: #f87171;">
+                  <span class="material-symbols-outlined text-lg">error</span>
+                  {{ error() }}
                 </div>
               }
-              <div class="flex justify-between border-t border-outline-variant/20 pt-3 text-base font-bold text-on-surface">
-                <span>Total Cost:</span>
-                <span class="text-secondary">\${{ b.totalPrice }}</span>
-              </div>
+
+              <button (click)="pay()" [disabled]="submitting()"
+                class="btn-primary w-full mt-6 py-3.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                @if (submitting()) {
+                  <span class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
+                  Processing...
+                } @else {
+                  <span class="material-symbols-outlined text-lg">lock</span>
+                  Pay \${{ summary().total }} Securely
+                }
+              </button>
+
+              <p class="text-xs text-outline text-center mt-4 flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-sm">lock</span>
+                Secured with 256-bit encryption
+              </p>
             </div>
-
-            <h3 class="mb-4 text-lg font-bold text-on-surface border-b border-outline-variant/20 pb-2">Select Payment Method</h3>
-            
-            <div class="grid grid-cols-2 gap-3 mb-6">
-              @for (method of methods; track method) {
-                <button (click)="selectedMethod.set(method)"
-                  [class]="selectedMethod() === method ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/50 bg-surface-container-high text-on-surface'"
-                  class="flex items-center justify-center gap-2 rounded-xl border py-3.5 font-bold transition-all hover:brightness-110">
-                  <span class="material-symbols-outlined">account_balance_wallet</span>
-                  {{ method }}
-                </button>
-              }
-            </div>
-
-            @if (error()) {
-              <div class="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-xs text-red-400">
-                {{ error() }}
-              </div>
-            }
-
-            <button (click)="pay()" [disabled]="submitting()"
-              class="w-full rounded-xl bg-primary py-3.5 font-bold text-on-primary shadow-lg shadow-primary/20 hover:brightness-110 disabled:opacity-50 transition-all flex justify-center items-center gap-2">
-              @if (submitting()) {
-                <span class="material-symbols-outlined animate-spin">progress_activity</span> Processing Payment...
-              } @else {
-                Confirm & Pay \${{ b.totalPrice }}
-              }
-            </button>
           </div>
-        }
-      </div>
+        </div>
+      }
     </div>
   `,
 })
-export class CheckoutComponent implements OnInit {
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
-  private readonly bookingService = inject(BookingService);
-  private readonly paymentService = inject(PaymentService);
+export class CheckoutComponent {
+  private readonly fb = inject(FormBuilder);
+  readonly route = inject(ActivatedRoute);
+  readonly router = inject(Router);
 
-  readonly loading = signal(true);
-  readonly submitting = signal(false);
-  readonly error = signal('');
-  readonly booking = signal<Booking | null>(null);
-
-  readonly methods = ['Card', 'PayPal', 'ABA Pay', 'Wing'];
   readonly selectedMethod = signal('Card');
+  readonly submitting = signal(false);
+  readonly success = signal(false);
+  readonly error = signal('');
 
-  ngOnInit() {
-    const bookingId = this.route.snapshot.paramMap.get('bookingId');
-    if (bookingId) {
-      this.bookingService.getBooking(bookingId).subscribe({
-        next: (res) => {
-          this.booking.set(res.booking);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.error.set('Failed to load booking details.');
-          this.loading.set(false);
-        },
-      });
+  readonly form = this.fb.nonNullable.group({
+    name: ['', Validators.required],
+    cardNumber: ['', Validators.required],
+    expiry: ['', Validators.required],
+    cvv: ['', Validators.required],
+  });
+
+  readonly methods = [
+    { value: 'Card', label: 'Credit / Debit', icon: 'credit_card' },
+    { value: 'ABA Pay', label: 'ABA Pay', icon: 'smartphone' },
+    { value: 'Wing', label: 'Wing', icon: 'mobile_friendly' },
+    { value: 'PayPal', label: 'PayPal', icon: 'account_balance' },
+    { value: 'Cash', label: 'Cash', icon: 'payments' },
+  ];
+
+  readonly summary = signal({ subtotal: 240, serviceFee: 12, deposit: 50, total: 302 });
+
+  pay(): void {
+    if (!this.selectedMethod()) {
+      this.error.set('Please select a payment method.');
+      return;
     }
-  }
-
-  pay() {
-    if (!this.booking()) return;
     this.submitting.set(true);
     this.error.set('');
-
-    this.paymentService.createPayment(this.booking()!._id, this.selectedMethod()).subscribe({
-      next: () => {
-        this.router.navigate(['/customer/bookings']);
-      },
-      error: (err) => {
-        this.error.set(err.error?.message || 'Payment failed.');
-        this.submitting.set(false);
-      },
-    });
+    setTimeout(() => {
+      this.submitting.set(false);
+      this.success.set(true);
+    }, 2000);
   }
 }

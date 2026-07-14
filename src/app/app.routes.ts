@@ -44,7 +44,7 @@ export const routes: Routes = [
       { path: 'payments', loadComponent: () => import('./features/admin/manage-payments/manage-payments.component').then((m) => m.ManagePaymentsComponent) },
       { path: 'promotions', loadComponent: () => import('./features/admin/manage-promotions/manage-promotions.component').then((m) => m.ManagePromotionsComponent) },
       { path: 'reports', loadComponent: () => import('./features/admin/reports/reports.component').then((m) => m.ReportsComponent) },
-      { path: 'settings', loadComponent: () => import('./features/simple-page/simple-page.component').then((m) => m.SimplePageComponent), data: { title: 'Settings', body: 'Configure system settings, rental tax rates, pricing categories, user roles, and system integrations.' } },
+      { path: 'settings', loadComponent: () => import('./features/admin/manage-settings/manage-settings.component').then((m) => m.ManageSettingsComponent) },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },

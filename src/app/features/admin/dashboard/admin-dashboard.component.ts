@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, computed, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Chart } from 'chart.js/auto';
 import { DataService } from '../../../core/services/data.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -6,98 +7,153 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   template: `
-    <div class="p-6 md:p-8 min-h-full" style="background: #0c0d1a;">
+    <div class="px-10 py-10 min-h-full" style="background: #F8F9FF;">
 
-      <!-- Header -->
-      <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <!-- ==================== HEADER ==================== -->
+      <div class="flex items-center justify-between mb-8">
         <div>
-          <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #a78bfa;">Overview</p>
-          <h1 class="text-3xl font-black text-white">Admin Dashboard</h1>
-          <p class="text-sm mt-1" style="color: #64748b;">{{ today | date:'EEEE, MMMM d, y' }}</p>
+          <h2 class="text-2xl font-semibold tracking-tight" style="color: #0B1C30;">Manage Fleet</h2>
+          <p class="text-base" style="color: #76777D;">{{ today | date:'fullDate' }}</p>
         </div>
-        <div class="flex items-center gap-3">
-          <div class="px-4 py-2 rounded-xl text-sm font-semibold"
-               style="background: rgba(139,92,246,0.1); color: #a78bfa; border: 1px solid rgba(139,92,246,0.2);">
-            <span class="material-symbols-outlined text-sm align-middle mr-1">admin_panel_settings</span>
-            Administrator
+        <div class="flex items-center gap-4">
+          <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-all"
+                  style="background: transparent;">
+            <span class="material-symbols-outlined text-xl" style="color: #45464D;">notifications</span>
+          </button>
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-base font-bold shadow-sm"
+               style="background: #FD761A; color: #5C2400;">
+            {{ auth.user()?.name?.charAt(0)?.toUpperCase() || 'A' }}
           </div>
         </div>
       </div>
 
-      <!-- Metric Cards -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        @for (card of metricCards; track card.label) {
-          <div class="rounded-2xl p-5 relative overflow-hidden transition-all duration-300 hover:-translate-y-1"
-               style="background: #13152b; border: 1px solid rgba(255,255,255,0.06);">
-            <!-- Icon -->
-            <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                 [style.background]="card.iconBg">
-              <span class="material-symbols-outlined text-xl" [style.color]="card.iconColor">{{ card.icon }}</span>
+      <!-- ==================== KPI CARDS ==================== -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        @for (kpi of kpis; track kpi.label) {
+          <div class="rounded-xl border p-6 flex flex-col gap-1"
+               style="background: #FFFFFF; border-color: #C6C6CD; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+            <div class="flex items-center justify-between mb-2">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                   style="background: #E5EEFF;">
+                <span class="material-symbols-outlined text-lg" style="color: #3980F4;">{{ kpi.icon }}</span>
+              </div>
+              <span class="text-xs font-semibold tracking-wider uppercase" style="color: #9D4300;">{{ kpi.change }}</span>
             </div>
-            <!-- Value -->
-            <p class="text-2xl md:text-3xl font-black text-white mb-1">{{ card.value }}</p>
-            <p class="text-xs font-semibold uppercase tracking-wide" style="color: #64748b;">{{ card.label }}</p>
-            <!-- Change indicator -->
-            <div class="absolute top-5 right-5 flex items-center gap-1 text-xs font-bold"
-                 [style.color]="card.up ? '#34d399' : '#f87171'">
-              <span class="material-symbols-outlined text-sm">{{ card.up ? 'trending_up' : 'trending_down' }}</span>
-              {{ card.change }}
-            </div>
-            <!-- Background glow -->
-            <div class="absolute -bottom-4 -right-4 w-20 h-20 rounded-full opacity-10 blur-xl"
-                 [style.background]="card.iconColor"></div>
+            <p class="text-xs font-semibold tracking-wider uppercase" style="color: #76777D;">{{ kpi.label }}</p>
+            <p class="text-2xl font-semibold tracking-tight" style="color: #0B1C30;">{{ kpi.value }}</p>
           </div>
         }
       </div>
 
-      <!-- Charts Row -->
+      <!-- ==================== ANALYTICS CHARTS ==================== -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <!-- Revenue Chart -->
-        <div class="rounded-2xl p-6" style="background: #13152b; border: 1px solid rgba(255,255,255,0.06);">
+        <!-- Monthly Revenue Bar Chart -->
+        <div class="rounded-xl border p-6"
+             style="background: #FFFFFF; border-color: #C6C6CD; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
           <div class="flex items-center justify-between mb-6">
-            <div>
-              <h2 class="text-lg font-bold text-white">Monthly Revenue</h2>
-              <p class="text-xs mt-0.5" style="color: #64748b;">Last 6 months performance</p>
+            <h4 class="text-lg font-bold" style="color: #0B1C30;">Monthly Revenue</h4>
+            <div class="relative">
+              <select class="appearance-none rounded-lg px-3 py-2 pr-10 text-sm font-semibold border-none cursor-pointer"
+                      style="background: #F8F9FF; color: #0B1C30;">
+                <option>2026</option>
+              </select>
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-sm pointer-events-none" style="color: #6B7280;">expand_more</span>
             </div>
-            <div class="px-3 py-1 rounded-lg text-xs font-bold"
-                 style="background: rgba(16,185,129,0.1); color: #34d399;">+18.2%</div>
           </div>
           <canvas #revenueChart></canvas>
         </div>
 
-        <!-- Popular Vehicles Chart -->
-        <div class="rounded-2xl p-6" style="background: #13152b; border: 1px solid rgba(255,255,255,0.06);">
-          <div class="flex items-center justify-between mb-6">
-            <div>
-              <h2 class="text-lg font-bold text-white">Fleet by Type</h2>
-              <p class="text-xs mt-0.5" style="color: #64748b;">Vehicle category distribution</p>
-            </div>
+        <!-- Popular Vehicles Horizontal Chart -->
+        <div class="rounded-xl border p-6"
+             style="background: #FFFFFF; border-color: #C6C6CD; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+          <h4 class="text-lg font-bold mb-6" style="color: #0B1C30;">Popular Vehicles</h4>
+          <div class="flex flex-col gap-6">
+            @for (item of popularVehicles; track item.name) {
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-semibold" style="color: #0B1C30;">{{ item.name }}</span>
+                  <span class="text-sm font-semibold" style="color: #76777D;">{{ item.percent }}%</span>
+                </div>
+                <div class="w-full h-2 rounded-full" style="background: #E5EEFF;">
+                  <div class="h-2 rounded-full transition-all duration-500"
+                       [style.width.%]="item.percent"
+                       style="background: #3980F4;"></div>
+                </div>
+              </div>
+            }
           </div>
-          <canvas #popularChart></canvas>
         </div>
       </div>
 
-      <!-- Quick Stats Row -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        @for (stat of quickStats; track stat.label) {
-          <div class="rounded-2xl p-5 flex items-center gap-4"
-               style="background: #13152b; border: 1px solid rgba(255,255,255,0.06);">
-            <div class="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center"
-                 [style.background]="stat.iconBg">
-              <span class="material-symbols-outlined text-xl" [style.color]="stat.iconColor">{{ stat.icon }}</span>
-            </div>
-            <div>
-              <p class="text-xl font-black text-white">{{ stat.value }}</p>
-              <p class="text-xs" style="color: #64748b;">{{ stat.label }}</p>
-            </div>
-          </div>
-        }
+      <!-- ==================== RECENT BOOKINGS TABLE ==================== -->
+      <div class="rounded-xl border overflow-hidden"
+           style="background: #FFFFFF; border-color: #C6C6CD; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+        <!-- Table Header -->
+        <div class="flex items-center justify-between px-6 py-5 border-b"
+             style="border-color: #C6C6CD;">
+          <h4 class="text-lg font-bold" style="color: #0B1C30;">Recent Bookings</h4>
+          <a routerLink="/admin/bookings" class="text-sm font-semibold tracking-wider" style="color: #3980F4;">View All</a>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr style="background: #EFF4FF;">
+                <th class="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider" style="color: #76777D;">Customer</th>
+                <th class="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider" style="color: #76777D;">Vehicle</th>
+                <th class="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider" style="color: #76777D;">Date</th>
+                <th class="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider" style="color: #76777D;">Status</th>
+                <th class="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider" style="color: #76777D;">Amount</th>
+                <th class="text-right px-6 py-4"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of bookings; track row.name) {
+                <tr class="border-t" style="border-color: #C6C6CD;">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                           style="background: #D3E4FE; color: #0B1C30;">
+                        {{ row.initials }}
+                      </div>
+                      <div>
+                        <p class="font-semibold text-base" style="color: #0B1C30;">{{ row.name }}</p>
+                        <p class="text-sm tracking-wider" style="color: #76777D;">{{ row.email }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-base" style="color: #0B1C30;">{{ row.vehicle }}</td>
+                  <td class="px-6 py-4" style="color: #76777D;">{{ row.date }}</td>
+                  <td class="px-6 py-4">
+                    <span class="inline-flex px-3 py-1 rounded-full text-sm font-semibold tracking-wider"
+                          [style]="row.status === 'Completed'
+                            ? 'background: rgba(16,185,129,0.1); color: #059669;'
+                            : 'background: rgba(245,158,11,0.1); color: #D97706;'">
+                      {{ row.status }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-base font-bold" style="color: #0B1C30;">\${{ row.amount }}</td>
+                  <td class="px-6 py-4 text-right">
+                    <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-all">
+                      <span class="material-symbols-outlined text-lg" style="color: #76777D;">more_horiz</span>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>
   `,
+  styles: [`
+    :host { display: block; min-height: 100%; }
+    canvas { max-height: 230px; }
+  `]
 })
 export class AdminDashboardComponent implements AfterViewInit {
   readonly data = inject(DataService);
@@ -105,112 +161,58 @@ export class AdminDashboardComponent implements AfterViewInit {
   readonly today = new Date();
 
   @ViewChild('revenueChart') revenueChart?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('popularChart') popularChart?: ElementRef<HTMLCanvasElement>;
 
-  readonly metricCards = [
-    {
-      label: 'Total Vehicles',
-      value: '142',
-      icon: 'directions_car',
-      iconBg: 'rgba(16,185,129,0.12)',
-      iconColor: '#10b981',
-      change: '+12%',
-      up: true,
-    },
-    {
-      label: 'Total Customers',
-      value: '1,284',
-      icon: 'group',
-      iconBg: 'rgba(59,130,246,0.12)',
-      iconColor: '#3b82f6',
-      change: '+8%',
-      up: true,
-    },
-    {
-      label: 'Active Bookings',
-      value: '47',
-      icon: 'receipt_long',
-      iconBg: 'rgba(245,158,11,0.12)',
-      iconColor: '#f59e0b',
-      change: '+3%',
-      up: true,
-    },
-    {
-      label: 'Monthly Revenue',
-      value: '$8,420',
-      icon: 'payments',
-      iconBg: 'rgba(139,92,246,0.12)',
-      iconColor: '#8b5cf6',
-      change: '+18%',
-      up: true,
-    },
+  readonly kpis = [
+    { label: 'Total Vehicles', value: '1,284', icon: 'directions_car', change: '+12%' },
+    { label: 'Total Users', value: '42,590', icon: 'group', change: '+8%' },
+    { label: 'Active Bookings', value: '312', icon: 'receipt_long', change: '+3%' },
+    { label: 'Monthly Revenue', value: '$142.8k', icon: 'payments', change: '+18%' },
   ];
 
-  readonly quickStats = [
-    { label: 'Vehicles Available Now', value: '98', icon: 'garage', iconBg: 'rgba(16,185,129,0.1)', iconColor: '#10b981' },
-    { label: 'Pending Approvals', value: '5', icon: 'pending_actions', iconBg: 'rgba(245,158,11,0.1)', iconColor: '#f59e0b' },
-    { label: 'Support Tickets', value: '3', icon: 'support_agent', iconBg: 'rgba(239,68,68,0.1)', iconColor: '#ef4444' },
+  readonly popularVehicles = [
+    { name: 'Toyota Camry', percent: 85 },
+    { name: 'Honda Wave', percent: 70 },
+    { name: 'Lexus LX600', percent: 55 },
+    { name: 'Yamaha NMAX', percent: 35 },
+  ];
+
+  readonly bookings = [
+    { name: 'Sokha Lim', initials: 'SL', email: 'sokha@example.com', vehicle: 'Toyota Camry', date: 'Dec 12, 2026', status: 'Completed', amount: '240.00' },
+    { name: 'Marie Dupont', initials: 'MD', email: 'marie@example.com', vehicle: 'Honda Wave', date: 'Dec 11, 2026', status: 'Pending', amount: '85.00' },
+    { name: 'James Wong', initials: 'JW', email: 'james@example.com', vehicle: 'Lexus LX600', date: 'Dec 10, 2026', status: 'Completed', amount: '520.00' },
   ];
 
   ngAfterViewInit(): void {
-    const gridColor = 'rgba(255,255,255,0.04)';
-    const textColor = '#64748b';
-
     if (this.revenueChart) {
       new Chart(this.revenueChart.nativeElement, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
           datasets: [{
-            label: 'Revenue ($)',
-            data: [3200, 4800, 4100, 6200, 7100, 8420],
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16,185,129,0.08)',
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: '#10b981',
-            pointRadius: 4,
-            pointHoverRadius: 6,
+            label: 'Revenue',
+            data: [18, 24, 20, 32, 38, 45],
+            backgroundColor: '#3980F4',
+            borderRadius: 4,
+            barPercentage: 0.55,
           }],
         },
         options: {
           responsive: true,
-          plugins: {
-            legend: { display: false },
-          },
+          maintainAspectRatio: true,
+          plugins: { legend: { display: false } },
           scales: {
             x: {
-              grid: { color: gridColor },
-              ticks: { color: textColor, font: { size: 11 } },
+              grid: { display: false },
+              ticks: { color: '#76777D', font: { size: 12, weight: 'bold' } },
             },
             y: {
-              grid: { color: gridColor },
-              ticks: { color: textColor, font: { size: 11 } },
-            },
-          },
-        },
-      });
-    }
-
-    if (this.popularChart) {
-      new Chart(this.popularChart.nativeElement, {
-        type: 'doughnut',
-        data: {
-          labels: ['Cars', 'Motorcycles', 'Bicycles'],
-          datasets: [{
-            data: [52, 35, 13],
-            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b'],
-            borderColor: '#13152b',
-            borderWidth: 3,
-          }],
-        },
-        options: {
-          responsive: true,
-          cutout: '68%',
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { color: '#94a3b8', font: { size: 12 }, padding: 16 },
+              grid: { color: '#E5E7EB' },
+              ticks: {
+                color: '#76777D',
+                font: { size: 12, weight: 'bold' },
+                callback: (v) => '$' + v + 'k',
+              },
+              border: { display: false },
             },
           },
         },

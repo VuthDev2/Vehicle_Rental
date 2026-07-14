@@ -102,6 +102,21 @@ img { display: block; max-width: 100%; }
 .animate-fade-in-up  { animation: fade-in-up  0.5s ease forwards; }
 .animate-fade-in     { animation: fade-in     0.4s ease forwards; }
 .animate-pulse-glow  { animation: pulse-glow  2s ease-in-out infinite; }
+.animate-scale-in    { animation: scale-in    0.3s ease forwards; }
+.animate-slide-in-right { animation: slide-in-right 0.3s ease forwards; }
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 
 /* ============================================================
    GLASS MORPHISM HELPERS
@@ -366,6 +381,80 @@ img { display: block; max-width: 100%; }
 }
 
 /* ============================================================
+   SKELETON LOADER
+   ============================================================ */
+.skeleton {
+  background: linear-gradient(90deg, var(--color-surface-container-high) 25%, var(--color-surface-container-highest) 50%, var(--color-surface-container-high) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* ============================================================
+   FLOATING BADGE
+   ============================================================ */
+.badge-floating {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 2;
+}
+
+/* ============================================================
+   GRADIENT BORDER HELPER
+   ============================================================ */
+.gradient-border {
+  position: relative;
+  background: var(--color-surface-container-low);
+  border-radius: 16px;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(59,130,246,0.3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ============================================================
+   SECTION DIVIDER
+   ============================================================ */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-outline-variant), transparent);
+  margin: 0 auto;
+}
+
+/* ============================================================
+   STATUS DOT
+   ============================================================ */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot.success { background: #34d399; box-shadow: 0 0 8px rgba(52,211,153,0.4); }
+.status-dot.warning { background: #fbbf24; box-shadow: 0 0 8px rgba(251,191,36,0.4); }
+.status-dot.danger  { background: #f87171; box-shadow: 0 0 8px rgba(248,113,113,0.4); }
+.status-dot.info    { background: #60a5fa; box-shadow: 0 0 8px rgba(96,165,250,0.4); }
+.status-dot.neutral { background: #64748b; box-shadow: 0 0 8px rgba(100,116,139,0.4); }
+
+/* ============================================================
    HERO GRADIENT
    ============================================================ */
 .hero-gradient {
@@ -384,6 +473,45 @@ img { display: block; max-width: 100%; }
   max-width: var(--spacing-container-max);
   margin: 0 auto;
   padding: 0 var(--spacing-margin-desktop);
+}
+
+/* ============================================================
+   RESPONSIVE MOBILE UTILITIES
+   ============================================================ */
+/* ============================================================
+   PAGE TRANSITIONS
+   ============================================================ */
+router-outlet + * {
+  animation: fade-in-up 0.35s ease forwards;
+}
+
+.page-container {
+  max-width: var(--spacing-container-max);
+  margin: 0 auto;
+  padding: 1.5rem var(--spacing-margin-desktop);
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+}
+.page-header .eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--color-on-surface);
+  line-height: 1.2;
+}
+.page-header p {
+  font-size: 0.875rem;
+  color: var(--color-on-surface-variant);
+  margin-top: 0.25rem;
 }
 
 /* ============================================================

@@ -84,12 +84,29 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
             <span class="text-base font-black text-white">Cambo Rent</span>
           </div>
 
-          <div class="mb-8">
+            <div class="mb-8">
             <h1 class="text-3xl font-black text-white mb-2">Create Account</h1>
             <p class="text-sm" style="color: #64748b;">Already have an account?
-              <a routerLink="/login" class="font-semibold ml-1" style="color: #10b981;">Sign in →</a>
+              <a routerLink="/login" class="font-semibold ml-1 transition-colors hover:text-emerald-300" style="color: #10b981;">Sign in →</a>
             </p>
           </div>
+
+          <!-- Password strength hint -->
+          @if ((form.get('password')?.value || '').length > 0) {
+            <div class="mb-6 p-3 rounded-xl text-xs animate-fade-in"
+                 [style]="getPasswordStrength() >= 2 ? 'background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:#34d399' : 'background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:#fbbf24'">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span class="material-symbols-outlined text-sm">{{ getPasswordStrength() >= 2 ? 'check_circle' : 'info' }}</span>
+                Password strength: {{ ['Weak', 'Medium', 'Strong'][getPasswordStrength()] }}
+              </div>
+              <div class="flex gap-1">
+                @for (i of [0,1,2]; track i) {
+                  <div class="h-1 flex-1 rounded-full transition-all duration-300"
+                       [style.background]="i <= getPasswordStrength() ? (getPasswordStrength() >= 2 ? '#34d399' : '#fbbf24') : 'rgba(255,255,255,0.1)'"></div>
+                }
+              </div>
+            </div>
+          }
 
           <!-- Error -->
           @if (error()) {
@@ -109,10 +126,13 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">person</span>
                 <input id="name" type="text" formControlName="name" placeholder="Your full name"
-                       class="input-field pl-11" />
+                       class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-11 pr-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
               </div>
               @if (form.get('name')?.invalid && form.get('name')?.touched) {
-                <p class="mt-1.5 text-xs" style="color: #f87171;">Name is required.</p>
+                <p class="mt-1.5 text-xs flex items-center gap-1" style="color: #f87171;">
+                  <span class="material-symbols-outlined text-sm">error</span>
+                  Name is required.
+                </p>
               }
             </div>
 
@@ -122,10 +142,13 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">mail</span>
                 <input id="email" type="email" formControlName="email" placeholder="you@example.com"
-                       class="input-field pl-11" />
+                       class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-11 pr-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
               </div>
               @if (form.get('email')?.invalid && form.get('email')?.touched) {
-                <p class="mt-1.5 text-xs" style="color: #f87171;">Valid email is required.</p>
+                <p class="mt-1.5 text-xs flex items-center gap-1" style="color: #f87171;">
+                  <span class="material-symbols-outlined text-sm">error</span>
+                  Valid email is required.
+                </p>
               }
             </div>
 
@@ -137,7 +160,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">phone</span>
                 <input id="phone" type="tel" formControlName="phone" placeholder="+855 12 345 678"
-                       class="input-field pl-11" />
+                       class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-11 pr-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
               </div>
             </div>
 
@@ -147,15 +170,18 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">lock</span>
                 <input id="password" [type]="showPass() ? 'text' : 'password'" formControlName="password" placeholder="Min 6 characters"
-                       class="input-field pl-11 pr-12" />
+                       class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-11 pr-12 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
                 <button type="button" (click)="showPass.set(!showPass())"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 transition-colors"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 transition-colors hover:text-on-surface"
                         style="color: #475569;">
                   <span class="material-symbols-outlined text-xl">{{ showPass() ? 'visibility_off' : 'visibility' }}</span>
                 </button>
               </div>
               @if (form.get('password')?.invalid && form.get('password')?.touched) {
-                <p class="mt-1.5 text-xs" style="color: #f87171;">Password must be at least 6 characters.</p>
+                <p class="mt-1.5 text-xs flex items-center gap-1" style="color: #f87171;">
+                  <span class="material-symbols-outlined text-sm">error</span>
+                  Password must be at least 6 characters.
+                </p>
               }
             </div>
 
@@ -165,16 +191,19 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">lock_reset</span>
                 <input id="confirm" type="password" formControlName="confirmPassword" placeholder="Repeat your password"
-                       class="input-field pl-11" />
+                       class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-11 pr-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
               </div>
               @if (form.errors?.['passwordMismatch'] && form.get('confirmPassword')?.touched) {
-                <p class="mt-1.5 text-xs" style="color: #f87171;">Passwords do not match.</p>
+                <p class="mt-1.5 text-xs flex items-center gap-1" style="color: #f87171;">
+                  <span class="material-symbols-outlined text-sm">error</span>
+                  Passwords do not match.
+                </p>
               }
             </div>
 
             <!-- Submit -->
             <button type="submit" [disabled]="loading() || form.invalid"
-                    class="btn-primary w-full py-4 mt-2 text-base disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="btn-primary w-full py-4 mt-2 text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-primary/20">
               @if (loading()) {
                 <span class="material-symbols-outlined animate-spin text-xl">progress_activity</span>
                 Creating account...
@@ -187,8 +216,8 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
 
           <p class="mt-6 text-center text-xs" style="color: #475569;">
             By registering you agree to our
-            <span class="cursor-pointer" style="color: #64748b;">Terms of Service</span> and
-            <span class="cursor-pointer" style="color: #64748b;">Privacy Policy</span>.
+            <span class="cursor-pointer hover:text-emerald-400 transition-colors" style="color: #64748b;">Terms of Service</span> and
+            <span class="cursor-pointer hover:text-emerald-400 transition-colors" style="color: #64748b;">Privacy Policy</span>.
           </p>
         </div>
       </div>
@@ -225,6 +254,15 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
   }, { validators: passwordMatchValidator });
+
+  getPasswordStrength(): number {
+    const pw = this.form.get('password')?.value || '';
+    let score = 0;
+    if (pw.length >= 8) score++;
+    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+    if (/\d/.test(pw) && /[^A-Za-z0-9]/.test(pw)) score++;
+    return Math.min(score, 2);
+  }
 
   onSubmit(): void {
     if (this.form.invalid) return;

@@ -4,12 +4,13 @@ const bcrypt = require('bcryptjs');
 
 
 const ADMIN_NAME = 'Vuthhh';
-const ADMIN_EMAIL = 'ravuthkry129@gmail.com';
+const ADMIN_EMAIL = 'ravuthkry129@gmail.com ';
 const ADMIN_PASSWORD = 'vuth123??';
 
 
 
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI =
+  'mongodb+srv://krysaravuth25_db_user:vuth123%3F%3F@cluster0.sihb0xt.mongodb.net/cambo_rent?appName=Cluster0&compressors=zlib';
 
 const userSchema = new mongoose.Schema(
   {

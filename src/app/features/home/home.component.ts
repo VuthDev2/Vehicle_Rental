@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -10,15 +10,15 @@ import { RouterLink } from '@angular/router';
 
       <!-- ====================== HERO ====================== -->
       <section class="relative min-h-screen flex items-center overflow-hidden">
-        <!-- Background Image -->
-        <div class="absolute inset-0 z-0">
+        <!-- Parallax Background Image -->
+        <div class="absolute inset-0 z-0"
+             [style.transform]="'translateY(' + scrollY * 0.4 + 'px)'">
           <img
             src="/hero_vehicles.png"
             alt="Cambo Rent - Cars, Motos and Bikes in Cambodia"
             class="w-full h-full object-cover object-center"
           />
           <div class="absolute inset-0 hero-gradient"></div>
-          <!-- Subtle gradient overlay bottom -->
           <div class="absolute inset-0 bg-gradient-to-t from-[#0a0f1e] via-transparent to-[rgba(10,15,30,0.4)]"></div>
         </div>
 
@@ -27,7 +27,7 @@ import { RouterLink } from '@angular/router';
           <div class="max-w-2xl animate-fade-in-up">
             <!-- Pill badge -->
             <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6 text-sm font-semibold text-on-surface-variant">
-              <span class="w-2 h-2 rounded-full bg-primary animate-pulse inline-block"></span>
+              <span class="w-2 h-2 rounded-full bg-primary animate-pulse-glow inline-block"></span>
               Trusted by thousands in Cambodia
             </div>
 
@@ -45,7 +45,7 @@ import { RouterLink } from '@angular/router';
             </p>
 
             <div class="flex flex-wrap gap-4">
-              <a routerLink="/login" class="btn-primary text-base px-8 py-4 rounded-xl">
+              <a routerLink="/login" class="btn-primary text-base px-8 py-4 rounded-xl shadow-2xl shadow-primary/25">
                 <span class="material-symbols-outlined">login</span>
                 Get Started
               </a>
@@ -58,8 +58,8 @@ import { RouterLink } from '@angular/router';
             <!-- Mini Stats -->
             <div class="flex flex-wrap gap-8 mt-12 pt-8 border-t border-white/10">
               @for (stat of heroStats; track stat.label) {
-                <div>
-                  <div class="text-3xl font-black text-white">{{ stat.value }}</div>
+                <div class="group">
+                  <div class="text-3xl sm:text-4xl font-black text-white group-hover:scale-105 transition-transform duration-300">{{ stat.value }}</div>
                   <div class="text-sm text-on-surface-variant mt-0.5">{{ stat.label }}</div>
                 </div>
               }
@@ -68,7 +68,10 @@ import { RouterLink } from '@angular/router';
         </div>
 
         <!-- Scroll indicator -->
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-on-surface-variant text-xs animate-bounce">
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-on-surface-variant text-xs animate-bounce"
+             [style.opacity]="scrollY > 100 ? 0 : 1"
+             [style.transition]="'opacity 0.4s'">
+          <span class="text-[10px] font-bold uppercase tracking-widest">Scroll</span>
           <span class="material-symbols-outlined text-xl">keyboard_arrow_down</span>
         </div>
       </section>
@@ -87,58 +90,29 @@ import { RouterLink } from '@angular/router';
           </div>
 
           <!-- Vehicle Category Cards -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            <!-- Car Card -->
-            <div class="group relative rounded-3xl overflow-hidden h-96 cursor-pointer">
-              <img src="/car_card.png" alt="Car Rental" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-              <div class="absolute bottom-0 left-0 right-0 p-8">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="badge badge-success">Cars</span>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-2">Sedan & SUV</h3>
-                <p class="text-on-surface-variant text-sm mb-4">Perfect for family trips and long-distance travel. AC, comfortable seating, and spacious trunks.</p>
-                <div class="flex items-center gap-2 text-primary font-semibold text-sm group-hover:gap-3 transition-all">
-                  <span>Sign in to Browse</span>
-                  <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            @for (card of fleetCards; track card.title) {
+              <div class="group relative rounded-3xl overflow-hidden h-96 cursor-pointer shadow-2xl shadow-black/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10">
+                <img [src]="card.img" [alt]="card.title" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
+                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                     [style.background]="'linear-gradient(135deg, ' + card.glowColor + '15, transparent)'"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-8 z-10">
+                  <div class="flex items-center gap-2 mb-3">
+                    <span [class]="'badge ' + card.badge">{{ card.label }}</span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">From \${{ card.from }}/day</span>
+                  </div>
+                  <h3 class="text-2xl font-bold text-white mb-2">{{ card.title }}</h3>
+                  <p class="text-on-surface-variant text-sm mb-4">{{ card.desc }}</p>
+                  <div class="flex items-center gap-2 font-semibold text-sm transition-all duration-300 group-hover:gap-4"
+                       [style.color]="card.accentColor">
+                    <span>Sign in to Browse</span>
+                    <span class="material-symbols-outlined text-lg transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <!-- Moto Card -->
-            <div class="group relative rounded-3xl overflow-hidden h-96 cursor-pointer">
-              <img src="/moto_card.png" alt="Moto Rental" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-              <div class="absolute bottom-0 left-0 right-0 p-8">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="badge badge-info">Motorcycles</span>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-2">Sport & Cruiser</h3>
-                <p class="text-on-surface-variant text-sm mb-4">Navigate Cambodia's streets effortlessly. Fuel-efficient, easy to park, thrilling to ride.</p>
-                <div class="flex items-center gap-2 text-secondary font-semibold text-sm group-hover:gap-3 transition-all">
-                  <span>Sign in to Browse</span>
-                  <span class="material-symbols-outlined text-lg">arrow_forward</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Bike Card -->
-            <div class="group relative rounded-3xl overflow-hidden h-96 cursor-pointer">
-              <img src="/bike_card.png" alt="Bike Rental" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
-              <div class="absolute bottom-0 left-0 right-0 p-8">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="badge badge-warning">Bicycles</span>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-2">City & Eco Bikes</h3>
-                <p class="text-on-surface-variant text-sm mb-4">Eco-friendly and fun. Explore Phnom Penh's streets, parks, and riverside at your own pace.</p>
-                <div class="flex items-center gap-2 text-amber-400 font-semibold text-sm group-hover:gap-3 transition-all">
-                  <span>Sign in to Browse</span>
-                  <span class="material-symbols-outlined text-lg">arrow_forward</span>
-                </div>
-              </div>
-            </div>
+            }
 
           </div>
         </div>
@@ -343,6 +317,46 @@ import { RouterLink } from '@angular/router';
   `]
 })
 export class HomeComponent {
+  scrollY = 0;
+
+  @HostListener('window:scroll')
+  onScroll(): void {
+    this.scrollY = window.scrollY;
+  }
+
+  readonly fleetCards = [
+    {
+      img: '/car_card.png',
+      title: 'Sedan & SUV',
+      label: 'Cars',
+      desc: 'Perfect for family trips and long-distance travel. AC, comfortable seating, and spacious trunks.',
+      from: '35',
+      badge: 'badge-success',
+      accentColor: '#10b981',
+      glowColor: '#10b981',
+    },
+    {
+      img: '/moto_card.png',
+      title: 'Sport & Cruiser',
+      label: 'Motorcycles',
+      desc: 'Navigate Cambodia\'s streets effortlessly. Fuel-efficient, easy to park, thrilling to ride.',
+      from: '12',
+      badge: 'badge-info',
+      accentColor: '#3b82f6',
+      glowColor: '#3b82f6',
+    },
+    {
+      img: '/bike_card.png',
+      title: 'City & Eco Bikes',
+      label: 'Bicycles',
+      desc: 'Eco-friendly and fun. Explore Phnom Penh\'s streets, parks, and riverside at your own pace.',
+      from: '5',
+      badge: 'badge-warning',
+      accentColor: '#f59e0b',
+      glowColor: '#f59e0b',
+    },
+  ];
+
   readonly heroStats = [
     { value: '500+', label: 'Vehicles Available' },
     { value: '10K+', label: 'Happy Customers' },

@@ -9,130 +9,188 @@ import { Promotion } from '../../../models/promotion.model';
   standalone: true,
   imports: [ReactiveFormsModule, DatePipe],
   template: `
-    <div class="p-6 bg-background min-h-screen pb-16">
-      <div class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <p class="text-xs font-bold uppercase tracking-widest text-outline">Marketing</p>
-          <h1 class="text-2xl font-bold text-on-surface">Manage Promotions</h1>
+    <div style="background: #FBF9F9; min-height: 100%; padding: 24px;">
+
+      <!-- ==================== HEADER ==================== -->
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-4">
+          <h1 style="font-size: 28px; font-weight: 700; color: #1B1C1C; margin: 0;">Promotions</h1>
+          <span style="background: #E5EEFF; color: #005DAC; padding: 2px 14px; border-radius: 20px; font-size: 14px; font-weight: 600; line-height: 28px;">
+            {{ promotions().length }} active
+          </span>
         </div>
-        <button (click)="openAddModal()" class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-on-primary shadow-lg shadow-primary/20 hover:brightness-110">
+        <button (click)="openAddModal()"
+                style="background: #005DAC; color: #FFFFFF; border: none; border-radius: 8px; padding: 10px 24px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.15s;"
+                onmouseover="this.style.background='#004080'" onmouseout="this.style.background='#005DAC'">
+          <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
           Add Promotion
         </button>
       </div>
 
-      <div class="overflow-x-auto rounded-2xl border border-outline-variant/30 bg-surface-container-low">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="border-b border-outline-variant/30 bg-surface-container-high text-xs font-bold uppercase tracking-wider text-outline">
-              <th class="p-4">Code</th>
-              <th class="p-4">Discount</th>
-              <th class="p-4">Min Spend</th>
-              <th class="p-4">Usage</th>
-              <th class="p-4">Expiry</th>
-              <th class="p-4">Status</th>
-              <th class="p-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-outline-variant/20 text-sm">
-            @if (loading()) {
-              <tr>
-                <td colspan="7" class="p-8 text-center text-on-surface-variant animate-pulse">Loading promotions...</td>
+      <!-- ==================== TABLE ==================== -->
+      @if (loading()) {
+        <div style="background: #FFFFFF; border: 1px solid #E9E8E7; border-radius: 12px; overflow: hidden;">
+          @for (i of [1,2,3]; track i) {
+            <div style="padding: 16px 24px; border-bottom: 1px solid #F0EFEF; display: flex; gap: 16px; align-items: center;">
+              <div style="flex: 1.5;"><div class="skeleton" style="height: 14px; width: 50%;"></div></div>
+              <div style="flex: 1;"><div class="skeleton" style="height: 14px; width: 40%;"></div></div>
+              <div style="flex: 1;"><div class="skeleton" style="height: 14px; width: 40%;"></div></div>
+              <div style="flex: 1;"><div class="skeleton" style="height: 14px; width: 30%;"></div></div>
+              <div style="flex: 1;"><div class="skeleton" style="height: 14px; width: 35%;"></div></div>
+            </div>
+          }
+        </div>
+      } @else if (promotions().length === 0) {
+        <div style="background: #FFFFFF; border: 1px solid #E9E8E7; border-radius: 12px; text-align: center; padding: 80px 20px;">
+          <span class="material-symbols-outlined" style="font-size: 48px; color: #C1C6D4; margin-bottom: 12px;">local_offer</span>
+          <p style="font-size: 18px; font-weight: 600; color: #717783; margin: 0 0 4px;">No promotions created</p>
+          <p style="font-size: 14px; color: #76777D; margin: 0;">Create your first promotion to start offering discounts.</p>
+        </div>
+      } @else {
+        <div style="background: #FFFFFF; border: 1px solid #E9E8E7; border-radius: 12px; overflow: hidden;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #F5F3F3;">
+                <th style="padding: 12px 24px; text-align: left; font-size: 12px; font-weight: 700; color: #49454F; text-transform: uppercase; letter-spacing: 0.5px;">Code</th>
+                <th style="padding: 12px 24px; text-align: left; font-size: 12px; font-weight: 700; color: #49454F; text-transform: uppercase; letter-spacing: 0.5px;">Discount</th>
+                <th style="padding: 12px 24px; text-align: left; font-size: 12px; font-weight: 700; color: #49454F; text-transform: uppercase; letter-spacing: 0.5px;">Min Spend</th>
+                <th style="padding: 12px 24px; text-align: center; font-size: 12px; font-weight: 700; color: #49454F; text-transform: uppercase; letter-spacing: 0.5px;">Usage</th>
+                <th style="padding: 12px 24px; text-align: left; font-size: 12px; font-weight: 700; color: #49454F; text-transform: uppercase; letter-spacing: 0.5px;">Expiry</th>
+                <th style="padding: 12px 24px; text-align: center; font-size: 12px; font-weight: 700; color: #49454F; text-transform: uppercase; letter-spacing: 0.5px;">Status</th>
+                <th style="padding: 12px 24px; text-align: right; font-size: 12px; font-weight: 700; color: #49454F; text-transform: uppercase; letter-spacing: 0.5px;">Actions</th>
               </tr>
-            } @else if (promotions().length === 0) {
-              <tr>
-                <td colspan="7" class="p-8 text-center text-on-surface-variant">No promotions created yet.</td>
-              </tr>
-            } @else {
+            </thead>
+            <tbody>
               @for (promo of promotions(); track promo._id) {
-                <tr class="hover:bg-surface-container-high/50 transition-colors">
-                  <td class="p-4">
-                    <p class="font-bold text-primary">{{ promo.code }}</p>
-                    <p class="text-xs text-on-surface-variant">{{ promo.description || 'No description' }}</p>
+                <tr style="border-bottom: 1px solid #F0EFEF;">
+                  <td style="padding: 16px 24px;">
+                    <p style="font-size: 14px; font-weight: 700; color: #005DAC; margin: 0; letter-spacing: 0.5px;">{{ promo.code }}</p>
+                    <p style="font-size: 12px; color: #717783; margin: 2px 0 0;">{{ promo.description || '—' }}</p>
                   </td>
-                  <td class="p-4 font-semibold text-on-surface">
-                    {{ promo.discountType === 'percent' ? promo.value + '%' : '$' + promo.value }}
-                  </td>
-                  <td class="p-4 font-semibold text-on-surface">\${{ promo.minAmount }}</td>
-                  <td class="p-4 font-semibold text-on-surface">
-                    {{ promo.usedCount }} / {{ promo.maxUses || 'Unlimited' }}
-                  </td>
-                  <td class="p-4 text-on-surface-variant">
-                    {{ promo.expiresAt ? (promo.expiresAt | date) : 'Never' }}
-                  </td>
-                  <td class="p-4">
-                    <span [class]="promo.active ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'"
-                      class="rounded-lg px-2.5 py-1 text-xs font-bold uppercase tracking-wider">
-                      {{ promo.active ? 'Active' : 'Inactive' }}
+                  <td style="padding: 16px 24px;">
+                    <span style="font-size: 15px; font-weight: 700; color: #1B1C1C;">
+                      {{ promo.discountType === 'percent' ? promo.value + '%' : '$' + promo.value }}
                     </span>
                   </td>
-                  <td class="p-4 text-right">
-                    <div class="flex justify-end gap-2">
-                      <button (click)="toggleActive(promo)" class="rounded-lg bg-surface-container-high px-3 py-1.5 text-xs font-bold text-on-surface hover:bg-surface-container-highest">
+                  <td style="padding: 16px 24px;">
+                    <span style="font-size: 14px; color: #414752;">\${{ promo.minAmount }}</span>
+                  </td>
+                  <td style="padding: 16px 24px; text-align: center;">
+                    <div style="display: flex; align-items: center; gap: 6px; justify-content: center;">
+                      <div style="flex: 1; max-width: 80px; height: 6px; border-radius: 3px; background: #F0EFEF; overflow: hidden;">
+                        <div style="height: 100%; border-radius: 3px; background: #005DAC; width: {{ promo.maxUses ? (promo.usedCount / promo.maxUses * 100) + '%' : (promo.usedCount > 0 ? '50%' : '0%') }};"></div>
+                      </div>
+                      <span style="font-size: 13px; font-weight: 600; color: #717783;">{{ promo.usedCount }}{{ promo.maxUses ? '/' + promo.maxUses : '' }}</span>
+                    </div>
+                  </td>
+                  <td style="padding: 16px 24px;">
+                    <span style="font-size: 13px; color: {{ isExpired(promo) ? '#B3261E' : '#717783' }};">
+                      {{ promo.expiresAt ? (promo.expiresAt | date) : 'Never' }}
+                    </span>
+                  </td>
+                  <td style="padding: 16px 24px; text-align: center;">
+                    <span style="display: inline-block; padding: 3px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.3px;
+                      background: {{ promo.active && !isExpired(promo) ? '#E7F5ED' : '#FFDAD6' }}; color: {{ promo.active && !isExpired(promo) ? '#1E7B4C' : '#B3261E' }};">
+                      {{ promo.active && !isExpired(promo) ? 'Active' : 'Inactive' }}
+                    </span>
+                  </td>
+                  <td style="padding: 16px 24px; text-align: right;">
+                    <div class="flex items-center justify-end gap-2">
+                      <button (click)="toggleActive(promo)"
+                              style="background: {{ promo.active ? '#FFDAD6' : '#E7F5ED' }}; color: {{ promo.active ? '#B3261E' : '#1E7B4C' }}; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
                         {{ promo.active ? 'Disable' : 'Enable' }}
                       </button>
-                      <button (click)="deletePromo(promo._id)" class="rounded-lg bg-red-500/20 px-3 py-1.5 text-xs font-bold text-red-400 hover:bg-red-500/30">
-                        Delete
+                      <button (click)="deletePromo(promo._id)"
+                              style="background: none; border: none; cursor: pointer; color: #717783; padding: 6px; transition: color 0.15s;"
+                              onmouseover="this.style.color='#B3261E'" onmouseout="this.style.color='#717783'">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">delete</span>
                       </button>
                     </div>
                   </td>
                 </tr>
               }
-            }
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
+      }
 
-      <!-- Add Promotion Modal -->
+      <!-- ==================== ADD PROMOTION MODAL ==================== -->
       @if (showModal()) {
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div class="w-full max-w-md rounded-2xl border border-outline-variant/30 bg-surface-container-low p-6 shadow-2xl">
-            <h2 class="mb-4 text-xl font-bold text-on-surface">Add New Promotion</h2>
-            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+        <div style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.45); padding: 16px; backdrop-filter: blur(4px);">
+          <div style="width: 100%; max-width: 480px; background: #FFFFFF; border-radius: 16px; padding: 28px; box-shadow: 0 24px 80px rgba(0,0,0,0.2);">
+            <div class="flex items-center justify-between mb-6">
+              <h2 style="font-size: 22px; font-weight: 700; color: #1B1C1C; margin: 0;">Add New Promotion</h2>
+              <button (click)="showModal.set(false)" style="width: 36px; height: 36px; border: none; border-radius: 8px; background: #F5F3F3; cursor: pointer; color: #717783; display: flex; align-items: center; justify-content: center; transition: background 0.15s;"
+                      onmouseover="this.style.background='#E9E8E7'" onmouseout="this.style.background='#F5F3F3'">
+                <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+              </button>
+            </div>
+
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; gap: 18px;">
               <div>
-                <label class="mb-1 block text-sm font-semibold text-on-surface">Promo Code</label>
-                <input type="text" formControlName="code" class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high px-3 py-2.5 text-on-surface uppercase focus:outline-none" placeholder="e.g. CAMBO10" />
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #414752; margin-bottom: 6px;">Promo Code</label>
+                <input type="text" formControlName="code" placeholder="e.g. SUMMER20"
+                       style="width: 100%; border: 1px solid #E9E8E7; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #1B1C1C; outline: none; box-sizing: border-box; text-transform: uppercase; transition: border-color 0.15s;"
+                       onfocus="this.style.borderColor='#005DAC'" onblur="this.style.borderColor='#E9E8E7'" />
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-semibold text-on-surface">Description</label>
-                <input type="text" formControlName="description" class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high px-3 py-2.5 text-on-surface focus:outline-none" />
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #414752; margin-bottom: 6px;">Description</label>
+                <input type="text" formControlName="description" placeholder="e.g. 20% off summer rentals"
+                       style="width: 100%; border: 1px solid #E9E8E7; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #1B1C1C; outline: none; box-sizing: border-box; transition: border-color 0.15s;"
+                       onfocus="this.style.borderColor='#005DAC'" onblur="this.style.borderColor='#E9E8E7'" />
               </div>
 
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="mb-1 block text-sm font-semibold text-on-surface">Discount Type</label>
-                  <select formControlName="discountType" class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high px-3 py-2.5 text-on-surface focus:outline-none">
+                  <label style="display: block; font-size: 13px; font-weight: 600; color: #414752; margin-bottom: 6px;">Discount Type</label>
+                  <select formControlName="discountType"
+                          style="width: 100%; border: 1px solid #E9E8E7; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #1B1C1C; outline: none; box-sizing: border-box; background: #FFFFFF; cursor: pointer; transition: border-color 0.15s;"
+                          onfocus="this.style.borderColor='#005DAC'" onblur="this.style.borderColor='#E9E8E7'">
                     <option value="percent">Percent (%)</option>
                     <option value="fixed">Fixed ($)</option>
                   </select>
                 </div>
                 <div>
-                  <label class="mb-1 block text-sm font-semibold text-on-surface">Value</label>
-                  <input type="number" formControlName="value" class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high px-3 py-2.5 text-on-surface focus:outline-none" />
+                  <label style="display: block; font-size: 13px; font-weight: 600; color: #414752; margin-bottom: 6px;">Value</label>
+                  <input type="number" formControlName="value"
+                         style="width: 100%; border: 1px solid #E9E8E7; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #1B1C1C; outline: none; box-sizing: border-box; transition: border-color 0.15s;"
+                         onfocus="this.style.borderColor='#005DAC'" onblur="this.style.borderColor='#E9E8E7'" />
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="mb-1 block text-sm font-semibold text-on-surface">Min Spend ($)</label>
-                  <input type="number" formControlName="minAmount" class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high px-3 py-2.5 text-on-surface focus:outline-none" />
+                  <label style="display: block; font-size: 13px; font-weight: 600; color: #414752; margin-bottom: 6px;">Min Spend ($)</label>
+                  <input type="number" formControlName="minAmount"
+                         style="width: 100%; border: 1px solid #E9E8E7; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #1B1C1C; outline: none; box-sizing: border-box; transition: border-color 0.15s;"
+                         onfocus="this.style.borderColor='#005DAC'" onblur="this.style.borderColor='#E9E8E7'" />
                 </div>
                 <div>
-                  <label class="mb-1 block text-sm font-semibold text-on-surface">Max Uses</label>
-                  <input type="number" formControlName="maxUses" class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high px-3 py-2.5 text-on-surface focus:outline-none" placeholder="Unlimited" />
+                  <label style="display: block; font-size: 13px; font-weight: 600; color: #414752; margin-bottom: 6px;">Max Uses</label>
+                  <input type="number" formControlName="maxUses" placeholder="Unlimited"
+                         style="width: 100%; border: 1px solid #E9E8E7; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #1B1C1C; outline: none; box-sizing: border-box; transition: border-color 0.15s;"
+                         onfocus="this.style.borderColor='#005DAC'" onblur="this.style.borderColor='#E9E8E7'" />
                 </div>
               </div>
 
               <div>
-                <label class="mb-1 block text-sm font-semibold text-on-surface">Expiry Date</label>
-                <input type="date" formControlName="expiresAt" class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high px-3 py-2.5 text-on-surface [color-scheme:dark] focus:outline-none" />
+                <label style="display: block; font-size: 13px; font-weight: 600; color: #414752; margin-bottom: 6px;">Expiry Date</label>
+                <input type="date" formControlName="expiresAt"
+                       style="width: 100%; border: 1px solid #E9E8E7; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #1B1C1C; outline: none; box-sizing: border-box; transition: border-color 0.15s;"
+                       onfocus="this.style.borderColor='#005DAC'" onblur="this.style.borderColor='#E9E8E7'" />
               </div>
 
-              <div class="mt-4 flex justify-end gap-3">
-                <button type="button" (click)="showModal.set(false)" class="rounded-xl border border-outline-variant/50 px-5 py-2.5 text-sm font-bold text-on-surface hover:bg-surface-container-high">
+              <div style="display: flex; justify-content: flex-end; gap: 12px; padding-top: 8px; border-top: 1px solid #F0EFEF;">
+                <button type="button" (click)="showModal.set(false)"
+                        style="border: 1px solid #E9E8E7; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 600; color: #717783; background: #FFFFFF; cursor: pointer; transition: border-color 0.15s;"
+                        onmouseover="this.style.borderColor='#C1C6D4'" onmouseout="this.style.borderColor='#E9E8E7'">
                   Cancel
                 </button>
-                <button type="submit" [disabled]="form.invalid" class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-on-primary hover:brightness-110">
+                <button type="submit" [disabled]="form.invalid"
+                        style="border: none; border-radius: 8px; padding: 10px 24px; font-size: 14px; font-weight: 700; color: #FFFFFF; background: #005DAC; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.15s;"
+                        onmouseover="this.style.background='#004080'" onmouseout="this.style.background='#005DAC'">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span>
                   Save Promotion
                 </button>
               </div>
@@ -140,6 +198,17 @@ import { Promotion } from '../../../models/promotion.model';
           </div>
         </div>
       }
+
+      <!-- ==================== FOOTER ==================== -->
+      <div style="border-top: 1px solid #E9E8E7; margin-top: 32px; padding-top: 20px; display: flex; justify-content: space-between; font-size: 13px; color: #717783;">
+        <span>&copy; 2025 Vehicle Rental. All rights reserved.</span>
+        <div class="flex items-center gap-4">
+          <a href="#" style="color: #717783; text-decoration: none;">Privacy Policy</a>
+          <a href="#" style="color: #717783; text-decoration: none;">Terms of Service</a>
+          <a href="#" style="color: #717783; text-decoration: none;">Support</a>
+        </div>
+      </div>
+
     </div>
   `,
 })
@@ -161,9 +230,7 @@ export class ManagePromotionsComponent implements OnInit {
     expiresAt: [''],
   });
 
-  ngOnInit() {
-    this.loadPromotions();
-  }
+  ngOnInit() { this.loadPromotions(); }
 
   loadPromotions() {
     this.loading.set(true);
@@ -217,5 +284,10 @@ export class ManagePromotionsComponent implements OnInit {
     if (confirm('Are you sure you want to delete this promotion?')) {
       this.promotionService.deletePromotion(id).subscribe(() => this.loadPromotions());
     }
+  }
+
+  isExpired(promo: Promotion): boolean {
+    if (!promo.expiresAt) return false;
+    return new Date(promo.expiresAt) < new Date();
   }
 }

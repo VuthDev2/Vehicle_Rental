@@ -82,7 +82,7 @@ import { AuthService } from '../../../core/services/auth.service';
           <div class="mb-8">
             <h1 class="text-3xl font-black text-white mb-2">Sign In</h1>
             <p class="text-sm" style="color: #64748b;">Don't have an account?
-              <a routerLink="/register" class="font-semibold ml-1" style="color: #10b981;">Create one →</a>
+              <a routerLink="/register" class="font-semibold ml-1 transition-colors hover:text-emerald-300" style="color: #10b981;">Create one →</a>
             </p>
           </div>
 
@@ -104,11 +104,14 @@ import { AuthService } from '../../../core/services/auth.service';
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">mail</span>
                 <input id="email" type="email" formControlName="email" placeholder="you@example.com"
-                       class="input-field pl-11"
+                       class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-11 pr-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                        [style.border-color]="form.get('email')?.invalid && form.get('email')?.touched ? 'rgba(239,68,68,0.5)' : ''" />
               </div>
               @if (form.get('email')?.invalid && form.get('email')?.touched) {
-                <p class="mt-1.5 text-xs" style="color: #f87171;">Please enter a valid email.</p>
+                <p class="mt-1.5 text-xs flex items-center gap-1" style="color: #f87171;">
+                  <span class="material-symbols-outlined text-sm">error</span>
+                  Please enter a valid email.
+                </p>
               }
             </div>
 
@@ -118,21 +121,33 @@ import { AuthService } from '../../../core/services/auth.service';
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">lock</span>
                 <input id="password" [type]="showPass() ? 'text' : 'password'" formControlName="password" placeholder="••••••••"
-                       class="input-field pl-11 pr-12" />
+                       class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-11 pr-12 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
                 <button type="button" (click)="showPass.set(!showPass())"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 transition-colors"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 transition-colors hover:text-on-surface"
                         style="color: #475569;">
                   <span class="material-symbols-outlined text-xl">{{ showPass() ? 'visibility_off' : 'visibility' }}</span>
                 </button>
               </div>
               @if (form.get('password')?.invalid && form.get('password')?.touched) {
-                <p class="mt-1.5 text-xs" style="color: #f87171;">Password must be at least 6 characters.</p>
+                <p class="mt-1.5 text-xs flex items-center gap-1" style="color: #f87171;">
+                  <span class="material-symbols-outlined text-sm">error</span>
+                  Password must be at least 6 characters.
+                </p>
               }
+            </div>
+
+            <!-- Forgot Password & Remember -->
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="w-4 h-4 rounded border-outline-variant/50 bg-surface-container-high text-primary focus:ring-primary/30" />
+                <span class="text-sm" style="color: #94a3b8;">Remember me</span>
+              </label>
+              <span class="text-sm font-semibold cursor-pointer transition-colors hover:text-emerald-400" style="color: #10b981;">Forgot password?</span>
             </div>
 
             <!-- Submit -->
             <button type="submit" [disabled]="loading() || form.invalid"
-                    class="btn-primary w-full py-4 mt-2 text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:brightness-100">
+                    class="btn-primary w-full py-4 mt-2 text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:brightness-100 shadow-2xl shadow-primary/20">
               @if (loading()) {
                 <span class="material-symbols-outlined animate-spin text-xl">progress_activity</span>
                 Signing in...

@@ -6,116 +6,109 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-admin-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   template: `
-    <div class="flex min-h-screen" style="background: #0c0d1a; color: #f1f5f9;">
+    <div class="flex min-h-screen" style="background: #F8F9FF;">
 
       <!-- ============ MOBILE OVERLAY ============ -->
       @if (sidebarOpen()) {
-        <div class="fixed inset-0 z-30 md:hidden" style="background: rgba(0,0,0,0.7);"
+        <div class="fixed inset-0 z-30 md:hidden" style="background: rgba(0,0,0,0.5);"
              (click)="sidebarOpen.set(false)"></div>
       }
 
-      <!-- ============ ADMIN SIDEBAR ============ -->
-      <aside class="fixed left-0 top-0 z-40 flex h-full w-64 flex-col transition-transform duration-300 md:translate-x-0"
+      <!-- ============ SIDEBAR ============ -->
+      <aside class="fixed left-0 top-0 z-40 flex h-full w-64 flex-col transition-transform duration-300 ease-in-out md:translate-x-0"
              [style.transform]="isMobile && !sidebarOpen() ? 'translateX(-100%)' : 'translateX(0)'"
-             style="background: linear-gradient(180deg, #13152b 0%, #0f1122 100%); border-right: 1px solid rgba(139,92,246,0.12);">
+             style="background: #131B2E;">
 
         <!-- Logo -->
-        <div class="flex h-20 items-center gap-3 px-6 flex-shrink-0"
-             style="border-bottom: 1px solid rgba(139,92,246,0.1);">
-          <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg"
-               style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-            <span class="material-symbols-outlined text-white text-lg">admin_panel_settings</span>
-          </div>
-          <div class="flex flex-col leading-tight">
-            <span class="text-sm font-black text-white">Cambo Rent</span>
-            <span class="text-[10px] font-bold uppercase tracking-widest" style="color: #a78bfa;">Admin Panel</span>
+        <div style="padding: 24px 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;">
+          <div class="flex items-center gap-3">
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: #3980F4; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <span class="material-symbols-outlined" style="font-size: 22px; color: #FFFFFF;">directions_car</span>
+            </div>
+            <div>
+              <h1 style="font-size: 18px; font-weight: 700; color: #FFFFFF; margin: 0; line-height: 1.2;">Cambo Rent</h1>
+              <p style="font-size: 11px; font-weight: 600; color: #7C839B; margin: 0; letter-spacing: 0.5px; text-transform: uppercase;">Admin Panel</p>
+            </div>
           </div>
         </div>
 
-        <!-- Nav Items -->
-        <div class="flex flex-col flex-1 overflow-y-auto p-4 gap-0.5">
-          <p class="text-[10px] font-bold uppercase tracking-widest px-3 mb-3" style="color: #4c4f70;">Management</p>
-
+        <!-- Navigation -->
+        <nav class="flex-1 flex flex-col gap-0.5 overflow-y-auto" style="padding: 12px 10px;">
           @for (item of navItems; track item.path) {
-            <a [routerLink]="item.path" routerLinkActive="admin-nav-active" (click)="sidebarOpen.set(false)"
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-all group"
-               style="color: #64748b;">
-              <span class="material-symbols-outlined text-xl transition-colors">{{ item.icon }}</span>
-              <span class="flex-1">{{ item.label }}</span>
-              @if (item.badge) {
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                      style="background: rgba(139,92,246,0.2); color: #a78bfa;">{{ item.badge }}</span>
+            <a [routerLink]="item.path"
+               routerLinkActive="active"
+               #rla="routerLinkActive"
+               (click)="sidebarOpen.set(false)"
+               class="flex items-center gap-3 rounded-lg text-sm font-semibold transition-all duration-150"
+               [class.active]="rla.isActive"
+               [style.color]="rla.isActive ? '#FFFFFF' : '#7C839B'"
+               [style.background]="rla.isActive ? 'rgba(57,128,244,0.15)' : 'transparent'"
+               [style.padding]="rla.isActive ? '10px 14px 10px 10px' : '10px 14px'"
+               style="position: relative;"
+               onmouseover="if(!this.classList.contains('active')){this.style.background='rgba(255,255,255,0.05)';}"
+               onmouseout="if(!this.classList.contains('active')){this.style.background='transparent';}">
+              @if (rla.isActive) {
+                <span style="position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; border-radius: 0 3px 3px 0; background: #3980F4;"></span>
               }
+              <span class="material-symbols-outlined flex-shrink-0"
+                    [style.color]="rla.isActive ? '#3980F4' : '#7C839B'"
+                    style="font-size: 20px;">{{ item.icon }}</span>
+              <span style="letter-spacing: 0.2px;">{{ item.label }}</span>
             </a>
           }
+        </nav>
 
-          <!-- Divider -->
-          <div class="my-3 h-px" style="background: rgba(255,255,255,0.05);"></div>
-          <p class="text-[10px] font-bold uppercase tracking-widest px-3 mb-3" style="color: #4c4f70;">System</p>
-
-          @for (item of systemItems; track item.path) {
-            <a [routerLink]="item.path" routerLinkActive="admin-nav-active" (click)="sidebarOpen.set(false)"
-               class="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-all"
-               style="color: #64748b;">
-              <span class="material-symbols-outlined text-xl">{{ item.icon }}</span>
-              {{ item.label }}
-            </a>
+        <!-- Bottom section -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.06); padding: 16px 20px; flex-shrink: 0;">
+          @if (auth.user(); as user) {
+            <div class="flex items-center gap-3 mb-3" style="padding: 0 4px;">
+              <div style="width: 34px; height: 34px; border-radius: 50%; background: #3980F4; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #FFFFFF; flex-shrink: 0;">
+                {{ user.name?.charAt(0)?.toUpperCase() || 'A' }}
+              </div>
+              <div style="min-width: 0; flex: 1;">
+                <p style="font-size: 13px; font-weight: 600; color: #FFFFFF; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ user.name }}</p>
+                <p style="font-size: 11px; color: #7C839B; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ user.email }}</p>
+              </div>
+            </div>
           }
-        </div>
-
-        <!-- Admin User Info -->
-        <div class="p-4 flex-shrink-0" style="border-top: 1px solid rgba(139,92,246,0.1);">
-          <div class="rounded-2xl p-3 mb-3 flex items-center gap-3"
-               style="background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.15);">
-            <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white"
-                 style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-              {{ auth.user()?.name?.charAt(0)?.toUpperCase() || 'A' }}
-            </div>
-            <div class="min-w-0 flex-1">
-              <p class="text-sm font-bold text-white truncate">{{ auth.user()?.name }}</p>
-              <span class="text-[10px] font-bold uppercase tracking-wide" style="color: #a78bfa;">Administrator</span>
-            </div>
-          </div>
-          <div class="flex gap-2">
-            <a routerLink="/" class="flex-1 rounded-xl py-2 text-center text-xs font-semibold transition-all"
-               style="border: 1px solid rgba(255,255,255,0.08); color: #64748b;">
-              Public Site
-            </a>
-            <button (click)="logout()"
-                    class="flex-1 rounded-xl py-2 text-xs font-semibold transition-all"
-                    style="background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.15);">
-              Logout
-            </button>
-          </div>
+          <a routerLink="/"
+             class="flex items-center gap-3 rounded-lg text-sm font-semibold transition-all duration-150"
+             style="color: #7C839B; padding: 10px 12px;"
+             onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+             onmouseout="this.style.background='transparent'">
+            <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
+            Back to Site
+          </a>
         </div>
       </aside>
 
       <!-- ============ MAIN CONTENT ============ -->
-      <div class="flex-1 flex flex-col" [class.pl-64]="!isMobile" style="min-width: 0;">
+      <div class="flex-1 flex flex-col min-h-screen" [class.pl-64]="!isMobile" style="min-width: 0;">
 
         <!-- Mobile Topbar -->
-        <div class="md:hidden flex items-center justify-between px-4 py-3 sticky top-0 z-20"
-             style="background: rgba(12,13,26,0.95); border-bottom: 1px solid rgba(139,92,246,0.12); backdrop-filter: blur(10px);">
+        <div class="md:hidden flex items-center justify-between px-4 py-3 sticky top-0 z-20 border-b"
+             style="background: #FFFFFF; border-color: #E5E7EB;">
           <button (click)="sidebarOpen.set(!sidebarOpen())"
-                  class="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2);">
-            <span class="material-symbols-outlined" style="color: #a78bfa;">menu</span>
+                  class="w-10 h-10 rounded-lg flex items-center justify-center"
+                  style="background: #F3F4F6;">
+            <span class="material-symbols-outlined" style="color: #374151;">menu</span>
           </button>
           <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-lg flex items-center justify-center"
-                 style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-              <span class="material-symbols-outlined text-white text-sm">admin_panel_settings</span>
+            <div style="width: 28px; height: 28px; border-radius: 6px; background: #3980F4; display: flex; align-items: center; justify-content: center;">
+              <span class="material-symbols-outlined" style="font-size: 16px; color: #FFFFFF;">directions_car</span>
             </div>
-            <span class="text-sm font-bold text-white">Admin Panel</span>
+            <span class="text-sm font-bold" style="color: #0B1C30;">Cambo Rent</span>
           </div>
-          <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white"
-               style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-            A
-          </div>
+          @if (auth.user(); as user) {
+            <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white"
+                 style="background: #3980F4;">
+              {{ user.name?.charAt(0)?.toUpperCase() || 'A' }}
+            </div>
+          }
         </div>
 
         <!-- Page Content -->
-        <main class="flex-1 overflow-auto">
+        <main class="flex-1">
           <router-outlet />
         </main>
       </div>
@@ -123,20 +116,8 @@ import { AuthService } from '../../core/services/auth.service';
   `,
   styles: [`
     :host { display: block; }
-
-    :host ::ng-deep .admin-nav-active {
-      background: rgba(139,92,246,0.12) !important;
-      color: #a78bfa !important;
-    }
-
-    a[routerLinkActive="admin-nav-active"] {
-      background: rgba(139,92,246,0.12) !important;
-      color: #a78bfa !important;
-    }
-
-    a[routerLinkActive="admin-nav-active"] .material-symbols-outlined {
-      color: #a78bfa !important;
-    }
+    a.active { color: #FFFFFF !important; }
+    a.active .material-symbols-outlined { color: #FFFFFF !important; }
   `]
 })
 export class AdminLayoutComponent {
@@ -149,20 +130,13 @@ export class AdminLayoutComponent {
   }
 
   readonly navItems = [
-    { path: '/admin/dashboard', icon: 'dashboard', label: 'Dashboard', badge: null },
-    { path: '/admin/vehicles', icon: 'directions_car', label: 'Vehicles', badge: null },
-    { path: '/admin/users', icon: 'group', label: 'Customers', badge: null },
-    { path: '/admin/bookings', icon: 'receipt_long', label: 'Bookings', badge: null },
-    { path: '/admin/payments', icon: 'payments', label: 'Payments', badge: null },
-    { path: '/admin/promotions', icon: 'local_offer', label: 'Promotions', badge: null },
-  ];
-
-  readonly systemItems = [
+    { path: '/admin/dashboard', icon: 'dashboard', label: 'Dashboard' },
+    { path: '/admin/vehicles', icon: 'directions_car', label: 'Vehicles' },
+    { path: '/admin/users', icon: 'group', label: 'Customers' },
+    { path: '/admin/bookings', icon: 'receipt_long', label: 'Bookings' },
+    { path: '/admin/payments', icon: 'payments', label: 'Payments' },
+    { path: '/admin/promotions', icon: 'local_offer', label: 'Promotions' },
     { path: '/admin/reports', icon: 'bar_chart', label: 'Reports' },
     { path: '/admin/settings', icon: 'settings', label: 'Settings' },
   ];
-
-  logout(): void {
-    this.auth.logout();
-  }
 }

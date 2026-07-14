@@ -32,47 +32,47 @@ import { AuthService } from '../../core/services/auth.service';
 
           <!-- Desktop Nav Links -->
           <div class="hidden md:flex items-center gap-1">
-            <a routerLink="/"
-               routerLinkActive="text-emerald-400"
-               [routerLinkActiveOptions]="{exact: true}"
-               class="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/5"
-               style="color: #94a3b8;">Home</a>
-            <a routerLink="/about"
-               class="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/5"
-               style="color: #94a3b8;">About</a>
-            <a routerLink="/contact"
-               class="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:bg-white/5"
-               style="color: #94a3b8;">Contact</a>
+            @for (link of navLinks; track link.path) {
+              <a [routerLink]="link.path"
+                 routerLinkActive="text-emerald-400 bg-emerald-500/10"
+                 [routerLinkActiveOptions]="{exact: link.exact}"
+                 class="px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
+                 style="color: #94a3b8;">{{ link.label }}</a>
+            }
           </div>
 
           <!-- Auth Actions (Desktop) -->
-          <div class="hidden md:flex items-center gap-3">
+          <div class="hidden md:flex items-center gap-2">
             @if (auth.isAuthenticated()) {
-              <span class="px-4 py-2 rounded-xl text-sm font-semibold"
-                    style="background: rgba(255,255,255,0.06); color: #f1f5f9;">
-                👋 {{ auth.user()?.name }}
-              </span>
+              <div class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold"
+                   style="background: rgba(255,255,255,0.05); color: #f1f5f9;">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                     style="background: linear-gradient(135deg, #10b981, #059669);">
+                  {{ auth.user()?.name?.charAt(0)?.toUpperCase() || 'U' }}
+                </div>
+                {{ auth.user()?.name }}
+              </div>
               @if (auth.role() === 'admin') {
                 <a routerLink="/admin/dashboard"
-                   class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
+                   class="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:brightness-110"
                    style="background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.25);">
-                  Admin Panel
+                  <span class="material-symbols-outlined text-lg">shield</span> Admin Panel
                 </a>
               } @else {
                 <a routerLink="/customer/dashboard"
-                   class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
+                   class="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:brightness-110"
                    style="background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.2);">
-                  My Account
+                  <span class="material-symbols-outlined text-lg">dashboard</span> My Account
                 </a>
               }
               <button (click)="logout()"
-                      class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                      class="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:brightness-110"
                       style="background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.15);">
-                Logout
+                <span class="material-symbols-outlined text-lg">logout</span>
               </button>
             } @else {
               <a routerLink="/login"
-                 class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                 class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
                  style="color: #94a3b8; border: 1px solid rgba(255,255,255,0.1);">
                 Sign In
               </a>
@@ -85,7 +85,7 @@ import { AuthService } from '../../core/services/auth.service';
           <!-- Mobile Menu Toggle -->
           <button (click)="mobileOpen.set(!mobileOpen())"
                   class="md:hidden w-10 h-10 rounded-xl flex items-center justify-center transition-all"
-                  style="background: rgba(255,255,255,0.06);">
+                  [style.background]="mobileOpen() ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.06)'">
             <span class="material-symbols-outlined text-white">{{ mobileOpen() ? 'close' : 'menu' }}</span>
           </button>
         </nav>
@@ -94,36 +94,44 @@ import { AuthService } from '../../core/services/auth.service';
         @if (mobileOpen()) {
           <div class="md:hidden border-t animate-fade-in"
                style="background: rgba(10,15,30,0.98); border-color: rgba(255,255,255,0.07);">
-            <div class="px-6 py-4 flex flex-col gap-2">
+            <div class="px-6 py-4 flex flex-col gap-1">
               <a routerLink="/" (click)="mobileOpen.set(false)"
-                 class="px-4 py-3 rounded-xl text-sm font-semibold"
-                 style="color: #94a3b8;">🏠 Home</a>
+                 class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
+                 style="color: #94a3b8;">
+                <span class="material-symbols-outlined text-lg">home</span> Home
+              </a>
               <a routerLink="/about" (click)="mobileOpen.set(false)"
-                 class="px-4 py-3 rounded-xl text-sm font-semibold"
-                 style="color: #94a3b8;">ℹ️ About</a>
+                 class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
+                 style="color: #94a3b8;">
+                <span class="material-symbols-outlined text-lg">info</span> About
+              </a>
               <a routerLink="/contact" (click)="mobileOpen.set(false)"
-                 class="px-4 py-3 rounded-xl text-sm font-semibold"
-                 style="color: #94a3b8;">📞 Contact</a>
+                 class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
+                 style="color: #94a3b8;">
+                <span class="material-symbols-outlined text-lg">call</span> Contact
+              </a>
               <div class="border-t my-2" style="border-color: rgba(255,255,255,0.07);"></div>
               @if (auth.isAuthenticated()) {
                 @if (auth.role() === 'admin') {
                   <a routerLink="/admin/dashboard" (click)="mobileOpen.set(false)"
-                     class="btn-admin py-3 rounded-xl text-sm">Admin Panel</a>
+                     class="btn-admin py-3 rounded-xl text-sm justify-center">Admin Panel</a>
                 } @else {
                   <a routerLink="/customer/dashboard" (click)="mobileOpen.set(false)"
-                     class="btn-primary py-3 rounded-xl text-sm">My Account</a>
+                     class="btn-primary py-3 rounded-xl text-sm justify-center">My Account</a>
                 }
                 <button (click)="logout(); mobileOpen.set(false)"
-                        class="py-3 rounded-xl text-sm font-semibold text-center"
+                        class="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-center w-full transition-all"
                         style="background: rgba(239,68,68,0.1); color: #f87171;">
-                  Logout
+                  <span class="material-symbols-outlined text-lg">logout</span> Logout
                 </button>
               } @else {
                 <a routerLink="/login" (click)="mobileOpen.set(false)"
-                   class="py-3 rounded-xl text-sm font-semibold text-center"
-                   style="background: rgba(255,255,255,0.06); color: #f1f5f9;">Sign In</a>
+                   class="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-center w-full transition-all hover:bg-white/5"
+                   style="background: rgba(255,255,255,0.06); color: #f1f5f9;">
+                  <span class="material-symbols-outlined text-lg">login</span> Sign In
+                </a>
                 <a routerLink="/register" (click)="mobileOpen.set(false)"
-                   class="btn-primary py-3 rounded-xl text-sm text-center">Create Account</a>
+                   class="btn-primary py-3 rounded-xl text-sm justify-center">Create Account</a>
               }
             </div>
           </div>
@@ -218,6 +226,12 @@ export class PublicLayoutComponent {
   logout(): void {
     this.auth.logout();
   }
+
+  readonly navLinks = [
+    { path: '/', label: 'Home', exact: true },
+    { path: '/about', label: 'About', exact: false },
+    { path: '/contact', label: 'Contact', exact: false },
+  ];
 
   readonly socials = [
     { icon: 'facebook' },
