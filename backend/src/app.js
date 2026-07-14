@@ -13,6 +13,7 @@ const userRoutes = require('./routes/user.routes');
 const reportRoutes = require('./routes/report.routes');
 const promotionRoutes = require('./routes/promotion.routes');
 const errorHandler = require('./middleware/errorHandler');
+const { authLimiter, apiLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 
@@ -37,6 +38,10 @@ if (process.env.NODE_ENV !== 'test') {
 // Static files – uploaded images
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Rate limiting
+app.use('/api/auth', authLimiter);
+app.use('/api', apiLimiter);
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
@@ -46,7 +51,6 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/promotions', promotionRoutes);
-app.use('api/')
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));

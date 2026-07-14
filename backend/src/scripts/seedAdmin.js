@@ -1,16 +1,14 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const path = require('path');
 
+// Load env from project root
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-const ADMIN_NAME = 'Vuthhh';
-const ADMIN_EMAIL = 'ravuthkry129@gmail.com ';
-const ADMIN_PASSWORD = 'vuth123??';
-
-
-
-const MONGO_URI =
-  'mongodb+srv://krysaravuth25_db_user:vuth123%3F%3F@cluster0.sihb0xt.mongodb.net/cambo_rent?appName=Cluster0&compressors=zlib';
+const ADMIN_NAME = process.env.ADMIN_NAME || 'Admin';
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@camborent.com').trim().toLowerCase();
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
 const userSchema = new mongoose.Schema(
   {
@@ -28,11 +26,15 @@ const userSchema = new mongoose.Schema(
 const User = mongoose.model('User', userSchema);
 
 async function seedAdmin() {
+  if (!process.env.MONGO_URI) {
+    console.error(' MONGO_URI not set. Check your .env file.');
+    process.exit(1);
+  }
+
   try {
-    await mongoose.connect(MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI);
     console.log(' Connected to MongoDB');
 
-    // Remove existing admin with the same email if any
     await User.deleteOne({ email: ADMIN_EMAIL });
 
     const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 12);

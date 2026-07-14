@@ -20,6 +20,9 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({ message: 'Invalid token.' });
   }
+  if (err.name === 'TokenExpiredError') {
+    return res.status(401).json({ message: 'Token expired.' });
+  }
 
   res.status(status).json({ message });
 };

@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
-  try {
-    
-    const uri = process.env.MONGO_URI ||
-      'mongodb+srv://krysaravuth25_db_user:vuth123%3F%3F@cluster0.sihb0xt.mongodb.net/cambo_rent?appName=Cluster0&compressors=zlib';
+  if (!process.env.MONGO_URI) {
+    console.error(' MONGO_URI is not set in environment variables.');
+    process.exit(1);
+  }
 
-    const conn = await mongoose.connect(uri);
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(` MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(` MongoDB connection error: ${error.message}`);

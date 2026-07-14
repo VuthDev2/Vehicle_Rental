@@ -1,5 +1,7 @@
 const multer = require('multer');
 const path = require('path');
+const sharp = require('sharp');
+const fs = require('fs');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -24,8 +26,30 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter,
 });
 
+const resizeAndSave = async (req, res, next) => {
+  if (!req.files || req.files.length === 0) return next();
+
+  try {
+    await Promise.all(
+      req.files.map(async (file) => {
+        const outputPath = file.path.replace(/(\.\w+)$/, '_resized$1');
+        await sharp(file.path)
+          .resize(1200, 800, { fit: 'inside', withoutEnlargement: true })
+          .jpeg({ quality: 85 })
+          .toFile(outputPath);
+        fs.unlinkSync(file.path);
+        fs.renameSync(outputPath, file.path);
+      })
+    );
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = upload;
+module.exports.resizeAndSave = resizeAndSave;

@@ -1,5 +1,6 @@
 const Vehicle = require('../models/Vehicle');
 const path = require('path');
+const fs = require('fs');
 
 // GET /api/vehicles
 const getVehicles = async (req, res, next) => {
@@ -110,4 +111,30 @@ const uploadImages = async (req, res, next) => {
   }
 };
 
-module.exports = { getVehicles, getVehicle, createVehicle, updateVehicle, deleteVehicle, uploadImages };
+// DELETE /api/vehicles/:id/images/:imageIndex (admin)
+const deleteImage = async (req, res, next) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.id);
+    if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
+
+    const index = parseInt(req.params.imageIndex);
+    if (isNaN(index) || index < 0 || index >= vehicle.images.length) {
+      return res.status(400).json({ message: 'Invalid image index.' });
+    }
+
+    const imageUrl = vehicle.images[index];
+    vehicle.images.splice(index, 1);
+    await vehicle.save();
+
+    // Delete physical file
+    const filename = path.basename(imageUrl);
+    const filepath = path.join(__dirname, '../../uploads', filename);
+    if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
+
+    res.json({ vehicle, message: 'Image deleted.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { getVehicles, getVehicle, createVehicle, updateVehicle, deleteVehicle, uploadImages, deleteImage };
