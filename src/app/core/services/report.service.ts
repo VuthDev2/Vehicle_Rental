@@ -3,6 +3,24 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 const API = 'http://localhost:5001/api';
 
+export interface DashboardResponse {
+  summary: {
+    totalVehicles: number;
+    totalUsers: number;
+    totalBookings: number;
+    totalRevenue: number;
+    bookingsByStatus: { _id: string; count: number }[];
+  };
+  kpi: { activeRentals: number; avgBooking: number };
+  revenueBreakdown: { today: number; thisWeek: number; thisMonth: number; thisYear: number; total: number };
+  fleetUtilization: {
+    fleet: { type: string; percent: number; total: number }[];
+    overallPercent: number;
+  };
+  customerSegments: { label: string; value: number; percent: number }[];
+  paymentMethods: { method: string; total: number; count: number; percentage: number }[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class ReportService {
   private readonly http = inject(HttpClient);
@@ -15,6 +33,10 @@ export class ReportService {
       totalRevenue: number;
       bookingsByStatus: { _id: string; count: number }[];
     }>(`${API}/reports/summary`);
+  }
+
+  getDashboard() {
+    return this.http.get<DashboardResponse>(`${API}/reports/dashboard`);
   }
 
   getRevenue(months = 6) {

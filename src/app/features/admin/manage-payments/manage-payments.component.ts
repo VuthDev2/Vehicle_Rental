@@ -173,16 +173,6 @@ const STATUS_STYLE: Record<string, { bg: string; color: string }> = {
         }
       }
 
-      <!-- ==================== FOOTER ==================== -->
-      <div style="border-top: 1px solid #E9E8E7; margin-top: 32px; padding-top: 20px; display: flex; justify-content: space-between; font-size: 13px; color: #717783;">
-        <span>&copy; 2025 Vehicle Rental. All rights reserved.</span>
-        <div class="flex items-center gap-4">
-          <a href="#" style="color: #717783; text-decoration: none;">Privacy Policy</a>
-          <a href="#" style="color: #717783; text-decoration: none;">Terms of Service</a>
-          <a href="#" style="color: #717783; text-decoration: none;">Support</a>
-        </div>
-      </div>
-
     </div>
   `,
 })

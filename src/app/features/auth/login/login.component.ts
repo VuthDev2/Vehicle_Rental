@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -8,161 +9,179 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   template: `
-    <div class="min-h-[calc(100vh-80px)] flex items-stretch">
+    <div class="flex min-h-screen bg-white">
+      <!-- Left Panel -->
+      <div class="hidden lg:flex lg:w-[520px] xl:w-[600px] relative overflow-hidden flex-shrink-0 flex-col justify-between p-14"
+           style="background: linear-gradient(160deg, #0B1C30 0%, #162240 50%, #1a2d4a 100%);">
+        <div class="absolute inset-0 opacity-[0.04] pointer-events-none" 
+             style="background-image: radial-gradient(circle at 25% 25%, #fff 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <div class="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full opacity-10 blur-[120px]" style="background: #3980F4;"></div>
+        <div class="absolute -bottom-40 -left-40 w-[400px] h-[400px] rounded-full opacity-[0.08] blur-[100px]" style="background: #005DAC;"></div>
 
-      <!-- Left Panel — Branding (hidden on mobile) -->
-      <div class="hidden lg:flex lg:w-[45%] relative overflow-hidden flex-col justify-between p-12"
-           style="background: linear-gradient(135deg, #0e1527 0%, #13152b 100%);">
-        <!-- Background Glow -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-          <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full opacity-20 blur-3xl"
-               style="background: #10b981;"></div>
-          <div class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full opacity-15 blur-3xl"
-               style="background: #3b82f6;"></div>
+        <div class="relative z-10">
+          <div class="flex items-center gap-3 mb-20">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #3980F4, #005DAC);">
+              <span class="material-symbols-outlined text-white text-xl">directions_car</span>
+            </div>
+            <span class="text-xl font-extrabold tracking-wide text-white">Cambo Rent</span>
+          </div>
+
+          <div class="max-w-[400px]">
+            <div class="flex items-center gap-2 mb-6">
+              <div class="w-8 h-px" style="background: #3980F4;"></div>
+              <span class="text-xs font-semibold tracking-[3px] uppercase" style="color: #3980F4;">Premium Fleet</span>
+            </div>
+            <h1 class="text-[40px] xl:text-[44px] font-bold text-white leading-[1.15] tracking-tight mb-5">
+              Drive the<br/>
+              <span style="color: #3980F4;">exceptional.</span>
+            </h1>
+            <p class="text-base leading-relaxed" style="color: rgba(203, 219, 245, 0.8);">
+              Sign in to manage your bookings, explore our fleet, and experience premium vehicle rental across Cambodia.
+            </p>
+          </div>
         </div>
 
         <div class="relative z-10">
-          <div class="flex items-center gap-3 mb-16">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                 style="background: linear-gradient(135deg, #10b981, #059669);">
-              <span class="material-symbols-outlined text-white text-xl">directions_car</span>
+          <div class="flex items-center gap-4">
+            <div class="flex -space-x-2">
+              @for (a of ['JD', 'MK', 'PL', 'RT']; track a) {
+                <div class="w-9 h-9 rounded-full border-2 flex items-center justify-center text-[11px] font-bold"
+                     style="border-color: #0B1C30; background: linear-gradient(135deg, #3980F4, #005DAC); color: #fff;">{{a}}</div>
+              }
             </div>
-            <span class="text-lg font-black text-white">Cambo Rent</span>
+            <div>
+              <p class="text-sm font-semibold text-white">4,000+</p>
+              <p class="text-xs" style="color: rgba(203, 219, 245, 0.6);">active riders this month</p>
+            </div>
           </div>
-
-          <h2 class="text-4xl font-black text-white leading-tight mb-4">
-            Welcome back to<br />
-            <span style="color: #10b981;">Cambodia's #1</span><br />
-            Rental Platform
-          </h2>
-          <p class="text-base leading-relaxed mb-12" style="color: #64748b;">
-            Sign in to access your bookings, manage your rentals, and browse our fleet of premium vehicles.
-          </p>
-
-          <!-- Features list -->
-          <div class="flex flex-col gap-4">
-            @for (feat of sideFeatures; track feat.text) {
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                     style="background: rgba(16,185,129,0.12);">
-                  <span class="material-symbols-outlined text-base" style="color: #10b981;">{{ feat.icon }}</span>
-                </div>
-                <span class="text-sm font-medium" style="color: #94a3b8;">{{ feat.text }}</span>
-              </div>
-            }
-          </div>
-        </div>
-
-        <!-- Bottom testimonial -->
-        <div class="relative z-10 rounded-2xl p-6" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">
-          <div class="flex gap-1 mb-3">
-            @for (s of [1,2,3,4,5]; track s) {
-              <span class="material-symbols-outlined text-sm" style="color: #f59e0b;">star</span>
-            }
-          </div>
-          <p class="text-sm italic mb-4" style="color: #94a3b8;">"Super easy to book. Got my motorcycle delivered in 30 minutes. Will use again!"</p>
-          <p class="text-sm font-bold text-white">Panha Keo</p>
-          <p class="text-xs" style="color: #64748b;">Phnom Penh, Cambodia</p>
         </div>
       </div>
 
-      <!-- Right Panel — Form -->
-      <div class="flex-1 flex items-center justify-center px-6 py-12" style="background: #0a0f1e;">
-        <div class="w-full max-w-md">
+      <!-- Right Panel -->
+      <div class="flex-1 flex items-center justify-center px-6 py-10 relative">
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none opacity-30"
+             style="background: radial-gradient(circle at 100% 0%, #E5EEFF 0%, transparent 60%);"></div>
 
-          <!-- Mobile logo -->
-          <div class="flex lg:hidden items-center gap-2 mb-8">
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center"
-                 style="background: linear-gradient(135deg, #10b981, #059669);">
+        <div class="w-full max-w-[400px] relative z-10">
+          <!-- Mobile Logo -->
+          <div class="flex lg:hidden items-center gap-2 mb-10">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #3980F4, #005DAC);">
               <span class="material-symbols-outlined text-white text-lg">directions_car</span>
             </div>
-            <span class="text-base font-black text-white">Cambo Rent</span>
+            <span class="text-lg font-extrabold text-[#0B1C30]">Cambo Rent</span>
           </div>
 
-          <div class="mb-8">
-            <h1 class="text-3xl font-black text-white mb-2">Sign In</h1>
-            <p class="text-sm" style="color: #64748b;">Don't have an account?
-              <a routerLink="/register" class="font-semibold ml-1 transition-colors hover:text-emerald-300" style="color: #10b981;">Create one →</a>
-            </p>
+          <!-- Header -->
+          <div class="mb-9">
+            <h1 class="text-[28px] font-bold text-[#0B1C30] mb-2">Welcome back</h1>
+            <p class="text-sm" style="color: #5A6A7E;">Enter your credentials to access your account.</p>
           </div>
 
           <!-- Error -->
           @if (error()) {
-            <div class="mb-6 flex items-center gap-3 rounded-xl p-4 text-sm animate-fade-in"
-                 style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #f87171;">
-              <span class="material-symbols-outlined text-lg flex-shrink-0">error</span>
+            <div class="mb-6 flex items-center gap-3 rounded-xl p-4 text-sm bg-red-50 border border-red-200 text-red-600" role="alert">
+              <span class="material-symbols-outlined text-lg flex-shrink-0 text-red-400">error</span>
               {{ error() }}
             </div>
           }
 
-          <!-- Form -->
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
 
             <!-- Email -->
             <div>
-              <label for="email" class="block text-sm font-semibold mb-2" style="color: #94a3b8;">Email Address</label>
+              <label class="block text-[13px] font-semibold text-[#0B1C30] mb-1.5">Email address</label>
               <div class="relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">mail</span>
-                <input id="email" type="email" formControlName="email" placeholder="you@example.com"
-                       class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-11 pr-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                       [style.border-color]="form.get('email')?.invalid && form.get('email')?.touched ? 'rgba(239,68,68,0.5)' : ''" />
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #94A3B8;">mail</span>
+                <input type="email" formControlName="email" placeholder="name@company.com"
+                       class="w-full h-[48px] rounded-xl border pl-[42px] pr-4 text-sm outline-none transition-all duration-200"
+                       [class.border-red-300]="isFieldInvalid('email')"
+                       [class.border-[#D0D5DD]]="!isFieldInvalid('email')"
+                       [class.focus:border-[#005DAC]]="!isFieldInvalid('email')"
+                       style="background: #F8FAFC; color: #0B1C30;"
+                       (focus)="focusedField.set('email')" (blur)="focusedField.set('')" />
               </div>
-              @if (form.get('email')?.invalid && form.get('email')?.touched) {
-                <p class="mt-1.5 text-xs flex items-center gap-1" style="color: #f87171;">
-                  <span class="material-symbols-outlined text-sm">error</span>
-                  Please enter a valid email.
+              @if (isFieldInvalid('email')) {
+                <p class="mt-1.5 text-xs flex items-center gap-1 text-red-500">
+                  <span class="material-symbols-outlined text-xs">error</span>
+                  Valid email is required.
                 </p>
               }
             </div>
 
             <!-- Password -->
             <div>
-              <label for="password" class="block text-sm font-semibold mb-2" style="color: #94a3b8;">Password</label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-[13px] font-semibold text-[#0B1C30]">Password</label>
+                <a routerLink="/forgot-password" class="text-[13px] font-medium transition-colors hover:underline" style="color: #005DAC;">Forgot?</a>
+              </div>
               <div class="relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #475569;">lock</span>
-                <input id="password" [type]="showPass() ? 'text' : 'password'" formControlName="password" placeholder="••••••••"
-                       class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-3 pl-11 pr-12 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" />
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg" style="color: #94A3B8;">lock</span>
+                <input [type]="showPass() ? 'text' : 'password'" formControlName="password" placeholder="Enter your password"
+                       class="w-full h-[48px] rounded-xl border pl-[42px] pr-12 text-sm outline-none transition-all duration-200"
+                       [class.border-red-300]="isFieldInvalid('password')"
+                       [class.border-[#D0D5DD]]="!isFieldInvalid('password')"
+                       [class.focus:border-[#005DAC]]="!isFieldInvalid('password')"
+                       style="background: #F8FAFC; color: #0B1C30;" />
                 <button type="button" (click)="showPass.set(!showPass())"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 transition-colors hover:text-on-surface"
-                        style="color: #475569;">
-                  <span class="material-symbols-outlined text-xl">{{ showPass() ? 'visibility_off' : 'visibility' }}</span>
+                        class="absolute right-3.5 top-1/2 -translate-y-1/2 transition-colors hover:text-[#0B1C30]" style="color: #94A3B8;">
+                  <span class="material-symbols-outlined text-lg">{{ showPass() ? 'visibility_off' : 'visibility' }}</span>
                 </button>
               </div>
-              @if (form.get('password')?.invalid && form.get('password')?.touched) {
-                <p class="mt-1.5 text-xs flex items-center gap-1" style="color: #f87171;">
-                  <span class="material-symbols-outlined text-sm">error</span>
+              @if (isFieldInvalid('password')) {
+                <p class="mt-1.5 text-xs flex items-center gap-1 text-red-500">
+                  <span class="material-symbols-outlined text-xs">error</span>
                   Password must be at least 6 characters.
                 </p>
               }
             </div>
 
-            <!-- Forgot Password & Remember -->
-            <div class="flex items-center justify-between">
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" class="w-4 h-4 rounded border-outline-variant/50 bg-surface-container-high text-primary focus:ring-primary/30" />
-                <span class="text-sm" style="color: #94a3b8;">Remember me</span>
-              </label>
-              <span class="text-sm font-semibold cursor-pointer transition-colors hover:text-emerald-400" style="color: #10b981;">Forgot password?</span>
-            </div>
-
             <!-- Submit -->
             <button type="submit" [disabled]="loading() || form.invalid"
-                    class="btn-primary w-full py-4 mt-2 text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:brightness-100 shadow-2xl shadow-primary/20">
+                    class="w-full h-[48px] rounded-xl text-sm font-bold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-110 active:scale-[0.99]"
+                    style="background: linear-gradient(135deg, #005DAC, #3980F4); box-shadow: 0 4px 14px rgba(0, 93, 172, 0.25);">
               @if (loading()) {
-                <span class="material-symbols-outlined animate-spin text-xl">progress_activity</span>
+                <span class="material-symbols-outlined animate-spin text-lg align-middle mr-2">progress_activity</span>
                 Signing in...
               } @else {
-                <span class="material-symbols-outlined text-xl">login</span>
-                Sign In
+                Sign in
               }
             </button>
           </form>
 
-          <p class="mt-8 text-center text-xs" style="color: #475569;">
-            By signing in you agree to our
-            <span class="cursor-pointer hover:text-emerald-400 transition-colors" style="color: #64748b;">Terms of Service</span>
-            and
-            <span class="cursor-pointer hover:text-emerald-400 transition-colors" style="color: #64748b;">Privacy Policy</span>.
+          <!-- Divider -->
+          <div class="flex items-center gap-4 my-7">
+            <div class="flex-1 h-px" style="background: #E2E8F0;"></div>
+            <span class="text-xs font-medium" style="color: #94A3B8;">or continue with</span>
+            <div class="flex-1 h-px" style="background: #E2E8F0;"></div>
+          </div>
+
+          <!-- Social -->
+          <div class="flex gap-3">
+            <button type="button"
+                    class="flex-1 flex items-center justify-center gap-2.5 h-[46px] rounded-xl border transition-all hover:bg-[#F8FAFC] cursor-pointer"
+                    style="border-color: #D0D5DD; background: #fff;">
+              <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              <span class="text-sm font-medium" style="color: #1E293B;">Google</span>
+            </button>
+            <button type="button"
+                    class="flex-1 flex items-center justify-center gap-2.5 h-[46px] rounded-xl border transition-all hover:bg-[#F8FAFC] cursor-pointer"
+                    style="border-color: #D0D5DD; background: #fff;">
+              <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24">
+                <path fill="#1E293B" d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+              </svg>
+              <span class="text-sm font-medium" style="color: #1E293B;">Apple</span>
+            </button>
+          </div>
+
+          <!-- Register link -->
+          <p class="text-center mt-8 text-sm" style="color: #5A6A7E;">
+            Don't have an account?
+            <a routerLink="/register" class="font-bold transition-colors hover:underline" style="color: #005DAC;">Create one</a>
           </p>
         </div>
       </div>
@@ -177,15 +196,9 @@ export class LoginComponent {
   readonly loading = signal(false);
   readonly error = signal('');
   readonly showPass = signal(false);
+  readonly focusedField = signal('');
 
-  readonly sideFeatures = [
-    { icon: 'directions_car', text: 'Browse 500+ cars, motos, and bikes' },
-    { icon: 'local_offer', text: 'Exclusive deals and promotions' },
-    { icon: 'support_agent', text: '24/7 customer support' },
-    { icon: 'verified_user', text: 'Fully insured, safety-checked fleet' },
-  ];
-
-  readonly form = this.fb.group({
+  readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
@@ -195,19 +208,23 @@ export class LoginComponent {
     this.loading.set(true);
     this.error.set('');
 
-    const { email, password } = this.form.value;
-    this.auth.login(email!, password!).subscribe({
-      next: (res) => {
-        if (res.user.role === 'admin') {
-          this.router.navigateByUrl('/admin/dashboard');
-        } else {
-          this.router.navigateByUrl('/customer/dashboard');
-        }
-      },
-      error: (err) => {
-        this.error.set(err.error?.message || 'Login failed. Please try again.');
-        this.loading.set(false);
-      },
+    const { email, password } = this.form.getRawValue();
+
+    this.auth.login(email, password).pipe(
+      finalize(() => this.loading.set(false)),
+      catchError((err) => {
+        this.error.set(err.error?.message || 'Authentication failed. Please verify your credentials.');
+        return of(null);
+      })
+    ).subscribe((res) => {
+      if (!res) return;
+      const targetRoute = res.user.role === 'admin' ? '/admin/dashboard' : '/customer/dashboard';
+      this.router.navigateByUrl(targetRoute);
     });
+  }
+
+  isFieldInvalid(fieldName: 'email' | 'password'): boolean {
+    const field = this.form.get(fieldName);
+    return !!(field?.invalid && field?.touched);
   }
 }

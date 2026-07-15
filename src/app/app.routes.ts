@@ -15,10 +15,10 @@ export const routes: Routes = [
       { path: 'vehicles/:id', canActivate: [authGuard], loadComponent: () => import('./features/vehicles/vehicle-details/vehicle-details.component').then((m) => m.VehicleDetailsComponent) },
       { path: 'about', loadComponent: () => import('./features/simple-page/simple-page.component').then((m) => m.SimplePageComponent), data: { title: 'About Us', body: 'Cambo Rent offers premium vehicle rental services across Cambodia. Enjoy hassle-free online bookings, flexible durations (hourly, daily, weekly, monthly, yearly), and 24/7 concierge delivery services.' } },
       { path: 'contact', loadComponent: () => import('./features/simple-page/simple-page.component').then((m) => m.SimplePageComponent), data: { title: 'Contact Us', body: 'Get in touch with Cambo Rent. Reach our support desk at support@camborent.com, call us at +855 12 345 678, or visit our central hub in Phnom Penh.' } },
-      { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then((m) => m.LoginComponent) },
-      { path: 'register', loadComponent: () => import('./features/auth/register/register.component').then((m) => m.RegisterComponent) },
     ],
   },
+  { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then((m) => m.LoginComponent) },
+  { path: 'register', loadComponent: () => import('./features/auth/register/register.component').then((m) => m.RegisterComponent) },
   {
     path: 'customer',
     component: CustomerLayoutComponent,
