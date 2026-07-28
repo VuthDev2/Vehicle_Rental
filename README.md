@@ -2,6 +2,42 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.4.
 
+## Getting started (first-time setup)
+
+**Prerequisites:** Node.js **v24.15+** (or v22.22.3+ / v26+) and npm.
+
+The repo is a full-stack app: an Angular frontend (root) and an Express/MongoDB
+backend (`backend/`). You need to set up and run **both**.
+
+```bash
+# 1. Install dependencies (run in BOTH folders)
+npm install
+cd backend && npm install && cd ..
+
+# 2. Create the backend env file (it is gitignored, so it is NOT in the repo)
+cd backend
+cp .env.example .env        # Windows PowerShell: copy .env.example .env
+```
+
+Then open `backend/.env` and fill in the values. Most already work as-is, but:
+
+- **`PORT` must stay `5001`** — the frontend calls `http://localhost:5001/api`.
+- **`JWT_SECRET`** — set any non-empty string (login breaks if it's empty).
+- **ABA PayWay** (`PAYWAY_MERCHANT_ID`, `PAYWAY_API_KEY`) — required only for the
+  payment feature. Ask a teammate for the current **sandbox** credentials; they
+  are intentionally kept out of git.
+
+```bash
+# 3. Run the backend (terminal 1)
+cd backend && npm run dev        # -> http://localhost:5001
+
+# 4. Run the frontend (terminal 2, from the repo root)
+npm start                        # -> http://localhost:4200
+```
+
+MongoDB connects to a shared Atlas cluster automatically (a fallback is baked
+into `backend/src/config/db.js`), so no local database is needed.
+
 ## Development server
 
 To start a local development server, run:
