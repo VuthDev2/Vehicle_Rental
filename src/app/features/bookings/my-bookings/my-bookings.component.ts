@@ -1,7 +1,8 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BookingService } from '../../../core/services/booking.service';
+import { PaymentService } from '../../../core/services/payment.service';
 import { Booking } from '../../../models/booking.model';
 import { Vehicle } from '../../../models/vehicle.model';
 
@@ -36,6 +37,15 @@ const PAYMENT_CONFIG: Record<string, { class: string; dot: string }> = {
           New Booking
         </a>
       </div>
+
+      @if (paymentMessage()) {
+        <div class="mb-6 flex items-center gap-2 rounded-xl p-4 text-sm"
+             [style.background]="paymentPaid() ? 'rgba(16,185,129,0.08)' : 'rgba(245,158,11,0.08)'"
+             [style.color]="paymentPaid() ? '#34d399' : '#fbbf24'">
+          <span class="material-symbols-outlined text-lg">{{ paymentPaid() ? 'check_circle' : 'info' }}</span>
+          {{ paymentMessage() }}
+        </div>
+      }
 
       @if (loading()) {
         <div class="flex flex-col gap-4">
@@ -134,11 +144,44 @@ const PAYMENT_CONFIG: Record<string, { class: string; dot: string }> = {
 })
 export class MyBookingsComponent implements OnInit {
   private readonly bookingService = inject(BookingService);
+  private readonly paymentService = inject(PaymentService);
+  private readonly route = inject(ActivatedRoute);
 
   readonly loading = signal(true);
   readonly bookings = signal<Booking[]>([]);
+  readonly paymentMessage = signal('');
+  readonly paymentPaid = signal(false);
 
-  ngOnInit() { this.loadBookings(); }
+  ngOnInit() {
+    const params = this.route.snapshot.queryParamMap;
+
+    // QR demo flow marks the payment before redirecting here with ?paid=1.
+    if (params.get('paid')) {
+      this.paymentPaid.set(true);
+      this.paymentMessage.set('Payment successful — your booking is confirmed.');
+      this.loadBookings();
+      return;
+    }
+
+    // Hosted-checkout redirect flow returns with ?payway=<tranId> to reconcile.
+    const tranId = params.get('payway');
+    if (tranId) {
+      this.paymentService.confirmPayway(tranId).subscribe({
+        next: (res) => {
+          this.paymentPaid.set(!!res.paid);
+          this.paymentMessage.set(
+            res.paid
+              ? 'Payment successful — your booking is confirmed.'
+              : 'Payment not completed yet. If you were charged, this will update shortly.'
+          );
+          this.loadBookings();
+        },
+        error: () => this.loadBookings(),
+      });
+    } else {
+      this.loadBookings();
+    }
+  }
 
   loadBookings() {
     this.bookingService.getBookings().subscribe({

@@ -1,7 +1,7 @@
 import { Injectable, computed, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs';
+import { Observable, of, tap, map, catchError, shareReplay } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { User, UserRole } from '../../models/user.model';
 
@@ -18,26 +18,54 @@ export class AuthService {
   readonly isAuthenticated = computed(() => !!this.sessionUser());
   readonly role = computed<UserRole | null>(() => this.sessionUser()?.role ?? null);
 
+  // Cached in-flight /auth/me so concurrent guards share one request.
+  private restore$?: Observable<boolean>;
+
   constructor() {
-    this.tryRestoreSession();
+    // Eagerly restore so non-guarded pages (e.g. home) know the user too.
+    this.ensureAuthenticated().subscribe();
   }
 
-  private tryRestoreSession(): void {
-    if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
+  /**
+   * Resolves to whether there is a valid session, restoring it from the stored
+   * token if needed. Guards MUST await this (rather than reading a signal) so a
+   * page refresh doesn't redirect to login before /auth/me has resolved.
+   */
+  ensureAuthenticated(): Observable<boolean> {
+    if (this.sessionUser()) return of(true);
+
+    const token = this.getValidToken();
+    if (!token) return of(false);
+
+    if (!this.restore$) {
+      this.restore$ = this.http.get<{ user: User }>(`${API}/auth/me`).pipe(
+        tap(({ user }) => this.sessionUser.set(user)),
+        map(() => true),
+        catchError(() => {
+          this.clearSession();
+          return of(false);
+        }),
+        shareReplay(1)
+      );
+    }
+    return this.restore$;
+  }
+
+  /** Returns the stored token if present and unexpired, else null. */
+  private getValidToken(): string | null {
+    if (typeof localStorage === 'undefined') return null;
     const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) return;
+    if (!token) return null;
     try {
       const decoded: any = jwtDecode(token);
       if (decoded.exp * 1000 < Date.now()) {
         this.clearSession();
-        return;
+        return null;
       }
-      this.http.get<{ user: User }>(`${API}/auth/me`).subscribe({
-        next: ({ user }) => this.sessionUser.set(user),
-        error: () => this.clearSession(),
-      });
+      return token;
     } catch {
       this.clearSession();
+      return null;
     }
   }
 
@@ -77,5 +105,6 @@ export class AuthService {
       localStorage.removeItem(TOKEN_KEY);
     }
     this.sessionUser.set(null);
+    this.restore$ = undefined;
   }
 }
