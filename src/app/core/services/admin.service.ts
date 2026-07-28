@@ -4,9 +4,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 const API = 'http://localhost:5001/api';
 
 export interface SystemHealth {
-  server: string;
-  database: string;
-  api: string;
+  server: 'Online' | 'Offline';
+  database: 'Connected' | 'Disconnected';
+  api: 'Healthy' | 'Degraded' | 'Down';
   storage: number;
   lastBackup: string;
 }

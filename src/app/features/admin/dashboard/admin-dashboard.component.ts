@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, PLATFORM_ID, ViewChild, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Chart } from 'chart.js/auto';
 import { DataService } from '../../../core/services/data.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { DatePipe } from '@angular/common';
+import { DatePipe, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -158,6 +158,7 @@ import { DatePipe } from '@angular/common';
 export class AdminDashboardComponent implements AfterViewInit {
   readonly data = inject(DataService);
   readonly auth = inject(AuthService);
+  private readonly platformId = inject(PLATFORM_ID);
   readonly today = new Date();
 
   @ViewChild('revenueChart') revenueChart?: ElementRef<HTMLCanvasElement>;
@@ -183,6 +184,8 @@ export class AdminDashboardComponent implements AfterViewInit {
   ];
 
   ngAfterViewInit(): void {
+    // Chart.js needs a real canvas — skip during server-side rendering.
+    if (!isPlatformBrowser(this.platformId)) return;
     if (this.revenueChart) {
       new Chart(this.revenueChart.nativeElement, {
         type: 'bar',

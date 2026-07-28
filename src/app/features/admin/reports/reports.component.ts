@@ -1,4 +1,5 @@
-import { Component, inject, signal, computed, ViewChildren, QueryList, ElementRef, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, computed, ViewChildren, QueryList, ElementRef, AfterViewInit, OnInit, OnDestroy, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Chart } from 'chart.js/auto';
 import { ReportService } from '../../../core/services/report.service';
@@ -473,6 +474,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly vehicleService = inject(VehicleService);
   private readonly paymentService = inject(PaymentService);
   private readonly userService = inject(UserService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   @ViewChildren('revenueChart') revenueChartRef!: QueryList<ElementRef<HTMLCanvasElement>>;
   @ViewChildren('bookingChart') bookingChartRef!: QueryList<ElementRef<HTMLCanvasElement>>;
@@ -842,6 +844,8 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initAllCharts() {
+    // Chart.js needs a real canvas — skip during server-side rendering.
+    if (!isPlatformBrowser(this.platformId)) return;
     this.rebuildRevenueChart();
     this.rebuildBookingChart();
     this.rebuildCustomerChart();

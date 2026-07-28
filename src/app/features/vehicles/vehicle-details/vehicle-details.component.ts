@@ -1,7 +1,9 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { VehicleService } from '../../../core/services/vehicle.service';
+import { BookingService } from '../../../core/services/booking.service';
+import { PaymentService, PaywayQr } from '../../../core/services/payment.service';
 import { Vehicle } from '../../../models/vehicle.model';
 
 @Component({
@@ -116,20 +118,35 @@ import { Vehicle } from '../../../models/vehicle.model';
                   <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant">Rental Type</label>
                   <select [(ngModel)]="rentalType"
                     class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-high py-2.5 px-4 text-on-surface focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all">
-                    <option value="daily">Daily</option>
-                    <option value="hourly">Hourly</option>
+                    <option value="day">Daily</option>
+                    <option value="hour">Hourly</option>
+                    <option value="week">Weekly</option>
+                    <option value="month">Monthly</option>
                   </select>
                 </div>
               </div>
               <div class="section-divider my-4"></div>
+              @if (error()) {
+                <div class="mb-4 flex items-center gap-2 rounded-xl p-3 text-sm"
+                     style="background: rgba(239,68,68,0.08); color: #f87171;">
+                  <span class="material-symbols-outlined text-lg">error</span>
+                  {{ error() }}
+                </div>
+              }
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-xs text-on-surface-variant">Estimated Total</p>
                   <p class="text-xl font-black text-secondary">\${{ estimate }}</p>
                 </div>
-                <button class="btn-primary text-sm px-8 py-3">
-                  <span class="material-symbols-outlined">shopping_cart</span>
-                  Book Now
+                <button (click)="book()" [disabled]="submitting()"
+                  class="btn-primary text-sm px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                  @if (submitting()) {
+                    <span class="material-symbols-outlined animate-spin">progress_activity</span>
+                    Loading QR...
+                  } @else {
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    Book Now
+                  }
                 </button>
               </div>
             </div>
@@ -143,11 +160,63 @@ import { Vehicle } from '../../../models/vehicle.model';
         </div>
       }
     </div>
+
+    <!-- ABA PayWay KHQR modal -->
+    @if (qr(); as q) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
+           style="background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);">
+        <div class="w-full max-w-sm rounded-2xl bg-surface-container-low border border-outline-variant/20 p-6 text-center">
+          <div class="flex items-center justify-center gap-2 mb-1">
+            <span class="material-symbols-outlined text-primary">qr_code_2</span>
+            <h3 class="text-lg font-bold text-on-surface">Scan to Pay</h3>
+          </div>
+          <p class="text-sm text-on-surface-variant mb-1">ABA PayWay &middot; KHQR</p>
+          <p class="text-2xl font-black text-secondary mb-4">\${{ q.amount }}</p>
+
+          <div class="rounded-2xl bg-white p-3 inline-block mb-4">
+            @if (q.qrImage) {
+              <img [src]="q.qrImage" alt="ABA KHQR" class="w-56 h-56 object-contain" />
+            }
+          </div>
+
+          <p class="text-xs text-on-surface-variant mb-5">
+            Scan with any ABA / KHQR-supported bank app, then tap "I've Paid".
+          </p>
+
+          @if (qrError()) {
+            <div class="mb-4 flex items-center gap-2 rounded-xl p-3 text-sm"
+                 style="background: rgba(239,68,68,0.08); color: #f87171;">
+              <span class="material-symbols-outlined text-lg">error</span>
+              {{ qrError() }}
+            </div>
+          }
+
+          <div class="flex gap-3">
+            <button (click)="cancelPayment()" [disabled]="paying()"
+              class="flex-1 rounded-xl border border-outline-variant/40 py-3 text-sm font-bold text-on-surface-variant hover:bg-surface-container-high transition-all disabled:opacity-50">
+              Cancel
+            </button>
+            <button (click)="markPaid()" [disabled]="paying()"
+              class="btn-primary flex-1 py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+              @if (paying()) {
+                <span class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
+              } @else {
+                <span class="material-symbols-outlined text-lg">check_circle</span>
+                I've Paid
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    }
   `,
 })
 export class VehicleDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly vehicleService = inject(VehicleService);
+  private readonly bookingService = inject(BookingService);
+  private readonly paymentService = inject(PaymentService);
 
   protected readonly Math = Math;
 
@@ -157,7 +226,14 @@ export class VehicleDetailsComponent implements OnInit {
   readonly startDate = signal('');
   readonly endDate = signal('');
   readonly qty = signal(1);
-  readonly rentalType = signal('daily');
+  readonly rentalType = signal('day');
+  readonly submitting = signal(false);
+  readonly error = signal('');
+
+  // ABA PayWay QR modal state
+  readonly qr = signal<PaywayQr | null>(null);
+  readonly paying = signal(false);
+  readonly qrError = signal('');
 
   get today(): string {
     const d = new Date();
@@ -189,8 +265,94 @@ export class VehicleDetailsComponent implements OnInit {
   }
 
   get estimate(): number {
-    const rate = this.vehicle()?.pricing?.day || 0;
-    const days = 3; // placeholder
-    return rate * days * this.qty();
+    // Mirrors the backend pricing: pricing[rentalType] * quantity.
+    const pricing = this.vehicle()?.pricing as Record<string, number> | undefined;
+    const rate = pricing?.[this.rentalType()] || 0;
+    return rate * this.qty();
+  }
+
+  /** Create the booking, then generate an ABA KHQR and open the pay modal. */
+  book(): void {
+    const v = this.vehicle();
+    if (!v || this.submitting()) return;
+
+    if (!this.startDate() || !this.endDate()) {
+      this.error.set('Please select a start and end date.');
+      return;
+    }
+    if (this.endDate() < this.startDate()) {
+      this.error.set('End date must be on or after the start date.');
+      return;
+    }
+
+    this.error.set('');
+    this.qrError.set('');
+    this.submitting.set(true);
+
+    this.bookingService
+      .createBooking({
+        vehicleId: v._id,
+        startDate: this.startDate(),
+        endDate: this.endDate(),
+        rentalType: this.rentalType(),
+        quantity: this.qty(),
+      })
+      .subscribe({
+        next: (res) => {
+          this.paymentService.createPaywayQr(res.booking._id).subscribe({
+            next: (qr) => {
+              this.submitting.set(false);
+              this.qr.set(qr);
+            },
+            error: (err) => {
+              this.submitting.set(false);
+              this.error.set(err?.error?.message || 'Could not generate the payment QR.');
+            },
+          });
+        },
+        error: (err) => {
+          this.submitting.set(false);
+          this.error.set(err?.error?.message || 'Could not create the booking.');
+        },
+      });
+  }
+
+  /** "I've Paid" — mark the transaction paid, then go to the bookings page. */
+  markPaid(): void {
+    const q = this.qr();
+    if (!q || this.paying()) return;
+    this.paying.set(true);
+    this.qrError.set('');
+
+    this.paymentService.markPaywayPaid(q.tranId).subscribe({
+      next: () => {
+        this.paying.set(false);
+        this.qr.set(null);
+        this.router.navigate(['/customer/bookings'], { queryParams: { paid: 1 } });
+      },
+      error: (err) => {
+        this.paying.set(false);
+        this.qrError.set(err?.error?.message || 'Could not confirm the payment.');
+      },
+    });
+  }
+
+  /** "Cancel" — cancel the pending booking and close the modal. */
+  cancelPayment(): void {
+    const q = this.qr();
+    if (!q || this.paying()) return;
+    this.paying.set(true);
+
+    this.bookingService.cancelBooking(q.bookingId).subscribe({
+      next: () => {
+        this.paying.set(false);
+        this.qr.set(null);
+      },
+      error: () => {
+        // Even if the cancel call fails, close the modal so the user isn't stuck.
+        this.paying.set(false);
+        this.qr.set(null);
+      },
+    });
   }
 }
