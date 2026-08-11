@@ -62,9 +62,13 @@ function buildPurchase({
   const amt = Number(amount).toFixed(2);
   const itemsB64 = items && items.length ? b64(JSON.stringify(items)) : '';
   const type = 'purchase';
+  // return_url is the server-to-server webhook (base64-encoded, per ABA).
   const return_url = returnUrl ? b64(returnUrl) : '';
-  const cancel_url = cancelUrl ? b64(cancelUrl) : '';
-  const continue_success_url = continueSuccessUrl ? b64(continueSuccessUrl) : '';
+  // cancel_url / continue_success_url are BROWSER redirects — ABA uses them
+  // verbatim (it does NOT base64-decode them), so send them as plain URLs.
+  // The hash is computed over these same plain values, so it still matches.
+  const cancel_url = cancelUrl || '';
+  const continue_success_url = continueSuccessUrl || '';
   const currency = CURRENCY;
 
   // Unused fields — kept explicit so the hash order below is unambiguous.
