@@ -1,9 +1,9 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { VehicleService } from '../../../core/services/vehicle.service';
 import { BookingService } from '../../../core/services/booking.service';
-import { PaymentService, PaywayQr } from '../../../core/services/payment.service';
+import { PaymentService, PaywayForm } from '../../../core/services/payment.service';
 import { Vehicle } from '../../../models/vehicle.model';
 
 @Component({
@@ -142,7 +142,7 @@ import { Vehicle } from '../../../models/vehicle.model';
                   class="btn-primary text-sm px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed">
                   @if (submitting()) {
                     <span class="material-symbols-outlined animate-spin">progress_activity</span>
-                    Loading QR...
+                    Redirecting...
                   } @else {
                     <span class="material-symbols-outlined">shopping_cart</span>
                     Book Now
@@ -160,60 +160,10 @@ import { Vehicle } from '../../../models/vehicle.model';
         </div>
       }
     </div>
-
-    <!-- ABA PayWay KHQR modal -->
-    @if (qr(); as q) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-4"
-           style="background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);">
-        <div class="w-full max-w-sm rounded-2xl bg-surface-container-low border border-outline-variant/20 p-6 text-center">
-          <div class="flex items-center justify-center gap-2 mb-1">
-            <span class="material-symbols-outlined text-primary">qr_code_2</span>
-            <h3 class="text-lg font-bold text-on-surface">Scan to Pay</h3>
-          </div>
-          <p class="text-sm text-on-surface-variant mb-1">ABA PayWay &middot; KHQR</p>
-          <p class="text-2xl font-black text-secondary mb-4">\${{ q.amount }}</p>
-
-          <div class="rounded-2xl bg-white p-3 inline-block mb-4">
-            @if (q.qrImage) {
-              <img [src]="q.qrImage" alt="ABA KHQR" class="w-56 h-56 object-contain" />
-            }
-          </div>
-
-          <p class="text-xs text-on-surface-variant mb-5">
-            Scan with any ABA / KHQR-supported bank app, then tap "I've Paid".
-          </p>
-
-          @if (qrError()) {
-            <div class="mb-4 flex items-center gap-2 rounded-xl p-3 text-sm"
-                 style="background: rgba(239,68,68,0.08); color: #f87171;">
-              <span class="material-symbols-outlined text-lg">error</span>
-              {{ qrError() }}
-            </div>
-          }
-
-          <div class="flex gap-3">
-            <button (click)="cancelPayment()" [disabled]="paying()"
-              class="flex-1 rounded-xl border border-outline-variant/40 py-3 text-sm font-bold text-on-surface-variant hover:bg-surface-container-high transition-all disabled:opacity-50">
-              Cancel
-            </button>
-            <button (click)="markPaid()" [disabled]="paying()"
-              class="btn-primary flex-1 py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-              @if (paying()) {
-                <span class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
-              } @else {
-                <span class="material-symbols-outlined text-lg">check_circle</span>
-                I've Paid
-              }
-            </button>
-          </div>
-        </div>
-      </div>
-    }
   `,
 })
 export class VehicleDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly vehicleService = inject(VehicleService);
   private readonly bookingService = inject(BookingService);
   private readonly paymentService = inject(PaymentService);
@@ -229,11 +179,6 @@ export class VehicleDetailsComponent implements OnInit {
   readonly rentalType = signal('day');
   readonly submitting = signal(false);
   readonly error = signal('');
-
-  // ABA PayWay QR modal state
-  readonly qr = signal<PaywayQr | null>(null);
-  readonly paying = signal(false);
-  readonly qrError = signal('');
 
   get today(): string {
     const d = new Date();
@@ -271,7 +216,7 @@ export class VehicleDetailsComponent implements OnInit {
     return rate * this.qty();
   }
 
-  /** Create the booking, then generate an ABA KHQR and open the pay modal. */
+  /** Create the booking, then redirect to ABA PayWay's hosted checkout page. */
   book(): void {
     const v = this.vehicle();
     if (!v || this.submitting()) return;
@@ -286,7 +231,6 @@ export class VehicleDetailsComponent implements OnInit {
     }
 
     this.error.set('');
-    this.qrError.set('');
     this.submitting.set(true);
 
     this.bookingService
@@ -299,14 +243,11 @@ export class VehicleDetailsComponent implements OnInit {
       })
       .subscribe({
         next: (res) => {
-          this.paymentService.createPaywayQr(res.booking._id).subscribe({
-            next: (qr) => {
-              this.submitting.set(false);
-              this.qr.set(qr);
-            },
+          this.paymentService.createPaywayForm(res.booking._id).subscribe({
+            next: (payload) => this.submitPaywayForm(payload),
             error: (err) => {
               this.submitting.set(false);
-              this.error.set(err?.error?.message || 'Could not generate the payment QR.');
+              this.error.set(err?.error?.message || 'Could not start the payment.');
             },
           });
         },
@@ -317,42 +258,23 @@ export class VehicleDetailsComponent implements OnInit {
       });
   }
 
-  /** "I've Paid" — mark the transaction paid, then go to the bookings page. */
-  markPaid(): void {
-    const q = this.qr();
-    if (!q || this.paying()) return;
-    this.paying.set(true);
-    this.qrError.set('');
+  /** Build a hidden form from the signed fields and POST it to ABA's checkout. */
+  private submitPaywayForm(payload: PaywayForm): void {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = payload.actionUrl;
+    form.enctype = 'multipart/form-data';
+    form.style.display = 'none';
 
-    this.paymentService.markPaywayPaid(q.tranId).subscribe({
-      next: () => {
-        this.paying.set(false);
-        this.qr.set(null);
-        this.router.navigate(['/customer/bookings'], { queryParams: { paid: 1 } });
-      },
-      error: (err) => {
-        this.paying.set(false);
-        this.qrError.set(err?.error?.message || 'Could not confirm the payment.');
-      },
-    });
-  }
+    for (const [name, value] of Object.entries(payload.fields)) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value ?? '';
+      form.appendChild(input);
+    }
 
-  /** "Cancel" — cancel the pending booking and close the modal. */
-  cancelPayment(): void {
-    const q = this.qr();
-    if (!q || this.paying()) return;
-    this.paying.set(true);
-
-    this.bookingService.cancelBooking(q.bookingId).subscribe({
-      next: () => {
-        this.paying.set(false);
-        this.qr.set(null);
-      },
-      error: () => {
-        // Even if the cancel call fails, close the modal so the user isn't stuck.
-        this.paying.set(false);
-        this.qr.set(null);
-      },
-    });
+    document.body.appendChild(form);
+    form.submit();
   }
 }
