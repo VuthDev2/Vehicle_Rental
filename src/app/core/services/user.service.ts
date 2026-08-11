@@ -1,8 +1,10 @@
+import { environment } from '../../../environments/environment';
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { User } from '../../models/user.model';
 
-const API = 'http://localhost:5001/api';
+const API = environment.apiUrl;
 
 export interface UserListResponse {
   users: User[];
@@ -20,6 +22,10 @@ export class UserService {
     if (query) params = params.set('query', query);
     if (role) params = params.set('role', role);
     return this.http.get<UserListResponse>(`${API}/users`, { params });
+  }
+
+  createUser(data: { name: string; email: string; password?: string; phone?: string; role?: string; isActive?: boolean }) {
+    return this.http.post<{ user: User }>(`${API}/users`, data);
   }
 
   getUser(id: string) {

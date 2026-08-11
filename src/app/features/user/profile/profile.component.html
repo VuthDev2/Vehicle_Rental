@@ -1,0 +1,343 @@
+<div class="page-container">
+  <div class="page-header">
+    <p class="eyebrow">Customer</p>
+    <h1>My Profile</h1>
+    <p>Manage your account and security settings</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- ============ IDENTITY CARD ============ -->
+    <div class="lg:col-span-1">
+      <div class="rounded-2xl border border-edge-deep/60 bg-surface-deep p-6 text-center">
+        <div
+          class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-black text-white shadow-xl"
+          style="background: linear-gradient(135deg, #10b981, #059669)"
+        >
+          {{ auth.user()?.name?.charAt(0)?.toUpperCase() || 'U' }}
+        </div>
+        <h2 class="text-xl font-bold text-on-surface">{{ auth.user()?.name }}</h2>
+        <p class="text-sm text-on-surface-variant mt-1">{{ auth.user()?.email }}</p>
+
+        <div class="mt-4 flex justify-center">
+          @if (emailVerified) {
+            <span class="badge badge-success flex items-center gap-1.5">
+              <span class="status-dot success"></span>
+              Email Verified
+            </span>
+          } @else {
+            <a
+              routerLink="/verify-email"
+              [queryParams]="{ email: auth.user()?.email }"
+              class="badge badge-warning flex items-center gap-1.5 transition-opacity hover:opacity-80"
+            >
+              <span class="status-dot warning"></span>
+              Verify Email
+            </a>
+          }
+        </div>
+
+        <div class="section-divider my-6"></div>
+        <div class="flex flex-col gap-3 text-sm text-left">
+          <div class="flex justify-between">
+            <span class="text-on-surface-variant">Role</span>
+            <span class="font-semibold text-on-surface capitalize">{{ auth.user()?.role }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-on-surface-variant">Member Since</span>
+            <span class="font-semibold text-on-surface">{{
+              (auth.user()?.createdAt | date: 'yyyy') || '2026'
+            }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-on-surface-variant">Phone</span>
+            <span class="font-semibold text-on-surface">{{ auth.user()?.phone || '—' }}</span>
+          </div>
+        </div>
+
+        <div class="section-divider my-6"></div>
+        <button
+          type="button"
+          (click)="logout()"
+          class="w-full rounded-xl py-3 text-sm font-bold flex items-center justify-center gap-2 transition-all hover:brightness-110"
+          style="
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+          "
+        >
+          <span class="material-symbols-outlined text-base">logout</span>
+          Sign Out
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ EDIT + SECURITY ============ -->
+    <div class="lg:col-span-2 flex flex-col gap-6">
+      <!-- Edit profile -->
+      <div class="rounded-2xl border border-edge-deep/60 bg-surface-deep p-6">
+        <h3 class="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">edit</span>
+          Edit Profile
+        </h3>
+
+        @if (success()) {
+          <div
+            class="mb-6 flex items-center gap-3 rounded-xl p-4 text-sm animate-fade-in"
+            style="
+              background: rgba(16, 185, 129, 0.08);
+              border: 1px solid rgba(16, 185, 129, 0.2);
+              color: #34d399;
+            "
+          >
+            <span class="material-symbols-outlined text-lg flex-shrink-0">check_circle</span>
+            Profile updated successfully.
+          </div>
+        }
+        @if (error()) {
+          <div
+            class="mb-6 flex items-center gap-3 rounded-xl p-4 text-sm animate-fade-in"
+            style="
+              background: rgba(239, 68, 68, 0.08);
+              border: 1px solid rgba(239, 68, 68, 0.2);
+              color: #f87171;
+            "
+          >
+            <span class="material-symbols-outlined text-lg flex-shrink-0">error</span>
+            {{ error() }}
+          </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant"
+                >Full Name</label
+              >
+              <div class="relative">
+                <span
+                  class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg text-outline"
+                  >person</span
+                >
+                <input
+                  type="text"
+                  formControlName="name"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised py-2.5 pl-11 pr-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </div>
+              @if (isFieldInvalid('name')) {
+                <p class="mt-1.5 text-xs text-red-400">Name is required.</p>
+              }
+            </div>
+            <div>
+              <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant"
+                >Phone Number</label
+              >
+              <div class="relative">
+                <span
+                  class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg text-outline"
+                  >phone</span
+                >
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised py-2.5 pl-11 pr-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </div>
+              @if (isFieldInvalid('phone')) {
+                <p class="mt-1.5 text-xs text-red-400">Phone number is required.</p>
+              }
+            </div>
+          </div>
+
+          <div>
+            <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant"
+              >Email Address</label
+            >
+            <div class="relative">
+              <span
+                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg text-outline"
+                >mail</span
+              >
+              <input
+                type="email"
+                [value]="auth.user()?.email || ''"
+                disabled
+                class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised/50 py-2.5 pl-11 pr-4 text-on-surface/60 placeholder:text-outline/60 cursor-not-allowed"
+              />
+            </div>
+            <p class="mt-1.5 text-xs text-on-surface-variant">
+              Your email is your login identity and cannot be changed.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3 pt-2">
+            <button
+              type="submit"
+              [disabled]="form.invalid || submitting()"
+              class="btn-primary px-8 py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              @if (submitting()) {
+                <span class="material-symbols-outlined animate-spin text-lg"
+                  >progress_activity</span
+                >
+                Saving...
+              } @else {
+                <span class="material-symbols-outlined text-lg">save</span>
+                Save Changes
+              }
+            </button>
+            <button type="button" (click)="resetForm()" class="btn-secondary px-6 py-3 text-sm">
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Security -->
+      <div class="rounded-2xl border border-edge-deep/60 bg-surface-deep p-6">
+        <h3 class="text-lg font-bold text-on-surface mb-1 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">lock</span>
+          Change Password
+        </h3>
+        <p class="text-sm text-on-surface-variant mb-6">
+          Use at least 6 characters. We recommend a mix of letters, numbers and symbols.
+        </p>
+
+        @if (pwSuccess()) {
+          <div
+            class="mb-6 flex items-center gap-3 rounded-xl p-4 text-sm animate-fade-in"
+            style="
+              background: rgba(16, 185, 129, 0.08);
+              border: 1px solid rgba(16, 185, 129, 0.2);
+              color: #34d399;
+            "
+          >
+            <span class="material-symbols-outlined text-lg flex-shrink-0">check_circle</span>
+            Password updated successfully.
+          </div>
+        }
+        @if (pwError()) {
+          <div
+            class="mb-6 flex items-center gap-3 rounded-xl p-4 text-sm animate-fade-in"
+            style="
+              background: rgba(239, 68, 68, 0.08);
+              border: 1px solid rgba(239, 68, 68, 0.2);
+              color: #f87171;
+            "
+          >
+            <span class="material-symbols-outlined text-lg flex-shrink-0">error</span>
+            {{ pwError() }}
+          </div>
+        }
+
+        <form
+          [formGroup]="passwordForm"
+          (ngSubmit)="onChangePassword()"
+          class="flex flex-col gap-5"
+        >
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant"
+                >Current Password</label
+              >
+              <div class="relative">
+                <span
+                  class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg text-outline"
+                  >lock</span
+                >
+                <input
+                  [type]="showCurrentPass() ? 'text' : 'password'"
+                  formControlName="currentPassword"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised py-2.5 pl-11 pr-12 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+                <button
+                  type="button"
+                  (click)="showCurrentPass.set(!showCurrentPass())"
+                  aria-label="Toggle current password visibility"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
+                >
+                  <span class="material-symbols-outlined text-xl">{{
+                    showCurrentPass() ? 'visibility_off' : 'visibility'
+                  }}</span>
+                </button>
+              </div>
+              @if (isPwFieldInvalid('currentPassword')) {
+                <p class="mt-1.5 text-xs text-red-400">Current password is required.</p>
+              }
+            </div>
+            <div>
+              <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant"
+                >New Password</label
+              >
+              <div class="relative">
+                <span
+                  class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg text-outline"
+                  >key</span
+                >
+                <input
+                  [type]="showNewPass() ? 'text' : 'password'"
+                  formControlName="newPassword"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised py-2.5 pl-11 pr-12 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+                <button
+                  type="button"
+                  (click)="showNewPass.set(!showNewPass())"
+                  aria-label="Toggle new password visibility"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
+                >
+                  <span class="material-symbols-outlined text-xl">{{
+                    showNewPass() ? 'visibility_off' : 'visibility'
+                  }}</span>
+                </button>
+              </div>
+              @if (isPwFieldInvalid('newPassword')) {
+                <p class="mt-1.5 text-xs text-red-400">
+                  New password must be at least 6 characters.
+                </p>
+              }
+            </div>
+            <div>
+              <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant"
+                >Confirm New Password</label
+              >
+              <div class="relative">
+                <span
+                  class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-lg text-outline"
+                  >verified_user</span
+                >
+                <input
+                  [type]="showNewPass() ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised py-2.5 pl-11 pr-4 text-on-surface placeholder:text-outline/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </div>
+              @if (isPwFieldInvalid('confirmPassword')) {
+                <p class="mt-1.5 text-xs text-red-400">
+                  Passwords do not match.
+                </p>
+              }
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 pt-2">
+            <button
+              type="submit"
+              [disabled]="passwordForm.invalid || pwSubmitting()"
+              class="btn-primary px-8 py-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              @if (pwSubmitting()) {
+                <span class="material-symbols-outlined animate-spin text-lg"
+                  >progress_activity</span
+                >
+                Updating...
+              } @else {
+                <span class="material-symbols-outlined text-lg">password</span>
+                Update Password
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

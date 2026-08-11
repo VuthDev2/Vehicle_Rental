@@ -1,0 +1,22 @@
+<nav
+  class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 md:hidden"
+  style="
+    border-top: 1px solid var(--color-edge-deep);
+    box-shadow: 0 -8px 30px -12px rgba(0, 0, 0, 0.6);
+  "
+>
+  @for (tab of tabs; track tab.path) {
+    <a
+      [routerLink]="tab.path"
+      routerLinkActive="is-active"
+      #rla="routerLinkActive"
+      class="app-bottom-tab"
+      [class.is-active]="rla.isActive"
+      [attr.aria-label]="tab.label"
+      [attr.aria-current]="rla.isActive ? 'page' : null"
+    >
+      <span class="app-bottom-tab-icon material-symbols-outlined">{{ tab.icon }}</span>
+      <span class="app-bottom-tab-label">{{ tab.label }}</span>
+    </a>
+  }
+</nav>

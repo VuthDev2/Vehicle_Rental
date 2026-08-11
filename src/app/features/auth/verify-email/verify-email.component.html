@@ -1,0 +1,108 @@
+<app-auth-layout
+  eyebrow="Verification"
+  headline="Verify your"
+  headlineAccent="identity."
+  description="We've sent a one-time verification code to your email. Enter it below to continue."
+>
+  <div class="auth-header">
+    <h1 class="auth-title">Check your email</h1>
+    <p class="auth-subtitle">
+      We sent a 6-digit code to <strong>{{ maskedEmail }}</strong>
+    </p>
+  </div>
+
+  @if (error()) {
+    <div class="auth-alert auth-alert--error">
+      <span class="material-symbols-outlined">error</span>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  @if (devCode()) {
+    <div class="auth-dev-token">
+      <p class="auth-dev-token-label">Dev Mode — Your Verification Code</p>
+      <code>{{ devCode() }}</code>
+    </div>
+  }
+
+  @if (success()) {
+    <div class="auth-alert auth-alert--success">
+      <span class="material-symbols-outlined">check_circle</span>
+      <div>
+        <span class="auth-alert-title">Email verified!</span>
+        Your email has been verified successfully. You can now access all features of your account.
+      </div>
+    </div>
+    <a routerLink="/customer/dashboard" class="auth-btn auth-btn--link">
+      <span class="material-symbols-outlined">dashboard</span>
+      Go to Dashboard
+    </a>
+  } @else {
+    <div class="auth-otp-group">
+      <label class="auth-otp-label">Enter verification code</label>
+      <div class="auth-otp-inputs">
+        @for (i of [0, 1, 2, 3, 4, 5]; track i) {
+          <input
+            #otpInput
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            [(ngModel)]="otp[i]"
+            (input)="onOtpInput(i)"
+            (keydown)="onOtpKeydown($event, i)"
+            class="auth-otp-input"
+            [class.is-invalid]="otpError()"
+            [class.filled]="!!otp[i]"
+          />
+        }
+      </div>
+      @if (otpError()) {
+        <p class="auth-field-error auth-field-error--center">
+          <span class="material-symbols-outlined">error</span>
+          Invalid code. Please try again.
+        </p>
+      }
+    </div>
+
+    <button
+      type="button"
+      (click)="onVerify()"
+      class="auth-btn"
+      [disabled]="loading() || otpCode.length < 6"
+    >
+      @if (loading()) {
+        <span class="material-symbols-outlined spin">progress_activity</span>
+        Verifying...
+      } @else {
+        Verify email
+      }
+    </button>
+
+    <div class="auth-resend">
+      <p>
+        Didn't receive the code?
+        <button
+          type="button"
+          class="auth-resend-btn"
+          (click)="onResend()"
+          [disabled]="resendCooldown() || loading()"
+        >
+          Resend code
+        </button>
+      </p>
+      @if (resendError()) {
+        <p class="auth-field-error auth-field-error--center">{{ resendError() }}</p>
+      }
+      @if (resendCooldown()) {
+        <p class="auth-countdown">Resend available in {{ resendCountdown() }}s</p>
+      }
+    </div>
+  }
+
+  <p class="auth-footer-text">
+    <a routerLink="/login" class="auth-link auth-link--back">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Back to sign in
+    </a>
+  </p>
+</app-auth-layout>

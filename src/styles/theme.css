@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap');
+@import 'tailwindcss';
+
+:root {
+  color-scheme: dark;
+  --color-background: #0a0f1e;
+  --color-surface: #0e1527;
+  --color-surface-container-lowest: #111827;
+  --color-surface-container-low: #1a2236;
+  --color-surface-container: #1e2a40;
+  --color-surface-container-high: #243047;
+  --color-surface-container-highest: #2d3b55;
+  --color-on-surface: #f1f5f9;
+  --color-on-surface-variant: #94a3b8;
+  --color-outline: #475569;
+  --color-outline-variant: #334155;
+  --color-admin-bg: #0c0d1a;
+  --color-admin-surface: #13152b;
+  --color-admin-surface-low: #1a1c35;
+  --color-admin-surface-high: #23264a;
+  --color-primary: #10b981;
+  --color-primary-dark: #059669;
+  --color-primary-light: #34d399;
+  --color-on-primary: #ffffff;
+  --color-bg-deep: #0b0f19;
+  --color-surface-deep: #111827;
+  --color-surface-deep-raised: #171f2f;
+  --color-edge-deep: #1f2937;
+  --color-edge-deep-strong: #2a3546;
+  --color-secondary: #3b82f6;
+  --color-secondary-dark: #2563eb;
+  --color-on-secondary: #ffffff;
+  --color-admin-accent: #8b5cf6;
+  --color-admin-accent-dark: #7c3aed;
+  --color-on-admin: #ffffff;
+}
+
+html.light {
+  color-scheme: light;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-container-lowest: #f8fafc;
+  --color-surface-container-low: #f1f5f9;
+  --color-surface-container: #e2e8f0;
+  --color-surface-container-high: #cbd5e1;
+  --color-surface-container-highest: #94a3b8;
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #475569;
+  --color-outline: #cbd5e1;
+  --color-outline-variant: #94a3b8;
+  --color-admin-bg: #f8fafc;
+  --color-admin-surface: #ffffff;
+  --color-admin-surface-low: #f1f5f9;
+  --color-admin-surface-high: #e2e8f0;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+/* ============================================================
+   TAILWIND V4 THEME — Cambo Rent Design System
+   ============================================================ */
+@theme {
+  /* --- Colour Palette --- */
+  --color-primary: #10b981;
+  --color-primary-dark: #059669;
+  --color-primary-light: #34d399;
+  --color-on-primary: #ffffff;
+
+  --color-bg-deep: #0b0f19;
+  --color-surface-deep: #111827;
+  --color-surface-deep-raised: #171f2f;
+  --color-edge-deep: #1f2937;
+  --color-edge-deep-strong: #2a3546;
+
+  --color-secondary: #3b82f6;
+  --color-secondary-dark: #2563eb;
+  --color-on-secondary: #ffffff;
+
+  --color-admin-accent: #8b5cf6;
+  --color-admin-accent-dark: #7c3aed;
+  --color-on-admin: #ffffff;
+
+  /* --- Background / Surface scale (dark) --- */
+  --color-background: #0a0f1e;
+  --color-surface: #0e1527;
+  --color-surface-container-lowest: #111827;
+  --color-surface-container-low: #1a2236;
+  --color-surface-container: #1e2a40;
+  --color-surface-container-high: #243047;
+  --color-surface-container-highest: #2d3b55;
+
+  /* --- Text colours --- */
+  --color-on-surface: #f1f5f9;
+  --color-on-surface-variant: #94a3b8;
+  --color-outline: #475569;
+  --color-outline-variant: #334155;
+
+  /* --- Admin surface scale (slightly purple-tinted) --- */
+  --color-admin-bg: #0c0d1a;
+  --color-admin-surface: #13152b;
+  --color-admin-surface-low: #1a1c35;
+  --color-admin-surface-high: #23264a;
+
+  /* --- Sizing --- */
+  --spacing-margin-desktop: clamp(20px, 5vw, 72px);
+  --spacing-container-max: 1280px;
+
+  /* --- Font --- */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}

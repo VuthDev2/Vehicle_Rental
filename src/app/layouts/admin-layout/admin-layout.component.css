@@ -1,0 +1,9 @@
+:host {
+  display: block;
+}
+a.active {
+  color: #ffffff !important;
+}
+a.active .material-symbols-outlined {
+  color: #ffffff !important;
+}

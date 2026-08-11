@@ -1,0 +1,116 @@
+<div class="auth-page">
+  <!-- Left brand panel -->
+  <aside class="auth-brand">
+    <!-- Khmer lattice pattern -->
+    <svg class="auth-brand-pattern" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <defs>
+        <pattern id="khmer" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+          <path
+            d="M30,0 L60,30 L30,60 L0,30 Z"
+            fill="none"
+            stroke="rgba(255,255,255,0.04)"
+            stroke-width="0.5"
+          />
+          <path
+            d="M30,0 L30,60 M0,30 L60,30"
+            fill="none"
+            stroke="rgba(255,255,255,0.015)"
+            stroke-width="0.15"
+          />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#khmer)" />
+    </svg>
+
+    <!-- Background image -->
+    <div class="auth-brand-photo" aria-hidden="true"></div>
+
+    <!-- Mekong Ribbon SVG -->
+    <svg class="auth-brand-ribbon" viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="ribbonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0EA776" stop-opacity="0.45" />
+          <stop offset="60%" stop-color="#0EA776" stop-opacity="0.08" />
+          <stop offset="100%" stop-color="#0A1930" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M -50,80 C 100,-20 200,350 450,200 C 550,150 600,50 650,-50"
+        fill="none"
+        stroke="#0EA776"
+        stroke-width="50"
+        opacity="0.06"
+      />
+      <path
+        d="M -50,80 C 100,-20 200,350 450,200 C 550,150 600,50 650,-50"
+        fill="none"
+        stroke="#0EA776"
+        stroke-width="8"
+        opacity="0.12"
+      />
+      <path
+        d="M -50,80 C 100,-20 200,350 450,200 C 550,150 600,50 650,-50"
+        fill="none"
+        stroke="url(#ribbonGrad)"
+        stroke-width="2.5"
+      />
+      <path
+        d="M -35,95 C 115,-5 215,365 465,215 C 565,165 615,65 665,-35"
+        fill="none"
+        stroke="#0EA776"
+        stroke-width="1"
+        opacity="0.3"
+      />
+    </svg>
+
+    <!-- Bottom glow -->
+    <div class="auth-brand-glow"></div>
+
+    <div class="auth-brand-inner">
+      <!-- Logo -->
+      <a routerLink="/" class="auth-brand-logo">
+        <div class="auth-brand-logo-img-wrap">
+          <span>CR</span>
+        </div>
+        <div class="auth-brand-logo-text">
+          <span class="auth-brand-logo-name">Cambo Rent</span>
+          <span class="auth-brand-logo-sub">Vehicle Rentals</span>
+        </div>
+      </a>
+
+      <!-- Brand copy -->
+      <div class="auth-brand-content">
+        @if (eyebrow) {
+          <div class="auth-eyebrow">
+            <span class="auth-eyebrow-line"></span>
+            <span>{{ eyebrow }}</span>
+          </div>
+        }
+        <h2 class="auth-brand-headline">
+          {{ headline }}
+          @if (headlineAccent) {
+            <span class="auth-brand-accent">{{ headlineAccent }}</span>
+          }
+        </h2>
+        @if (description) {
+          <p class="auth-brand-desc">{{ description }}</p>
+        }
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right form panel -->
+  <main class="auth-main">
+    <div class="auth-main-inner">
+      <!-- Mobile logo -->
+      <a routerLink="/" class="auth-mobile-logo">
+        <div class="auth-mobile-logo-img">
+          <span>CR</span>
+        </div>
+        <span class="auth-mobile-logo-name">Cambo Rent</span>
+      </a>
+
+      <ng-content></ng-content>
+    </div>
+  </main>
+</div>

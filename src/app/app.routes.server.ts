@@ -10,7 +10,15 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
+    path: 'customer/explore/:id',
+    renderMode: RenderMode.Server,
+  },
+  {
     path: 'customer/checkout/:bookingId',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'reset-password/:token',
     renderMode: RenderMode.Server,
   },
   {

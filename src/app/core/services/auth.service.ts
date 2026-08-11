@@ -1,3 +1,5 @@
+import { environment } from '../../../environments/environment';
+
 import { Injectable, computed, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -5,7 +7,7 @@ import { Observable, of, tap, map, catchError, shareReplay } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { User, UserRole } from '../../models/user.model';
 
-const API = 'http://localhost:5001/api';
+const API = environment.apiUrl;
 const TOKEN_KEY = 'cr_token';
 
 @Injectable({ providedIn: 'root' })
@@ -81,14 +83,42 @@ export class AuthService {
   }
 
   register(name: string, email: string, phone: string, password: string) {
-    return this.http.post<{ token: string; user: User }>(`${API}/auth/register`, { name, email, phone, password }).pipe(
-      tap(({ token, user }) => {
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem(TOKEN_KEY, token);
-        }
-        this.sessionUser.set(user);
+    return this.http
+      .post<{ token: string; user: User; devCode?: string }>(`${API}/auth/register`, {
+        name,
+        email,
+        phone,
+        password,
       })
-    );
+      .pipe(
+        tap(({ token, user }) => {
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(TOKEN_KEY, token);
+          }
+          this.sessionUser.set(user);
+        })
+      );
+  }
+
+  verifyEmail(email: string, code: string) {
+    return this.http
+      .post<{ message: string; user: User }>(`${API}/auth/verify-email`, { email, code })
+      .pipe(tap(({ user }) => this.updateUser(user)));
+  }
+
+  resendVerification(email: string) {
+    return this.http.post<{ message: string; devCode?: string }>(`${API}/auth/resend-verification`, {
+      email,
+    });
+  }
+
+  changePassword(currentPassword: string, newPassword: string) {
+    return this.http
+      .post<{ message: string; user: User }>(`${API}/auth/change-password`, {
+        currentPassword,
+        newPassword,
+      })
+      .pipe(tap(({ user }) => this.updateUser(user)));
   }
 
   logout(): void {

@@ -21,6 +21,17 @@ const loginRules = [
   handleValidation,
 ];
 
+const verifyEmailRules = [
+  body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail(),
+  body('code').matches(/^\d{6}$/).withMessage('Verification code must be 6 digits'),
+  handleValidation,
+];
+
+const resendVerificationRules = [
+  body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail(),
+  handleValidation,
+];
+
 const forgotPasswordRules = [
   body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail(),
   handleValidation,
@@ -29,6 +40,12 @@ const forgotPasswordRules = [
 const resetPasswordRules = [
   param('token').notEmpty().withMessage('Reset token is required'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  handleValidation,
+];
+
+const changePasswordRules = [
+  body('currentPassword').notEmpty().withMessage('Current password is required'),
+  body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters'),
   handleValidation,
 ];
 
@@ -107,8 +124,11 @@ const updateBookingStatusRules = [
 module.exports = {
   registerRules,
   loginRules,
+  verifyEmailRules,
+  resendVerificationRules,
   forgotPasswordRules,
   resetPasswordRules,
+  changePasswordRules,
   createVehicleRules,
   createBookingRules,
   createPaymentRules,
