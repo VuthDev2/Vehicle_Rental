@@ -204,7 +204,7 @@ const createPaywayForm = async (req, res, next) => {
       email: booking.userId.email || '',
       phone: booking.userId.phone || '',
       returnUrl: `${backend}/api/payments/payway/callback`,
-      continueSuccessUrl: `${frontend}/customer/bookings?payway=${tranId}`,
+      continueSuccessUrl: `${frontend}/payment/return?tran_id=${tranId}`,
       cancelUrl: `${frontend}/vehicles/${booking.vehicleId?._id || ''}`,
     });
 
