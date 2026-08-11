@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
+import { guestGuard } from './core/guards/guest.guard';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { CustomerLayoutComponent } from './layouts/customer-layout/customer-layout.component';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
@@ -11,25 +12,32 @@ export const routes: Routes = [
     component: PublicLayoutComponent,
     children: [
       { path: '', loadComponent: () => import('./features/home/home.component').then((m) => m.HomeComponent) },
-      { path: 'vehicles', canActivate: [authGuard], loadComponent: () => import('./features/vehicles/vehicle-list/vehicle-list.component').then((m) => m.VehicleListComponent) },
-      { path: 'vehicles/:id', canActivate: [authGuard], loadComponent: () => import('./features/vehicles/vehicle-details/vehicle-details.component').then((m) => m.VehicleDetailsComponent) },
+      { path: 'vehicles', canActivate: [authGuard], loadComponent: () => import('./features/user/vehicles/vehicle-list/vehicle-list.component').then((m) => m.VehicleListComponent) },
+      { path: 'vehicles/:id', canActivate: [authGuard], loadComponent: () => import('./features/user/vehicles/vehicle-details/vehicle-details.component').then((m) => m.VehicleDetailsComponent) },
       { path: 'about', loadComponent: () => import('./features/simple-page/simple-page.component').then((m) => m.SimplePageComponent), data: { title: 'About Us', body: 'Cambo Rent offers premium vehicle rental services across Cambodia. Enjoy hassle-free online bookings, flexible durations (hourly, daily, weekly, monthly, yearly), and 24/7 concierge delivery services.' } },
       { path: 'contact', loadComponent: () => import('./features/simple-page/simple-page.component').then((m) => m.SimplePageComponent), data: { title: 'Contact Us', body: 'Get in touch with Cambo Rent. Reach our support desk at support@camborent.com, call us at +855 12 345 678, or visit our central hub in Phnom Penh.' } },
     ],
   },
-  { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then((m) => m.LoginComponent) },
-  { path: 'register', loadComponent: () => import('./features/auth/register/register.component').then((m) => m.RegisterComponent) },
-  { path: 'payment/return', loadComponent: () => import('./features/payments/payment-return/payment-return.component').then((m) => m.PaymentReturnComponent) },
+  { path: 'login', canActivate: [guestGuard], loadComponent: () => import('./features/auth/login/login.component').then((m) => m.LoginComponent) },
+  { path: 'register', canActivate: [guestGuard], loadComponent: () => import('./features/auth/register/register.component').then((m) => m.RegisterComponent) },
+  { path: 'forgot-password', canActivate: [guestGuard], loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent) },
+  { path: 'reset-password/:token', canActivate: [guestGuard], loadComponent: () => import('./features/auth/reset-password/reset-password.component').then((m) => m.ResetPasswordComponent) },
+  // Verification is authenticated by email + code (not the session), so it stays open to all users.
+  { path: 'verify-email', loadComponent: () => import('./features/auth/verify-email/verify-email.component').then((m) => m.VerifyEmailComponent) },
+  // ABA PayWay hosted-checkout return page (verifies payment, marks booking paid).
+  { path: 'payment/return', loadComponent: () => import('./features/user/payments/payment-return/payment-return.component').then((m) => m.PaymentReturnComponent) },
   {
     path: 'customer',
     component: CustomerLayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: 'dashboard', loadComponent: () => import('./features/bookings/my-bookings/my-bookings.component').then((m) => m.MyBookingsComponent) },
-      { path: 'bookings', loadComponent: () => import('./features/bookings/my-bookings/my-bookings.component').then((m) => m.MyBookingsComponent) },
-      { path: 'profile', loadComponent: () => import('./features/profile/profile/profile.component').then((m) => m.ProfileComponent) },
-      { path: 'payments', loadComponent: () => import('./features/payments/payment-history/payment-history.component').then((m) => m.PaymentHistoryComponent) },
-      { path: 'checkout/:bookingId', loadComponent: () => import('./features/payments/checkout/checkout.component').then((m) => m.CheckoutComponent) },
+      { path: 'dashboard', loadComponent: () => import('./features/user/dashboard/dashboard.component').then((m) => m.DashboardComponent) },
+      { path: 'bookings', loadComponent: () => import('./features/user/bookings/my-bookings/my-bookings.component').then((m) => m.MyBookingsComponent) },
+      { path: 'explore', loadComponent: () => import('./features/user/vehicles/vehicle-list/vehicle-list.component').then((m) => m.VehicleListComponent) },
+      { path: 'explore/:id', loadComponent: () => import('./features/user/vehicles/vehicle-details/vehicle-details.component').then((m) => m.VehicleDetailsComponent) },
+      { path: 'profile', loadComponent: () => import('./features/user/profile/profile.component').then((m) => m.ProfileComponent) },
+      { path: 'payments', loadComponent: () => import('./features/user/payments/payment-history/payment-history.component').then((m) => m.PaymentHistoryComponent) },
+      { path: 'checkout/:bookingId', loadComponent: () => import('./features/user/payments/checkout/checkout.component').then((m) => m.CheckoutComponent) },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },

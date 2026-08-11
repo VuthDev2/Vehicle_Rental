@@ -3,7 +3,7 @@ export type PaymentMethod = 'Card' | 'PayPal' | 'Cash' | 'ABA Pay' | 'Wing';
 
 export interface Payment {
   _id: string;
-  bookingId: string | { _id: string; rentalType: string; startDate: string; endDate: string; totalPrice: number };
+  bookingId: string | { _id: string; rentalType: string; startDate: string; endDate: string; totalPrice: number; vehicleId?: { name: string } };
   userId: string | { _id: string; name: string; email: string };
   amount: number;
   method: PaymentMethod;

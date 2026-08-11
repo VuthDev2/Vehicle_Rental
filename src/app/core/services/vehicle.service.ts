@@ -1,8 +1,10 @@
+import { environment } from '../../../environments/environment';
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Vehicle, VehicleFilter } from '../../models/vehicle.model';
 
-const API = 'http://localhost:5001/api';
+const API = environment.apiUrl;
 
 export interface VehicleListResponse {
   vehicles: Vehicle[];
