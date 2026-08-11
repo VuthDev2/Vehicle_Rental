@@ -1,5 +1,30 @@
 const User = require('../models/User');
 
+// POST /api/users (admin)
+const createUser = async (req, res, next) => {
+  try {
+    const { name, email, password, phone, role, isActive } = req.body;
+
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ message: 'Email already registered.' });
+    }
+
+    const user = await User.create({
+      name,
+      email,
+      phone: phone || '',
+      passwordHash: password || 'changeme123',
+      role: role || 'customer',
+      isActive: isActive !== undefined ? isActive : true,
+    });
+
+    res.status(201).json({ user });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // GET /api/users (admin)
 const getUsers = async (req, res, next) => {
   try {
@@ -78,4 +103,4 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, getUser, updateUser, deleteUser };
+module.exports = { createUser, getUsers, getUser, updateUser, deleteUser };

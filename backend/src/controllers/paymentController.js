@@ -94,7 +94,11 @@ const getPayments = async (req, res, next) => {
 
     const [payments, total] = await Promise.all([
       Payment.find(filter)
-        .populate('bookingId', 'rentalType startDate endDate totalPrice')
+        .populate({
+          path: 'bookingId',
+          select: 'rentalType startDate endDate totalPrice vehicleId',
+          populate: { path: 'vehicleId', select: 'name' },
+        })
         .populate('userId', 'name email')
         .sort({ createdAt: -1 })
         .skip(skip)

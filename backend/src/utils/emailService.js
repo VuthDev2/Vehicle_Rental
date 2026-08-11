@@ -43,6 +43,21 @@ const sendEmail = async ({ to, subject, html }) => {
   }
 };
 
+const sendVerificationEmail = (to, name, code) => {
+  return sendEmail({
+    to,
+    subject: 'Verify your Cambo Rent email address',
+    html: `
+      <h2>Hi ${name},</h2>
+      <p>Welcome to Cambo Rent! Use the 6-digit code below to verify your email address. The code expires in 10 minutes.</p>
+      <p style="font-size:32px;letter-spacing:8px;font-weight:800;color:#005DAC;margin:16px 0;">${code}</p>
+      <p>If you didn't create an account, you can safely ignore this email.</p>
+      <br/>
+      <p>Cheers,<br/>Cambo Rent Team</p>
+    `,
+  });
+};
+
 const sendPasswordResetEmail = (to, name, resetToken) => {
   const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:4200'}/reset-password/${resetToken}`;
   return sendEmail({
@@ -78,4 +93,4 @@ const sendBookingConfirmationEmail = (to, name, booking) => {
   });
 };
 
-module.exports = { sendEmail, sendPasswordResetEmail, sendBookingConfirmationEmail };
+module.exports = { sendEmail, sendVerificationEmail, sendPasswordResetEmail, sendBookingConfirmationEmail };

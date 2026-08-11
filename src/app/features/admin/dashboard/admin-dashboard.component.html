@@ -1,0 +1,211 @@
+<div class="px-10 py-10 min-h-full" style="background: #f8f9ff">
+  <!-- ==================== HEADER ==================== -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h2 class="text-2xl font-semibold tracking-tight" style="color: #0b1c30">Manage Fleet</h2>
+      <p class="text-base" style="color: #76777d">{{ today | date: 'fullDate' }}</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <button
+        class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-all"
+        style="background: transparent"
+      >
+        <span class="material-symbols-outlined text-xl" style="color: #45464d">notifications</span>
+      </button>
+      <div
+        class="w-10 h-10 rounded-full flex items-center justify-center text-base font-bold shadow-sm"
+        style="background: #fd761a; color: #5c2400"
+      >
+        {{ auth.user()?.name?.charAt(0)?.toUpperCase() || 'A' }}
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== KPI CARDS ==================== -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    @for (kpi of kpis; track kpi.label) {
+      <div
+        class="rounded-xl border p-6 flex flex-col gap-1"
+        style="
+          background: #ffffff;
+          border-color: #c6c6cd;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        "
+      >
+        <div class="flex items-center justify-between mb-2">
+          <div
+            class="w-10 h-10 rounded-lg flex items-center justify-center"
+            style="background: #e5eeff"
+          >
+            <span class="material-symbols-outlined text-lg" style="color: #3980f4">{{
+              kpi.icon
+            }}</span>
+          </div>
+          <span class="text-xs font-semibold tracking-wider uppercase" style="color: #9d4300">{{
+            kpi.change
+          }}</span>
+        </div>
+        <p class="text-xs font-semibold tracking-wider uppercase" style="color: #76777d">
+          {{ kpi.label }}
+        </p>
+        <p class="text-2xl font-semibold tracking-tight" style="color: #0b1c30">{{ kpi.value }}</p>
+      </div>
+    }
+  </div>
+
+  <!-- ==================== ANALYTICS CHARTS ==================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Monthly Revenue Bar Chart -->
+    <div
+      class="rounded-xl border p-6"
+      style="background: #ffffff; border-color: #c6c6cd; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05)"
+    >
+      <div class="flex items-center justify-between mb-6">
+        <h4 class="text-lg font-bold" style="color: #0b1c30">Monthly Revenue</h4>
+        <div class="relative">
+          <select
+            class="appearance-none rounded-lg px-3 py-2 pr-10 text-sm font-semibold border-none cursor-pointer"
+            style="background: #f8f9ff; color: #0b1c30"
+          >
+            <option>2026</option>
+          </select>
+          <span
+            class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-sm pointer-events-none"
+            style="color: #6b7280"
+            >expand_more</span
+          >
+        </div>
+      </div>
+      <canvas #revenueChart></canvas>
+    </div>
+
+    <!-- Popular Vehicles Horizontal Chart -->
+    <div
+      class="rounded-xl border p-6"
+      style="background: #ffffff; border-color: #c6c6cd; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05)"
+    >
+      <h4 class="text-lg font-bold mb-6" style="color: #0b1c30">Popular Vehicles</h4>
+      <div class="flex flex-col gap-6">
+        @for (item of popularVehicles; track item.name) {
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold" style="color: #0b1c30">{{ item.name }}</span>
+              <span class="text-sm font-semibold" style="color: #76777d">{{ item.percent }}%</span>
+            </div>
+            <div class="w-full h-2 rounded-full" style="background: #e5eeff">
+              <div
+                class="h-2 rounded-full transition-all duration-500"
+                [style.width.%]="item.percent"
+                style="background: #3980f4"
+              ></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== RECENT BOOKINGS TABLE ==================== -->
+  <div
+    class="rounded-xl border overflow-hidden"
+    style="background: #ffffff; border-color: #c6c6cd; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05)"
+  >
+    <!-- Table Header -->
+    <div class="flex items-center justify-between px-6 py-5 border-b" style="border-color: #c6c6cd">
+      <h4 class="text-lg font-bold" style="color: #0b1c30">Recent Bookings</h4>
+      <a
+        routerLink="/admin/bookings"
+        class="text-sm font-semibold tracking-wider"
+        style="color: #3980f4"
+        >View All</a
+      >
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr style="background: #eff4ff">
+            <th
+              class="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider"
+              style="color: #76777d"
+            >
+              Customer
+            </th>
+            <th
+              class="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider"
+              style="color: #76777d"
+            >
+              Vehicle
+            </th>
+            <th
+              class="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider"
+              style="color: #76777d"
+            >
+              Date
+            </th>
+            <th
+              class="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider"
+              style="color: #76777d"
+            >
+              Status
+            </th>
+            <th
+              class="text-left px-6 py-4 text-xs font-semibold uppercase tracking-wider"
+              style="color: #76777d"
+            >
+              Amount
+            </th>
+            <th class="text-right px-6 py-4"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of bookings; track row.name) {
+            <tr class="border-t" style="border-color: #c6c6cd">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                    style="background: #d3e4fe; color: #0b1c30"
+                  >
+                    {{ row.initials }}
+                  </div>
+                  <div>
+                    <p class="font-semibold text-base" style="color: #0b1c30">{{ row.name }}</p>
+                    <p class="text-sm tracking-wider" style="color: #76777d">{{ row.email }}</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-base" style="color: #0b1c30">{{ row.vehicle }}</td>
+              <td class="px-6 py-4" style="color: #76777d">{{ row.date }}</td>
+              <td class="px-6 py-4">
+                <span
+                  class="inline-flex px-3 py-1 rounded-full text-sm font-semibold tracking-wider"
+                  [style]="
+                    row.status === 'Completed'
+                      ? 'background: rgba(16,185,129,0.1); color: #059669;'
+                      : 'background: rgba(245,158,11,0.1); color: #D97706;'
+                  "
+                >
+                  {{ row.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-base font-bold" style="color: #0b1c30">
+                \${{ row.amount }}
+              </td>
+              <td class="px-6 py-4 text-right">
+                <button
+                  class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-all"
+                >
+                  <span class="material-symbols-outlined text-lg" style="color: #76777d"
+                    >more_horiz</span
+                  >
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

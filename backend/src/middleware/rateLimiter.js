@@ -16,4 +16,13 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-module.exports = { authLimiter, apiLimiter };
+// Tighter limit for OTP verification: 6-digit codes (1M space) must not be brute-forceable.
+const verificationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { message: 'Too many verification attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+module.exports = { authLimiter, apiLimiter, verificationLimiter };

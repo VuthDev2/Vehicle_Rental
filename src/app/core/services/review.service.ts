@@ -1,8 +1,10 @@
+import { environment } from '../../../environments/environment';
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Review } from '../../models/review.model';
 
-const API = 'http://localhost:5001/api';
+const API = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
