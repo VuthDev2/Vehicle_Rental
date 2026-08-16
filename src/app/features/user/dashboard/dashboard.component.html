@@ -1,387 +1,200 @@
-<div class="page-container">
-  <!-- ============ WELCOME HERO ============ -->
-  <div
-    class="relative overflow-hidden rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 shadow-sm"
-  >
-    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-      <div class="max-w-2xl">
-        <p class="text-xs text-on-surface-variant font-medium flex items-center gap-1.5 mb-2">
-          <span class="material-symbols-outlined text-sm text-primary">calendar_today</span>
-          {{ todayLabel }}
-        </p>
-
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-on-surface">
-          {{ greeting() }}, <span class="text-white">{{ firstName }}</span>
-        </h1>
-
-        <p class="mt-2 text-sm text-on-surface-variant leading-relaxed">
-          View your active rentals, track upcoming pickup schedules, and manage vehicle reservations across Phnom Penh, Siem Reap, and Sihanoukville.
-        </p>
-
-        <div class="mt-5 flex flex-wrap items-center gap-3">
-          <a
-            routerLink="/customer/explore"
-            class="btn-primary text-sm px-5 py-2.5 rounded-xl flex items-center gap-2"
-          >
-            <span class="material-symbols-outlined text-lg">directions_car</span>
-            Explore Vehicles
-          </a>
-          <a
-            routerLink="/customer/bookings"
-            class="btn-secondary text-sm px-5 py-2.5 rounded-xl flex items-center gap-2"
-          >
-            <span class="material-symbols-outlined text-lg">receipt_long</span>
-            My Bookings
-          </a>
+<div class="dashboard-wrapper">
+  <!-- ============ 1. HERO BANNER ============ -->
+  <div class="hero-banner mb-8">
+    <img src="/hero_vehicles.png" alt="Hero background" class="hero-banner-bg" />
+    <div class="hero-banner-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Welcome back, {{ firstName }}.</h1>
+      <p class="hero-subtitle">
+        Your next adventure is just a tap away. Ready to hit the road in style?
+      </p>
+      <div class="hero-pills">
+        <div class="hero-pill points">
+          <span class="material-symbols-outlined icon">search</span>
+          <span>3450 Points</span>
+        </div>
+        <div class="hero-pill gold">
+          <span class="material-symbols-outlined icon">workspace_premium</span>
+          <span>Gold Status</span>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- Functional Account Summary Panel -->
-      @if (auth.user(); as user) {
-        <div
-          class="hidden lg:flex flex-col rounded-xl border border-edge-deep bg-surface-deep-raised p-4 min-w-[240px]"
-        >
-          <div class="flex items-center gap-3 pb-3 border-b border-edge-deep">
-            <div
-              class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm text-white"
-              style="background: linear-gradient(135deg, #10b981, #059669)"
-            >
-              {{ user.name?.charAt(0)?.toUpperCase() || 'U' }}
+  <!-- ============ 2. QUICK ACTIONS & ACTIVE RENTAL SECTION ============ -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10 items-stretch">
+    <!-- Quick Actions (Left Column - 4 cols) -->
+    <div class="lg:col-span-4 flex flex-col justify-between">
+      <div class="mb-3">
+        <h2 class="section-title">Quick Actions</h2>
+      </div>
+
+      <div class="quick-actions-container">
+        <!-- Card 1: Book a Ride -->
+        <a routerLink="/customer/explore" class="action-card">
+          <div class="action-card-left">
+            <div class="action-icon-box blue">
+              <span class="material-symbols-outlined">directions_car</span>
             </div>
-            <div class="min-w-0">
-              <p class="text-sm font-semibold text-white truncate">{{ user.name }}</p>
-              <p class="text-xs text-on-surface-variant truncate">{{ user.email }}</p>
+            <div>
+              <div class="action-title">Book a Ride</div>
+              <div class="action-sub">Browse our elite fleet</div>
             </div>
           </div>
-          <div class="pt-3 flex flex-col gap-1.5 text-xs text-on-surface-variant">
-            <div class="flex items-center justify-between">
-              <span>Account Status</span>
-              <span class="text-primary font-semibold flex items-center gap-1">
-                <span class="status-dot success"></span>
-                Active
-              </span>
+          <span class="material-symbols-outlined action-arrow">arrow_forward</span>
+        </a>
+
+        <!-- Card 2: Manage Bookings -->
+        <a routerLink="/customer/bookings" class="action-card">
+          <div class="action-card-left">
+            <div class="action-icon-box dark">
+              <span class="material-symbols-outlined">calendar_today</span>
             </div>
-            <div class="flex items-center justify-between">
-              <span>Phone</span>
-              <span class="text-on-surface font-medium">{{ user.phone || 'Not set' }}</span>
+            <div>
+              <div class="action-title">Manage Bookings</div>
+              <div class="action-sub">Modify or cancel trips</div>
             </div>
+          </div>
+          <span class="material-symbols-outlined action-arrow">arrow_forward</span>
+        </a>
+
+        <!-- Card 3: Contact Support -->
+        <a routerLink="/customer/bookings" class="action-card">
+          <div class="action-card-left">
+            <div class="action-icon-box orange">
+              <span class="material-symbols-outlined">headset_mic</span>
+            </div>
+            <div>
+              <div class="action-title">Contact Support</div>
+              <div class="action-sub">24/7 Premium Concierge</div>
+            </div>
+          </div>
+          <span class="material-symbols-outlined action-arrow">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Active Rental (Right Column - 8 cols) -->
+    <div class="lg:col-span-8 flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="section-title">Active Rental</h2>
+        <a routerLink="/customer/bookings" class="link-details">Details</a>
+      </div>
+
+      <div class="active-rental-card">
+        <div class="active-rental-grid">
+          <!-- Left Details Section -->
+          <div class="active-rental-info">
+            <div>
+              <div class="active-badges">
+                <span class="badge-tag blue">CAR</span>
+                <span class="badge-tag green">
+                  <span class="dot"></span>
+                  IN PROGRESS
+                </span>
+              </div>
+
+              <div class="active-vehicle-subtitle">
+                {{ nextTrip ? getVehicleName(nextTrip.vehicleId) : 'Premium All-Wheel Drive' }} •
+              </div>
+              <h3 class="active-vehicle-title">
+                {{ nextTrip ? getVehicleName(nextTrip.vehicleId) : 'BMW X5 xDrive40i' }}
+              </h3>
+            </div>
+
+            <div class="active-meta-grid">
+              <div class="meta-item">
+                <span class="meta-label">RETURN DATE</span>
+                <span class="meta-value">
+                  {{ (nextTrip?.endDate ? (nextTrip!.endDate | date : 'MMM d, y') : 'Oct 24, 2024') }}
+                </span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">LOCATION</span>
+                <span class="meta-value">
+                  {{ nextTrip ? getVehicleLocation(nextTrip.vehicleId) : 'LAX Airport' }}
+                  <button type="button" class="meta-edit-btn" title="Edit location">
+                    <span class="material-symbols-outlined text-sm">edit</span>
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Car Image Section -->
+          <div class="active-rental-img-container">
+            <img
+              [src]="nextTrip ? getVehicleImage(nextTrip.vehicleId) : '/car_card.png'"
+              alt="Active Rental Car"
+              class="active-rental-img"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 3. RECOMMENDED FOR YOU SECTION ============ -->
+  <div class="mt-4">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+      <div>
+        <h2 class="section-title">Recommended for You</h2>
+        <p class="section-subtitle">Tailored suggestions based on your preferences.</p>
+      </div>
+
+      <a routerLink="/customer/explore" class="btn-catalog">
+        <span>View Catalog</span>
+        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+      </a>
+    </div>
+
+    <!-- 3 EQUAL SIZE CARDS GRID -->
+    <div class="recommended-grid">
+      @for (item of recommendedVehicles(); track item.name) {
+        <div class="vehicle-card">
+          <!-- Top Image & Category Tag -->
+          <div class="vehicle-card-image-wrapper">
+            <span class="vehicle-type-tag">{{ item.tag }}</span>
+            <img [src]="item.image" [alt]="item.name" class="vehicle-card-img" />
+          </div>
+
+          <!-- Body Content -->
+          <div class="vehicle-card-body">
+            <div>
+              <div class="vehicle-card-header">
+                <h3 class="vehicle-card-name">{{ item.name }}</h3>
+                <div class="vehicle-card-price">
+                  {{ item.price | currency : 'USD' : 'symbol' : '1.0-0' }}
+                  <span class="per-day">/day</span>
+                </div>
+              </div>
+
+              <p class="vehicle-card-sub">{{ item.subtitle }}</p>
+
+              <hr class="vehicle-card-divider" />
+
+              <div class="vehicle-card-specs">
+                <div class="spec-item">
+                  <span class="material-symbols-outlined">{{ item.spec1Icon }}</span>
+                  <span>{{ item.spec1 }}</span>
+                </div>
+                <div class="spec-item">
+                  <span class="material-symbols-outlined">{{ item.spec2Icon }}</span>
+                  <span>{{ item.spec2 }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Full-width Blue Action Button -->
+            <a
+              [routerLink]="item.id ? ['/customer/explore', item.id] : '/customer/explore'"
+              class="btn-reserve"
+            >
+              Reserve Now
+            </a>
           </div>
         </div>
       }
     </div>
   </div>
-
-  <!-- ============ METRICS OVERVIEW ============ -->
-  @if (!loading()) {
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
-      @for (s of stats; track s.label) {
-        <div
-          class="rounded-xl border border-edge-deep bg-surface-deep p-4 sm:p-5 transition-all duration-200 hover:border-edge-deep-strong"
-        >
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-semibold text-on-surface-variant">
-              {{ s.label }}
-            </span>
-            <div
-              class="w-9 h-9 rounded-lg flex items-center justify-center"
-              [style]="'background: ' + s.bg"
-            >
-              <span class="material-symbols-outlined text-lg" [style]="'color: ' + s.color">{{
-                s.icon
-              }}</span>
-            </div>
-          </div>
-
-          <p class="text-2xl font-bold tracking-tight text-on-surface tabular-nums">
-            {{ s.value }}
-          </p>
-        </div>
-      }
-    </div>
-  }
-
-  <!-- Loading Skeletons -->
-  @if (loading()) {
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-      @for (i of [1, 2, 3, 4]; track i) {
-        <div class="rounded-xl border border-edge-deep bg-surface-deep p-5">
-          <div class="flex items-center justify-between mb-3">
-            <div class="h-3 w-1/2 skeleton"></div>
-            <div class="w-9 h-9 rounded-lg skeleton"></div>
-          </div>
-          <div class="h-7 w-2/3 skeleton mt-2"></div>
-        </div>
-      }
-    </div>
-  }
-
-  <!-- ============ CONTENT SECTION ============ -->
-  @if (loadError()) {
-    <div
-      class="mt-6 rounded-2xl border border-red-500/25 bg-red-500/5 p-8 text-center"
-    >
-      <div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 bg-red-500/10 text-red-400">
-        <span class="material-symbols-outlined text-2xl">error_outline</span>
-      </div>
-      <h2 class="text-base font-bold text-on-surface">Unable to load dashboard data</h2>
-      <p class="text-sm text-on-surface-variant mt-1 max-w-sm mx-auto">
-        Could not connect to the booking service. Please check your network connection.
-      </p>
-      <button
-        type="button"
-        (click)="loadDashboard()"
-        class="mt-4 btn-secondary text-sm px-5 py-2 inline-flex items-center gap-2"
-      >
-        <span class="material-symbols-outlined text-base">refresh</span>
-        Try again
-      </button>
-    </div>
-  } @else if (!loading() && bookings().length === 0) {
-    <!-- Empty state when no bookings exist -->
-    <div
-      class="rounded-2xl border border-edge-deep bg-surface-deep mt-6 p-8 sm:p-10"
-    >
-      <div class="max-w-xl">
-        <h2 class="text-xl font-bold text-on-surface">
-          No bookings on record
-        </h2>
-
-        <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">
-          You currently do not have any active or past vehicle reservations. Select a vehicle from our fleet to start a booking.
-        </p>
-
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a routerLink="/customer/explore" class="btn-primary px-6 py-2.5 text-sm">
-            <span class="material-symbols-outlined text-lg">search</span>
-            Browse Vehicle Fleet
-          </a>
-          <a routerLink="/customer/profile" class="btn-secondary px-6 py-2.5 text-sm">
-            <span class="material-symbols-outlined text-lg">person</span>
-            Review Profile
-          </a>
-        </div>
-      </div>
-    </div>
-  } @else if (!loading()) {
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
-      <!-- ============ NEXT TRIP HIGHLIGHT (2 COLS) ============ -->
-      <div class="xl:col-span-2">
-        @if (nextTrip) {
-          <div class="h-full rounded-2xl border border-edge-deep bg-surface-deep overflow-hidden flex flex-col justify-between">
-            <div class="flex flex-col sm:flex-row h-full">
-              <!-- Vehicle Image Container -->
-              <div
-                class="sm:w-56 h-48 sm:h-auto relative flex-shrink-0 bg-surface-deep-raised overflow-hidden"
-              >
-                @if (getVehicleImage(nextTrip.vehicleId)) {
-                  <img
-                    [src]="getVehicleImage(nextTrip.vehicleId)"
-                    class="w-full h-full object-cover"
-                    alt="{{ getVehicleName(nextTrip.vehicleId) }}"
-                  />
-                } @else {
-                  <div
-                    class="w-full h-full flex items-center justify-center bg-white/[0.02]"
-                  >
-                    <span class="material-symbols-outlined text-4xl text-outline"
-                      >directions_car</span
-                    >
-                  </div>
-                }
-
-                <div
-                  class="badge-floating"
-                  style="background: rgba(11, 15, 25, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); color: #34d399"
-                >
-                  {{ startLabel }}
-                </div>
-              </div>
-
-              <!-- Details Section -->
-              <div class="flex-1 p-5 sm:p-6 flex flex-col justify-between">
-                <div>
-                  <div class="flex items-center justify-between gap-2 mb-2">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Upcoming Reservation</span>
-                    <span [class]="'badge ' + getStatusClass(nextTrip.status)">
-                      <span [class]="'status-dot ' + getStatusDot(nextTrip.status)"></span>
-                      {{ nextTrip.status }}
-                    </span>
-                  </div>
-
-                  <h3 class="text-lg sm:text-xl font-bold text-on-surface tracking-tight truncate">
-                    {{ getVehicleName(nextTrip.vehicleId) }}
-                  </h3>
-
-                  <p
-                    class="text-sm text-on-surface-variant flex items-center gap-1.5 mt-1"
-                  >
-                    <span class="material-symbols-outlined text-base text-primary"
-                      >date_range</span
-                    >
-                    {{ nextTrip.startDate | date: 'mediumDate' }} to
-                    {{ nextTrip.endDate | date: 'mediumDate' }}
-                  </p>
-
-                  <div class="flex flex-wrap items-center gap-2 mt-3">
-                    <span class="chip">
-                      <span class="material-symbols-outlined text-xs">schedule</span>
-                      {{ nextTrip.quantity }} × {{ nextTrip.rentalType }}
-                    </span>
-                    @if (getVehicleLocation(nextTrip.vehicleId)) {
-                      <span class="chip">
-                        <span class="material-symbols-outlined text-xs">location_on</span>
-                        {{ getVehicleLocation(nextTrip.vehicleId) }}
-                      </span>
-                    }
-                    <span
-                      [class]="'chip ' + (nextTrip.paymentStatus === 'paid' ? 'chip-success' : 'chip-warning')"
-                    >
-                      <span class="material-symbols-outlined text-xs">payments</span>
-                      Payment: {{ nextTrip.paymentStatus }}
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Price & Action Bottom Row -->
-                <div
-                  class="mt-5 pt-4 border-t border-edge-deep flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                >
-                  <div>
-                    <span class="text-xs text-on-surface-variant block">Total Cost</span>
-                    <span class="text-xl sm:text-2xl font-bold text-white tabular-nums">
-                      ${{ nextTrip.totalPrice }}
-                    </span>
-                  </div>
-
-                  <div class="flex flex-wrap items-center gap-2">
-                    @if (nextTrip.paymentStatus === 'unpaid') {
-                      <a
-                        [routerLink]="['/customer/checkout', nextTrip._id]"
-                        class="btn-primary text-xs sm:text-sm px-4 py-2 rounded-xl whitespace-nowrap"
-                      >
-                        <span class="material-symbols-outlined text-base">credit_card</span>
-                        Pay Now
-                      </a>
-                    }
-                    <a
-                      routerLink="/customer/bookings"
-                      class="btn-secondary text-xs sm:text-sm px-4 py-2 rounded-xl whitespace-nowrap"
-                    >
-                      Booking Details
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        } @else {
-          <!-- Fallback when bookings exist but none are upcoming active -->
-          <div
-            class="h-full min-h-[240px] rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 flex flex-col items-center justify-center text-center"
-          >
-            <div
-              class="w-12 h-12 rounded-xl flex items-center justify-center mb-3 bg-white/[0.04]"
-            >
-              <span class="material-symbols-outlined text-2xl text-on-surface-variant"
-                >event_busy</span
-              >
-            </div>
-            <h3 class="text-base font-bold text-on-surface">No upcoming trips scheduled</h3>
-            <p class="text-sm text-on-surface-variant mt-1 max-w-sm">
-              All previous reservations are completed. Browse the fleet to schedule your next rental.
-            </p>
-            <a routerLink="/customer/explore" class="btn-primary text-sm px-5 py-2 mt-4">
-              <span class="material-symbols-outlined text-base">directions_car</span>
-              Reserve a Vehicle
-            </a>
-          </div>
-        }
-      </div>
-
-      <!-- ============ RECENT BOOKINGS (1 COL) ============ -->
-      <div
-        class="rounded-2xl border border-edge-deep bg-surface-deep p-5 flex flex-col justify-between"
-      >
-        <div>
-          <div class="flex items-center justify-between mb-3 pb-3 border-b border-edge-deep">
-            <h3 class="text-sm font-bold text-on-surface flex items-center gap-2">
-              <span class="material-symbols-outlined text-base text-primary"
-                >history</span
-              >
-              Recent Bookings
-            </h3>
-            <a
-              routerLink="/customer/bookings"
-              class="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5"
-            >
-              View all
-              <span class="material-symbols-outlined text-sm">chevron_right</span>
-            </a>
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            @for (b of recentBookings; track b._id) {
-              <a
-                [routerLink]="['/customer/bookings']"
-                class="flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-white/[0.04]"
-              >
-                <!-- Vehicle Thumbnail -->
-                <div
-                  class="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-surface-deep-raised flex items-center justify-center"
-                >
-                  @if (getVehicleImage(b.vehicleId)) {
-                    <img
-                      [src]="getVehicleImage(b.vehicleId)"
-                      class="w-full h-full object-cover"
-                      alt=""
-                    />
-                  } @else {
-                    <span class="material-symbols-outlined text-lg text-outline"
-                      >directions_car</span
-                    >
-                  }
-                </div>
-
-                <!-- Info -->
-                <div class="flex-1 min-w-0">
-                  <p class="text-xs font-semibold text-on-surface truncate">
-                    {{ getVehicleName(b.vehicleId) }}
-                  </p>
-                  <p class="text-[11px] text-on-surface-variant truncate">
-                    {{ b.startDate | date: 'mediumDate' }}
-                  </p>
-                </div>
-
-                <!-- Price & Status -->
-                <div class="flex flex-col items-end gap-1 flex-shrink-0">
-                  <span class="text-xs font-bold text-white tabular-nums"
-                    >${{ b.totalPrice }}</span
-                  >
-                  <span [class]="'badge ' + getStatusClass(b.status)">
-                    <span
-                      [class]="'status-dot ' + getStatusDot(b.status)"
-                    ></span>
-                    {{ b.status }}
-                  </span>
-                </div>
-              </a>
-            }
-          </div>
-        </div>
-
-        <!-- Contact Support Link -->
-        <div class="mt-5 pt-3 border-t border-edge-deep">
-          <div class="flex items-center justify-between text-xs text-on-surface-variant">
-            <div class="flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-base text-primary">support_agent</span>
-              <span>Support Desk:</span>
-            </div>
-            <a routerLink="/contact" class="text-primary font-medium hover:underline">
-              support&#64;camborent.com
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  }
 </div>

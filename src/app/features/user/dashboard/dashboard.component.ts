@@ -1,8 +1,9 @@
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BookingService } from '../../../core/services/booking.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { VehicleService } from '../../../core/services/vehicle.service';
 import { Booking } from '../../../models/booking.model';
 import { Vehicle } from '../../../models/vehicle.model';
 
@@ -19,22 +20,77 @@ const PAYMENT_CONFIG: Record<string, { class: string; dot: string; label: string
   refunded: { class: 'badge-info', dot: 'info', label: 'Refunded' },
 };
 
+export interface RecommendedCardItem {
+  id?: string;
+  tag: string;
+  image: string;
+  name: string;
+  price: number;
+  subtitle: string;
+  spec1: string;
+  spec1Icon: string;
+  spec2: string;
+  spec2Icon: string;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, CurrencyPipe, RouterLink],
   templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit {
   private readonly bookingService = inject(BookingService);
+  private readonly vehicleService = inject(VehicleService);
   readonly auth = inject(AuthService);
 
   readonly loading = signal(true);
   readonly loadError = signal(false);
   readonly bookings = signal<Booking[]>([]);
 
+  // Default curated recommended items matching the design mock exactly
+  readonly defaultRecommendations: RecommendedCardItem[] = [
+    {
+      tag: 'MOTORCYCLE',
+      image: '/moto_card.png',
+      name: 'RR-1000 Carbon Sport',
+      price: 120,
+      subtitle: 'Track Performance Edition',
+      spec1: '1000cc',
+      spec1Icon: 'speed',
+      spec2: 'Sport',
+      spec2Icon: 'two_wheeler',
+    },
+    {
+      tag: 'E-BIKE',
+      image: '/bike_card.png',
+      name: 'Peak Hunter V3 E-MTB',
+      price: 65,
+      subtitle: 'Long Range Premium Assist',
+      spec1: '900Wh',
+      spec1Icon: 'bolt',
+      spec2: 'Off-road',
+      spec2Icon: 'terrain',
+    },
+    {
+      tag: 'CAR',
+      image: '/car_card.png',
+      name: 'Luxury GT Executive',
+      price: 145,
+      subtitle: 'Touring Comfort Edition',
+      spec1: '5 Seats',
+      spec1Icon: 'airline_seat_recline_normal',
+      spec2: 'Hybrid',
+      spec2Icon: 'eco',
+    },
+  ];
+
+  readonly recommendedVehicles = signal<RecommendedCardItem[]>(this.defaultRecommendations);
+
   ngOnInit() {
     this.loadDashboard();
+    this.loadRecommendedVehicles();
   }
 
   loadDashboard(): void {
@@ -48,6 +104,34 @@ export class DashboardComponent implements OnInit {
       error: () => {
         this.loading.set(false);
         this.loadError.set(true);
+      },
+    });
+  }
+
+  loadRecommendedVehicles(): void {
+    this.vehicleService.getVehicles({}, 1, 3).subscribe({
+      next: (res) => {
+        if (res.vehicles && res.vehicles.length >= 3) {
+          const mapped: RecommendedCardItem[] = res.vehicles.slice(0, 3).map((v, i) => {
+            const fallback = this.defaultRecommendations[i % 3];
+            return {
+              id: v._id,
+              tag: v.type ? v.type.toUpperCase() : fallback.tag,
+              image: v.images?.[0] || fallback.image,
+              name: v.name || fallback.name,
+              price: v.pricing?.day || fallback.price,
+              subtitle: `${v.brand || ''} ${v.model || ''}`.trim() || fallback.subtitle,
+              spec1: v.seats ? `${v.seats} Seats` : fallback.spec1,
+              spec1Icon: fallback.spec1Icon,
+              spec2: v.fuel || fallback.spec2,
+              spec2Icon: fallback.spec2Icon,
+            };
+          });
+          this.recommendedVehicles.set(mapped);
+        }
+      },
+      error: () => {
+        // Keep default recommendations on error
       },
     });
   }
@@ -68,7 +152,7 @@ export class DashboardComponent implements OnInit {
   }
 
   get firstName(): string {
-    return this.auth.user()?.name?.split(' ')[0] || 'there';
+    return this.auth.user()?.name?.split(' ')[0] || 'Alex';
   }
 
   get stats() {
@@ -145,17 +229,17 @@ export class DashboardComponent implements OnInit {
 
   getVehicleName(v: string | Vehicle | any): string {
     if (typeof v === 'string') return v;
-    return v?.name || 'Unknown Vehicle';
+    return v?.name || 'Premium All-Wheel Drive';
   }
 
   getVehicleImage(v: string | Vehicle | any): string {
     if (typeof v === 'object' && v?.images?.[0]) return v.images[0];
-    return '';
+    return '/car_card.png';
   }
 
   getVehicleLocation(v: string | Vehicle | any): string {
     if (typeof v === 'object' && v?.location) return v.location;
-    return '';
+    return 'LAX Airport';
   }
 
   getStatusClass(status: string): string {
@@ -174,3 +258,4 @@ export class DashboardComponent implements OnInit {
     return PAYMENT_CONFIG[status]?.dot || 'neutral';
   }
 }
+

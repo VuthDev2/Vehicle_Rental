@@ -9,6 +9,7 @@ import { Vehicle } from '../../../../models/vehicle.model';
   standalone: true,
   imports: [RouterLink, FormsModule],
   templateUrl: './vehicle-list.component.html',
+  styleUrl: './vehicle-list.component.css',
 })
 export class VehicleListComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);

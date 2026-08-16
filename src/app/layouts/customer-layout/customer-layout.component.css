@@ -5,22 +5,65 @@
   color: var(--color-on-surface);
 }
 
+/* ============================================================
+   SIDEBAR SMOOTH COLLAPSE TRANSITIONS
+   ============================================================ */
 aside {
+  /* NO min-width — it overrides width and breaks the expand animation */
   width: 16rem;
-  min-width: 16rem;
   box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
+  overflow-x: hidden;
+  will-change: width;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+aside.sidebar-collapsed {
+  width: 5rem;
+}
+
+/* Main content wrapper: padding-left driven by inline [style] binding for true animatability */
+.main-content-wrapper {
+  will-change: padding-left;
+  transition: padding-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth text collapse helper */
+.collapsible-text {
+  white-space: nowrap;
+  opacity: 1;
+  max-width: 220px;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  will-change: opacity, max-width;
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              margin 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-collapsed .collapsible-text {
+  opacity: 0;
+  max-width: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  pointer-events: none;
+}
+
+/* Nav Item Styling */
 .nav-item {
   position: relative;
   color: #94a3b8;
   border-radius: 12px;
+  transition: background 0.2s ease, color 0.2s ease, padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-accent-bar {
   opacity: 0;
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.85);
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease;
 }
 
 .nav-item.active-nav {
@@ -49,14 +92,18 @@ aside {
   color: #f1f5f9;
 }
 
-@media (max-width: 1024px) {
-  aside {
-    width: 16rem;
-    min-width: 16rem;
-  }
+/* Dynamic User Section Button Transitions */
+.user-action-btn {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (max-width: 768px) {
+  /* On mobile the sidebar is a fixed overlay — reset padding */
+  .main-content-wrapper {
+    padding-left: 0 !important;
+    transition: none;
+  }
+
   aside {
     position: fixed;
     left: 0;
@@ -65,7 +112,7 @@ aside {
     width: min(100%, 18rem);
     transform: translateX(-100%);
     z-index: 50;
-    transition: transform 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   aside.translate-x-0 {
@@ -80,17 +127,6 @@ aside {
   }
 
   .nav-item {
-    padding: 16px 18px;
-  }
-}
-
-@media (max-width: 640px) {
-  :host {
-    font-size: 0.95rem;
-  }
-
-  .nav-item {
-    gap: 1rem;
     padding: 14px 16px;
   }
 }
