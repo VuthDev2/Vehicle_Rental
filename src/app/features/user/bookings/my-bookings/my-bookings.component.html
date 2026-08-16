@@ -1,18 +1,16 @@
-<div class="page-container">
+<div class="bookings-wrapper">
   <!-- ====================== HEADER ====================== -->
   <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
     <div>
-      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-        My Bookings
-      </h1>
-      <p class="text-sm text-on-surface-variant mt-1">
+      <h1 class="page-title">My Bookings</h1>
+      <p class="page-subtitle">
         Track your active rentals, view pickup schedules, and manage reservation payments.
       </p>
     </div>
 
     <a
       routerLink="/customer/explore"
-      class="btn-primary text-xs sm:text-sm px-5 py-2.5 rounded-xl self-start sm:self-auto flex items-center gap-2"
+      class="btn-new-reservation self-start sm:self-auto"
     >
       <span class="material-symbols-outlined text-base">add</span>
       New Reservation
@@ -21,40 +19,38 @@
 
   @if (loadError()) {
     <!-- Error State -->
-    <div class="rounded-2xl border border-red-500/25 bg-red-500/5 p-10 text-center">
-      <span class="material-symbols-outlined text-4xl text-red-400 mb-2">error</span>
-      <p class="text-sm font-bold text-red-400">Unable to load your reservations.</p>
-      <button type="button" (click)="loadBookings()" class="mt-4 btn-secondary text-xs px-5 py-2.5 rounded-xl inline-flex items-center gap-2">
+    <div class="error-card">
+      <span class="material-symbols-outlined text-4xl text-red-500 mb-2">error</span>
+      <p class="text-sm font-bold text-red-600">Unable to load your reservations.</p>
+      <button
+        type="button"
+        (click)="loadBookings()"
+        class="mt-4 btn-outline inline-flex items-center gap-2"
+      >
         <span class="material-symbols-outlined text-base">refresh</span>
         Retry Connection
       </button>
     </div>
   } @else {
-    <!-- ====================== METRICS OVERVIEW (4-COLUMNS) ====================== -->
+    <!-- ====================== STATS OVERVIEW ====================== -->
     @if (!loading()) {
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+      <div class="stats-grid">
         @for (s of stats; track s.label) {
-          <div
-            class="relative rounded-2xl border border-edge-deep bg-surface-deep p-4 sm:p-5 overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-edge-deep-strong hover:shadow-[0_12px_32px_-16px_rgba(0,0,0,0.6),0_0_0_1px_rgba(16,185,129,0.08)]"
-          >
-            <div
-              class="absolute -top-10 -right-10 w-28 h-28 rounded-full blur-2xl opacity-20 pointer-events-none"
-              [style.background]="s.color"
-            ></div>
-            <div
-              class="relative w-11 h-11 rounded-xl flex items-center justify-center"
-              [style.background]="s.bg"
-            >
-              <span class="material-symbols-outlined text-xl" [style.color]="s.color">
-                {{ s.icon }}
-              </span>
+          <div class="stat-card">
+            <div class="flex items-center justify-between">
+              <span class="stat-label">{{ s.label }}</span>
+              <div
+                class="stat-icon-box"
+                [style.background]="s.bg"
+              >
+                <span class="material-symbols-outlined text-xl" [style.color]="s.color">
+                  {{ s.icon }}
+                </span>
+              </div>
             </div>
-            <p class="relative mt-4 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
-              {{ s.label }}
-            </p>
-            <p class="relative text-2xl font-black tracking-tight text-white mt-1">
+            <div class="stat-value">
               {{ s.value }}
-            </p>
+            </div>
           </div>
         }
       </div>
@@ -62,27 +58,19 @@
 
     <!-- ====================== FILTER TABS ====================== -->
     @if (!loading() && bookings().length > 0) {
-      <div class="flex gap-2 overflow-x-auto pb-1 mb-6 -mx-1 px-1">
+      <div class="filter-tabs">
         @for (tab of tabs(); track tab.key) {
           <button
             type="button"
             (click)="setFilter(tab.key)"
-            class="flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold whitespace-nowrap transition-all border cursor-pointer"
-            [class.bg-primary/15]="filter() === tab.key"
-            [class.text-primary]="filter() === tab.key"
-            [class.border-primary/30]="filter() === tab.key"
-            [class.bg-surface-deep]="filter() !== tab.key"
-            [class.text-on-surface-variant]="filter() !== tab.key"
-            [class.border-edge-deep]="filter() !== tab.key"
-            [class.hover:text-white]="filter() !== tab.key"
+            class="tab-btn"
+            [class.active]="filter() === tab.key"
           >
             <span>{{ tab.label }}</span>
             <span
-              class="rounded-full px-2 py-0.5 text-[10px] font-bold"
-              [class.bg-primary/20]="filter() === tab.key"
-              [class.text-primary]="filter() === tab.key"
-              [class.bg-white/5]="filter() !== tab.key"
-              [class.text-outline]="filter() !== tab.key"
+              class="tab-count"
+              [class.active]="filter() === tab.key"
+              [class.inactive]="filter() !== tab.key"
             >
               {{ tab.count }}
             </span>
@@ -93,15 +81,15 @@
 
     <!-- ====================== CONTENT SECTION ====================== -->
     @if (loading()) {
-      <div class="space-y-4">
+      <div class="bookings-list">
         @for (i of [1, 2, 3]; track i) {
-          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-5">
-            <div class="flex gap-4">
-              <div class="w-24 h-24 rounded-xl skeleton flex-shrink-0"></div>
+          <div class="booking-card">
+            <div class="flex flex-col sm:flex-row gap-5">
+              <div class="skeleton-box w-full sm:w-28 h-28 flex-shrink-0"></div>
               <div class="flex-1 space-y-3">
-                <div class="h-5 w-1/3 skeleton"></div>
-                <div class="h-4 w-1/2 skeleton"></div>
-                <div class="h-6 w-1/4 skeleton mt-4"></div>
+                <div class="skeleton-line h-5 w-1/3"></div>
+                <div class="skeleton-line h-4 w-1/2"></div>
+                <div class="skeleton-line h-6 w-1/4 mt-4"></div>
               </div>
             </div>
           </div>
@@ -109,20 +97,20 @@
       </div>
     } @else if (bookings().length === 0) {
       <!-- Empty Total Bookings State -->
-      <div class="relative overflow-hidden rounded-2xl border border-edge-deep bg-surface-deep p-8 sm:p-12 text-center">
-        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-white/[0.03] text-outline">
+      <div class="empty-state">
+        <div class="empty-icon-box">
           <span class="material-symbols-outlined text-3xl">receipt_long</span>
         </div>
-        <h2 class="text-xl font-bold text-white mb-2">No reservations yet</h2>
-        <p class="text-sm text-on-surface-variant max-w-md mx-auto mb-6">
+        <h2 class="empty-title">No reservations yet</h2>
+        <p class="empty-sub">
           Your active and past rental bookings will appear here once you reserve a vehicle.
         </p>
         <div class="flex flex-wrap items-center justify-center gap-3">
-          <a routerLink="/customer/explore" class="btn-primary text-xs px-6 py-2.5 rounded-xl flex items-center gap-2">
+          <a routerLink="/customer/explore" class="btn-explore">
             <span class="material-symbols-outlined text-base">search</span>
             Explore Vehicles
           </a>
-          <a routerLink="/customer/profile" class="btn-secondary text-xs px-6 py-2.5 rounded-xl flex items-center gap-2">
+          <a routerLink="/customer/profile" class="btn-outline">
             <span class="material-symbols-outlined text-base">person</span>
             Review Profile
           </a>
@@ -130,34 +118,30 @@
       </div>
     } @else if (filteredBookings().length === 0) {
       <!-- Empty Filtered Category State -->
-      <div class="rounded-2xl border border-edge-deep bg-surface-deep p-12 text-center">
-        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 bg-white/[0.03] text-outline">
+      <div class="empty-state">
+        <div class="empty-icon-box">
           <span class="material-symbols-outlined text-2xl">filter_alt_off</span>
         </div>
-        <h2 class="text-base font-bold text-white mb-1">No {{ filter() }} bookings</h2>
-        <p class="text-xs text-on-surface-variant mb-4">
+        <h2 class="empty-title">No {{ filter() }} bookings</h2>
+        <p class="empty-sub">
           There are no reservations matching the {{ filter() }} filter.
         </p>
         <button
           type="button"
           (click)="setFilter('all')"
-          class="btn-secondary text-xs px-4 py-2 rounded-xl"
+          class="btn-outline"
         >
           View All Bookings
         </button>
       </div>
     } @else {
       <!-- Bookings List -->
-      <div class="space-y-4">
+      <div class="bookings-list">
         @for (booking of filteredBookings(); track booking._id) {
-          <div
-            class="rounded-2xl border border-edge-deep bg-surface-deep p-5 sm:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-edge-deep-strong hover:shadow-[0_12px_32px_-16px_rgba(0,0,0,0.6)]"
-          >
+          <div class="booking-card">
             <div class="flex flex-col sm:flex-row gap-5">
               <!-- Vehicle Thumbnail -->
-              <div
-                class="w-full sm:w-28 sm:h-28 rounded-xl overflow-hidden flex-shrink-0 bg-surface-deep-raised relative aspect-[16/10] sm:aspect-square"
-              >
+              <div class="booking-thumb">
                 @if (getVehicleImage(booking.vehicleId)) {
                   <img
                     [src]="getVehicleImage(booking.vehicleId)"
@@ -165,8 +149,8 @@
                     alt="{{ getVehicleName(booking.vehicleId) }}"
                   />
                 } @else {
-                  <div class="w-full h-full flex items-center justify-center bg-white/[0.02]">
-                    <span class="material-symbols-outlined text-3xl text-outline">directions_car</span>
+                  <div class="booking-thumb-placeholder">
+                    <span class="material-symbols-outlined text-3xl">directions_car</span>
                   </div>
                 }
               </div>
@@ -176,63 +160,45 @@
                 <div>
                   <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                     <div class="min-w-0">
-                      <h3 class="font-bold text-white text-base truncate">
+                      <h3 class="booking-vehicle-name truncate">
                         {{ getVehicleName(booking.vehicleId) }}
                       </h3>
                       @if (getVehicleMeta(booking.vehicleId)) {
-                        <p class="text-xs text-on-surface-variant mt-0.5">
+                        <p class="booking-vehicle-meta">
                           {{ getVehicleMeta(booking.vehicleId) }}
                         </p>
                       }
-                      <p class="text-xs text-on-surface-variant flex items-center gap-1.5 mt-1.5">
-                        <span class="material-symbols-outlined text-sm text-primary">calendar_month</span>
+                      <p class="booking-date-row">
+                        <span class="material-symbols-outlined">calendar_month</span>
                         <span>{{ booking.startDate | date: 'mediumDate' }} to {{ booking.endDate | date: 'mediumDate' }}</span>
                       </p>
                     </div>
 
                     <div class="flex items-baseline gap-1 sm:text-right flex-shrink-0">
-                      <span class="text-xl font-black text-white tabular-nums">${{ booking.totalPrice }}</span>
+                      <span class="booking-price">${{ booking.totalPrice }}</span>
                     </div>
                   </div>
 
                   <!-- Status Chips Row -->
-                  <div class="flex flex-wrap items-center gap-2 mt-3 text-xs">
-                    <span
-                      class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5"
-                      [class.bg-amber-500/10]="booking.status === 'pending'"
-                      [class.text-amber-400]="booking.status === 'pending'"
-                      [class.bg-blue-500/10]="booking.status === 'confirmed'"
-                      [class.text-blue-400]="booking.status === 'confirmed'"
-                      [class.bg-emerald-500/10]="booking.status === 'completed'"
-                      [class.text-emerald-400]="booking.status === 'completed'"
-                      [class.bg-red-500/10]="booking.status === 'cancelled'"
-                      [class.text-red-400]="booking.status === 'cancelled'"
-                    >
+                  <div class="flex flex-wrap items-center gap-2 mt-3.5">
+                    <span [class]="'status-pill ' + booking.status">
                       <span [class]="'status-dot ' + getStatusDot(booking.status)"></span>
                       <span>{{ booking.status }}</span>
                     </span>
 
-                    <span
-                      class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5"
-                      [class.bg-amber-500/10]="booking.paymentStatus === 'unpaid'"
-                      [class.text-amber-400]="booking.paymentStatus === 'unpaid'"
-                      [class.bg-emerald-500/10]="booking.paymentStatus === 'paid'"
-                      [class.text-emerald-400]="booking.paymentStatus === 'paid'"
-                      [class.bg-blue-500/10]="booking.paymentStatus === 'refunded'"
-                      [class.text-blue-400]="booking.paymentStatus === 'refunded'"
-                    >
+                    <span [class]="'payment-pill ' + booking.paymentStatus">
                       <span [class]="'status-dot ' + getPaymentDot(booking.paymentStatus)"></span>
                       <span>{{ booking.paymentStatus }}</span>
                     </span>
 
-                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold text-on-surface-variant bg-white/[0.04] border border-edge-deep flex items-center gap-1">
-                      <span class="material-symbols-outlined text-xs">schedule</span>
+                    <span class="info-chip">
+                      <span class="material-symbols-outlined">schedule</span>
                       {{ rentalLabel(booking) }}
                     </span>
 
                     @if (getVehicleLocation(booking.vehicleId)) {
-                      <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold text-on-surface-variant bg-white/[0.04] border border-edge-deep flex items-center gap-1">
-                        <span class="material-symbols-outlined text-xs text-primary">location_on</span>
+                      <span class="info-chip location">
+                        <span class="material-symbols-outlined">location_on</span>
                         {{ getVehicleLocation(booking.vehicleId) }}
                       </span>
                     }
@@ -241,11 +207,11 @@
 
                 <!-- Actions Bottom Row -->
                 @if (showActions(booking)) {
-                  <div class="flex items-center gap-2.5 mt-4 pt-3.5 border-t border-edge-deep">
+                  <div class="booking-actions">
                     @if (booking.paymentStatus === 'unpaid' && booking.status !== 'cancelled') {
                       <a
                         [routerLink]="['/customer/checkout', booking._id]"
-                        class="btn-primary text-xs px-4 py-2 rounded-xl inline-flex items-center gap-1.5 shadow-sm"
+                        class="btn-pay"
                       >
                         <span class="material-symbols-outlined text-sm">payments</span>
                         Pay ${{ booking.totalPrice }}
@@ -255,7 +221,7 @@
                       <button
                         type="button"
                         (click)="cancel(booking._id)"
-                        class="btn-ghost text-xs px-3.5 py-2 rounded-xl text-red-400 hover:bg-red-500/10 inline-flex items-center gap-1 cursor-pointer"
+                        class="btn-cancel"
                       >
                         <span class="material-symbols-outlined text-sm">close</span>
                         Cancel

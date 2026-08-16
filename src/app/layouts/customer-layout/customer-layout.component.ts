@@ -16,6 +16,11 @@ export class CustomerLayoutComponent {
   private readonly router = inject(Router);
 
   sidebarOpen = signal(false);
+  sidebarCollapsed = signal(false);
+
+  toggleCollapse(): void {
+    this.sidebarCollapsed.update((v) => !v);
+  }
 
   /** Show a dismissible banner (per user) prompting unverified accounts to verify their email. */
   readonly showVerifyBanner = computed(() => {
