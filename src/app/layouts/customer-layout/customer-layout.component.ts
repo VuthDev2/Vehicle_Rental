@@ -16,6 +16,7 @@ export class CustomerLayoutComponent {
   private readonly router = inject(Router);
 
   sidebarOpen = signal(false);
+  sidebarCollapsed = signal(false);
 
   /** Show a dismissible banner (per user) prompting unverified accounts to verify their email. */
   readonly showVerifyBanner = computed(() => {
@@ -47,8 +48,10 @@ export class CustomerLayoutComponent {
   ];
 
   confirmLogout(): void {
-    if (confirm('Are you sure you want to sign out?')) {
-      this.auth.logout();
-    }
+    this.auth.logout();
+  }
+
+  toggleSidebar(): void {
+    this.sidebarCollapsed.set(!this.sidebarCollapsed());
   }
 }

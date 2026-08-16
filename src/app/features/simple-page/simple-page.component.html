@@ -1,5 +1,111 @@
-<section class="page narrow">
-  <p class="eyebrow">RentFlow</p>
-  <h1>{{ route.snapshot.data['title'] }}</h1>
-  <p class="lede">{{ route.snapshot.data['body'] }}</p>
-</section>
+<main class="info-page">
+  <section class="info-hero">
+    <div class="container info-hero-grid">
+      <div class="info-copy">
+        <p class="info-kicker">
+          <span></span>
+          Cambo Rent
+        </p>
+        <h1>{{ isContact ? 'Talk with our rental team' : 'Reliable rentals for every Cambodia trip' }}</h1>
+        <p>{{ body }}</p>
+
+        <div class="info-actions">
+          <a routerLink="/register" class="btn-primary info-primary">Get Started</a>
+          <a routerLink="/vehicles" class="info-secondary">View Fleet</a>
+        </div>
+      </div>
+
+      <aside class="info-panel">
+        <div class="panel-icon">
+          <span class="material-symbols-outlined">{{ isContact ? 'support_agent' : 'verified' }}</span>
+        </div>
+        <p>{{ isContact ? 'Customer support' : 'Why renters choose us' }}</p>
+        <h2>{{ isContact ? 'Fast help for bookings, pickup, and payments.' : 'Clean vehicles, simple booking, and local support.' }}</h2>
+        <div class="panel-list">
+          @for (item of (isContact ? contactSupport : ['Flexible durations', 'ABA QR checkout', '24/7 support']); track item) {
+            <span>
+              <span class="material-symbols-outlined">check_circle</span>
+              {{ item }}
+            </span>
+          }
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  @if (!isContact) {
+    <section class="info-section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="info-kicker"><span></span> About Us</p>
+          <h2>Built for simple, dependable vehicle rental.</h2>
+          <p>
+            Cambo Rent helps customers compare vehicles, reserve online, and complete checkout with a focused
+            rental flow that works for short errands, business travel, family trips, and long-term needs.
+          </p>
+        </div>
+
+        <div class="stat-grid">
+          @for (stat of aboutStats; track stat.label) {
+            <article class="stat-card">
+              <strong>{{ stat.value }}</strong>
+              <span>{{ stat.label }}</span>
+            </article>
+          }
+        </div>
+
+        <div class="info-card-grid">
+          @for (feature of aboutFeatures; track feature.title) {
+            <article class="info-card">
+              <span class="material-symbols-outlined">{{ feature.icon }}</span>
+              <h3>{{ feature.title }}</h3>
+              <p>{{ feature.text }}</p>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+  } @else {
+    <section class="info-section">
+      <div class="container contact-grid">
+        <div>
+          <div class="section-heading">
+            <p class="info-kicker"><span></span> Contact Us</p>
+            <h2>Need help before or after your booking?</h2>
+            <p>
+              Send us your booking reference, pickup time, vehicle type, or payment question and the support
+              team will help you move forward.
+            </p>
+          </div>
+
+          <div class="info-card-grid contact-card-grid">
+            @for (method of contactMethods; track method.title) {
+              <article class="info-card contact-card">
+                <span class="material-symbols-outlined">{{ method.icon }}</span>
+                <div>
+                  <h3>{{ method.title }}</h3>
+                  <strong>{{ method.detail }}</strong>
+                  <p>{{ method.note }}</p>
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+
+        <aside class="support-card">
+          <p class="info-kicker"><span></span> Support Desk</p>
+          <h2>We can help with</h2>
+          <div class="support-list">
+            @for (item of contactSupport; track item) {
+              <span>
+                <span class="material-symbols-outlined">done</span>
+                {{ item }}
+              </span>
+            }
+          </div>
+          <a routerLink="/login" class="info-secondary support-link">Sign In</a>
+        </aside>
+      </div>
+    </section>
+  }
+</main>
