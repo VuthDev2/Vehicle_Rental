@@ -10,9 +10,9 @@
   <!-- ============ SIDEBAR ============ -->
   <aside
     #sidebar
-    class="fixed left-0 top-0 z-40 flex h-full w-64 flex-col transition-transform duration-300 ease-in-out"
-    [class.-translate-x-full]="isMobile && !sidebarOpen()"
-    [class.translate-x-0]="!isMobile || sidebarOpen()"
+    class="fixed left-0 top-0 z-40 flex h-full w-64 flex-col transition-transform duration-300 ease-in-out md:translate-x-0"
+    [class.-translate-x-full]="!sidebarOpen()"
+    [class.translate-x-0]="sidebarOpen()"
     style="background: var(--color-surface-deep); border-right: 1px solid var(--color-edge-deep)"
   >
     <!-- Logo -->
@@ -142,7 +142,7 @@
   </aside>
 
   <!-- ============ MAIN CONTENT ============ -->
-  <div class="flex-1 flex flex-col min-h-screen" [class.pl-64]="!isMobile" style="min-width: 0">
+  <div class="flex-1 flex flex-col min-h-screen md:pl-64" style="min-width: 0">
     <!-- Email verification banner -->
     @if (showVerifyBanner()) {
       <div
@@ -218,7 +218,7 @@
     </div>
 
     <!-- Page Content -->
-    <main class="flex-1 overflow-auto pb-24 md:pb-0">
+    <main class="flex-1 overflow-auto pb-24 md:pb-0 w-full flex flex-col">
       <router-outlet />
     </main>
   </div>

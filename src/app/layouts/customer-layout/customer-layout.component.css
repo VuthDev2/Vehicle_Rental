@@ -6,8 +6,8 @@
 }
 
 aside {
-  width: 20rem;
-  min-width: 20rem;
+  width: 16rem;
+  min-width: 16rem;
   box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
 }
 
@@ -51,8 +51,8 @@ aside {
 
 @media (max-width: 1024px) {
   aside {
-    width: 18rem;
-    min-width: 18rem;
+    width: 16rem;
+    min-width: 16rem;
   }
 }
 
