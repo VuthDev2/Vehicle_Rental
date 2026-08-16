@@ -1,1520 +1,575 @@
-<div style="background: #f8f9fa; min-height: 100vh; font-family: 'Inter', system-ui, sans-serif">
+<div class="p-6 sm:p-8 lg:p-10 min-h-full" style="background: var(--color-background); color: var(--color-on-surface)">
   <!-- ==================== HEADER ==================== -->
-  <div style="padding: 28px 32px 0">
-    <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
-      <div>
-        <div class="flex items-center gap-3">
-          <h1
-            style="
-              font-size: 26px;
-              font-weight: 800;
-              color: #1a1a2e;
-              margin: 0;
-              letter-spacing: -0.5px;
-            "
-          >
-            Settings
-          </h1>
-          <span
-            style="
-              background: #f3f0ff;
-              color: #7c3aed;
-              padding: 2px 14px;
-              border-radius: 20px;
-              font-size: 12px;
-              font-weight: 700;
-              line-height: 28px;
-            "
-            >Admin</span
-          >
-        </div>
-        <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0">
-          Configure every aspect of your vehicle rental system
-        </p>
+  <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+    <div>
+      <div class="flex items-center gap-3">
+        <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
+          System Settings
+        </h1>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+          Admin Portal
+        </span>
       </div>
+      <p class="text-sm text-on-surface-variant mt-1">
+        Configure operational rules, payment methods, vehicle thresholds, and system preferences.
+      </p>
     </div>
 
-    <!-- Search -->
-    <div style="position: relative; max-width: 480px; margin-bottom: 24px">
-      <span
-        class="material-symbols-outlined"
-        style="
-          position: absolute;
-          left: 14px;
-          top: 50%;
-          transform: translateY(-50%);
-          font-size: 20px;
-          color: #9ca3af;
-          pointer-events: none;
-        "
-        >search</span
-      >
+    <!-- Quick Search -->
+    <div class="relative w-full sm:w-72">
+      <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-lg text-outline pointer-events-none">
+        search
+      </span>
       <input
         type="text"
-        [(ngModel)]="searchQuery"
-        placeholder="Search settings..."
-        style="
-          width: 100%;
-          border: 1px solid #e5e7eb;
-          border-radius: 12px;
-          padding: 12px 16px 12px 44px;
-          font-size: 14px;
-          color: #1a1a2e;
-          outline: none;
-          box-sizing: border-box;
-          background: #ffffff;
-          transition: all 0.15s;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        "
-        onfocus="
-          this.style.borderColor = '#3980F4';
-          this.style.boxShadow = '0 0 0 3px rgba(57,128,244,0.12)';
-        "
-        onblur="
-          this.style.borderColor = '#E5E7EB';
-          this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
-        "
+        [ngModel]="searchQuery()"
+        (ngModelChange)="setSearchQuery($event)"
+        placeholder="Filter settings sections..."
+        class="w-full rounded-xl border border-edge-deep bg-surface-deep py-2 pl-10 pr-4 text-sm text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
       />
     </div>
   </div>
 
-  <!-- ==================== SYSTEM HEALTH CARD ==================== -->
-  <div style="padding: 0 32px; margin-bottom: 24px">
-    <div
-      style="
-        background: #ffffff;
-        border-radius: 14px;
-        border: 1px solid #f0f0f0;
-        padding: 16px 24px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 20px;
-      "
-    >
+  <!-- ==================== SYSTEM HEALTH STATUS BAR ==================== -->
+  <div class="mb-6 rounded-2xl border border-edge-deep bg-surface-deep p-4 sm:p-5 shadow-sm">
+    <div class="flex flex-wrap items-center justify-between gap-4 text-xs">
       <div class="flex items-center gap-2">
-        <span
-          style="
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #059669;
-            display: inline-block;
-          "
-        ></span>
-        <span style="font-size: 13px; font-weight: 600; color: #1a1a2e">System Status</span>
+        <span class="status-dot success"></span>
+        <span class="font-bold text-white uppercase tracking-wider">System Services</span>
       </div>
+
       <div class="flex items-center gap-2">
-        <span style="font-size: 12px; font-weight: 500; color: #6b7280">Server</span>
-        <span style="font-size: 12px; font-weight: 700; color: #059669"
-          >🟢 {{ health().server }}</span
-        >
+        <span class="text-on-surface-variant">Server:</span>
+        <span class="font-semibold text-primary flex items-center gap-1">
+          <span class="status-dot success"></span>
+          {{ health().server }}
+        </span>
       </div>
+
       <div class="flex items-center gap-2">
-        <span style="font-size: 12px; font-weight: 500; color: #6b7280">Database</span>
-        <span style="font-size: 12px; font-weight: 700; color: #059669"
-          >🟢 {{ health().database }}</span
-        >
+        <span class="text-on-surface-variant">Database:</span>
+        <span class="font-semibold text-primary flex items-center gap-1">
+          <span class="status-dot success"></span>
+          {{ health().database }}
+        </span>
       </div>
+
       <div class="flex items-center gap-2">
-        <span style="font-size: 12px; font-weight: 500; color: #6b7280">Storage</span>
-        <span style="font-size: 12px; font-weight: 700; color: #1a1a2e"
-          >{{ health().storage }}%</span
-        >
-        <div
-          style="
-            width: 60px;
-            height: 6px;
-            border-radius: 3px;
-            background: #f3f4f6;
-            overflow: hidden;
-          "
-        >
+        <span class="text-on-surface-variant">API Gateway:</span>
+        <span class="font-semibold text-primary flex items-center gap-1">
+          <span class="status-dot success"></span>
+          {{ health().api }}
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span class="text-on-surface-variant">Storage ({{ health().storage }}%):</span>
+        <div class="w-24 h-2 rounded-full bg-white/10 overflow-hidden">
           <div
-            style="height: 100%; border-radius: 3px; width: {{ health().storage }}%; background: {{
-              health().storage > 80 ? '#DC2626' : health().storage > 60 ? '#F59E0B' : '#059669'
-            }};"
+            class="h-full rounded-full transition-all duration-500"
+            [style.width.%]="health().storage"
+            [style.background]="health().storage > 85 ? '#ef4444' : health().storage > 65 ? '#f59e0b' : '#10b981'"
           ></div>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span style="font-size: 12px; font-weight: 500; color: #6b7280">API</span>
-        <span style="font-size: 12px; font-weight: 700; color: #059669">🟢 {{ health().api }}</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span style="font-size: 12px; font-weight: 500; color: #6b7280">Backup</span>
-        <span style="font-size: 12px; font-weight: 600; color: #6b7280">{{
-          health().lastBackup
-        }}</span>
+
+      <div class="flex items-center gap-1.5 text-on-surface-variant">
+        <span class="material-symbols-outlined text-sm">schedule</span>
+        <span>Backup: {{ health().lastBackup }}</span>
       </div>
     </div>
   </div>
 
-  <!-- ==================== TWO-COLUMN LAYOUT ==================== -->
-  <div style="display: flex; gap: 24px; padding: 0 32px 32px; align-items: flex-start">
-    <!-- ==================== SIDEBAR NAVIGATION ==================== -->
-    <div style="width: 240px; flex-shrink: 0; position: sticky; top: 24px">
-      <nav
-        style="
-          background: #ffffff;
-          border-radius: 14px;
-          border: 1px solid #f0f0f0;
-          padding: 8px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        "
-      >
-        @for (item of navItems; track item.id) {
+  <!-- ==================== TWO-COLUMN SETTINGS WORKSPACE ==================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+    <!-- Navigation Sidebar -->
+    <div class="lg:col-span-1 space-y-4 sticky top-6">
+      <div class="rounded-2xl border border-edge-deep bg-surface-deep p-2 space-y-1 shadow-sm">
+        @for (item of filteredNavItems(); track item.id) {
           <button
+            type="button"
             (click)="activeSection.set(item.id)"
-            [style.background]="activeSection() === item.id ? '#E5EEFF' : 'transparent'"
-            [style.color]="activeSection() === item.id ? '#005DAC' : '#374151'"
-            style="
-              width: 100%;
-              border: none;
-              border-radius: 10px;
-              padding: 10px 14px;
-              font-size: 13px;
-              font-weight: 600;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              gap: 10px;
-              transition: all 0.15s;
-              text-align: left;
-            "
-            (mouseover)="navHover($event, item.id)"
-            (mouseout)="navUnhover($event, item.id)"
+            class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all text-left"
+            [class.bg-primary/15]="activeSection() === item.id"
+            [class.text-primary]="activeSection() === item.id"
+            [class.text-on-surface-variant]="activeSection() !== item.id"
+            [class.hover:bg-white/5]="activeSection() !== item.id"
+            [class.hover:text-white]="activeSection() !== item.id"
           >
-            <span class="material-symbols-outlined" style="font-size: 18px">{{ item.icon }}</span>
-            {{ item.label }}
+            <span class="material-symbols-outlined text-lg">{{ item.icon }}</span>
+            <span class="truncate">{{ item.label }}</span>
           </button>
         }
-      </nav>
+        @if (filteredNavItems().length === 0) {
+          <div class="p-4 text-center text-xs text-on-surface-variant">
+            No sections match "{{ searchQuery() }}"
+          </div>
+        }
+      </div>
 
-      <!-- Maintenance Mode -->
-      <div
-        style="
-          background: #ffffff;
-          border-radius: 14px;
-          border: 1px solid #f0f0f0;
-          padding: 16px;
-          margin-top: 16px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        "
-      >
+      <!-- Maintenance Mode Toggle -->
+      <div class="rounded-2xl border border-edge-deep bg-surface-deep p-4 shadow-sm">
         <div class="flex items-center justify-between mb-2">
-          <span style="font-size: 13px; font-weight: 700; color: #1a1a2e">Maintenance Mode</span>
-          <label
-            style="
-              position: relative;
-              display: inline-block;
-              width: 44px;
-              height: 24px;
-              cursor: pointer;
-            "
+          <span class="text-xs font-bold uppercase tracking-wider text-white">Maintenance Mode</span>
+          <button
+            type="button"
+            (click)="toggleMaintenanceMode()"
+            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+            [class.bg-red-500]="maintenanceMode()"
+            [class.bg-white/20]="!maintenanceMode()"
           >
-            <input
-              type="checkbox"
-              [checked]="maintenanceMode()"
-              (change)="maintenanceMode.set(!maintenanceMode()); markDirty()"
-              style="opacity: 0; width: 0; height: 0; position: absolute"
-            />
             <span
-              style="position: absolute; inset: 0; background: {{
-                maintenanceMode() ? '#DC2626' : '#D1D5DB'
-              }}; border-radius: 12px; transition: background 0.2s;"
-            >
-              <span
-                style="position: absolute; top: 2px; left: {{
-                  maintenanceMode() ? '22px' : '2px'
-                }}; width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
-              ></span>
-            </span>
-          </label>
+              class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+              [class.translate-x-6]="maintenanceMode()"
+              [class.translate-x-1]="!maintenanceMode()"
+            ></span>
+          </button>
         </div>
         @if (maintenanceMode()) {
           <input
             type="text"
-            [(ngModel)]="maintenanceMessage"
-            placeholder="Custom maintenance message..."
-            style="
-              width: 100%;
-              border: 1px solid #e5e7eb;
-              border-radius: 8px;
-              padding: 8px 12px;
-              font-size: 12px;
-              outline: none;
-              box-sizing: border-box;
-              margin-top: 8px;
-            "
-            (input)="markDirty()"
+            [ngModel]="maintenanceMessage()"
+            (ngModelChange)="setMaintenanceMessage($event)"
+            placeholder="Custom maintenance notice for visitors..."
+            class="w-full mt-2 rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-white placeholder:text-red-300 focus:outline-none"
           />
         }
-        <p style="font-size: 11px; color: #6b7280; margin: 6px 0 0">
-          When enabled, customers see a maintenance notice.
+        <p class="text-[11px] text-on-surface-variant mt-2 leading-relaxed">
+          When activated, customer portals display a service suspension banner while admins retain access.
         </p>
       </div>
     </div>
 
-    <!-- ==================== CONTENT AREA ==================== -->
-    <div style="flex: 1; min-width: 0">
+    <!-- Main Content Area -->
+    <div class="lg:col-span-3">
       @switch (activeSection()) {
-        <!-- ==================== 1. GENERAL ==================== -->
+        <!-- 1. GENERAL -->
         @case ('general') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #e5eeff;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #005dac"
-                  >settings</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">settings</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  General Settings
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Company information and business configuration
-                </p>
+                <h2 class="text-lg font-bold text-white">General Information</h2>
+                <p class="text-xs text-on-surface-variant">Legal entity info and contact coordinates</p>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-5">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Company Name</label
-                >
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Company Name</label>
                 <input
                   type="text"
-                  [value]="cfg.companyName"
-                  (input)="patch('companyName', $any($event.target).value)"
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    color: #1a1a2e;
-                    outline: none;
-                    box-sizing: border-box;
-                    background: #f9fafb;
-                    transition: all 0.15s;
-                  "
-                  onfocus="
-                    this.style.borderColor = '#3980F4';
-                    this.style.boxShadow = '0 0 0 3px rgba(57,128,244,0.12)';
-                    this.style.background = '#FFFFFF';
-                  "
-                  onblur="
-                    this.style.borderColor = '#E5E7EB';
-                    this.style.boxShadow = 'none';
-                    this.style.background = '#F9FAFB';
-                  "
+                  [ngModel]="cfg.companyName"
+                  (ngModelChange)="patch('companyName', $event)"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface focus:border-primary focus:outline-none"
                 />
               </div>
               <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Business Email</label
-                >
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Business Email</label>
                 <input
                   type="email"
-                  [value]="cfg.businessEmail"
-                  (input)="patch('businessEmail', $any($event.target).value)"
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    color: #1a1a2e;
-                    outline: none;
-                    box-sizing: border-box;
-                    background: #f9fafb;
-                    transition: all 0.15s;
-                  "
-                  onfocus="
-                    this.style.borderColor = '#3980F4';
-                    this.style.boxShadow = '0 0 0 3px rgba(57,128,244,0.12)';
-                    this.style.background = '#FFFFFF';
-                  "
-                  onblur="
-                    this.style.borderColor = '#E5E7EB';
-                    this.style.boxShadow = 'none';
-                    this.style.background = '#F9FAFB';
-                  "
+                  [ngModel]="cfg.businessEmail"
+                  (ngModelChange)="patch('businessEmail', $event)"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface focus:border-primary focus:outline-none"
                 />
               </div>
               <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Phone Number</label
-                >
-                <input
-                  type="tel"
-                  [value]="cfg.phone"
-                  (input)="patch('phone', $any($event.target).value)"
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    color: #1a1a2e;
-                    outline: none;
-                    box-sizing: border-box;
-                    background: #f9fafb;
-                    transition: all 0.15s;
-                  "
-                  onfocus="
-                    this.style.borderColor = '#3980F4';
-                    this.style.boxShadow = '0 0 0 3px rgba(57,128,244,0.12)';
-                    this.style.background = '#FFFFFF';
-                  "
-                  onblur="
-                    this.style.borderColor = '#E5E7EB';
-                    this.style.boxShadow = 'none';
-                    this.style.background = '#F9FAFB';
-                  "
-                />
-              </div>
-              <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Website</label
-                >
-                <input
-                  type="url"
-                  [value]="cfg.website"
-                  (input)="patch('website', $any($event.target).value)"
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    color: #1a1a2e;
-                    outline: none;
-                    box-sizing: border-box;
-                    background: #f9fafb;
-                    transition: all 0.15s;
-                  "
-                  onfocus="
-                    this.style.borderColor = '#3980F4';
-                    this.style.boxShadow = '0 0 0 3px rgba(57,128,244,0.12)';
-                    this.style.background = '#FFFFFF';
-                  "
-                  onblur="
-                    this.style.borderColor = '#E5E7EB';
-                    this.style.boxShadow = 'none';
-                    this.style.background = '#F9FAFB';
-                  "
-                />
-              </div>
-              <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Address</label
-                >
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Support Phone</label>
                 <input
                   type="text"
-                  [value]="cfg.address"
-                  (input)="patch('address', $any($event.target).value)"
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    color: #1a1a2e;
-                    outline: none;
-                    box-sizing: border-box;
-                    background: #f9fafb;
-                    transition: all 0.15s;
-                  "
-                  onfocus="
-                    this.style.borderColor = '#3980F4';
-                    this.style.boxShadow = '0 0 0 3px rgba(57,128,244,0.12)';
-                    this.style.background = '#FFFFFF';
-                  "
-                  onblur="
-                    this.style.borderColor = '#E5E7EB';
-                    this.style.boxShadow = 'none';
-                    this.style.background = '#F9FAFB';
-                  "
+                  [ngModel]="cfg.phone"
+                  (ngModelChange)="patch('phone', $event)"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface focus:border-primary focus:outline-none"
                 />
               </div>
               <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Tax ID</label
-                >
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Official Website</label>
                 <input
                   type="text"
-                  [value]="cfg.taxId"
-                  (input)="patch('taxId', $any($event.target).value)"
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    color: #1a1a2e;
-                    outline: none;
-                    box-sizing: border-box;
-                    background: #f9fafb;
-                    transition: all 0.15s;
-                  "
-                  onfocus="
-                    this.style.borderColor = '#3980F4';
-                    this.style.boxShadow = '0 0 0 3px rgba(57,128,244,0.12)';
-                    this.style.background = '#FFFFFF';
-                  "
-                  onblur="
-                    this.style.borderColor = '#E5E7EB';
-                    this.style.boxShadow = 'none';
-                    this.style.background = '#F9FAFB';
-                  "
+                  [ngModel]="cfg.website"
+                  (ngModelChange)="patch('website', $event)"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface focus:border-primary focus:outline-none"
+                />
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Headquarters Address</label>
+                <input
+                  type="text"
+                  [ngModel]="cfg.address"
+                  (ngModelChange)="patch('address', $event)"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface focus:border-primary focus:outline-none"
                 />
               </div>
               <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Currency</label
-                >
-                <select
-                  [value]="cfg.currency"
-                  (change)="patch('currency', $any($event.target).value)"
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    color: #1a1a2e;
-                    outline: none;
-                    background: #f9fafb;
-                    cursor: pointer;
-                    transition: all 0.15s;
-                  "
-                  onfocus="
-                    this.style.borderColor = '#3980F4';
-                    this.style.boxShadow = '0 0 0 3px rgba(57,128,244,0.12)';
-                    this.style.background = '#FFFFFF';
-                  "
-                  onblur="
-                    this.style.borderColor = '#E5E7EB';
-                    this.style.boxShadow = 'none';
-                    this.style.background = '#F9FAFB';
-                  "
-                >
-                  <option value="USD">USD — US Dollar</option>
-                  <option value="KHR">KHR — Cambodian Riel</option>
-                  <option value="EUR">EUR — Euro</option>
-                  <option value="THB">THB — Thai Baht</option>
-                </select>
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">VAT / Tax ID</label>
+                <input
+                  type="text"
+                  [ngModel]="cfg.taxId"
+                  (ngModelChange)="patch('taxId', $event)"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface focus:border-primary focus:outline-none"
+                />
               </div>
               <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Timezone</label
-                >
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Operating Timezone</label>
                 <select
-                  [value]="cfg.timezone"
-                  (change)="patch('timezone', $any($event.target).value)"
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    color: #1a1a2e;
-                    outline: none;
-                    background: #f9fafb;
-                    cursor: pointer;
-                    transition: all 0.15s;
-                  "
-                  onfocus="
-                    this.style.borderColor = '#3980F4';
-                    this.style.boxShadow = '0 0 0 3px rgba(57,128,244,0.12)';
-                    this.style.background = '#FFFFFF';
-                  "
-                  onblur="
-                    this.style.borderColor = '#E5E7EB';
-                    this.style.boxShadow = 'none';
-                    this.style.background = '#F9FAFB';
-                  "
+                  [ngModel]="cfg.timezone"
+                  (ngModelChange)="patch('timezone', $event)"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface focus:border-primary focus:outline-none"
                 >
-                  <option value="Asia/Phnom_Penh">Asia/Phnom Penh (UTC+7)</option>
-                  <option value="Asia/Bangkok">Asia/Bangkok (UTC+7)</option>
-                  <option value="Asia/Singapore">Asia/Singapore (UTC+8)</option>
-                  <option value="UTC">UTC</option>
+                  <option value="Asia/Phnom_Penh">Asia/Phnom Penh (GMT+7)</option>
+                  <option value="Asia/Bangkok">Asia/Bangkok (GMT+7)</option>
+                  <option value="Asia/Singapore">Asia/Singapore (GMT+8)</option>
                 </select>
-              </div>
-            </div>
-            <div class="mt-6 pt-5" style="border-top: 1px solid #f3f4f6">
-              <label
-                style="
-                  display: block;
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: #374151;
-                  margin-bottom: 5px;
-                  letter-spacing: 0.3px;
-                  text-transform: uppercase;
-                "
-                >Business Hours</label
-              >
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <span style="font-size: 12px; color: #6b7280">Weekdays</span>
-                  <input
-                    type="text"
-                    [value]="cfg.businessHours.weekdays"
-                    (input)="patchNested('businessHours', 'weekdays', $any($event.target).value)"
-                    style="
-                      width: 100%;
-                      border: 1px solid #e5e7eb;
-                      border-radius: 8px;
-                      padding: 8px 12px;
-                      font-size: 13px;
-                      outline: none;
-                      box-sizing: border-box;
-                      margin-top: 4px;
-                      background: #f9fafb;
-                    "
-                  />
-                </div>
-                <div>
-                  <span style="font-size: 12px; color: #6b7280">Weekends</span>
-                  <input
-                    type="text"
-                    [value]="cfg.businessHours.weekends"
-                    (input)="patchNested('businessHours', 'weekends', $any($event.target).value)"
-                    style="
-                      width: 100%;
-                      border: 1px solid #e5e7eb;
-                      border-radius: 8px;
-                      padding: 8px 12px;
-                      font-size: 13px;
-                      outline: none;
-                      box-sizing: border-box;
-                      margin-top: 4px;
-                      background: #f9fafb;
-                    "
-                  />
-                </div>
               </div>
             </div>
           </div>
         }
 
-        <!-- ==================== 2. COMPANY BRANDING ==================== -->
+        <!-- 2. BRANDING -->
         @case ('branding') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #f3f0ff;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #7c3aed"
-                  >palette</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">palette</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Company Branding
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Customize your brand appearance
-                </p>
+                <h2 class="text-lg font-bold text-white">Company Branding</h2>
+                <p class="text-xs text-on-surface-variant">Logos, visual identity, and invoice typography</p>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-5 mb-6">
-              <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Primary Color</label
-                >
-                <div class="flex items-center gap-3">
-                  <input
-                    type="color"
-                    [value]="cfg.branding.primaryColor"
-                    (input)="patchNested('branding', 'primaryColor', $any($event.target).value)"
-                    style="
-                      width: 48px;
-                      height: 48px;
-                      border: 1px solid #e5e7eb;
-                      border-radius: 10px;
-                      padding: 2px;
-                      cursor: pointer;
-                      background: none;
-                    "
-                  />
-                  <input
-                    type="text"
-                    [value]="cfg.branding.primaryColor"
-                    (input)="patchNested('branding', 'primaryColor', $any($event.target).value)"
-                    style="
-                      flex: 1;
-                      border: 1px solid #e5e7eb;
-                      border-radius: 10px;
-                      padding: 10px 14px;
-                      font-size: 13px;
-                      outline: none;
-                      background: #f9fafb;
-                    "
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Secondary Color</label
-                >
-                <div class="flex items-center gap-3">
-                  <input
-                    type="color"
-                    [value]="cfg.branding.secondaryColor"
-                    (input)="patchNested('branding', 'secondaryColor', $any($event.target).value)"
-                    style="
-                      width: 48px;
-                      height: 48px;
-                      border: 1px solid #e5e7eb;
-                      border-radius: 10px;
-                      padding: 2px;
-                      cursor: pointer;
-                      background: none;
-                    "
-                  />
-                  <input
-                    type="text"
-                    [value]="cfg.branding.secondaryColor"
-                    (input)="patchNested('branding', 'secondaryColor', $any($event.target).value)"
-                    style="
-                      flex: 1;
-                      border: 1px solid #e5e7eb;
-                      border-radius: 10px;
-                      padding: 10px 14px;
-                      font-size: 13px;
-                      outline: none;
-                      background: #f9fafb;
-                    "
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="grid grid-cols-4 gap-4 mb-5">
-              @for (item of brandingItems; track item.label) {
-                <div
-                  style="
-                    border: 1px dashed #e5e7eb;
-                    border-radius: 10px;
-                    padding: 20px;
-                    text-align: center;
-                    cursor: pointer;
-                    transition: all 0.15s;
-                    background: #f9fafb;
-                  "
-                  onmouseover="
-                    this.style.borderColor = '#3980F4';
-                    this.style.background = '#EFF6FF';
-                  "
-                  onmouseout="
-                    this.style.borderColor = '#E5E7EB';
-                    this.style.background = '#F9FAFB';
-                  "
-                >
-                  <span
-                    class="material-symbols-outlined"
-                    style="font-size: 28px; color: #9ca3af; display: block; margin-bottom: 8px"
-                    >{{ item.icon }}</span
-                  >
-                  <span style="font-size: 12px; font-weight: 600; color: #374151">{{
-                    item.label
-                  }}</span>
-                  <span style="font-size: 11px; color: #9ca3af; display: block; margin-top: 2px"
-                    >Click to upload</span
-                  >
-                </div>
-              }
-            </div>
-            <div>
-              <label
-                style="
-                  display: block;
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: #374151;
-                  margin-bottom: 5px;
-                  letter-spacing: 0.3px;
-                  text-transform: uppercase;
-                "
-                >Footer Text</label
-              >
-              <input
-                type="text"
-                [value]="cfg.branding.footerText"
-                (input)="patchNested('branding', 'footerText', $any($event.target).value)"
-                style="
-                  width: 100%;
-                  border: 1px solid #e5e7eb;
-                  border-radius: 10px;
-                  padding: 10px 14px;
-                  font-size: 14px;
-                  outline: none;
-                  box-sizing: border-box;
-                  background: #f9fafb;
-                "
-              />
-            </div>
-          </div>
-        }
 
-        <!-- ==================== 3. BOOKING ==================== -->
-        @case ('booking') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #fff3e0;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #e65100"
-                  >receipt_long</span
-                >
-              </div>
-              <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Booking Settings
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Configure booking rules and policies
-                </p>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-5">
-              @for (field of bookingFields; track field.key) {
-                <div>
-                  <label
-                    style="
-                      display: block;
-                      font-size: 12px;
-                      font-weight: 700;
-                      color: #374151;
-                      margin-bottom: 5px;
-                      letter-spacing: 0.3px;
-                      text-transform: uppercase;
-                    "
-                    >{{ field.label }}</label
-                  >
-                  @if (field.type === 'toggle') {
-                    <label
-                      style="
-                        position: relative;
-                        display: inline-block;
-                        width: 44px;
-                        height: 24px;
-                        cursor: pointer;
-                      "
-                    >
-                      <input
-                        type="checkbox"
-                        [checked]="$any(cfg.booking)[field.key]"
-                        (change)="patchNested('booking', field.key, !$any(cfg.booking)[field.key])"
-                        style="opacity: 0; width: 0; height: 0; position: absolute"
-                      />
-                      <span
-                        style="position: absolute; inset: 0; background: {{
-                          $any(cfg.booking)[field.key] ? '#005DAC' : '#D1D5DB'
-                        }}; border-radius: 12px; transition: background 0.2s;"
-                      >
-                        <span
-                          style="position: absolute; top: 2px; left: {{
-                            $any(cfg.booking)[field.key] ? '22px' : '2px'
-                          }}; width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
-                        ></span>
-                      </span>
-                    </label>
-                  } @else {
-                    <input
-                      type="{{ field.type }}"
-                      [value]="$any(cfg.booking)[field.key]"
-                      (input)="
-                        patchNested(
-                          'booking',
-                          field.key,
-                          field.type === 'number'
-                            ? Number($any($event.target).value)
-                            : $any($event.target).value
-                        )
-                      "
-                      style="
-                        width: 100%;
-                        border: 1px solid #e5e7eb;
-                        border-radius: 10px;
-                        padding: 10px 14px;
-                        font-size: 14px;
-                        color: #1a1a2e;
-                        outline: none;
-                        box-sizing: border-box;
-                        background: #f9fafb;
-                        transition: all 0.15s;
-                      "
-                      onfocus="
-                        this.style.borderColor = '#3980F4';
-                        this.style.boxShadow = '0 0 0 3px rgba(57,128,244,0.12)';
-                        this.style.background = '#FFFFFF';
-                      "
-                      onblur="
-                        this.style.borderColor = '#E5E7EB';
-                        this.style.boxShadow = 'none';
-                        this.style.background = '#F9FAFB';
-                      "
-                    />
-                  }
-                </div>
-              }
-            </div>
-          </div>
-        }
-
-        <!-- ==================== 4. VEHICLES ==================== -->
-        @case ('vehicles') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #e7f5ed;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #059669"
-                  >directions_car</span
-                >
-              </div>
-              <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Vehicle Settings
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Configure fleet behavior and rental options
-                </p>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-5">
-              @for (field of vehicleFields; track field.key) {
-                <div>
-                  <label
-                    style="
-                      display: block;
-                      font-size: 12px;
-                      font-weight: 700;
-                      color: #374151;
-                      margin-bottom: 5px;
-                      letter-spacing: 0.3px;
-                      text-transform: uppercase;
-                    "
-                    >{{ field.label }}</label
-                  >
-                  @if (field.type === 'toggle') {
-                    <label
-                      style="
-                        position: relative;
-                        display: inline-block;
-                        width: 44px;
-                        height: 24px;
-                        cursor: pointer;
-                      "
-                    >
-                      <input
-                        type="checkbox"
-                        [checked]="$any(cfg.vehicles)[field.key]"
-                        (change)="
-                          patchNested('vehicles', field.key, !$any(cfg.vehicles)[field.key])
-                        "
-                        style="opacity: 0; width: 0; height: 0; position: absolute"
-                      />
-                      <span
-                        style="position: absolute; inset: 0; background: {{
-                          $any(cfg.vehicles)[field.key] ? '#005DAC' : '#D1D5DB'
-                        }}; border-radius: 12px; transition: background 0.2s;"
-                      >
-                        <span
-                          style="position: absolute; top: 2px; left: {{
-                            $any(cfg.vehicles)[field.key] ? '22px' : '2px'
-                          }}; width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
-                        ></span>
-                      </span>
-                    </label>
-                  } @else {
-                    <input
-                      type="{{ field.type }}"
-                      [value]="$any(cfg.vehicles)[field.key]"
-                      (input)="
-                        patchNested(
-                          'vehicles',
-                          field.key,
-                          field.type === 'number'
-                            ? Number($any($event.target).value)
-                            : $any($event.target).value
-                        )
-                      "
-                      style="
-                        width: 100%;
-                        border: 1px solid #e5e7eb;
-                        border-radius: 10px;
-                        padding: 10px 14px;
-                        font-size: 14px;
-                        color: #1a1a2e;
-                        outline: none;
-                        box-sizing: border-box;
-                        background: #f9fafb;
-                      "
-                    />
-                  }
-                </div>
-              }
-            </div>
-          </div>
-        }
-
-        <!-- ==================== 5. PAYMENTS ==================== -->
-        @case ('payments') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #e7f5ed;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #059669"
-                  >payments</span
-                >
-              </div>
-              <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Payment Settings
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Configure payment options and financial rules
-                </p>
-              </div>
-            </div>
-            <div class="mb-6">
-              <label
-                style="
-                  display: block;
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: #374151;
-                  margin-bottom: 10px;
-                  letter-spacing: 0.3px;
-                  text-transform: uppercase;
-                "
-                >Accepted Payment Methods</label
-              >
-              <div class="grid grid-cols-2 gap-3">
-                @for (method of paymentMethods; track method.key) {
-                  <div
-                    class="flex items-center justify-between"
-                    style="
-                      border: 1px solid #e5e7eb;
-                      border-radius: 10px;
-                      padding: 12px 16px;
-                      background: #f9fafb;
-                    "
-                  >
-                    <div class="flex items-center gap-3">
-                      <div
-                        style="width: 36px; height: 36px; border-radius: 8px; background: {{
-                          method.bg
-                        }}; display: flex; align-items: center; justify-content: center;"
-                      >
-                        <span
-                          class="material-symbols-outlined"
-                          style="font-size: 18px; color: {{ method.color }};"
-                          >{{ method.icon }}</span
-                        >
-                      </div>
-                      <span style="font-size: 13px; font-weight: 600; color: #1a1a2e">{{
-                        method.label
-                      }}</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              @for (brand of brandingItems; track brand.label) {
+                <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary text-2xl">{{ brand.icon }}</span>
+                    <div>
+                      <p class="text-sm font-semibold text-white">{{ brand.label }}</p>
+                      <p class="text-[11px] text-on-surface-variant">PNG or SVG up to 2MB</p>
                     </div>
-                    <label
-                      style="
-                        position: relative;
-                        display: inline-block;
-                        width: 44px;
-                        height: 24px;
-                        cursor: pointer;
-                      "
-                    >
-                      <input
-                        type="checkbox"
-                        [checked]="$any(cfg.payments.methods)[method.key]"
-                        (change)="togglePaymentMethod(method.key)"
-                        style="opacity: 0; width: 0; height: 0; position: absolute"
-                      />
-                      <span
-                        style="position: absolute; inset: 0; background: {{
-                          $any(cfg.payments.methods)[method.key] ? '#005DAC' : '#D1D5DB'
-                        }}; border-radius: 12px; transition: background 0.2s;"
-                      >
-                        <span
-                          style="position: absolute; top: 2px; left: {{
-                            $any(cfg.payments.methods)[method.key] ? '22px' : '2px'
-                          }}; width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
-                        ></span>
-                      </span>
-                    </label>
                   </div>
-                }
+                  <button type="button" (click)="showToast('Media upload dialog ready')" class="btn-secondary text-xs px-3 py-1.5 rounded-lg">
+                    Upload
+                  </button>
+                </div>
+              }
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-edge-deep">
+              <div>
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Brand Primary Color</label>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    [ngModel]="cfg.branding.primaryColor"
+                    (ngModelChange)="patchNested('branding', 'primaryColor', $event)"
+                    class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    type="text"
+                    [ngModel]="cfg.branding.primaryColor"
+                    (ngModelChange)="patchNested('branding', 'primaryColor', $event)"
+                    class="flex-1 rounded-xl border border-edge-deep bg-surface-deep-raised p-2.5 text-sm text-on-surface uppercase"
+                  />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Brand Accent Color</label>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="color"
+                    [ngModel]="cfg.branding.secondaryColor"
+                    (ngModelChange)="patchNested('branding', 'secondaryColor', $event)"
+                    class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    type="text"
+                    [ngModel]="cfg.branding.secondaryColor"
+                    (ngModelChange)="patchNested('branding', 'secondaryColor', $event)"
+                    class="flex-1 rounded-xl border border-edge-deep bg-surface-deep-raised p-2.5 text-sm text-on-surface uppercase"
+                  />
+                </div>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Footer Copyright Line</label>
+                <input
+                  type="text"
+                  [ngModel]="cfg.branding.footerText"
+                  (ngModelChange)="patchNested('branding', 'footerText', $event)"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface focus:border-primary focus:outline-none"
+                />
               </div>
             </div>
-            <div class="grid grid-cols-3 gap-5">
+          </div>
+        }
+
+        <!-- 3. BOOKING RULES -->
+        @case ('booking') {
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">receipt_long</span>
+              </div>
               <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Tax Percentage</label
-                >
+                <h2 class="text-lg font-bold text-white">Booking Rules & Constraints</h2>
+                <p class="text-xs text-on-surface-variant">Duration limits, grace periods, and approval workflows</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              @for (field of bookingFields; track field.key) {
+                <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                  <div>
+                    <label class="text-xs font-semibold text-white block">{{ field.label }}</label>
+                    <span class="text-[11px] text-on-surface-variant">System parameter</span>
+                  </div>
+
+                  @if (field.type === 'toggle') {
+                    <button
+                      type="button"
+                      (click)="patchNested('booking', field.key, !cfg.booking[field.key])"
+                      class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                      [class.bg-primary]="cfg.booking[field.key]"
+                      [class.bg-white/20]="!cfg.booking[field.key]"
+                    >
+                      <span
+                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                        [class.translate-x-6]="cfg.booking[field.key]"
+                        [class.translate-x-1]="!cfg.booking[field.key]"
+                      ></span>
+                    </button>
+                  } @else {
+                    <input
+                      type="number"
+                      [ngModel]="cfg.booking[field.key]"
+                      (ngModelChange)="patchNested('booking', field.key, Number($event))"
+                      class="w-24 rounded-lg border border-edge-deep bg-surface-deep p-2 text-sm text-right text-on-surface focus:border-primary focus:outline-none"
+                    />
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- 4. VEHICLES -->
+        @case ('vehicles') {
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">directions_car</span>
+              </div>
+              <div>
+                <h2 class="text-lg font-bold text-white">Vehicle Management Rules</h2>
+                <p class="text-xs text-on-surface-variant">Inspection checks, rental periods, and maintenance thresholds</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              @for (field of vehicleFields; track field.key) {
+                <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                  <div>
+                    <label class="text-xs font-semibold text-white block">{{ field.label }}</label>
+                    <span class="text-[11px] text-on-surface-variant">Fleet automation parameter</span>
+                  </div>
+
+                  @if (field.type === 'toggle') {
+                    <button
+                      type="button"
+                      (click)="patchNested('vehicles', field.key, !cfg.vehicles[field.key])"
+                      class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                      [class.bg-primary]="cfg.vehicles[field.key]"
+                      [class.bg-white/20]="!cfg.vehicles[field.key]"
+                    >
+                      <span
+                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                        [class.translate-x-6]="cfg.vehicles[field.key]"
+                        [class.translate-x-1]="!cfg.vehicles[field.key]"
+                      ></span>
+                    </button>
+                  } @else if (field.type === 'number') {
+                    <input
+                      type="number"
+                      [ngModel]="cfg.vehicles[field.key]"
+                      (ngModelChange)="patchNested('vehicles', field.key, Number($event))"
+                      class="w-28 rounded-lg border border-edge-deep bg-surface-deep p-2 text-sm text-right text-on-surface focus:border-primary focus:outline-none"
+                    />
+                  } @else {
+                    <input
+                      type="text"
+                      [ngModel]="cfg.vehicles[field.key]"
+                      (ngModelChange)="patchNested('vehicles', field.key, $event)"
+                      class="w-32 rounded-lg border border-edge-deep bg-surface-deep p-2 text-sm text-on-surface focus:border-primary focus:outline-none"
+                    />
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- 5. PAYMENTS -->
+        @case ('payments') {
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">payments</span>
+              </div>
+              <div>
+                <h2 class="text-lg font-bold text-white">Payment Gateways & Methods</h2>
+                <p class="text-xs text-on-surface-variant">Enable checkout methods, deposits, and tax rules</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              @for (m of paymentMethods; track m.key) {
+                <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg flex items-center justify-center" [style.background]="m.bg">
+                      <span class="material-symbols-outlined text-lg" [style.color]="m.color">{{ m.icon }}</span>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-white">{{ m.label }}</p>
+                      <p class="text-[11px] text-on-surface-variant">
+                        {{ cfg.payments?.methods?.[m.key] ? 'Active Gateway' : 'Disabled' }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    (click)="togglePaymentMethod(m.key)"
+                    class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                    [class.bg-primary]="cfg.payments?.methods?.[m.key]"
+                    [class.bg-white/20]="!cfg.payments?.methods?.[m.key]"
+                  >
+                    <span
+                      class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                      [class.translate-x-6]="cfg.payments?.methods?.[m.key]"
+                      [class.translate-x-1]="!cfg.payments?.methods?.[m.key]"
+                    ></span>
+                  </button>
+                </div>
+              }
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-edge-deep">
+              <div>
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Tax Percentage (%)</label>
                 <input
                   type="number"
-                  [value]="cfg.payments.taxPercentage"
-                  (input)="
-                    patchNested('payments', 'taxPercentage', Number($any($event.target).value))
-                  "
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    outline: none;
-                    box-sizing: border-box;
-                    background: #f9fafb;
-                  "
+                  [ngModel]="cfg.payments.taxPercentage"
+                  (ngModelChange)="patchNested('payments', 'taxPercentage', Number($event))"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface"
                 />
               </div>
               <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Deposit Percentage</label
-                >
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Required Deposit (%)</label>
                 <input
                   type="number"
-                  [value]="cfg.payments.depositPercentage"
-                  (input)="
-                    patchNested('payments', 'depositPercentage', Number($any($event.target).value))
-                  "
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    outline: none;
-                    box-sizing: border-box;
-                    background: #f9fafb;
-                  "
+                  [ngModel]="cfg.payments.depositPercentage"
+                  (ngModelChange)="patchNested('payments', 'depositPercentage', Number($event))"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface"
                 />
               </div>
               <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 5px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Default Currency</label
-                >
+                <label class="block text-xs font-semibold text-on-surface-variant mb-1.5">Default Currency</label>
                 <select
-                  [value]="cfg.payments.defaultCurrency"
-                  (change)="patchNested('payments', 'defaultCurrency', $any($event.target).value)"
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    outline: none;
-                    background: #f9fafb;
-                    cursor: pointer;
-                  "
+                  [ngModel]="cfg.payments.defaultCurrency"
+                  (ngModelChange)="patchNested('payments', 'defaultCurrency', $event)"
+                  class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised p-3 text-sm text-on-surface"
                 >
-                  <option value="USD">USD</option>
-                  <option value="KHR">KHR</option>
-                  <option value="EUR">EUR</option>
-                  <option value="THB">THB</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="KHR">KHR (Riel)</option>
                 </select>
               </div>
             </div>
           </div>
         }
 
-        <!-- ==================== 6. NOTIFICATIONS ==================== -->
+        <!-- 6. NOTIFICATIONS -->
         @case ('notifications') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #e5eeff;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #005dac"
-                  >notifications</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">notifications</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Notification Settings
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Manage email and SMS notification preferences
-                </p>
+                <h2 class="text-lg font-bold text-white">Notifications & Alerts</h2>
+                <p class="text-xs text-on-surface-variant">Automated trigger alerts for customers and operations</p>
               </div>
             </div>
-            <div class="grid grid-cols-3 gap-4">
-              @for (n of notificationItems; track n.key) {
-                <div
-                  style="
-                    border: 1px solid #f0f0f0;
-                    border-radius: 12px;
-                    padding: 18px;
-                    background: #fafbfc;
-                  "
-                >
-                  <div class="flex items-center justify-between mb-2">
-                    <span style="font-size: 13px; font-weight: 700; color: #1a1a2e">{{
-                      n.label
-                    }}</span>
-                    <label
-                      style="
-                        position: relative;
-                        display: inline-block;
-                        width: 44px;
-                        height: 24px;
-                        cursor: pointer;
-                      "
-                    >
-                      <input
-                        type="checkbox"
-                        [checked]="$any(cfg.notifications)[n.key]"
-                        (change)="toggleNotif(n.key)"
-                        style="opacity: 0; width: 0; height: 0; position: absolute"
-                      />
-                      <span
-                        style="position: absolute; inset: 0; background: {{
-                          $any(cfg.notifications)[n.key] ? '#005DAC' : '#D1D5DB'
-                        }}; border-radius: 12px; transition: background 0.2s;"
-                      >
-                        <span
-                          style="position: absolute; top: 2px; left: {{
-                            $any(cfg.notifications)[n.key] ? '22px' : '2px'
-                          }}; width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
-                        ></span>
-                      </span>
-                    </label>
+
+            <div class="space-y-3">
+              @for (item of notificationItems; track item.key) {
+                <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-semibold text-white">{{ item.label }}</p>
+                    <p class="text-xs text-on-surface-variant mt-0.5">{{ item.desc }}</p>
                   </div>
-                  <p style="font-size: 12px; color: #6b7280; margin: 0">{{ n.desc }}</p>
+
+                  <button
+                    type="button"
+                    (click)="toggleNotif(item.key)"
+                    class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none flex-shrink-0"
+                    [class.bg-primary]="cfg.notifications?.[item.key]"
+                    [class.bg-white/20]="!cfg.notifications?.[item.key]"
+                  >
+                    <span
+                      class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                      [class.translate-x-6]="cfg.notifications?.[item.key]"
+                      [class.translate-x-1]="!cfg.notifications?.[item.key]"
+                    ></span>
+                  </button>
                 </div>
               }
             </div>
           </div>
         }
 
-        <!-- ==================== 7. PROMOTIONS ==================== -->
+        <!-- 7. PROMOTIONS -->
         @case ('promotions') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #fff3e0;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #e65100"
-                  >local_offer</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">local_offer</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Promotion Settings
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Configure discount and coupon rules
-                </p>
+                <h2 class="text-lg font-bold text-white">Promotions & Discounts</h2>
+                <p class="text-xs text-on-surface-variant">Rules for seasonal vouchers, coupon limits, and stacking</p>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-5">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               @for (field of promotionFields; track field.key) {
-                <div>
-                  <label
-                    style="
-                      display: block;
-                      font-size: 12px;
-                      font-weight: 700;
-                      color: #374151;
-                      margin-bottom: 5px;
-                      letter-spacing: 0.3px;
-                      text-transform: uppercase;
-                    "
-                    >{{ field.label }}</label
-                  >
+                <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                  <div>
+                    <label class="text-xs font-semibold text-white block">{{ field.label }}</label>
+                    <span class="text-[11px] text-on-surface-variant">Promotion parameter</span>
+                  </div>
+
                   @if (field.type === 'toggle') {
-                    <label
-                      style="
-                        position: relative;
-                        display: inline-block;
-                        width: 44px;
-                        height: 24px;
-                        cursor: pointer;
-                      "
+                    <button
+                      type="button"
+                      (click)="patchNested('promotions', field.key, !cfg.promotions[field.key])"
+                      class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                      [class.bg-primary]="cfg.promotions[field.key]"
+                      [class.bg-white/20]="!cfg.promotions[field.key]"
                     >
-                      <input
-                        type="checkbox"
-                        [checked]="$any(cfg.promotions)[field.key]"
-                        (change)="
-                          patchNested('promotions', field.key, !$any(cfg.promotions)[field.key])
-                        "
-                        style="opacity: 0; width: 0; height: 0; position: absolute"
-                      />
                       <span
-                        style="position: absolute; inset: 0; background: {{
-                          $any(cfg.promotions)[field.key] ? '#005DAC' : '#D1D5DB'
-                        }}; border-radius: 12px; transition: background 0.2s;"
-                      >
-                        <span
-                          style="position: absolute; top: 2px; left: {{
-                            $any(cfg.promotions)[field.key] ? '22px' : '2px'
-                          }}; width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
-                        ></span>
-                      </span>
-                    </label>
+                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                        [class.translate-x-6]="cfg.promotions[field.key]"
+                        [class.translate-x-1]="!cfg.promotions[field.key]"
+                      ></span>
+                    </button>
                   } @else {
                     <input
-                      type="{{ field.type }}"
-                      [value]="$any(cfg.promotions)[field.key]"
-                      (input)="
-                        patchNested(
-                          'promotions',
-                          field.key,
-                          field.type === 'number'
-                            ? Number($any($event.target).value)
-                            : $any($event.target).value
-                        )
-                      "
-                      style="
-                        width: 100%;
-                        border: 1px solid #e5e7eb;
-                        border-radius: 10px;
-                        padding: 10px 14px;
-                        font-size: 14px;
-                        outline: none;
-                        box-sizing: border-box;
-                        background: #f9fafb;
-                      "
+                      type="number"
+                      [ngModel]="cfg.promotions[field.key]"
+                      (ngModelChange)="patchNested('promotions', field.key, Number($event))"
+                      class="w-24 rounded-lg border border-edge-deep bg-surface-deep p-2 text-sm text-right text-on-surface focus:border-primary focus:outline-none"
                     />
                   }
                 </div>
@@ -1523,88 +578,41 @@
           </div>
         }
 
-        <!-- ==================== 8. USERS & ROLES ==================== -->
+        <!-- 8. USER ROLES & PERMISSIONS -->
         @case ('users') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #f3f0ff;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #7c3aed"
-                  >manage_accounts</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">manage_accounts</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  User & Role Management
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Manage permissions and access control
-                </p>
+                <h2 class="text-lg font-bold text-white">Roles and Access Matrix</h2>
+                <p class="text-xs text-on-surface-variant">Define granular action rights per administration tier</p>
               </div>
             </div>
-            <div style="overflow-x: auto">
-              <table style="width: 100%; border-collapse: collapse; font-size: 13px">
+
+            <div class="overflow-x-auto rounded-xl border border-edge-deep bg-surface-deep-raised">
+              <table class="w-full text-left text-xs">
                 <thead>
-                  <tr style="background: #f9fafb">
-                    <th
-                      style="
-                        padding: 10px 16px;
-                        text-align: left;
-                        font-size: 11px;
-                        font-weight: 700;
-                        color: #6b7280;
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
-                      "
-                    >
-                      Permission
-                    </th>
+                  <tr class="border-b border-edge-deep bg-white/[0.02]">
+                    <th class="p-3.5 font-bold text-white">Action Scope</th>
                     @for (role of permissionRoles; track role) {
-                      <th
-                        style="
-                          padding: 10px 16px;
-                          text-align: center;
-                          font-size: 11px;
-                          font-weight: 700;
-                          color: #6b7280;
-                          text-transform: uppercase;
-                          letter-spacing: 0.5px;
-                        "
-                      >
-                        {{ role }}
-                      </th>
+                      <th class="p-3.5 font-bold text-center text-white">{{ role }}</th>
                     }
                   </tr>
                 </thead>
-                <tbody>
-                  @for (perm of permissionMatrix; track perm.label) {
-                    <tr style="border-bottom: 1px solid #f3f4f6">
-                      <td style="padding: 12px 16px; font-weight: 600; color: #1a1a2e">
-                        {{ perm.label }}
-                      </td>
-                      @for (role of perm.roles; track $index) {
-                        <td style="padding: 12px 16px; text-align: center">
-                          <span style="color: {{ role ? '#059669' : '#D1D5DB' }};">
-                            <span class="material-symbols-outlined" style="font-size: 18px">{{
-                              role ? 'check_circle' : 'cancel'
-                            }}</span>
+                <tbody class="divide-y divide-edge-deep">
+                  @for (row of permissionMatrix; track row.label) {
+                    <tr class="hover:bg-white/[0.02]">
+                      <td class="p-3.5 font-medium text-white">{{ row.label }}</td>
+                      @for (val of row.roles; track $index) {
+                        <td class="p-3.5 text-center">
+                          <span
+                            class="material-symbols-outlined text-base"
+                            [class.text-primary]="val"
+                            [class.text-outline]="!val"
+                          >
+                            {{ val ? 'check_circle' : 'cancel' }}
                           </span>
                         </td>
                       }
@@ -1616,147 +624,64 @@
           </div>
         }
 
-        <!-- ==================== 9. SECURITY ==================== -->
+        <!-- 9. SECURITY -->
         @case ('security') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #ffeaea;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #dc2626"
-                  >security</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">security</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Security Center
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Manage authentication and security settings
-                </p>
+                <h2 class="text-lg font-bold text-white">Security & Access Controls</h2>
+                <p class="text-xs text-on-surface-variant">Authentication policies and active login logs</p>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-5">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               @for (field of securityFields; track field.key) {
-                <div
-                  style="
-                    border: 1px solid #f0f0f0;
-                    border-radius: 12px;
-                    padding: 18px;
-                    background: #fafbfc;
-                  "
-                >
-                  <div class="flex items-center justify-between mb-1">
-                    <span style="font-size: 13px; font-weight: 700; color: #1a1a2e">{{
-                      field.label
-                    }}</span>
-                    @if (field.type === 'toggle') {
-                      <label
-                        style="
-                          position: relative;
-                          display: inline-block;
-                          width: 44px;
-                          height: 24px;
-                          cursor: pointer;
-                        "
-                      >
-                        <input
-                          type="checkbox"
-                          [checked]="$any(cfg.security)[field.key]"
-                          (change)="
-                            patchNested('security', field.key, !$any(cfg.security)[field.key])
-                          "
-                          style="opacity: 0; width: 0; height: 0; position: absolute"
-                        />
-                        <span
-                          style="position: absolute; inset: 0; background: {{
-                            $any(cfg.security)[field.key] ? '#005DAC' : '#D1D5DB'
-                          }}; border-radius: 12px; transition: background 0.2s;"
-                        >
-                          <span
-                            style="position: absolute; top: 2px; left: {{
-                              $any(cfg.security)[field.key] ? '22px' : '2px'
-                            }}; width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
-                          ></span>
-                        </span>
-                      </label>
-                    } @else if (field.type === 'button') {
-                      <button
-                        style="
-                          border: 1px solid #e5e7eb;
-                          border-radius: 8px;
-                          padding: 6px 14px;
-                          font-size: 12px;
-                          font-weight: 600;
-                          cursor: pointer;
-                          background: #ffffff;
-                          color: #374151;
-                        "
-                      >
-                        {{ field.btnLabel }}
-                      </button>
-                    }
+                <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                  <div>
+                    <label class="text-xs font-semibold text-white block">{{ field.label }}</label>
+                    <p class="text-[11px] text-on-surface-variant mt-0.5">{{ field.desc }}</p>
                   </div>
-                  @if (field.desc) {
-                    <p style="font-size: 12px; color: #6b7280; margin: 0">{{ field.desc }}</p>
+
+                  @if (field.type === 'toggle') {
+                    <button
+                      type="button"
+                      (click)="patchNested('security', field.key, !cfg.security[field.key])"
+                      class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none flex-shrink-0"
+                      [class.bg-primary]="cfg.security[field.key]"
+                      [class.bg-white/20]="!cfg.security[field.key]"
+                    >
+                      <span
+                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                        [class.translate-x-6]="cfg.security[field.key]"
+                        [class.translate-x-1]="!cfg.security[field.key]"
+                      ></span>
+                    </button>
+                  } @else {
+                    <input
+                      type="number"
+                      [ngModel]="cfg.security[field.key]"
+                      (ngModelChange)="patchNested('security', field.key, Number($event))"
+                      class="w-24 rounded-lg border border-edge-deep bg-surface-deep p-2 text-sm text-right text-on-surface focus:border-primary focus:outline-none"
+                    />
                   }
                 </div>
               }
             </div>
-            <div
-              style="
-                margin-top: 20px;
-                border: 1px solid #f0f0f0;
-                border-radius: 12px;
-                padding: 18px;
-                background: #fafbfc;
-              "
-            >
-              <div class="flex items-center justify-between mb-3">
-                <span style="font-size: 13px; font-weight: 700; color: #1a1a2e"
-                  >Recent Login Activity</span
-                >
-                <button
-                  style="
-                    border: none;
-                    border-radius: 8px;
-                    padding: 6px 14px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    background: #ffeaea;
-                    color: #dc2626;
-                  "
-                >
-                  Logout All Devices
-                </button>
-              </div>
-              <div style="display: flex; flex-direction: column; gap: 8px">
-                @for (a of loginActivity; track a.label) {
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                      <span style="font-size: 12px; font-weight: 600; color: #1a1a2e">{{
-                        a.label
-                      }}</span>
-                      <span style="font-size: 11px; color: #6b7280">{{ a.device }}</span>
+
+            <div class="pt-4 border-t border-edge-deep">
+              <h3 class="text-sm font-bold text-white mb-3">Recent Administrator Logins</h3>
+              <div class="space-y-2">
+                @for (log of loginActivity; track log.time) {
+                  <div class="p-3 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2.5">
+                      <span class="material-symbols-outlined text-primary text-base">laptop</span>
+                      <span class="font-semibold text-white">{{ log.label }}</span>
+                      <span class="text-on-surface-variant">({{ log.device }})</span>
                     </div>
-                    <span style="font-size: 11px; color: #6b7280">{{ a.time }}</span>
+                    <span class="text-on-surface-variant font-medium">{{ log.time }}</span>
                   </div>
                 }
               </div>
@@ -1764,460 +689,213 @@
           </div>
         }
 
-        <!-- ==================== 10. BACKUP ==================== -->
+        <!-- 10. BACKUP -->
         @case ('backup') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #e7f5ed;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #059669"
-                  >backup</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">backup</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Backup & Restore
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Manage data backup and restoration
-                </p>
+                <h2 class="text-lg font-bold text-white">Database Backup & Recovery</h2>
+                <p class="text-xs text-on-surface-variant">Automated snapshots and snapshot exports</p>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-5">
-              @for (field of backupFields; track field.key) {
-                <div
-                  style="
-                    border: 1px solid #f0f0f0;
-                    border-radius: 12px;
-                    padding: 18px;
-                    background: #fafbfc;
-                  "
-                >
-                  <div class="flex items-center justify-between">
-                    <span style="font-size: 13px; font-weight: 700; color: #1a1a2e">{{
-                      field.label
-                    }}</span>
-                    @if (field.type === 'toggle') {
-                      <label
-                        style="
-                          position: relative;
-                          display: inline-block;
-                          width: 44px;
-                          height: 24px;
-                          cursor: pointer;
-                        "
-                      >
-                        <input
-                          type="checkbox"
-                          [checked]="$any(cfg.backup)[field.key]"
-                          (change)="patchNested('backup', field.key, !$any(cfg.backup)[field.key])"
-                          style="opacity: 0; width: 0; height: 0; position: absolute"
-                        />
-                        <span
-                          style="position: absolute; inset: 0; background: {{
-                            $any(cfg.backup)[field.key] ? '#005DAC' : '#D1D5DB'
-                          }}; border-radius: 12px; transition: background 0.2s;"
-                        >
-                          <span
-                            style="position: absolute; top: 2px; left: {{
-                              $any(cfg.backup)[field.key] ? '22px' : '2px'
-                            }}; width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
-                          ></span>
-                        </span>
-                      </label>
-                    } @else {
-                      <button
-                        style="
-                          border: 1px solid #e5e7eb;
-                          border-radius: 8px;
-                          padding: 6px 14px;
-                          font-size: 12px;
-                          font-weight: 600;
-                          cursor: pointer;
-                          background: #ffffff;
-                          color: #374151;
-                        "
-                      >
-                        {{ field.btnLabel }}
-                      </button>
-                    }
-                  </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-white">Automatic Daily Backup</p>
+                  <p class="text-xs text-on-surface-variant mt-0.5">Executes daily at 03:00 AM Phnom Penh time</p>
                 </div>
-              }
+                <button
+                  type="button"
+                  (click)="patchNested('backup', 'autoDailyBackup', !cfg.backup.autoDailyBackup)"
+                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                  [class.bg-primary]="cfg.backup.autoDailyBackup"
+                  [class.bg-white/20]="!cfg.backup.autoDailyBackup"
+                >
+                  <span
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                    [class.translate-x-6]="cfg.backup.autoDailyBackup"
+                    [class.translate-x-1]="!cfg.backup.autoDailyBackup"
+                  ></span>
+                </button>
+              </div>
+
+              <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-white">Automatic Weekly Archive</p>
+                  <p class="text-xs text-on-surface-variant mt-0.5">Compresses database for cold storage</p>
+                </div>
+                <button
+                  type="button"
+                  (click)="patchNested('backup', 'autoWeeklyBackup', !cfg.backup.autoWeeklyBackup)"
+                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                  [class.bg-primary]="cfg.backup.autoWeeklyBackup"
+                  [class.bg-white/20]="!cfg.backup.autoWeeklyBackup"
+                >
+                  <span
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                    [class.translate-x-6]="cfg.backup.autoWeeklyBackup"
+                    [class.translate-x-1]="!cfg.backup.autoWeeklyBackup"
+                  ></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-4 border-t border-edge-deep">
+              <button type="button" (click)="showToast('Manual database snapshot created')" class="btn-primary text-xs px-5 py-2.5 rounded-xl flex items-center gap-2">
+                <span class="material-symbols-outlined text-base">cloud_download</span>
+                Create Snapshot Now
+              </button>
+              <button type="button" (click)="exportData()" class="btn-secondary text-xs px-5 py-2.5 rounded-xl flex items-center gap-2">
+                <span class="material-symbols-outlined text-base">file_download</span>
+                Export System Data (JSON)
+              </button>
             </div>
           </div>
         }
 
-        <!-- ==================== 11. INTEGRATIONS ==================== -->
+        <!-- 11. INTEGRATIONS -->
         @case ('integrations') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #e5eeff;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #005dac"
-                  >extension</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">extension</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Integrations
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Connect third-party services
-                </p>
+                <h2 class="text-lg font-bold text-white">External Integrations</h2>
+                <p class="text-xs text-on-surface-variant">Connected APIs, storage engines, and communication gateways</p>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-              @for (int of integrations; track int.name) {
-                <div
-                  style="
-                    border: 1px solid #f0f0f0;
-                    border-radius: 12px;
-                    padding: 18px;
-                    background: #fafbfc;
-                    display: flex;
-                    align-items: center;
-                    justify-content: between;
-                  "
-                >
-                  <div class="flex items-center gap-3">
-                    <div
-                      style="width: 40px; height: 40px; border-radius: 10px; background: {{
-                        int.color
-                      }}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #FFFFFF;"
-                    >
-                      {{ int.logo }}
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              @for (item of integrations; track item.name) {
+                <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex flex-col justify-between space-y-3">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs text-white" [style.background]="item.color">
+                        {{ item.logo }}
+                      </div>
+                      <span class="text-sm font-semibold text-white">{{ item.name }}</span>
                     </div>
-                    <div>
-                      <span style="font-size: 13px; font-weight: 700; color: #1a1a2e">{{
-                        int.name
-                      }}</span>
-                      <span
-                        style="display: block; font-size: 11px; color: {{
-                          int.status === 'Connected'
-                            ? '#059669'
-                            : int.status === 'Error'
-                              ? '#DC2626'
-                              : '#6B7280'
-                        }};"
-                        >{{ int.status }}</span
-                      >
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <button
-                      style="
-                        border: 1px solid #e5e7eb;
-                        border-radius: 8px;
-                        padding: 6px 12px;
-                        font-size: 11px;
-                        font-weight: 600;
-                        cursor: pointer;
-                        background: #ffffff;
-                        color: #374151;
-                      "
+                    <span
+                      class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                      [class.bg-emerald-500/10]="item.status === 'Connected'"
+                      [class.text-emerald-400]="item.status === 'Connected'"
+                      [class.bg-red-500/10]="item.status === 'Error'"
+                      [class.text-red-400]="item.status === 'Error'"
+                      [class.bg-slate-500/10]="item.status === 'Disconnected'"
+                      [class.text-slate-400]="item.status === 'Disconnected'"
                     >
-                      Configure
-                    </button>
-                    <button
-                      style="
-                        border: 1px solid #fee2e2;
-                        border-radius: 8px;
-                        padding: 6px 12px;
-                        font-size: 11px;
-                        font-weight: 600;
-                        cursor: pointer;
-                        background: #ffeaea;
-                        color: #dc2626;
-                      "
-                    >
-                      {{ int.status === 'Connected' ? 'Disconnect' : 'Connect' }}
-                    </button>
+                      {{ item.status }}
+                    </span>
                   </div>
+                  <button type="button" (click)="showToast(item.name + ' settings dialog ready')" class="btn-secondary text-xs w-full py-1.5 rounded-lg text-center">
+                    Configure Keys
+                  </button>
                 </div>
               }
             </div>
           </div>
         }
 
-        <!-- ==================== 12. APPEARANCE ==================== -->
+        <!-- 12. APPEARANCE -->
         @case ('appearance') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #f3f0ff;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #7c3aed"
-                  >contrast</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">contrast</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Appearance
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Customize the look and feel
-                </p>
+                <h2 class="text-lg font-bold text-white">Appearance & Display</h2>
+                <p class="text-xs text-on-surface-variant">Default theme mode and layout density</p>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-5">
-              <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 8px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Theme</label
-                >
-                <div class="flex gap-3">
-                  @for (t of themes; track t.value) {
-                    <button
-                      (click)="patch('appearanceTheme', t.value)"
-                      style="flex: 1; border: 2px solid {{
-                        cfg.appearanceTheme === t.value ? '#005DAC' : '#E5E7EB'
-                      }}; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; background: {{
-                        t.bg
-                      }}; transition: all 0.15s;"
-                    >
-                      <span style="font-size: 13px; font-weight: 700; color: {{ t.color }};">{{
-                        t.label
-                      }}</span>
-                    </button>
-                  }
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-white">Compact Table Mode</p>
+                  <p class="text-xs text-on-surface-variant mt-0.5">Increases row density for wide screens</p>
                 </div>
-              </div>
-              <div>
-                <label
-                  style="
-                    display: block;
-                    font-size: 12px;
-                    font-weight: 700;
-                    color: #374151;
-                    margin-bottom: 8px;
-                    letter-spacing: 0.3px;
-                    text-transform: uppercase;
-                  "
-                  >Language</label
+                <button
+                  type="button"
+                  (click)="patch('compactMode', !cfg.compactMode)"
+                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                  [class.bg-primary]="cfg.compactMode"
+                  [class.bg-white/20]="!cfg.compactMode"
                 >
+                  <span
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                    [class.translate-x-6]="cfg.compactMode"
+                    [class.translate-x-1]="!cfg.compactMode"
+                  ></span>
+                </button>
+              </div>
+
+              <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-white">Default Interface Language</p>
+                  <p class="text-xs text-on-surface-variant mt-0.5">English (US) / Khmer (KH)</p>
+                </div>
                 <select
-                  [value]="cfg.language"
-                  (change)="patch('language', $any($event.target).value)"
-                  style="
-                    width: 100%;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 14px;
-                    font-size: 14px;
-                    outline: none;
-                    background: #f9fafb;
-                    cursor: pointer;
-                  "
+                  [ngModel]="cfg.language"
+                  (ngModelChange)="patch('language', $event)"
+                  class="rounded-lg border border-edge-deep bg-surface-deep p-2 text-xs text-on-surface"
                 >
                   <option value="en">English</option>
                   <option value="km">Khmer</option>
-                  <option value="ja">Japanese</option>
-                  <option value="th">Thai</option>
                 </select>
               </div>
-            </div>
-            <div style="margin-top: 20px">
-              <label
-                style="
-                  display: block;
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: #374151;
-                  margin-bottom: 8px;
-                  letter-spacing: 0.3px;
-                  text-transform: uppercase;
-                "
-                >Compact Mode</label
-              >
-              <label
-                style="
-                  position: relative;
-                  display: inline-block;
-                  width: 44px;
-                  height: 24px;
-                  cursor: pointer;
-                "
-              >
-                <input
-                  type="checkbox"
-                  [checked]="cfg.compactMode"
-                  (change)="patch('compactMode', !cfg.compactMode)"
-                  style="opacity: 0; width: 0; height: 0; position: absolute"
-                />
-                <span
-                  style="position: absolute; inset: 0; background: {{
-                    cfg.compactMode ? '#005DAC' : '#D1D5DB'
-                  }}; border-radius: 12px; transition: background 0.2s;"
-                >
-                  <span
-                    style="position: absolute; top: 2px; left: {{
-                      cfg.compactMode ? '22px' : '2px'
-                    }}; width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
-                  ></span>
-                </span>
-              </label>
-              <span style="font-size: 12px; color: #6b7280; margin-left: 8px"
-                >Reduce padding and font sizes for a denser layout</span
-              >
             </div>
           </div>
         }
 
-        <!-- ==================== 13. REPORTS ==================== -->
+        <!-- 13. REPORTS -->
         @case ('reports') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #e5eeff;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #005dac"
-                  >analytics</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">analytics</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Reports Settings
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Configure reporting preferences
-                </p>
+                <h2 class="text-lg font-bold text-white">Reports & Export Preferences</h2>
+                <p class="text-xs text-on-surface-variant">Default date ranges, chart formatting, and export filetypes</p>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-5">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               @for (field of reportFields; track field.key) {
-                <div>
-                  <label
-                    style="
-                      display: block;
-                      font-size: 12px;
-                      font-weight: 700;
-                      color: #374151;
-                      margin-bottom: 5px;
-                      letter-spacing: 0.3px;
-                      text-transform: uppercase;
-                    "
-                    >{{ field.label }}</label
-                  >
+                <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                  <div>
+                    <label class="text-xs font-semibold text-white block">{{ field.label }}</label>
+                    <span class="text-[11px] text-on-surface-variant">Report default</span>
+                  </div>
+
                   @if (field.type === 'toggle') {
-                    <label
-                      style="
-                        position: relative;
-                        display: inline-block;
-                        width: 44px;
-                        height: 24px;
-                        cursor: pointer;
-                      "
+                    <button
+                      type="button"
+                      (click)="patchNested('reports', field.key, !cfg.reports[field.key])"
+                      class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+                      [class.bg-primary]="cfg.reports[field.key]"
+                      [class.bg-white/20]="!cfg.reports[field.key]"
                     >
-                      <input
-                        type="checkbox"
-                        [checked]="$any(cfg.reports)[field.key]"
-                        (change)="patchNested('reports', field.key, !$any(cfg.reports)[field.key])"
-                        style="opacity: 0; width: 0; height: 0; position: absolute"
-                      />
                       <span
-                        style="position: absolute; inset: 0; background: {{
-                          $any(cfg.reports)[field.key] ? '#005DAC' : '#D1D5DB'
-                        }}; border-radius: 12px; transition: background 0.2s;"
-                      >
-                        <span
-                          style="position: absolute; top: 2px; left: {{
-                            $any(cfg.reports)[field.key] ? '22px' : '2px'
-                          }}; width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
-                        ></span>
-                      </span>
-                    </label>
+                        class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                        [class.translate-x-6]="cfg.reports[field.key]"
+                        [class.translate-x-1]="!cfg.reports[field.key]"
+                      ></span>
+                    </button>
                   } @else {
                     <select
-                      [value]="$any(cfg.reports)[field.key]"
-                      (change)="patchNested('reports', field.key, $any($event.target).value)"
-                      style="
-                        width: 100%;
-                        border: 1px solid #e5e7eb;
-                        border-radius: 10px;
-                        padding: 10px 14px;
-                        font-size: 14px;
-                        outline: none;
-                        background: #f9fafb;
-                        cursor: pointer;
-                      "
+                      [ngModel]="cfg.reports[field.key]"
+                      (ngModelChange)="patchNested('reports', field.key, $event)"
+                      class="rounded-lg border border-edge-deep bg-surface-deep p-2 text-xs text-on-surface"
                     >
                       @for (opt of field.options; track opt) {
-                        <option value="{{ opt }}">{{ opt }}</option>
+                        <option [value]="opt">{{ opt }}</option>
                       }
                     </select>
                   }
@@ -2227,272 +905,83 @@
           </div>
         }
 
-        <!-- ==================== 14. EMAIL TEMPLATES ==================== -->
+        <!-- 14. EMAIL TEMPLATES -->
         @case ('email') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #e5eeff;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #005dac"
-                  >mail</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">mail</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Email Templates
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Manage email notification templates
-                </p>
+                <h2 class="text-lg font-bold text-white">Transactional Email Templates</h2>
+                <p class="text-xs text-on-surface-variant">Manage template wording, receipts, and cancellation letters</p>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-              @for (tpl of emailTemplates; track tpl.label) {
-                <div
-                  style="
-                    border: 1px solid #f0f0f0;
-                    border-radius: 12px;
-                    padding: 18px;
-                    background: #fafbfc;
-                  "
-                >
-                  <div class="flex items-center justify-between mb-2">
-                    <span style="font-size: 13px; font-weight: 700; color: #1a1a2e">{{
-                      tpl.label
-                    }}</span>
-                    <span style="font-size: 11px; color: #6b7280">{{ tpl.status }}</span>
+
+            <div class="space-y-3">
+              @for (tmpl of emailTemplates; track tmpl.key) {
+                <div class="p-4 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary text-xl">drafts</span>
+                    <div>
+                      <p class="text-sm font-semibold text-white">{{ tmpl.label }}</p>
+                      <p class="text-xs text-on-surface-variant">Status: {{ tmpl.status }}</p>
+                    </div>
                   </div>
-                  <div style="display: flex; gap: 6px">
-                    <button
-                      style="
-                        flex: 1;
-                        border: 1px solid #e5e7eb;
-                        border-radius: 8px;
-                        padding: 6px;
-                        font-size: 11px;
-                        font-weight: 600;
-                        cursor: pointer;
-                        background: #ffffff;
-                        color: #374151;
-                      "
-                    >
-                      Edit
-                    </button>
-                    <button
-                      style="
-                        flex: 1;
-                        border: 1px solid #e5e7eb;
-                        border-radius: 8px;
-                        padding: 6px;
-                        font-size: 11px;
-                        font-weight: 600;
-                        cursor: pointer;
-                        background: #ffffff;
-                        color: #374151;
-                      "
-                    >
-                      Preview
-                    </button>
-                  </div>
+                  <button type="button" (click)="showToast('Opening editor for ' + tmpl.label)" class="btn-secondary text-xs px-3 py-1.5 rounded-lg">
+                    Edit Template
+                  </button>
                 </div>
               }
             </div>
           </div>
         }
 
-        <!-- ==================== 15. SYSTEM ==================== -->
+        <!-- 15. SYSTEM -->
         @case ('system') {
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #f3f4f6;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #6b7280"
-                  >info</span
-                >
+          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-edge-deep">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-xl">info</span>
               </div>
               <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  System Information
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Application version and system health
-                </p>
+                <h2 class="text-lg font-bold text-white">System Information & Maintenance</h2>
+                <p class="text-xs text-on-surface-variant">Host telemetry, database cache operations, and diagnostics</p>
               </div>
             </div>
-            <div class="grid grid-cols-3 gap-4 mb-6">
-              @for (info of systemInfo; track info.label) {
-                <div
-                  style="
-                    border: 1px solid #f0f0f0;
-                    border-radius: 12px;
-                    padding: 16px;
-                    background: #fafbfc;
-                  "
-                >
-                  <span
-                    style="
-                      font-size: 11px;
-                      font-weight: 600;
-                      color: #6b7280;
-                      text-transform: uppercase;
-                      letter-spacing: 0.3px;
-                    "
-                    >{{ info.label }}</span
-                  >
-                  <p style="font-size: 15px; font-weight: 700; color: #1a1a2e; margin: 4px 0 0">
-                    {{ info.value }}
-                  </p>
-                  @if (info.status) {
-                    <span style="font-size: 11px; font-weight: 600; color: {{ info.statusColor }};"
-                      >🟢 {{ info.status }}</span
-                    >
-                  }
-                </div>
-              }
-            </div>
-            <div style="border-top: 1px solid #f3f4f6; padding-top: 20px">
-              <div class="flex items-center gap-4 mb-6">
-                <div>
-                  <span style="font-size: 16px; font-weight: 800; color: #1a1a2e">Cambo Rent</span>
-                  <span style="font-size: 13px; color: #6b7280; margin-left: 6px"
-                    >Version 1.0.0</span
-                  >
-                </div>
-                <span style="font-size: 12px; color: #6b7280">Built by Your Team</span>
-              </div>
-              <div class="flex gap-3">
-                <button
-                  style="
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 20px;
-                    font-size: 13px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    background: #ffffff;
-                    color: #374151;
-                  "
-                >
-                  Check for Updates
-                </button>
-                <button
-                  style="
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 20px;
-                    font-size: 13px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    background: #ffffff;
-                    color: #374151;
-                  "
-                >
-                  Documentation
-                </button>
-                <button
-                  style="
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 10px 20px;
-                    font-size: 13px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    background: #ffffff;
-                    color: #374151;
-                  "
-                >
-                  Support
-                </button>
-              </div>
-            </div>
-          </div>
 
-          <!-- Data Management -->
-          <div
-            style="
-              background: #ffffff;
-              border-radius: 14px;
-              border: 1px solid #f0f0f0;
-              padding: 28px;
-              margin-top: 20px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            "
-          >
-            <div class="flex items-center gap-3 mb-6">
-              <div
-                style="
-                  width: 40px;
-                  height: 40px;
-                  border-radius: 10px;
-                  background: #fff3e0;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <span class="material-symbols-outlined" style="font-size: 22px; color: #e65100"
-                  >storage</span
-                >
-              </div>
-              <div>
-                <h2 style="font-size: 18px; font-weight: 800; color: #1a1a2e; margin: 0">
-                  Data Management
-                </h2>
-                <p style="font-size: 13px; color: #6b7280; margin: 1px 0 0">
-                  Export, import, and optimize your data
-                </p>
-              </div>
-            </div>
-            <div class="flex flex-wrap gap-3">
-              @for (action of dataActions; track action.label) {
-                <button
-                  style="border: 1px solid #E5E7EB; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; background: #FFFFFF; color: {{
-                    action.color
-                  }}; display: flex; align-items: center; gap: 6px;
-                           {{ action.danger ? 'border-color: #FEE2E2;' : '' }}"
-                  onmouseover="this.style.background = '#F9FAFB'"
-                  onmouseout="this.style.background = '#FFFFFF'"
-                >
-                  <span class="material-symbols-outlined" style="font-size: 16px">{{
-                    action.icon
-                  }}</span>
-                  {{ action.label }}
-                </button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              @for (info of systemInfo; track info.label) {
+                <div class="p-3.5 rounded-xl border border-edge-deep bg-surface-deep-raised flex items-center justify-between text-xs">
+                  <span class="text-on-surface-variant font-medium">{{ info.label }}</span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-white">{{ info.value }}</span>
+                    @if (info.status) {
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400">
+                        {{ info.status }}
+                      </span>
+                    }
+                  </div>
+                </div>
               }
+            </div>
+
+            <div class="pt-4 border-t border-edge-deep">
+              <h3 class="text-sm font-bold text-white mb-3">System Actions</h3>
+              <div class="flex flex-wrap gap-3">
+                <button type="button" (click)="clearCache()" class="btn-secondary text-xs px-4 py-2.5 rounded-xl flex items-center gap-2">
+                  <span class="material-symbols-outlined text-base">cleaning_services</span>
+                  Clear Application Cache
+                </button>
+                <button type="button" (click)="optimizeDatabase()" class="btn-secondary text-xs px-4 py-2.5 rounded-xl flex items-center gap-2">
+                  <span class="material-symbols-outlined text-base">speed</span>
+                  Optimize Database Indexes
+                </button>
+                <button type="button" (click)="resetDemoData()" class="btn-ghost text-xs px-4 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-base">restart_alt</span>
+                  Reset Demo Records
+                </button>
+              </div>
             </div>
           </div>
         }
@@ -2500,107 +989,43 @@
     </div>
   </div>
 
-  <!-- ==================== STICKY SAVE BAR ==================== -->
+  <!-- ============ STICKY SAVE BAR ============ -->
   @if (dirty()) {
     <div
-      style="
-        position: sticky;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #ffffff;
-        border-top: 1px solid #e5e7eb;
-        padding: 16px 32px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        z-index: 40;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-        animation: fade-in-up 0.3s ease;
-      "
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 rounded-2xl border border-primary/30 bg-surface-deep-raised px-6 py-3.5 shadow-2xl flex items-center gap-6 animate-fade-in-up"
+      style="backdrop-filter: blur(16px);"
     >
       <div class="flex items-center gap-2">
-        <span
-          style="
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #f59e0b;
-            display: inline-block;
-          "
-        ></span>
-        <span style="font-size: 13px; font-weight: 600; color: #374151">Unsaved Changes</span>
-        <span style="font-size: 12px; color: #6b7280">Your settings have not been saved yet</span>
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span class="text-xs font-semibold text-white">Unsaved configuration changes</span>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
         <button
+          type="button"
           (click)="resetChanges()"
-          style="
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            background: #ffffff;
-            color: #374151;
-            transition: all 0.15s;
-          "
-          onmouseover="this.style.background = '#F9FAFB'"
-          onmouseout="this.style.background = '#FFFFFF'"
+          class="btn-ghost text-xs px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-white"
         >
           Discard
         </button>
         <button
+          type="button"
           (click)="saveChanges()"
-          style="
-            border: none;
-            border-radius: 10px;
-            padding: 10px 24px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            background: #005dac;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 2px 6px rgba(0, 93, 172, 0.25);
-            transition: all 0.15s;
-          "
-          onmouseover="this.style.background = '#004080'"
-          onmouseout="this.style.background = '#005DAC'"
+          class="btn-primary text-xs px-4 py-1.5 rounded-lg flex items-center gap-1.5 shadow-md shadow-primary/20"
         >
-          <span class="material-symbols-outlined" style="font-size: 18px">save</span>
+          <span class="material-symbols-outlined text-sm">save</span>
           Save Changes
         </button>
       </div>
     </div>
   }
 
-  <!-- ==================== SUCCESS TOAST ==================== -->
+  <!-- ============ TOAST NOTIFICATION ============ -->
   @if (savedToast()) {
     <div
-      style="
-        position: fixed;
-        bottom: 80px;
-        right: 32px;
-        background: #059669;
-        color: #ffffff;
-        border-radius: 12px;
-        padding: 14px 24px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        box-shadow: 0 8px 32px rgba(5, 150, 105, 0.3);
-        z-index: 50;
-        animation: fade-in-up 0.3s ease;
-      "
+      class="fixed bottom-6 right-6 z-50 rounded-xl border border-primary/30 bg-surface-deep-raised px-5 py-3 shadow-2xl text-xs font-semibold text-white flex items-center gap-2.5 animate-fade-in-up"
     >
-      <span class="material-symbols-outlined" style="font-size: 20px">check_circle</span>
-      Settings saved successfully
+      <span class="material-symbols-outlined text-primary text-base">check_circle</span>
+      <span>{{ toastMessage() }}</span>
     </div>
   }
 </div>

@@ -27,26 +27,46 @@ export class VehicleListComponent implements OnInit {
   ngOnInit() {
     this.vehicleService.getVehicles().subscribe({
       next: (res) => {
-        this.vehicles.set(res.vehicles);
+        this.vehicles.set(res.vehicles || []);
         this.loading.set(false);
       },
       error: () => this.loading.set(false),
     });
   }
 
-  get filtered() {
-    const term = this.searchTerm().toLowerCase();
+  setSearchTerm(val: string) {
+    this.searchTerm.set(val);
+    this.page.set(1);
+  }
+
+  setSelectedType(val: string) {
+    this.selectedType.set(val);
+    this.page.set(1);
+  }
+
+  setSortBy(val: string) {
+    this.sortBy.set(val);
+    this.page.set(1);
+  }
+
+  toggleOnlyAvailable() {
+    this.onlyAvailable.set(!this.onlyAvailable());
+    this.page.set(1);
+  }
+
+  get filtered(): Vehicle[] {
+    const term = this.searchTerm().toLowerCase().trim();
     const type = this.selectedType();
     const onlyAvail = this.onlyAvailable();
     return this.vehicles().filter((v) => {
-      const matchName = !term || v.name.toLowerCase().includes(term);
+      const matchName = !term || v.name.toLowerCase().includes(term) || (v.brand && v.brand.toLowerCase().includes(term));
       const matchType = !type || v.type === type;
       const matchAvail = !onlyAvail || v.available;
       return matchName && matchType && matchAvail;
     });
   }
 
-  get sorted() {
+  get sorted(): Vehicle[] {
     const list = [...this.filtered];
     switch (this.sortBy()) {
       case 'price-asc':
@@ -62,17 +82,17 @@ export class VehicleListComponent implements OnInit {
     }
   }
 
-  get totalPages() {
+  get totalPages(): number {
     return Math.max(1, Math.ceil(this.filtered.length / this.pageSize));
   }
 
-  get paginated() {
+  get paginated(): Vehicle[] {
     const p = this.page();
     const s = this.pageSize;
     return this.sorted.slice((p - 1) * s, p * s);
   }
 
-  get pages() {
+  get pages(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
@@ -98,7 +118,7 @@ export class VehicleListComponent implements OnInit {
     return map[type] || 'badge-neutral';
   }
 
-  getFuelIcon(fuel: string): string {
+  getFuelIcon(fuel?: string): string {
     const map: Record<string, string> = {
       Petrol: 'local_gas_station',
       Diesel: 'local_gas_station',
@@ -106,6 +126,6 @@ export class VehicleListComponent implements OnInit {
       Electric: 'bolt',
       'N/A': 'help',
     };
-    return map[fuel] || 'local_gas_station';
+    return (fuel && map[fuel]) || 'local_gas_station';
   }
 }
