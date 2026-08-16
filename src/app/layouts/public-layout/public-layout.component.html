@@ -1,10 +1,11 @@
 <div class="min-h-screen flex flex-col" style="background: var(--color-background); color: var(--color-on-surface)">
   <!-- ======================== NAVBAR ======================== -->
   <header
-    class="fixed top-0 z-50 w-full transition-all duration-300"
-    [style.background]="scrolled ? 'rgba(10,15,30,0.97)' : 'transparent'"
-    [style.border-bottom]="scrolled ? '1px solid rgba(255,255,255,0.07)' : 'none'"
-    [style.box-shadow]="scrolled ? '0 4px 30px rgba(0,0,0,0.3)' : 'none'"
+    class="public-header fixed top-0 z-50 w-full transition-all duration-300"
+    [class.is-scrolled]="scrolled"
+    [style.background]="theme.isDark() ? 'rgba(10,15,30,0.97)' : 'rgba(255,255,255,0.96)'"
+    [style.border-bottom]="'1px solid var(--color-edge-deep)'"
+    [style.box-shadow]="'none'"
     [style.backdrop-filter]="scrolled ? 'blur(20px)' : 'none'"
   >
     <nav
@@ -36,7 +37,7 @@
           <span class="material-symbols-outlined text-white text-xl">directions_car</span>
         </div>
         <div class="flex flex-col leading-tight">
-          <span class="text-base font-black text-white">Cambo Rent</span>
+          <span class="public-brand-name text-base font-black">Cambo Rent</span>
           <span class="text-[10px] font-bold uppercase tracking-widest" style="color: #10b981"
             >Vehicle Rentals</span
           >
@@ -48,22 +49,20 @@
         @for (link of navLinks; track link.path) {
           <a
             [routerLink]="link.path"
-            routerLinkActive="text-emerald-400 bg-emerald-500/10 active-nav-link"
+            routerLinkActive="active-nav-link"
             [routerLinkActiveOptions]="{ exact: link.exact }"
-            class="nav-link px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
-            style="color: #94a3b8"
-            >{{ link.label }}</a
+            class="nav-link"
+          >
+            <span class="material-symbols-outlined">{{ link.icon }}</span>
+            {{ link.label }}</a
           >
         }
         <a
           [routerLink]="auth.isAuthenticated() ? '/customer/explore' : '/login'"
-          class="nav-link px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
-          style="color: #94a3b8"
+          class="nav-link"
         >
-          <span class="inline-flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-base">directions_car</span>
-            Fleet
-          </span>
+          <span class="material-symbols-outlined">directions_car</span>
+          Fleet
         </a>
       </div>
 
@@ -72,7 +71,7 @@
         <button
           type="button"
           (click)="theme.toggleTheme()"
-          class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
+          class="public-action-button flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
           [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
           style="border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8"
         >
@@ -131,12 +130,11 @@
         } @else {
           <a
             routerLink="/login"
-            class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
-            style="color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.1)"
+            class="public-action-button flex items-center justify-center rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
           >
             Sign In
           </a>
-          <a routerLink="/register" class="btn-primary py-2.5 px-6 text-sm"> Get Started </a>
+          <a routerLink="/register" class="btn-primary public-action-button text-sm"> Get Started </a>
         }
       </div>
 
@@ -162,32 +160,28 @@
           <a
             routerLink="/"
             (click)="mobileOpen.set(false)"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
-            style="color: #94a3b8"
+            class="mobile-nav-link"
           >
             <span class="material-symbols-outlined text-lg">home</span> Home
           </a>
           <a
             routerLink="/about"
             (click)="mobileOpen.set(false)"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
-            style="color: #94a3b8"
+            class="mobile-nav-link"
           >
             <span class="material-symbols-outlined text-lg">info</span> About
           </a>
           <a
             routerLink="/contact"
             (click)="mobileOpen.set(false)"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
-            style="color: #94a3b8"
+            class="mobile-nav-link"
           >
             <span class="material-symbols-outlined text-lg">call</span> Contact
           </a>
           <a
             [routerLink]="auth.isAuthenticated() ? '/customer/explore' : '/login'"
             (click)="mobileOpen.set(false)"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
-            style="color: #94a3b8"
+            class="mobile-nav-link"
           >
             <span class="material-symbols-outlined text-lg">directions_car</span> Fleet
           </a>

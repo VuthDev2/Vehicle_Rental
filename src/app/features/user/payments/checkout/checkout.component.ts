@@ -8,21 +8,93 @@ import { PaymentService, PaywayForm } from '../../../../core/services/payment.se
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="min-h-screen flex items-center justify-center p-4" style="background: var(--color-background);">
-      <div class="w-full max-w-md rounded-2xl border border-outline-variant/20 bg-surface-container-low p-10 text-center">
-        @if (error()) {
-          <div class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4"
-               style="background: rgba(239,68,68,0.1);">
-            <span class="material-symbols-outlined text-5xl" style="color: #f87171;">error</span>
+    <div class="min-h-screen p-4 sm:p-6" style="background: var(--color-bg-deep);">
+      <div class="mx-auto flex min-h-[calc(100vh-48px)] w-full max-w-5xl items-center">
+        <section
+          class="grid w-full overflow-hidden rounded-2xl border border-edge-deep/80 bg-surface-deep shadow-sm lg:grid-cols-[0.9fr_1.1fr]"
+        >
+          <div class="border-b border-edge-deep/80 p-6 sm:p-8 lg:border-b-0 lg:border-r">
+            <a routerLink="/customer/bookings" class="chip">
+              <span class="material-symbols-outlined text-sm">arrow_back</span>
+              Booking
+            </a>
+
+            <div class="mt-12">
+              <p class="eyebrow">Secure checkout</p>
+              <h1 class="mt-2 text-3xl font-black tracking-tight text-on-surface">
+                ABA PayWay handoff
+              </h1>
+              <p class="mt-3 text-sm leading-6 text-on-surface-variant">
+                Your booking payment is being prepared with signed checkout details.
+              </p>
+            </div>
+
+            <div class="mt-8 grid gap-3">
+              <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-4 py-3">
+                <span class="material-symbols-outlined text-primary">lock</span>
+                <div>
+                  <p class="text-sm font-bold text-on-surface">Encrypted payment page</p>
+                  <p class="text-xs text-on-surface-variant">Hosted securely by ABA PayWay.</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-4 py-3">
+                <span class="material-symbols-outlined text-secondary">receipt_long</span>
+                <div>
+                  <p class="text-sm font-bold text-on-surface">Booking status tracked</p>
+                  <p class="text-xs text-on-surface-variant">Your trip updates after confirmation.</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-4 py-3">
+                <span class="material-symbols-outlined text-primary">verified_user</span>
+                <div>
+                  <p class="text-sm font-bold text-on-surface">Verified gateway</p>
+                  <p class="text-xs text-on-surface-variant">Payment fields are submitted directly.</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <h1 class="text-xl font-bold text-on-surface">Payment could not start</h1>
-          <p class="text-sm text-on-surface-variant mt-1 mb-6">{{ error() }}</p>
-          <a routerLink="/customer/bookings" class="btn-primary text-sm px-6 py-2.5">Back to My Bookings</a>
-        } @else {
-          <span class="material-symbols-outlined animate-spin text-5xl text-primary">progress_activity</span>
-          <h1 class="text-xl font-bold text-on-surface mt-4">Redirecting to ABA PayWay…</h1>
-          <p class="text-sm text-on-surface-variant mt-1">Opening the secure payment page.</p>
-        }
+
+          <div class="flex items-center justify-center p-6 sm:p-10">
+            <div class="w-full max-w-md text-center">
+              @if (error()) {
+                <div
+                  class="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-2xl"
+                  style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.2);"
+                >
+                  <span class="material-symbols-outlined text-6xl text-red-400">error</span>
+                </div>
+                <p class="mb-2 text-[11px] font-black uppercase tracking-widest text-red-400">
+                  Checkout unavailable
+                </p>
+                <h2 class="text-2xl font-black text-on-surface">Payment could not start</h2>
+                <p class="mt-3 text-sm leading-6 text-on-surface-variant">{{ error() }}</p>
+                <a routerLink="/customer/bookings" class="btn-primary mt-7 px-6 py-2.5 text-sm">
+                  <span class="material-symbols-outlined text-lg">arrow_back</span>
+                  Back to bookings
+                </a>
+              } @else {
+                <div
+                  class="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-2xl animate-pulse-glow"
+                  style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.22);"
+                >
+                  <span class="material-symbols-outlined animate-spin text-6xl text-primary">progress_activity</span>
+                </div>
+                <p class="mb-2 text-[11px] font-black uppercase tracking-widest text-primary">
+                  Opening payment
+                </p>
+                <h2 class="text-2xl font-black text-on-surface">Redirecting to ABA PayWay</h2>
+                <p class="mt-3 text-sm leading-6 text-on-surface-variant">
+                  This usually takes a moment. Keep this tab open while the secure payment page loads.
+                </p>
+                <div class="mt-7 flex items-center justify-center gap-2">
+                  <span class="h-2 w-8 rounded-full bg-primary"></span>
+                  <span class="h-2 w-2 rounded-full bg-white/20"></span>
+                  <span class="h-2 w-2 rounded-full bg-white/20"></span>
+                </div>
+              }
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   `,
@@ -35,7 +107,7 @@ export class CheckoutComponent implements OnInit {
   readonly error = signal('');
 
   ngOnInit(): void {
-    // The form POST needs the browser — skip during server-side rendering.
+    // The form POST needs the browser, so skip during server-side rendering.
     if (!isPlatformBrowser(this.platformId)) return;
 
     const bookingId = this.route.snapshot.paramMap.get('bookingId');
@@ -44,7 +116,7 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
-    // Straight to ABA PayWay's hosted checkout — no in-app method-selection step.
+    // Straight to ABA PayWay's hosted checkout, without an in-app method-selection step.
     this.payment.createPaywayForm(bookingId).subscribe({
       next: (payload) => this.submitPaywayForm(payload),
       error: (err) => this.error.set(err.error?.message || 'Unable to start the ABA payment.'),

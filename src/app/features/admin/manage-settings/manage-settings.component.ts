@@ -135,12 +135,7 @@ export class ManageSettingsComponent implements OnInit {
     },
     payments: {
       methods: {
-        cash: true,
-        creditCard: true,
         abaPay: true,
-        acleda: true,
-        wing: false,
-        bankTransfer: true,
       },
       taxPercentage: 10,
       depositPercentage: 20,
@@ -214,12 +209,7 @@ export class ManageSettingsComponent implements OnInit {
   ];
 
   readonly paymentMethods = [
-    { key: 'cash', label: 'Cash', icon: 'payments', bg: '#E7F5ED', color: '#059669' },
-    { key: 'creditCard', label: 'Credit Card', icon: 'credit_card', bg: '#E5EEFF', color: '#005DAC' },
-    { key: 'abaPay', label: 'ABA Pay', icon: 'smartphone', bg: '#F3F0FF', color: '#7C3AED' },
-    { key: 'acleda', label: 'ACLEDA', icon: 'account_balance', bg: '#FFF3E0', color: '#E65100' },
-    { key: 'wing', label: 'Wing', icon: 'mobile_friendly', bg: '#FFEAEA', color: '#DC2626' },
-    { key: 'bankTransfer', label: 'Bank Transfer', icon: 'account_balance', bg: '#F3F4F6', color: '#6B7280' },
+    { key: 'abaPay', label: 'ABA PayWay QR', icon: 'qr_code_scanner', bg: '#E7F5ED', color: '#059669' },
   ];
 
   readonly notificationItems: ToggleItem[] = [

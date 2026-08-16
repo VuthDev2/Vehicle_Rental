@@ -5,33 +5,127 @@
   color: var(--color-on-surface);
 }
 
-aside {
+.customer-sidebar {
   width: 20rem;
   min-width: 20rem;
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
+  background: var(--color-surface-deep);
+  border-right: 1px solid var(--color-edge-deep);
+}
+
+.customer-sidebar.is-collapsed {
+  width: 5rem;
+  min-width: 5rem;
+}
+
+.sidebar-header {
+  min-height: 5.5rem;
+}
+
+.sidebar-logo,
+.sidebar-logo-fallback {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.customer-sidebar.is-collapsed .sidebar-text,
+.customer-sidebar.is-collapsed .nav-accent-bar {
+  display: none;
+}
+
+.customer-sidebar.is-collapsed .sidebar-header {
+  height: 6.75rem;
+  min-height: 6.75rem;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.5rem;
+}
+
+.customer-sidebar.is-collapsed .sidebar-logo,
+.customer-sidebar.is-collapsed .sidebar-logo-fallback {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+.customer-sidebar.is-collapsed .nav-item {
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.customer-sidebar.is-collapsed .nav-item > div:first-child {
+  margin: 0 auto;
+}
+
+.customer-sidebar.is-collapsed .collapse-button {
+  margin-left: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.customer-sidebar.is-collapsed .sidebar-logout-button {
+  display: none;
 }
 
 .nav-item {
   position: relative;
-  color: #94a3b8;
+  color: var(--color-on-surface-variant);
   border-radius: 12px;
+}
+
+.customer-sidebar > div:first-child {
+  border-bottom: 1px solid var(--color-edge-deep);
+}
+
+.sidebar-brand-name {
+  color: var(--color-on-surface);
+}
+
+.sidebar-brand-kicker {
+  color: var(--color-primary);
+}
+
+.sidebar-section-label {
+  color: var(--color-on-surface-variant);
+}
+
+.collapse-button {
+  color: var(--color-on-surface-variant);
+}
+
+.collapse-button:hover {
+  background: var(--color-surface-deep-raised);
+  color: var(--color-on-surface);
+}
+
+.nav-icon {
+  background: var(--color-surface-deep-raised);
+  color: var(--color-on-surface-variant);
+}
+
+.nav-item:hover .nav-icon {
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface);
 }
 
 .nav-accent-bar {
   opacity: 0;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.85);
   transition: opacity 0.2s ease;
 }
 
 .nav-item.active-nav {
-  color: #34d399 !important;
+  color: var(--color-primary) !important;
   background: linear-gradient(
     90deg,
     rgba(16, 185, 129, 0.14) 0%,
     rgba(16, 185, 129, 0.04) 75%,
     transparent 100%
   );
-  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.14);
 }
 
 .nav-item.active-nav .nav-accent-bar {
@@ -40,35 +134,148 @@ aside {
 
 .nav-item.active-nav div:first-child {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.24), rgba(16, 185, 129, 0.08)) !important;
-  color: #34d399 !important;
-  box-shadow: 0 0 18px rgba(16, 185, 129, 0.18);
+  color: var(--color-primary) !important;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: #f1f5f9;
+  background: var(--color-surface-deep-raised);
+  color: var(--color-on-surface);
+}
+
+.sidebar-footer {
+  border-top: 1px solid var(--color-edge-deep);
+}
+
+.sidebar-user-card {
+  background: var(--color-surface-deep-raised);
+  border: 1px solid var(--color-edge-deep);
+}
+
+.sidebar-user-name {
+  color: var(--color-on-surface);
+}
+
+.sidebar-logout-button {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  z-index: 2;
+}
+
+.sidebar-logout-button:hover {
+  background: #fecaca;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+:host-context(html.light) .customer-sidebar {
+  background: #ffffff;
+  border-right-color: #dbe3ef;
+  box-shadow: 12px 0 34px rgba(15, 23, 42, 0.04);
+}
+
+:host-context(html.light) .customer-sidebar > div:first-child,
+:host-context(html.light) .sidebar-footer {
+  border-color: #e2e8f0;
+}
+
+:host-context(html.light) .sidebar-brand-name {
+  color: #0f172a;
+}
+
+:host-context(html.light) .sidebar-brand-kicker {
+  color: #059669;
+}
+
+:host-context(html.light) .sidebar-section-label {
+  color: #334155;
+}
+
+:host-context(html.light) .nav-item {
+  color: #0f172a;
+}
+
+:host-context(html.light) .nav-icon {
+  background: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+}
+
+:host-context(html.light) .nav-item:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+:host-context(html.light) .nav-item:hover .nav-icon {
+  background: #eef6ff;
+  color: #0f172a;
+  border-color: #bfdbfe;
+}
+
+:host-context(html.light) .nav-item.active-nav {
+  color: #059669 !important;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.16), rgba(16, 185, 129, 0.05));
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.22);
+}
+
+:host-context(html.light) .nav-item.active-nav div:first-child {
+  background: #dff8ed !important;
+  color: #059669 !important;
+  border-color: #a7f3d0;
+}
+
+:host-context(html.light) .collapse-button {
+  color: #64748b;
+}
+
+:host-context(html.light) .collapse-button:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+:host-context(html.light) .sidebar-user-card {
+  background: #ffffff;
+  border-color: #dbe3ef;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+:host-context(html.light) .sidebar-user-name {
+  color: #0f172a;
+}
+
+:host-context(html.light) .sidebar-logout-button {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+:host-context(html.light) .sidebar-logout-button:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
 }
 
 @media (max-width: 1024px) {
-  aside {
+  .customer-sidebar {
     width: 18rem;
     min-width: 18rem;
   }
 }
 
 @media (max-width: 768px) {
-  aside {
+  .customer-sidebar {
     position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
     width: min(100%, 18rem);
+    min-width: min(100%, 18rem);
     transform: translateX(-100%);
     z-index: 50;
     transition: transform 0.3s ease;
   }
 
-  aside.translate-x-0 {
+  .customer-sidebar.translate-x-0 {
     transform: translateX(0);
   }
 
