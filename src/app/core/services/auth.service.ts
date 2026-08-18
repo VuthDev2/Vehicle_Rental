@@ -123,7 +123,7 @@ export class AuthService {
 
   logout(): void {
     this.clearSession();
-    this.router.navigateByUrl('/');
+    this.router.navigateByUrl('/login');
   }
 
   updateUser(user: User): void {
