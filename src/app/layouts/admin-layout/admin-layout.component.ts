@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
 
@@ -14,6 +14,20 @@ export class AdminLayoutComponent {
   readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
   sidebarOpen = signal(false);
+  profileMenuOpen = signal(false);
+  readonly pageTitle = signal('Dashboard');
+
+  constructor() {
+    this.syncTitle();
+    this.router.events.subscribe((e) => {
+      if (e instanceof NavigationEnd) this.syncTitle();
+    });
+  }
+
+  private syncTitle(): void {
+    const match = this.navItems.find((n) => this.router.url.startsWith(n.path));
+    this.pageTitle.set(match?.label ?? 'Admin');
+  }
 
   get isMobile(): boolean {
     return typeof window !== 'undefined' && window.innerWidth < 768;
