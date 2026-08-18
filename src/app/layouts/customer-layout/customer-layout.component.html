@@ -10,7 +10,6 @@
   <!-- ============ SIDEBAR ============ -->
   <aside
     #sidebar
-<<<<<<< HEAD
     class="fixed left-0 top-0 z-40 flex h-full flex-col md:translate-x-0"
     [class.-translate-x-full]="!sidebarOpen()"
     [class.translate-x-0]="sidebarOpen()"
@@ -63,63 +62,16 @@
       >
         <span class="material-symbols-outlined text-xl transition-transform duration-300">
           {{ sidebarCollapsed() ? 'chevron_right' : 'menu_open' }}
-=======
-    class="customer-sidebar fixed left-0 top-0 z-40 flex h-full flex-col transition-all duration-300 ease-in-out"
-    [class.is-collapsed]="sidebarCollapsed()"
-    [class.-translate-x-full]="isMobile && !sidebarOpen()"
-    [class.translate-x-0]="!isMobile || sidebarOpen()"
-  >
-    <!-- Logo -->
-    <div class="sidebar-header flex h-20 items-center gap-3 px-6 flex-shrink-0">
-      <img
-        src="/logo.jpg"
-        alt="Cambo Rent"
-        class="sidebar-logo"
-        onerror="
-          this.style.display = 'none';
-          this.nextElementSibling.style.display = 'flex';
-        "
-      />
-      <div
-        class="sidebar-logo-fallback"
-        style="
-          display: none;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          background: linear-gradient(135deg, #10b981, #059669);
-        "
-      >
-        <span class="material-symbols-outlined text-white text-2xl">directions_car</span>
-      </div>
-      <div class="sidebar-text flex flex-col leading-tight">
-        <span class="sidebar-brand-name text-sm font-black">Cambo Rent</span>
-        <span class="sidebar-brand-kicker text-[10px] font-bold uppercase tracking-widest">Customer Portal</span>
-      </div>
-      <button
-        type="button"
-        (click)="toggleSidebar()"
-        class="collapse-button ml-auto hidden h-9 w-9 items-center justify-center rounded-xl transition-colors md:flex"
-        [attr.aria-label]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
-      >
-        <span class="material-symbols-outlined text-xl">
-          {{ sidebarCollapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}
->>>>>>> 6ede6f0cee9c41f8b101a3dfa35d0e6c39af0e78
         </span>
       </button>
     </div>
 
     <!-- Nav Items -->
-<<<<<<< HEAD
     <div class="flex flex-col flex-1 overflow-y-auto p-3 gap-1 overflow-x-hidden">
       <p
         class="text-[10px] font-bold uppercase tracking-widest px-3 mb-2 collapsible-text"
         style="color: var(--color-on-surface-variant)"
       >
-=======
-    <div class="flex flex-col flex-1 overflow-y-auto p-4 gap-0.5">
-      <p class="sidebar-section-label sidebar-text text-[10px] font-bold uppercase tracking-widest px-3 mb-3">
->>>>>>> 6ede6f0cee9c41f8b101a3dfa35d0e6c39af0e78
         Navigation
       </p>
 
@@ -133,43 +85,25 @@
           [class.px-3]="!sidebarCollapsed()"
           [class.px-2.5]="sidebarCollapsed()"
           [class.active-nav]="rla.isActive"
-<<<<<<< HEAD
           [title]="item.label"
-=======
->>>>>>> 6ede6f0cee9c41f8b101a3dfa35d0e6c39af0e78
         >
           <div
             class="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 flex-shrink-0"
             [class]="
               rla.isActive
-<<<<<<< HEAD
                 ? 'text-white'
                 : 'text-on-surface-variant'
-=======
-                ? 'nav-icon is-active'
-                : 'nav-icon'
->>>>>>> 6ede6f0cee9c41f8b101a3dfa35d0e6c39af0e78
             "
             [style.background]="rla.isActive ? '' : 'var(--color-surface-container-low)'"
           >
             <span class="material-symbols-outlined text-xl">{{ item.icon }}</span>
           </div>
-<<<<<<< HEAD
           <span class="collapsible-text ml-3 truncate">{{ item.label }}</span>
-=======
-          <span class="sidebar-text">{{ item.label }}</span>
-          @if (rla.isActive) {
-            <div
-              class="nav-accent-bar absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-primary"
-            ></div>
-          }
->>>>>>> 6ede6f0cee9c41f8b101a3dfa35d0e6c39af0e78
         </a>
       }
     </div>
 
     <!-- User Profile Section -->
-<<<<<<< HEAD
     <div class="p-3 flex-shrink-0 overflow-hidden" style="border-top: 1px solid var(--color-edge-deep)">
       <!-- User Info Box -->
       <div
@@ -217,34 +151,11 @@
             <span class="material-symbols-outlined text-base flex-shrink-0">logout</span>
             <span class="collapsible-text ml-1.5">Logout</span>
           </button>
-=======
-    <div class="sidebar-footer p-4 flex-shrink-0">
-      <div
-        class="sidebar-user-card rounded-xl p-3 flex items-center gap-3 transition-all"
-      >
-        @if (auth.user()?.avatar) {
-          <img
-            [src]="auth.user()?.avatar"
-            [alt]="(auth.user()?.name || 'Profile') + ' photo'"
-            class="h-9 w-9 flex-shrink-0 rounded-full object-cover"
-          />
-        } @else {
-          <div
-            class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white flex-shrink-0"
-            style="background: linear-gradient(135deg, #10b981, #059669)"
-          >
-            {{ auth.user()?.name?.charAt(0)?.toUpperCase() || 'U' }}
-          </div>
-        }
-        <div class="sidebar-text min-w-0 flex-1">
-          <p class="sidebar-user-name text-sm font-bold truncate">{{ auth.user()?.name }}</p>
->>>>>>> 6ede6f0cee9c41f8b101a3dfa35d0e6c39af0e78
         </div>
 
         <!-- Theme Toggle Button -->
         <button
           type="button"
-<<<<<<< HEAD
           (click)="theme.toggleTheme()"
           class="user-action-btn w-full h-9 rounded-xl text-xs font-semibold hover:bg-white/5 flex items-center justify-center overflow-hidden"
           style="background: var(--color-surface-deep-raised); color: var(--color-on-surface); border: 1px solid var(--color-edge-deep);"
@@ -252,14 +163,6 @@
         >
           <span class="material-symbols-outlined text-base flex-shrink-0">{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</span>
           <span class="collapsible-text ml-2">{{ theme.isDark() ? 'Light Mode' : 'Dark Mode' }}</span>
-=======
-          (click)="confirmLogout()"
-          class="sidebar-logout-button ml-auto h-9 w-9 shrink-0 rounded-xl transition-all flex items-center justify-center"
-          aria-label="Sign out"
-          title="Sign out"
-        >
-          <span class="material-symbols-outlined text-base">logout</span>
->>>>>>> 6ede6f0cee9c41f8b101a3dfa35d0e6c39af0e78
         </button>
       </div>
     </div>
@@ -267,14 +170,8 @@
 
   <!-- ============ MAIN CONTENT ============ -->
   <div
-<<<<<<< HEAD
     class="flex-1 flex flex-col min-h-screen main-content-wrapper"
     [style.paddingLeft]="sidebarCollapsed() ? '5rem' : '16rem'"
-=======
-    class="flex-1 flex flex-col min-h-screen transition-all duration-300"
-    [class.pl-80]="!isMobile && !sidebarCollapsed()"
-    [class.pl-20]="!isMobile && sidebarCollapsed()"
->>>>>>> 6ede6f0cee9c41f8b101a3dfa35d0e6c39af0e78
     style="min-width: 0"
   >
     <!-- Email verification banner -->

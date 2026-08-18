@@ -5,7 +5,7 @@
        ================================================================ -->
   <header class="home-hero">
     <p class="hero-date">{{ todayLabel }}</p>
-    <h1 class="hero-title">{{ greeting() }}, {{ firstName }}! 👋</h1>
+    <h1 class="hero-title">{{ greeting() }}, {{ firstName }}!</h1>
     <p class="hero-subtitle">
       Welcome to your Cambo Rent portal. Explore our premium vehicle fleet available across Cambodia, manage your reservations, and view trip details.
     </p>
@@ -140,15 +140,9 @@
        ================================================================ -->
   <section class="home-section">
     <div class="subtle-card">
-      <div class="section-header-minimal flex-row-layout mb-6">
-        <div>
-          <h2 class="section-title-minimal">Browse Our Fleet</h2>
-          <p class="section-desc-minimal">Choose from our diverse categories tailored to your travel needs.</p>
-        </div>
-        <a routerLink="/customer/explore" class="text-link-explore">
-          View Full Catalog
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </a>
+      <div class="section-header-minimal mb-6">
+        <h2 class="section-title-minimal">Browse Our Fleet</h2>
+        <p class="section-desc-minimal">Choose from our diverse categories tailored to your travel needs.</p>
       </div>
 
       <div class="fleet-columns">
@@ -156,11 +150,6 @@
           <div class="fleet-column-item">
             <div class="fleet-header">
               <span class="material-symbols-outlined fleet-icon" [style.color]="cat.color">{{ cat.icon }}</span>
-              @if (getCategoryCount(cat.query) !== null) {
-                <span class="fleet-count" [style.color]="cat.color">
-                  {{ getCategoryCount(cat.query) }} available
-                </span>
-              }
             </div>
             <h3 class="fleet-title">{{ cat.label }}</h3>
             <p class="fleet-desc">{{ cat.description }}</p>
