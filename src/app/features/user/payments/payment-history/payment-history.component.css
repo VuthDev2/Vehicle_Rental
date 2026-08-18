@@ -1,0 +1,146 @@
+:host {
+  display: block;
+}
+
+.payments-panel {
+  background: var(--color-surface-deep);
+  border: 1px solid var(--color-edge-deep);
+  border-radius: 18px;
+}
+
+.payments-panel .text-on-surface,
+.payments-panel h1,
+.payments-panel h2,
+.payments-panel p {
+  color: var(--color-on-surface);
+}
+
+.payments-panel .text-on-surface-variant,
+.payments-panel .text-outline {
+  color: var(--color-on-surface-variant);
+}
+
+.payments-card {
+  background: var(--color-surface-deep-raised);
+  border: 1px solid var(--color-edge-deep);
+  border-radius: 14px;
+}
+
+.payments-action {
+  min-height: 48px;
+  border-radius: 12px;
+  background: var(--color-surface-deep-raised);
+  border-color: var(--color-edge-deep-strong);
+  color: var(--color-on-surface);
+}
+
+.payments-filter {
+  background: var(--color-surface-deep-raised);
+  border: 1px solid var(--color-edge-deep);
+  color: var(--color-on-surface-variant);
+}
+
+.payments-filter.is-active {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.32);
+  color: var(--color-primary);
+}
+
+.payments-count {
+  background: var(--color-surface-container-low);
+  color: inherit;
+}
+
+.payments-table {
+  overflow: hidden;
+  border: 1px solid var(--color-edge-deep);
+  border-radius: 14px;
+}
+
+.payments-table-head {
+  background: var(--color-surface-deep-raised);
+  border-bottom: 1px solid var(--color-edge-deep);
+  color: var(--color-on-surface-variant);
+}
+
+.payments-row {
+  border-bottom: 1px solid var(--color-edge-deep);
+}
+
+.payments-row:hover {
+  background: var(--color-surface-deep-raised);
+}
+
+.payments-row:last-child {
+  border-bottom: 0;
+}
+
+.payments-panel .chip {
+  background: var(--color-surface-deep-raised);
+  border-color: var(--color-edge-deep);
+  color: var(--color-on-surface-variant);
+}
+
+:host-context(html.light) .payments-panel {
+  background: #ffffff;
+  border-color: #dbe3ef;
+}
+
+:host-context(html.light) .payments-panel .text-on-surface,
+:host-context(html.light) .payments-panel h1,
+:host-context(html.light) .payments-panel h2,
+:host-context(html.light) .payments-panel p {
+  color: #0f172a !important;
+}
+
+:host-context(html.light) .payments-panel .text-on-surface-variant,
+:host-context(html.light) .payments-panel .text-outline {
+  color: #475569 !important;
+}
+
+:host-context(html.light) .payments-card,
+:host-context(html.light) .payments-action,
+:host-context(html.light) .payments-table,
+:host-context(html.light) .payments-filter {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+:host-context(html.light) .payments-action:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+:host-context(html.light) .payments-table-head {
+  background: #f8fafc;
+  border-color: #dbe3ef;
+  color: #475569;
+}
+
+:host-context(html.light) .payments-row {
+  border-color: #e2e8f0;
+}
+
+:host-context(html.light) .payments-row:hover {
+  background: #f8fafc;
+}
+
+:host-context(html.light) .payments-filter {
+  color: #334155;
+}
+
+:host-context(html.light) .payments-filter.is-active {
+  background: #e7f8ef;
+  border-color: #a7f3d0;
+  color: #059669;
+}
+
+:host-context(html.light) .payments-count {
+  background: #e2e8f0;
+}
+
+:host-context(html.light) .payments-panel .chip {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}

@@ -22,6 +22,10 @@ export class CustomerLayoutComponent {
     this.sidebarCollapsed.update((v) => !v);
   }
 
+  toggleSidebar(): void {
+    this.sidebarCollapsed.set(!this.sidebarCollapsed());
+  }
+
   /** Show a dismissible banner (per user) prompting unverified accounts to verify their email. */
   readonly showVerifyBanner = computed(() => {
     const user = this.auth.user();
@@ -52,8 +56,6 @@ export class CustomerLayoutComponent {
   ];
 
   confirmLogout(): void {
-    if (confirm('Are you sure you want to sign out?')) {
-      this.auth.logout();
-    }
+    this.auth.logout();
   }
 }
