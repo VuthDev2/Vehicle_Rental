@@ -131,12 +131,9 @@
   } @else {
     <div class="vehicles-grid">
       @for (vehicle of paginated; track vehicle._id) {
-        <a
-          [routerLink]="['/customer/explore', vehicle._id]"
-          class="vcard"
-        >
-          <!-- Image -->
-          <div class="vcard-img-wrap">
+        <div class="vcard">
+          <!-- Image Header with Link -->
+          <a [routerLink]="['/customer/explore', vehicle._id]" class="vcard-img-wrap">
             @if (vehicle.images?.[0]) {
               <img
                 [src]="vehicle.images[0]"
@@ -157,7 +154,7 @@
               <span class="avail-dot" [class.green]="vehicle.available" [class.gray]="!vehicle.available"></span>
               {{ vehicle.available ? 'Available' : 'Booked' }}
             </span>
-          </div>
+          </a>
 
           <!-- Card Body -->
           <div class="vcard-body">
@@ -168,11 +165,15 @@
                   <p class="vcard-meta">
                     {{ vehicle.brand || vehicle.type }}{{ vehicle.year ? ' · ' + vehicle.year : '' }}
                   </p>
-                  <h2 class="vcard-name">{{ vehicle.name }}</h2>
+                  <h2 class="vcard-name">
+                    <a [routerLink]="['/customer/explore', vehicle._id]" class="vcard-title-link">
+                      {{ vehicle.name }}
+                    </a>
+                  </h2>
                 </div>
                 <div class="vcard-price">
                   ${{ vehicle.pricing?.day ?? 0 }}
-                  <span class="per-unit">per day</span>
+                  <span class="per-unit">/day</span>
                 </div>
               </div>
 
@@ -180,7 +181,7 @@
               <div class="vcard-rating-row">
                 <div class="vcard-stars">
                   <span class="material-symbols-outlined">star</span>
-                  <span style="color: #0f172a;">{{ vehicle.rating ? vehicle.rating.toFixed(1) : 'New' }}</span>
+                  <span>{{ vehicle.rating ? vehicle.rating.toFixed(1) : '5.0' }}</span>
                 </div>
                 @if (vehicle.trips) {
                   <span>· {{ vehicle.trips }} trips</span>
@@ -188,7 +189,7 @@
                 @if (vehicle.location) {
                   <div class="vcard-location">
                     <span class="material-symbols-outlined">location_on</span>
-                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ vehicle.location }}</span>
+                    <span>{{ vehicle.location }}</span>
                   </div>
                 }
               </div>
@@ -212,22 +213,16 @@
               </div>
             </div>
 
-            <!-- Footer -->
-            <div class="vcard-footer">
-              <span class="vcard-from-price">
-                @if (vehicle.pricing?.hour) {
-                  From ${{ vehicle.pricing.hour }}/hr
-                } @else {
-                  Flexible terms
-                }
-              </span>
-              <span class="vcard-action-link">
-                View Details
-                <span class="material-symbols-outlined">arrow_forward</span>
-              </span>
-            </div>
+            <!-- Prominent Action Button matching Dashboard Reserve button -->
+            <a
+              [routerLink]="['/customer/explore', vehicle._id]"
+              class="btn-reserve"
+            >
+              <span>View Details & Book</span>
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
           </div>
-        </a>
+        </div>
       }
     </div>
 
