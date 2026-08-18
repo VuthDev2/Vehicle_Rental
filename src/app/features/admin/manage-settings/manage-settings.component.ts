@@ -210,16 +210,12 @@ export class ManageSettingsComponent implements OnInit {
   ];
 
   readonly paymentMethods = [
-<<<<<<< HEAD
     { key: 'cash', label: 'Cash', icon: 'payments', bg: 'rgba(16, 185, 129, 0.12)', color: '#34d399' },
     { key: 'creditCard', label: 'Credit Card', icon: 'credit_card', bg: 'rgba(59, 130, 246, 0.12)', color: '#60a5fa' },
     { key: 'abaPay', label: 'ABA PayWay', icon: 'smartphone', bg: 'rgba(16, 185, 129, 0.12)', color: '#34d399' },
     { key: 'acleda', label: 'ACLEDA Pay', icon: 'account_balance', bg: 'rgba(245, 158, 11, 0.12)', color: '#fbbf24' },
     { key: 'wing', label: 'Wing Bank', icon: 'mobile_friendly', bg: 'rgba(239, 68, 68, 0.12)', color: '#f87171' },
     { key: 'bankTransfer', label: 'Direct Bank Transfer', icon: 'account_balance', bg: 'rgba(148, 163, 184, 0.12)', color: '#94a3b8' },
-=======
-    { key: 'abaPay', label: 'ABA PayWay QR', icon: 'qr_code_scanner', bg: '#E7F5ED', color: '#059669' },
->>>>>>> 6ede6f0cee9c41f8b101a3dfa35d0e6c39af0e78
   ];
 
   readonly notificationItems: ToggleItem[] = [
