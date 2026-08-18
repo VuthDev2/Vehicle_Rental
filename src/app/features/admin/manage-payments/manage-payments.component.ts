@@ -1,7 +1,8 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { PaymentService } from '../../../core/services/payment.service';
-import { Payment } from '../../../models/payment.model';
+import { Payment, PaymentStatus } from '../../../models/payment.model';
 
 const PAYMENT_METHOD_ICONS: Record<string, string> = {
   Card: 'credit_card',
@@ -18,10 +19,12 @@ const STATUS_STYLE: Record<string, { bg: string; color: string }> = {
   refunded: { bg: '#E3E2E2', color: '#49454F' },
 };
 
+type PaymentStatusFilter = 'all' | PaymentStatus;
+
 @Component({
   selector: 'app-manage-payments',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, FormsModule],
   templateUrl: './manage-payments.component.html',
 })
 export class ManagePaymentsComponent implements OnInit {
@@ -36,7 +39,16 @@ export class ManagePaymentsComponent implements OnInit {
   readonly currentPage = signal(1);
   readonly totalPages = signal(1);
   readonly total = signal(0);
+  readonly searchTerm = signal('');
+  readonly statusFilter = signal<PaymentStatusFilter>('all');
   readonly pageSize = 20;
+  readonly statusOptions: { value: PaymentStatusFilter; label: string }[] = [
+    { value: 'all', label: 'All Status' },
+    { value: 'succeeded', label: 'Succeeded' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'failed', label: 'Failed' },
+    { value: 'refunded', label: 'Refunded' },
+  ];
 
   readonly statCards = computed(() => {
     const all = this.payments();
@@ -53,6 +65,30 @@ export class ManagePaymentsComponent implements OnInit {
   });
 
   ngOnInit() { this.loadPayments(); }
+
+  readonly filteredPayments = computed(() => {
+    const status = this.statusFilter();
+    const query = this.searchTerm().trim().toLowerCase();
+
+    return this.payments().filter((payment) => {
+      const matchesStatus = status === 'all' || payment.status === status;
+      if (!query) return matchesStatus;
+
+      const searchable = [
+        payment.transactionId,
+        payment._id,
+        payment.method,
+        payment.status,
+        this.getCustomerName(payment),
+        this.getCustomerEmail(payment),
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return matchesStatus && searchable.includes(query);
+    });
+  });
 
   readonly pageNumbers = () => {
     const total = this.totalPages();
@@ -87,12 +123,18 @@ export class ManagePaymentsComponent implements OnInit {
     this.loadPayments();
   }
 
-  getCustomerName(user: any): string {
-    return user?.name || 'Walk-in Customer';
+  updateSearch(event: Event): void {
+    this.searchTerm.set((event.target as HTMLInputElement).value);
   }
 
-  getCustomerEmail(user: any): string {
-    return user?.email || 'N/A';
+  getCustomerName(payment: Payment): string {
+    const user = payment.userId;
+    return typeof user === 'object' ? user.name || 'Walk-in Customer' : 'Walk-in Customer';
+  }
+
+  getCustomerEmail(payment: Payment): string {
+    const user = payment.userId;
+    return typeof user === 'object' ? user.email || 'N/A' : 'N/A';
   }
 
   getInitials(name: string): string {
