@@ -70,6 +70,12 @@
   color: var(--color-on-surface);
 }
 
+.mobile-nav-link.active-nav-link {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: var(--color-primary);
+}
+
 .public-brand-name {
   color: #ffffff;
 }
@@ -172,6 +178,12 @@
   color: #0f172a;
 }
 
+:host-context(html.light) .mobile-nav-link.active-nav-link {
+  background: #e7f8ef;
+  border-color: #a7f3d0;
+  color: #059669;
+}
+
 footer {
   border-top-color: var(--color-edge-deep) !important;
 }
@@ -180,6 +192,28 @@ footer .text-white,
 footer h4,
 footer .font-black {
   color: var(--color-on-surface) !important;
+}
+
+:host-context(html.light) footer h4,
+:host-context(html.light) footer .font-black,
+:host-context(html.light) footer .text-white {
+  color: #0f172a !important;
+}
+
+:host-context(html.light) footer p,
+:host-context(html.light) footer a,
+:host-context(html.light) footer div,
+:host-context(html.light) footer span {
+  color: #334155 !important;
+}
+
+:host-context(html.light) footer a:hover,
+:host-context(html.light) footer .hover\:text-emerald-400:hover {
+  color: #047857 !important;
+}
+
+:host-context(html.light) footer .material-symbols-outlined {
+  color: #059669 !important;
 }
 
 footer p,

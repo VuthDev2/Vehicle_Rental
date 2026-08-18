@@ -7,6 +7,11 @@
   color: var(--color-on-surface);
 }
 
+.landing-page .section-container {
+  max-width: 1120px;
+  padding-inline: clamp(20px, 6vw, 64px);
+}
+
 .landing-hero {
   position: relative;
   min-height: calc(100vh - 80px);

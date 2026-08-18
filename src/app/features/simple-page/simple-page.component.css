@@ -8,20 +8,21 @@
   color: var(--color-on-surface);
 }
 
-.info-hero {
-  padding: 96px 0 72px;
-  background:
-    linear-gradient(135deg, rgba(16, 185, 129, 0.12), transparent 34%),
-    var(--color-surface);
-  border-bottom: 1px solid var(--color-outline);
+.info-page .section-container {
+  max-width: 1120px;
+  padding-inline: clamp(20px, 6vw, 64px);
 }
 
-.info-hero-grid,
-.contact-grid {
+.info-hero {
+  padding: 88px 0 76px;
+  background: var(--color-background);
+}
+
+.info-hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 380px;
-  gap: 32px;
-  align-items: stretch;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: 40px;
+  align-items: center;
 }
 
 .info-copy {
@@ -81,17 +82,18 @@
 
 .info-primary,
 .info-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   min-height: 50px;
   border-radius: 12px;
 }
 
 .info-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   padding: 12px 24px;
-  border: 1px solid var(--color-outline);
-  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-edge-deep-strong);
+  background: transparent;
   color: var(--color-on-surface);
   font-weight: 800;
   text-decoration: none;
@@ -102,6 +104,7 @@
 }
 
 .info-secondary:hover {
+  background: var(--color-surface-deep-raised);
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
@@ -110,17 +113,17 @@
 .info-card,
 .stat-card,
 .support-card {
-  border: 1px solid var(--color-outline);
-  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-edge-deep);
+  background: var(--color-surface-deep);
 }
 
 .info-panel {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 320px;
-  padding: 28px;
-  border-radius: 22px;
+  min-height: 300px;
+  padding: 30px;
+  border-radius: 18px;
 }
 
 .panel-icon {
@@ -171,7 +174,8 @@
 }
 
 .info-section {
-  padding: 76px 0 92px;
+  padding: 80px 0 92px;
+  background: var(--color-background);
 }
 
 .section-heading {
@@ -220,11 +224,21 @@
 .info-card {
   padding: 26px;
   border-radius: 18px;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .info-card > .material-symbols-outlined {
   color: var(--color-primary);
   font-size: 30px;
+}
+
+.info-card:hover {
+  background: var(--color-surface-deep-raised);
+  border-color: var(--color-edge-deep-strong);
+  transform: translateY(-2px);
 }
 
 .info-card h3 {
@@ -240,8 +254,9 @@
   line-height: 1.65;
 }
 
-.contact-grid {
-  align-items: start;
+.contact-section {
+  display: grid;
+  gap: 28px;
 }
 
 .contact-card-grid {
@@ -251,6 +266,11 @@
 .contact-card {
   display: flex;
   gap: 16px;
+  min-height: 180px;
+}
+
+.contact-card > .material-symbols-outlined {
+  flex: 0 0 auto;
 }
 
 .contact-card h3 {
@@ -265,22 +285,22 @@
 }
 
 .support-card {
-  position: sticky;
-  top: 104px;
-  padding: 28px;
-  border-radius: 22px;
+  position: static;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(320px, 1fr) auto;
+  gap: 28px;
+  align-items: center;
+  padding: 30px;
+  border-radius: 18px;
 }
 
 .support-link {
-  width: 100%;
-  margin-top: 28px;
+  min-width: 170px;
+  margin-top: 0;
 }
 
 html.light .info-hero {
-  background:
-    linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent 36%),
-    #ffffff;
-  border-color: #dbe4ee;
+  background: #f8fafc;
 }
 
 html.light .info-panel,
@@ -288,8 +308,14 @@ html.light .info-card,
 html.light .stat-card,
 html.light .support-card,
 html.light .info-secondary {
-  border-color: #d8e2ee;
+  border-color: #dbe3ef;
   background: #ffffff;
+}
+
+html.light .info-card:hover,
+html.light .info-secondary:hover {
+  background: #f8fafc;
+  border-color: #a7f3d0;
 }
 
 html.light .info-copy h1,
@@ -311,26 +337,24 @@ html.light .info-card p {
   color: #475569;
 }
 
-html.dark .info-panel,
-html.dark .info-card,
-html.dark .stat-card,
-html.dark .support-card,
-html.dark .info-secondary {
-  border-color: #223047;
-  background: #111827;
-}
-
 @media (max-width: 960px) {
   .info-hero-grid,
-  .contact-grid,
   .stat-grid,
   .info-card-grid,
   .contact-card-grid {
     grid-template-columns: 1fr;
   }
 
+  .contact-card {
+    min-height: auto;
+  }
+
   .support-card {
-    position: static;
+    grid-template-columns: 1fr;
+  }
+
+  .support-link {
+    width: 100%;
   }
 }
 
