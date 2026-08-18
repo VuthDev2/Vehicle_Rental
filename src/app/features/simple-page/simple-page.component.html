@@ -1,6 +1,6 @@
 <main class="info-page">
   <section class="info-hero">
-    <div class="container info-hero-grid">
+    <div class="section-container info-hero-grid">
       <div class="info-copy">
         <p class="info-kicker">
           <span></span>
@@ -10,7 +10,10 @@
         <p>{{ body }}</p>
 
         <div class="info-actions">
-          <a routerLink="/register" class="btn-primary info-primary">Get Started</a>
+          <a routerLink="/register" class="btn-primary info-primary">
+            <span class="material-symbols-outlined">person_add</span>
+            Sign Up
+          </a>
           <a routerLink="/vehicles" class="info-secondary">View Fleet</a>
         </div>
       </div>
@@ -35,7 +38,7 @@
 
   @if (!isContact) {
     <section class="info-section">
-      <div class="container">
+      <div class="section-container">
         <div class="section-heading">
           <p class="info-kicker"><span></span> About Us</p>
           <h2>Built for simple, dependable vehicle rental.</h2>
@@ -67,34 +70,34 @@
     </section>
   } @else {
     <section class="info-section">
-      <div class="container contact-grid">
-        <div>
-          <div class="section-heading">
-            <p class="info-kicker"><span></span> Contact Us</p>
-            <h2>Need help before or after your booking?</h2>
-            <p>
-              Send us your booking reference, pickup time, vehicle type, or payment question and the support
-              team will help you move forward.
-            </p>
-          </div>
+      <div class="section-container contact-section">
+        <div class="section-heading">
+          <p class="info-kicker"><span></span> Contact Us</p>
+          <h2>Need help before or after your booking?</h2>
+          <p>
+            Send us your booking reference, pickup time, vehicle type, or payment question and the support
+            team will help you move forward.
+          </p>
+        </div>
 
-          <div class="info-card-grid contact-card-grid">
-            @for (method of contactMethods; track method.title) {
-              <article class="info-card contact-card">
-                <span class="material-symbols-outlined">{{ method.icon }}</span>
-                <div>
-                  <h3>{{ method.title }}</h3>
-                  <strong>{{ method.detail }}</strong>
-                  <p>{{ method.note }}</p>
-                </div>
-              </article>
-            }
-          </div>
+        <div class="info-card-grid contact-card-grid">
+          @for (method of contactMethods; track method.title) {
+            <article class="info-card contact-card">
+              <span class="material-symbols-outlined">{{ method.icon }}</span>
+              <div>
+                <h3>{{ method.title }}</h3>
+                <strong>{{ method.detail }}</strong>
+                <p>{{ method.note }}</p>
+              </div>
+            </article>
+          }
         </div>
 
         <aside class="support-card">
-          <p class="info-kicker"><span></span> Support Desk</p>
-          <h2>We can help with</h2>
+          <div>
+            <p class="info-kicker"><span></span> Support Desk</p>
+            <h2>We can help with</h2>
+          </div>
           <div class="support-list">
             @for (item of contactSupport; track item) {
               <span>
