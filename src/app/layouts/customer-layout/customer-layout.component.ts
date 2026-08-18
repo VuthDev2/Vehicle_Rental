@@ -44,7 +44,7 @@ export class CustomerLayoutComponent {
   }
 
   readonly navItems = [
-    { path: '/customer/dashboard', icon: 'dashboard', label: 'Dashboard' },
+    { path: '/customer/dashboard', icon: 'home', label: 'Home' },
     { path: '/customer/explore', icon: 'explore', label: 'Explore' },
     { path: '/customer/bookings', icon: 'receipt_long', label: 'My Bookings' },
     { path: '/customer/payments', icon: 'payments', label: 'Payments' },
