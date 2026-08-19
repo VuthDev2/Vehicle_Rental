@@ -71,12 +71,12 @@ const getEmailTemplate = (title, name, bodyContent, otp = null) => `
                 ${bodyContent}
               </div>
               
-              ${otp ? \`
+              ${otp ? `
               <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 24px; text-align: center; margin: 32px 0;">
                 <p style="margin: 0 0 8px 0; font-size: 14px; color: #166534; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Your Security Code</p>
-                <p style="margin: 0; font-size: 40px; letter-spacing: 12px; font-weight: 800; color: #0ea776;">\${otp}</p>
+                <p style="margin: 0; font-size: 40px; letter-spacing: 12px; font-weight: 800; color: #0ea776;">${otp}</p>
               </div>
-              \` : ''}
+              ` : ''}
               
               <div style="font-size: 16px; line-height: 1.6; color: #475569;">
                 <p style="margin: 0 0 8px 0;">If you didn't request this, you can safely ignore this email.</p>
@@ -98,7 +98,7 @@ const getEmailTemplate = (title, name, bodyContent, otp = null) => `
   </table>
 </body>
 </html>
-\`;
+`;
 
 const sendVerificationEmail = (to, name, code) => {
   return sendEmail({
