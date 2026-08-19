@@ -1,5 +1,6 @@
 const rateLimit = require('express-rate-limit');
 
+// General auth routes: register, resend, etc.
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
@@ -8,6 +9,16 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Login-specific: tighter to prevent brute-force password attacks.
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { message: 'Too many login attempts. Please try again in 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// General API routes.
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
@@ -25,4 +36,5 @@ const verificationLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-module.exports = { authLimiter, apiLimiter, verificationLimiter };
+module.exports = { authLimiter, loginLimiter, apiLimiter, verificationLimiter };
+

@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 const { sendPasswordResetEmail, sendVerificationEmail } = require('../utils/emailService');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
@@ -21,6 +24,10 @@ const generateVerificationCode = () => {
 const register = async (req, res, next) => {
   try {
     const { name, email, phone, password } = req.body;
+
+    if (!email || !email.endsWith('@gmail.com')) {
+      return res.status(400).json({ message: 'Only @gmail.com emails are allowed to register.' });
+    }
 
     const existing = await User.findOne({ email });
     if (existing) {
@@ -52,6 +59,10 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !email.endsWith('@gmail.com')) {
+      return res.status(400).json({ message: 'Only @gmail.com emails are allowed to login.' });
+    }
 
     const user = await User.findOne({ email }).select('+passwordHash');
     if (!user || !(await user.comparePassword(password))) {
@@ -150,37 +161,70 @@ const forgotPassword = async (req, res, next) => {
       return res.json({ message: 'If that email exists, a reset link has been sent.' });
     }
 
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetHash = crypto.createHash('sha256').update(resetToken).digest('hex');
+    const { code, hash } = generateVerificationCode();
 
-    user.resetPasswordToken = resetHash;
-    user.resetPasswordExpires = Date.now() + 3600000;
+    user.resetPasswordToken = hash;
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 mins
     await user.save({ validateBeforeSave: false });
 
-    const result = await sendPasswordResetEmail(user.email, user.name, resetToken);
+    const result = await sendPasswordResetEmail(user.email, user.name, code);
 
     res.json({
-      message: 'If that email exists, a reset link has been sent.',
-      ...(result.sent ? {} : { notice: 'Email service not configured. Use the reset token directly in development.' }),
-      ...(result.sent ? {} : { devToken: resetToken }),
+      message: 'If that email exists, a reset code has been sent.',
+      ...(result.sent ? {} : { notice: 'Email service not configured. Use the reset code directly in development.' }),
+      ...(result.sent ? {} : { devToken: code }),
     });
   } catch (err) {
     next(err);
   }
 };
 
-// POST /api/auth/reset-password/:token
-const resetPassword = async (req, res, next) => {
+// POST /api/auth/verify-reset-otp
+const verifyResetOtp = async (req, res, next) => {
   try {
-    const resetHash = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const { email, otp } = req.body;
+    
+    if (!email || !otp) {
+      return res.status(400).json({ message: 'Email and OTP are required.' });
+    }
+
+    const resetHash = crypto.createHash('sha256').update(String(otp)).digest('hex');
 
     const user = await User.findOne({
+      email,
+      resetPasswordToken: resetHash,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired reset code.' });
+    }
+
+    res.json({ message: 'OTP verified successfully.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// POST /api/auth/reset-password
+const resetPassword = async (req, res, next) => {
+  try {
+    const { email, otp, password } = req.body;
+    
+    if (!email || !otp || !password) {
+      return res.status(400).json({ message: 'Email, OTP, and new password are required.' });
+    }
+
+    const resetHash = crypto.createHash('sha256').update(String(otp)).digest('hex');
+
+    const user = await User.findOne({
+      email,
       resetPasswordToken: resetHash,
       resetPasswordExpires: { $gt: Date.now() },
     }).select('+passwordHash');
 
     if (!user) {
-      return res.status(400).json({ message: 'Invalid or expired reset token.' });
+      return res.status(400).json({ message: 'Invalid or expired reset code.' });
     }
 
     user.passwordHash = req.body.password;
@@ -218,4 +262,59 @@ const changePassword = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, getMe, verifyEmail, resendVerification, forgotPassword, resetPassword, changePassword };
+// POST /api/auth/google
+const googleLogin = async (req, res, next) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) return res.status(400).json({ message: 'Google ID token is required.' });
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    
+    if (!payload || !payload.email) {
+      return res.status(400).json({ message: 'Invalid Google token payload.' });
+    }
+
+    const { email, name, picture, sub: googleId } = payload;
+
+    if (!email || !email.endsWith('@gmail.com')) {
+      return res.status(400).json({ message: 'Only @gmail.com emails are allowed.' });
+    }
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      if (user.authProvider !== 'google') {
+        user.googleId = googleId;
+        user.authProvider = 'google';
+        user.emailVerified = true;
+        if (!user.avatar && picture) user.avatar = picture;
+        await user.save({ validateBeforeSave: false });
+      }
+    } else {
+      user = await User.create({
+        name,
+        email,
+        googleId,
+        authProvider: 'google',
+        emailVerified: true,
+        avatar: picture || '',
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ message: 'Account is disabled.' });
+    }
+
+    const token = signToken(user._id);
+
+    res.json({ token, user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { register, login, getMe, verifyEmail, resendVerification, forgotPassword, verifyResetOtp, resetPassword, changePassword, googleLogin };

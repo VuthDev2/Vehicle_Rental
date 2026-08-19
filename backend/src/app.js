@@ -28,9 +28,9 @@ app.use(cors({
   credentials: true,
 }));
 
-// Body parser
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+// Body parser — keep JSON limit small; file uploads are handled by multer separately.
+app.use(express.json({ limit: '100kb' }));
+app.use(express.urlencoded({ extended: true, limit: '100kb' }));
 
 // Request logger
 if (process.env.NODE_ENV !== 'test') {
