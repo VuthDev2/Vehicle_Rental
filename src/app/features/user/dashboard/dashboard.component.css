@@ -1,0 +1,706 @@
+/* ============================================================
+   HOME PAGE (CARD-LESS MINIMALIST DESIGN)
+   Uses spacing, clean typography, and subtle lines for layout
+   ============================================================ */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.home-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem 5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem; /* Cozy vertical card spacing */
+}
+
+@media (max-width: 768px) {
+  .home-wrapper {
+    padding: 2rem 1.25rem 4rem 1.25rem;
+    gap: 2rem;
+  }
+}
+
+.subtle-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-edge-deep);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.015);
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .subtle-card {
+    padding: 1.5rem;
+  }
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.step-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.step-symbol {
+  font-size: 1.6rem;
+}
+
+/* ============================================================
+   COMMON SECTION STYLING (Card-free typography)
+   ============================================================ */
+.home-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.section-header-minimal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.section-header-minimal.flex-row-layout {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.section-title-minimal {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--color-on-surface);
+  letter-spacing: -0.02em;
+}
+
+.section-desc-minimal {
+  font-size: 0.9rem;
+  color: var(--color-on-surface-variant);
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+.text-link-explore {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0284c7;
+  text-decoration: none;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.text-link-explore:hover {
+  color: #0369a1;
+  gap: 0.6rem;
+}
+
+.text-link-explore .material-symbols-outlined {
+  font-size: 1rem;
+}
+
+/* ============================================================
+   1. HERO HEADER
+   ============================================================ */
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.hero-date {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-on-surface-variant);
+}
+
+.hero-title {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 900;
+  color: var(--color-on-surface);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: var(--color-on-surface-variant);
+  line-height: 1.6;
+  max-width: 760px;
+  margin-bottom: 0.75rem;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.btn-primary-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+}
+
+.btn-primary-custom:hover {
+  background: #0369a1;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-secondary-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary-custom:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+/* Inline stats row in hero */
+.hero-meta-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--color-on-surface-variant);
+  border-top: 1px solid var(--color-edge-deep);
+  padding-top: 1.25rem;
+  width: 100%;
+  max-width: 760px;
+}
+
+.summary-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.summary-item strong {
+  color: var(--color-on-surface);
+}
+
+.summary-item .icon {
+  font-size: 1.15rem;
+  color: #0284c7;
+}
+
+.summary-item .icon.green { color: #10b981; }
+.summary-item .icon.orange { color: #ea580c; }
+
+.summary-divider {
+  color: var(--color-edge-deep);
+}
+
+/* ============================================================
+   2. ACTIVE RENTAL STRIP (No cards, elegant bordered strip)
+   ============================================================ */
+.active-rental-strip {
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1.75rem 0;
+  gap: 1.25rem;
+}
+
+.rental-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.rental-strip-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.rental-thumb {
+  width: 100px;
+  height: 70px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f1f5f9;
+  flex-shrink: 0;
+  border: 1px solid #e2e8f0;
+}
+
+.rental-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rental-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.rental-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.rental-type-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.status-pill.pending   { background: #fffbeb; color: #b45309; }
+.status-pill.confirmed { background: #eff6ff; color: #1d4ed8; }
+.status-pill.completed { background: #f0fdf4; color: #15803d; }
+.status-pill.cancelled { background: #fff1f2; color: #b91c1c; }
+
+.status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot.warning { background: #b45309; }
+.status-dot.info    { background: #1d4ed8; }
+.status-dot.success { background: #15803d; }
+.status-dot.danger  { background: #b91c1c; }
+
+.rental-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-on-surface);
+  margin-bottom: 0.3rem;
+}
+
+.rental-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.meta-part {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--color-on-surface-variant);
+}
+
+.meta-part .material-symbols-outlined {
+  font-size: 0.95rem;
+  color: #0284c7;
+}
+
+/* Right side countdown */
+.rental-strip-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-shrink: 0;
+}
+
+.countdown-info {
+  text-align: right;
+}
+
+.countdown-text {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-on-surface-variant);
+  letter-spacing: 0.05em;
+}
+
+.countdown-days-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0284c7;
+}
+
+.btn-strip-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  background: var(--color-surface-deep-raised);
+  color: var(--color-on-surface-variant);
+  font-size: 0.825rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid var(--color-edge-deep);
+}
+
+.btn-strip-action:hover {
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface);
+  border-color: var(--color-edge-deep-strong);
+}
+
+.btn-strip-action .material-symbols-outlined {
+  font-size: 1rem;
+}
+
+/* Empty rental strip */
+.rental-empty-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: #64748b;
+  flex-wrap: wrap;
+}
+
+.rental-empty-strip .icon {
+  color: #0284c7;
+  font-size: 1.25rem;
+}
+
+.empty-text {
+  flex: 1;
+}
+
+.empty-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 700;
+  color: #0284c7;
+  text-decoration: none;
+}
+
+.empty-link:hover {
+  text-decoration: underline;
+}
+
+.empty-link .material-symbols-outlined {
+  font-size: 1rem;
+}
+
+/* ============================================================
+   3. HOW IT WORKS (Stepper list, no card borders)
+   ============================================================ */
+.stepper-flow {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .stepper-flow {
+    flex-direction: column;
+    gap: 2.25rem;
+  }
+}
+
+.step-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.step-number {
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.step-icon {
+  margin-bottom: 0.25rem;
+}
+
+.step-icon .material-symbols-outlined {
+  font-size: 1.75rem;
+}
+
+.step-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-on-surface);
+}
+
+.step-desc {
+  font-size: 0.85rem;
+  color: var(--color-on-surface-variant);
+  line-height: 1.6;
+}
+
+.step-arrow {
+  color: #cbd5e1;
+  align-self: center;
+  margin-top: 1rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .step-arrow {
+    display: none;
+  }
+}
+
+/* ============================================================
+   4. OUR FLEET (4-Column vertical sections)
+   ============================================================ */
+.fleet-columns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.25rem;
+}
+
+@media (max-width: 1024px) {
+  .fleet-columns {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .fleet-columns {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.fleet-column-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.fleet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.fleet-icon {
+  font-size: 1.75rem;
+}
+
+.fleet-count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.fleet-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-on-surface);
+}
+
+.fleet-desc {
+  font-size: 0.825rem;
+  color: var(--color-on-surface-variant);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.fleet-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  margin-top: 0.25rem;
+  transition: gap 0.2s ease;
+}
+
+.fleet-link:hover {
+  gap: 0.4rem;
+}
+
+.fleet-link .material-symbols-outlined {
+  font-size: 1rem;
+}
+
+/* ============================================================
+   5. TRUST highlights (3 Columns)
+   ============================================================ */
+.trust-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .trust-row {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+}
+
+.trust-column-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.trust-icon {
+  font-size: 1.75rem;
+}
+
+.trust-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-on-surface);
+}
+
+.trust-desc {
+  font-size: 0.85rem;
+  color: var(--color-on-surface-variant);
+  line-height: 1.6;
+}
+
+/* ============================================================
+   6. FOOTER AREA
+   ============================================================ */
+.home-footer {
+  border-top: 1px solid var(--color-edge-deep);
+  padding-top: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-on-surface-variant);
+}
+
+.footer-locations {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.footer-locations .icon {
+  color: #0284c7;
+  font-size: 1.05rem;
+}
+
+.footer-locations .dot {
+  color: #cbd5e1;
+}
+
+/* ============================================================
+   SKELETON STRIP LOADER
+   ============================================================ */
+.skeleton-strip {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.skeleton-line {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ============================================================
+   RESPONSIVE OVERRIDES
+   ============================================================ */
+@media (max-width: 640px) {
+  .rental-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .rental-strip-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .home-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}

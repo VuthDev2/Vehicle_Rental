@@ -1,332 +1,370 @@
-<div class="page-container">
+<div class="details-wrapper">
+
+  <!-- ====================== BACK TO FLEET BUTTON ====================== -->
+  <a routerLink="/customer/explore" class="back-btn">
+    <span class="material-symbols-outlined">chevron_left</span>
+    <span>Back to Explore Fleet</span>
+  </a>
+
+  <!-- ====================== LOADING STATE ====================== -->
   @if (loading()) {
-    <div class="flex flex-col gap-6">
-      <div class="h-8 w-1/4 skeleton"></div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="aspect-[16/9] rounded-2xl skeleton"></div>
-        <div class="space-y-4">
-          <div class="h-8 w-2/3 skeleton"></div>
-          <div class="h-4 w-1/3 skeleton"></div>
-          <div class="h-20 skeleton"></div>
+    <div class="details-grid">
+      <div class="skeleton-card">
+        <div class="skeleton-box" style="width: 100%; aspect-ratio: 16/10;"></div>
+        <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+          <div class="skeleton-box" style="width: 76px; height: 54px;"></div>
+          <div class="skeleton-box" style="width: 76px; height: 54px;"></div>
+          <div class="skeleton-box" style="width: 76px; height: 54px;"></div>
         </div>
+      </div>
+      <div class="skeleton-card" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="skeleton-line" style="height: 16px; width: 30%;"></div>
+        <div class="skeleton-line" style="height: 32px; width: 75%;"></div>
+        <div class="skeleton-line" style="height: 20px; width: 50%;"></div>
+        <div class="skeleton-box" style="height: 100px; width: 100%;"></div>
+        <div class="skeleton-box" style="height: 200px; width: 100%;"></div>
       </div>
     </div>
+
+  <!-- ====================== VEHICLE FOUND ====================== -->
   } @else if (vehicle()) {
-    <a
-      routerLink="../"
-      class="inline-flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4 focus-ring"
-    >
-      <span class="material-symbols-outlined">chevron_left</span>
-      Back to Fleet
-    </a>
+    <div class="details-grid">
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
-      <!-- ====================== GALLERY ====================== -->
+      <!-- ====================== LEFT COLUMN: MEDIA & DETAILS ====================== -->
       <div>
-        <div class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-surface-deep-raised">
-          @if (vehicle()!.images?.[selectedImage()]) {
-            <img
-              [src]="vehicle()!.images[selectedImage()]"
-              [alt]="vehicle()!.name"
-              class="w-full h-full object-cover transition-all duration-300"
-            />
-          } @else {
-            <div class="w-full h-full flex items-center justify-center">
-              <span class="material-symbols-outlined text-6xl text-outline/60"
-                >directions_car</span
-              >
-            </div>
-          }
-
-          <!-- Badges -->
-          <span class="badge badge-success badge-floating">{{ vehicle()!.type }}</span>
-          <span
-            class="absolute top-4 right-4 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md"
-            [style]="
-              vehicle()!.available
-                ? 'background: rgba(16,185,129,0.18); color: #34d399; border: 1px solid rgba(16,185,129,0.3)'
-                : 'background: rgba(148,163,184,0.18); color: #94a3b8; border: 1px solid rgba(148,163,184,0.3)'
-            "
-          >
-            @if (vehicle()!.available) {
-              <span class="status-dot success mr-1"></span>Available
+        <!-- Main Media Gallery Card -->
+        <div class="gallery-card">
+          <div class="main-image-wrap">
+            @if (vehicle()!.images?.[selectedImage()]) {
+              <img
+                [src]="vehicle()!.images[selectedImage()]"
+                [alt]="vehicle()!.name"
+                class="main-img"
+              />
             } @else {
-              <span class="status-dot neutral mr-1"></span>Currently Booked
+              <div class="main-img-placeholder">
+                <span class="material-symbols-outlined" style="font-size: 3.5rem;">directions_car</span>
+              </div>
             }
-          </span>
 
-          <!-- Image counter -->
-          @if (vehicle()!.images?.length > 1) {
+            <!-- Floating Badges -->
+            <span class="badge-category">{{ vehicle()!.type }}</span>
+
             <span
-              class="absolute bottom-4 right-4 rounded-full px-3 py-1 text-xs font-bold backdrop-blur-md"
-              style="background: rgba(11, 15, 25, 0.7); color: #f1f5f9; border: 1px solid rgba(255,255,255,0.1)"
+              class="badge-availability"
+              [class.available]="vehicle()!.available"
+              [class.booked]="!vehicle()!.available"
             >
-              {{ selectedImage() + 1 }} / {{ vehicle()!.images!.length }}
+              <span class="avail-dot" [class.green]="vehicle()!.available" [class.gray]="!vehicle()!.available"></span>
+              {{ vehicle()!.available ? 'Available Now' : 'Currently Booked' }}
             </span>
-          }
-        </div>
 
-        @if (vehicle()!.images?.length > 1) {
-          <div class="flex gap-3 mt-3 overflow-x-auto pb-1">
-            @for (img of vehicle()!.images; track $index) {
-              <button
-                (click)="selectedImage.set($index)"
-                [attr.aria-label]="'View image ' + ($index + 1)"
-                [class]="
-                  $index === selectedImage()
-                    ? 'w-20 h-16 rounded-xl overflow-hidden flex-shrink-0 ring-2 ring-primary ring-offset-2 ring-offset-bg-surface transition-all'
-                    : 'w-20 h-16 rounded-xl overflow-hidden flex-shrink-0 opacity-60 hover:opacity-100 hover:border-primary/40 border border-transparent transition-all'
-                "
-              >
-                <img [src]="img" class="w-full h-full object-cover" [alt]="'Thumbnail ' + ($index + 1)" />
-              </button>
+            @if (vehicle()!.images?.length > 1) {
+              <span class="image-counter">
+                {{ selectedImage() + 1 }} / {{ vehicle()!.images!.length }}
+              </span>
             }
           </div>
-        }
 
-        <!-- Trust chips -->
-        <div class="flex flex-wrap gap-2 mt-4">
-          <span class="chip chip-success">
-            <span class="material-symbols-outlined">verified_user</span> Fully insured
-          </span>
-          <span class="chip chip-info">
-            <span class="material-symbols-outlined">event_available</span> Free cancellation
-          </span>
-          <span class="chip chip-warning">
-            <span class="material-symbols-outlined">support_agent</span> 24/7 support
-          </span>
+          <!-- Thumbnails Strip -->
+          @if (vehicle()!.images?.length > 1) {
+            <div class="thumbs-row">
+              @for (img of vehicle()!.images; track $index) {
+                <button
+                  type="button"
+                  (click)="selectedImage.set($index)"
+                  [attr.aria-label]="'View photo ' + ($index + 1)"
+                  class="thumb-btn"
+                  [class.active]="$index === selectedImage()"
+                >
+                  <img [src]="img" class="thumb-img" [alt]="'Photo ' + ($index + 1)" />
+                </button>
+              }
+            </div>
+          }
         </div>
+
+        <!-- Trust Badges -->
+        <div class="trust-badges-grid">
+          <div class="trust-badge">
+            <div class="trust-icon-box green">
+              <span class="material-symbols-outlined text-lg">verified_user</span>
+            </div>
+            <div>
+              <div class="trust-title">Fully Insured</div>
+              <div class="trust-sub">Comprehensive coverage</div>
+            </div>
+          </div>
+
+          <div class="trust-badge">
+            <div class="trust-icon-box blue">
+              <span class="material-symbols-outlined text-lg">event_available</span>
+            </div>
+            <div>
+              <div class="trust-title">Free Cancellation</div>
+              <div class="trust-sub">Up to 24h prior</div>
+            </div>
+          </div>
+
+          <div class="trust-badge">
+            <div class="trust-icon-box orange">
+              <span class="material-symbols-outlined text-lg">support_agent</span>
+            </div>
+            <div>
+              <div class="trust-title">24/7 Support</div>
+              <div class="trust-sub">Concierge roadside care</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overview & Description Card -->
+        <div class="info-section-card">
+          <h2 class="section-heading">
+            <span class="material-symbols-outlined">info</span>
+            Vehicle Overview
+          </h2>
+          <p class="desc-text">
+            {{ vehicle()!.description || 'Experience comfort, prestige, and peak performance with this premium vehicle. Ideal for urban getaways, VIP airport transfers, and long-distance road trips across Cambodia.' }}
+          </p>
+        </div>
+
+        <!-- What's Included / Features -->
+        @if (vehicle()!.features?.length) {
+          <div class="info-section-card">
+            <h2 class="section-heading">
+              <span class="material-symbols-outlined">checklist</span>
+              Key Features & Amenities
+            </h2>
+            <div class="features-cloud">
+              @for (feat of vehicle()!.features; track feat) {
+                <span class="feature-pill">
+                  <span class="material-symbols-outlined">check_circle</span>
+                  {{ feat }}
+                </span>
+              }
+            </div>
+          </div>
+        }
       </div>
 
-      <!-- ====================== DETAILS ====================== -->
+      <!-- ====================== RIGHT COLUMN: INFO & BOOKING WIDGET ====================== -->
       <div>
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <p class="text-[11px] font-bold uppercase tracking-widest text-primary mb-1">
-              {{ vehicle()!.brand || vehicle()!.type }} @if (vehicle()!.year) {
-                &middot; {{ vehicle()!.year }}
+        <!-- Header Info Card -->
+        <div class="header-card">
+          <p class="eyebrow-meta">
+            {{ vehicle()!.brand || vehicle()!.type }}{{ vehicle()!.year ? ' · ' + vehicle()!.year : '' }}
+          </p>
+          <h1 class="vehicle-main-title">{{ vehicle()!.name }}</h1>
+
+          <!-- Rating & Location -->
+          <div class="meta-stats-row">
+            <div class="rating-badge">
+              <span class="material-symbols-outlined">star</span>
+              <span>{{ vehicle()!.rating ? vehicle()!.rating.toFixed(1) : '5.0' }}</span>
+              <span style="font-weight: normal; color: #64748b;">({{ vehicle()!.trips || 12 }} trips)</span>
+            </div>
+
+            @if (vehicle()!.location) {
+              <div class="location-badge">
+                <span class="material-symbols-outlined">location_on</span>
+                <span>{{ vehicle()!.location }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Price Highlight Box -->
+          <div class="price-showcase">
+            <div>
+              <div class="price-main">
+                ${{ vehicle()!.pricing?.day ?? 0 }}
+                <span class="price-period">/ day</span>
+              </div>
+            </div>
+
+            <div class="rate-pills-list">
+              @if (vehicle()!.pricing?.hour) {
+                <div class="rate-pill">
+                  <span>${{ vehicle()!.pricing?.hour }}</span>/hr
+                </div>
               }
-            </p>
-            <h1 class="text-2xl sm:text-3xl font-black text-on-surface">{{ vehicle()!.name }}</h1>
-            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm">
-              @if (vehicle()!.rating) {
-                <span class="flex items-center gap-1 font-semibold text-on-surface">
-                  <span class="material-symbols-outlined text-amber-400">star</span>
-                  {{ vehicle()!.rating.toFixed(1) }}
-                  <span class="text-on-surface-variant font-normal">
-                    ({{ vehicle()!.trips || 0 }} trips)
-                  </span>
-                </span>
-              }
-              @if (vehicle()!.location) {
-                <span class="flex items-center gap-1 text-on-surface-variant">
-                  <span class="material-symbols-outlined text-base">location_on</span>
-                  {{ vehicle()!.location }}
-                </span>
+              @if (vehicle()!.pricing?.week) {
+                <div class="rate-pill">
+                  <span>${{ vehicle()!.pricing?.week }}</span>/wk
+                </div>
               }
             </div>
           </div>
-          <div class="text-right flex-shrink-0">
-            <p class="text-2xl sm:text-3xl font-black text-secondary">
-              \${{ vehicle()!.pricing?.day }}
-            </p>
-            <p class="text-xs text-on-surface-variant">per day</p>
+
+          <!-- Specs 4-Box Grid -->
+          <div class="specs-grid">
+            @for (spec of specs; track spec.label) {
+              <div class="spec-box">
+                <span class="material-symbols-outlined">{{ spec.icon }}</span>
+                <div class="spec-title">{{ spec.value }}</div>
+                <div class="spec-subtitle">{{ spec.label }}</div>
+              </div>
+            }
           </div>
         </div>
-
-        <div class="section-divider my-5"></div>
-
-        <p class="text-sm text-on-surface-variant leading-relaxed">
-          {{ vehicle()!.description || 'No description available.' }}
-        </p>
-
-        <div class="section-divider my-5"></div>
-
-        <!-- Specs -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          @for (spec of specs; track spec.label) {
-            <div
-              class="rounded-xl bg-surface-deep-raised p-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border hover:border-primary/20"
-            >
-              <span class="material-symbols-outlined text-xl text-primary block mb-1">{{
-                spec.icon
-              }}</span>
-              <p class="text-xs font-semibold text-on-surface">{{ spec.value }}</p>
-              <p class="text-[10px] text-on-surface-variant">{{ spec.label }}</p>
-            </div>
-          }
-        </div>
-
-        <!-- Features -->
-        @if (vehicle()!.features?.length) {
-          <div class="mt-5">
-            <h3 class="text-sm font-bold text-on-surface mb-3 flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary text-base">checklist</span>
-              What's Included
-            </h3>
-            <div class="flex flex-wrap gap-2">
-              @for (feature of vehicle()!.features; track feature) {
-                <span class="chip">
-                  <span class="material-symbols-outlined text-primary">check</span>
-                  {{ feature }}
-                </span>
-              }
-            </div>
-          </div>
-        }
-
-        <div class="section-divider my-5"></div>
 
         <!-- ====================== BOOKING WIDGET ====================== -->
-        <div class="rounded-2xl border border-edge-deep/60 bg-surface-deep p-5 sm:p-6">
-          <div class="flex items-center justify-between mb-5">
-            <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary">calendar_today</span>
-              Book This Vehicle
-            </h3>
-            <!-- Rental type segmented -->
-            <div
-              class="flex rounded-xl p-1 gap-1"
-              style="background: var(--color-surface-deep-raised); border: 1px solid var(--color-edge-deep)"
-            >
-              @for (rt of ['daily', 'hourly']; track rt) {
-                <button
-                  (click)="rentalType.set(rt)"
-                  class="px-4 py-1.5 rounded-lg text-xs font-bold capitalize transition-all"
-                  [style]="
-                    rentalType() === rt
-                      ? 'background: linear-gradient(135deg,#10b981,#059669); color: #fff; box-shadow: 0 2px 10px rgba(16,185,129,0.35)'
-                      : 'color: var(--color-on-surface-variant)'
-                  "
-                >
-                  {{ rt }}
-                </button>
-              }
+        <div class="booking-widget-card">
+          <div class="widget-header">
+            <h2 class="widget-title">
+              <span class="material-symbols-outlined">calendar_today</span>
+              Reserve This Vehicle
+            </h2>
+
+            <!-- Segmented Daily / Hourly Switcher -->
+            <div class="segmented-control">
+              <button
+                type="button"
+                (click)="setRentalType('daily')"
+                class="segment-btn"
+                [class.active]="rentalType() === 'daily'"
+              >
+                Daily
+              </button>
+              <button
+                type="button"
+                (click)="setRentalType('hourly')"
+                class="segment-btn"
+                [class.active]="rentalType() === 'hourly'"
+              >
+                Hourly
+              </button>
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <!-- Dates Grid -->
+          <div class="form-group-grid">
             <div>
-              <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant"
-                >Start Date</label
-              >
-              <input
-                type="date"
-                [(ngModel)]="startDate"
-                (ngModelChange)="bookingError.set('')"
-                [min]="today"
-                class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised py-2.5 px-4 text-on-surface focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-              />
+              <label class="input-label" for="startDateInput">Start Date</label>
+              <div class="date-input-wrap">
+                <input
+                  id="startDateInput"
+                  type="date"
+                  [ngModel]="startDate()"
+                  (ngModelChange)="setStartDate($event)"
+                  [min]="today"
+                  class="date-input"
+                />
+              </div>
             </div>
+
             <div>
-              <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant"
-                >End Date</label
-              >
-              <input
-                type="date"
-                [(ngModel)]="endDate"
-                (ngModelChange)="bookingError.set('')"
-                [min]="startDate() || today"
-                class="w-full rounded-xl border border-edge-deep bg-surface-deep-raised py-2.5 px-4 text-on-surface focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-              />
+              <label class="input-label" for="endDateInput">End Date</label>
+              <div class="date-input-wrap">
+                <input
+                  id="endDateInput"
+                  type="date"
+                  [ngModel]="endDate()"
+                  (ngModelChange)="setEndDate($event)"
+                  [min]="startDate() || today"
+                  class="date-input"
+                />
+              </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 mt-4">
+          <!-- Quantity and Rates -->
+          <div class="form-group-grid">
             <div>
-              <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant"
-                >Quantity</label
-              >
-              <div
-                class="flex items-center rounded-xl border border-edge-deep bg-surface-deep-raised overflow-hidden"
-              >
+              <label class="input-label">Vehicle Quantity</label>
+              <div class="stepper-box">
                 <button
+                  type="button"
                   (click)="qty.set(Math.max(1, qty() - 1))"
-                  class="px-4 py-2.5 text-outline hover:text-on-surface hover:bg-white/5 transition-all text-lg font-bold"
-                  aria-label="Decrease quantity"
+                  class="stepper-btn"
+                  aria-label="Decrease vehicle quantity"
                 >
-                  –
+                  −
                 </button>
-                <span class="flex-1 text-center font-bold text-on-surface">{{ qty() }}</span>
+                <span class="stepper-value">{{ qty() }}</span>
                 <button
+                  type="button"
                   (click)="qty.set(qty() + 1)"
-                  class="px-4 py-2.5 text-outline hover:text-on-surface hover:bg-white/5 transition-all text-lg font-bold"
-                  aria-label="Increase quantity"
+                  class="stepper-btn"
+                  aria-label="Increase vehicle quantity"
                 >
                   +
                 </button>
               </div>
             </div>
+
             <div>
-              <label class="mb-1.5 block text-sm font-semibold text-on-surface-variant"
-                >Rental Rates</label
-              >
-              <div
-                class="rounded-xl px-4 py-1 flex flex-col justify-center h-[46px] overflow-hidden"
-                style="background: var(--color-surface-deep-raised); border: 1px solid var(--color-edge-deep)"
-              >
-                <div class="flex gap-2 text-xs overflow-x-auto">
-                  @for (rate of rates; track rate.label) {
-                    <span class="text-on-surface-variant whitespace-nowrap">
-                      <span class="font-bold text-primary">\${{ rate.value }}</span>/{{ rate.suffix }}
-                    </span>
-                  }
-                </div>
+              <label class="input-label">Available Rates</label>
+              <div class="rates-strip">
+                @for (rate of rates; track rate.label) {
+                  <span class="rate-item">
+                    <strong>${{ rate.value }}</strong>/{{ rate.suffix }}
+                  </span>
+                }
               </div>
             </div>
           </div>
 
-          <div class="section-divider my-4"></div>
-
+          <!-- Error Alert -->
           @if (bookingError()) {
-            <div
-              class="mb-4 flex items-start gap-2 rounded-xl p-3 text-sm animate-fade-in"
-              style="background: rgba(239, 68, 68, 0.08); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2)"
-            >
-              <span class="material-symbols-outlined text-base flex-shrink-0">error</span>
+            <div class="error-alert">
+              <span class="material-symbols-outlined">error</span>
               <span>{{ bookingError() }}</span>
             </div>
           }
 
-          <div class="flex items-center justify-between">
+          <!-- Estimated Total Box -->
+          <div class="estimation-box">
             <div>
-              <p class="text-xs text-on-surface-variant">
-                Estimated Total
-                <span class="text-outline"
-                  >&middot; {{ estimateUnits }} {{ rentalType() === 'hourly' ? 'hours' : 'days' }}
-                  &times; {{ qty() }}</span
-                >
-              </p>
-              <p class="text-xl font-black text-secondary">\${{ estimate }}</p>
+              <div class="est-label">Estimated Total</div>
+              <div class="est-breakdown">
+                {{ estimateUnits }} {{ rentalType() === 'hourly' ? 'hours' : 'days' }} × {{ qty() }} {{ qty() > 1 ? 'vehicles' : 'vehicle' }}
+              </div>
             </div>
-            <button
-              (click)="book()"
-              [disabled]="submitting() || !vehicle()!.available"
-              class="btn-primary text-sm px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              @if (submitting()) {
-                <span class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
-                Booking...
-              } @else {
-                <span class="material-symbols-outlined">shopping_cart</span>
-                Book Now
-              }
-            </button>
+            <div class="est-amount">
+              ${{ estimate }}
+            </div>
           </div>
+
+          <!-- Action Button -->
+          <button
+            type="button"
+            (click)="book()"
+            [disabled]="submitting() || !vehicle()!.available"
+            class="btn-book-submit"
+          >
+            @if (submitting()) {
+              <span class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
+              <span>Processing Reservation...</span>
+            } @else if (!vehicle()!.available) {
+              <span class="material-symbols-outlined text-lg">block</span>
+              <span>Currently Unavailable</span>
+            } @else {
+              <span class="material-symbols-outlined text-lg">shopping_cart_checkout</span>
+              <span>Book & Proceed to Checkout</span>
+            }
+          </button>
         </div>
       </div>
+
     </div>
+
+  <!-- ====================== NOT FOUND ====================== -->
   } @else {
-    <div class="rounded-2xl border border-edge-deep/60 bg-surface-deep p-16 text-center">
-      <div
-        class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5"
-        style="background: rgba(255, 255, 255, 0.04)"
-      >
-        <span class="material-symbols-outlined text-4xl text-outline">search_off</span>
+    <div class="not-found-card">
+      <div class="not-found-icon-box">
+        <span class="material-symbols-outlined" style="font-size: 2.5rem;">directions_car</span>
       </div>
-      <h2 class="text-xl font-bold text-on-surface mb-2">Vehicle not found</h2>
-      <p class="text-on-surface-variant text-sm mb-8">The vehicle may have been removed.</p>
-      <a routerLink="../" class="btn-primary text-sm">Browse Fleet</a>
+      <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">
+        Vehicle Not Found
+      </h2>
+      <p style="color: #64748b; font-size: 0.9rem; max-width: 400px; margin: 0 auto;">
+        The vehicle you are looking for may have been retired or does not exist in our current fleet.
+      </p>
+      <a routerLink="/customer/explore" class="btn-browse-fleet">
+        <span class="material-symbols-outlined">search</span>
+        <span>Browse Available Fleet</span>
+      </a>
     </div>
   }
+
 </div>

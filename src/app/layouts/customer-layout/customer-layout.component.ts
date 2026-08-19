@@ -16,6 +16,15 @@ export class CustomerLayoutComponent {
   private readonly router = inject(Router);
 
   sidebarOpen = signal(false);
+  sidebarCollapsed = signal(false);
+
+  toggleCollapse(): void {
+    this.sidebarCollapsed.update((v) => !v);
+  }
+
+  toggleSidebar(): void {
+    this.sidebarCollapsed.set(!this.sidebarCollapsed());
+  }
 
   /** Show a dismissible banner (per user) prompting unverified accounts to verify their email. */
   readonly showVerifyBanner = computed(() => {
@@ -39,7 +48,7 @@ export class CustomerLayoutComponent {
   }
 
   readonly navItems = [
-    { path: '/customer/dashboard', icon: 'dashboard', label: 'Dashboard' },
+    { path: '/customer/dashboard', icon: 'home', label: 'Home' },
     { path: '/customer/explore', icon: 'explore', label: 'Explore' },
     { path: '/customer/bookings', icon: 'receipt_long', label: 'My Bookings' },
     { path: '/customer/payments', icon: 'payments', label: 'Payments' },
@@ -47,8 +56,6 @@ export class CustomerLayoutComponent {
   ];
 
   confirmLogout(): void {
-    if (confirm('Are you sure you want to sign out?')) {
-      this.auth.logout();
-    }
+    this.auth.logout();
   }
 }

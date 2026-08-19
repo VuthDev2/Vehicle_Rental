@@ -1,0 +1,375 @@
+:host {
+  display: block;
+}
+
+.info-page {
+  min-height: 100%;
+  background: var(--color-background);
+  color: var(--color-on-surface);
+}
+
+.info-page .section-container {
+  max-width: 1120px;
+  padding-inline: clamp(20px, 6vw, 64px);
+}
+
+.info-hero {
+  padding: 88px 0 76px;
+  background: var(--color-background);
+}
+
+.info-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: 40px;
+  align-items: center;
+}
+
+.info-copy {
+  max-width: 780px;
+}
+
+.info-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.info-kicker span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+.info-copy h1,
+.section-heading h2,
+.info-panel h2,
+.support-card h2 {
+  margin: 14px 0 0;
+  color: var(--color-on-surface);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.info-copy h1 {
+  max-width: 760px;
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+}
+
+.info-copy p,
+.section-heading p {
+  max-width: 700px;
+  margin: 18px 0 0;
+  color: var(--color-on-surface-variant);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.info-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.info-primary,
+.info-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  border-radius: 12px;
+}
+
+.info-secondary {
+  padding: 12px 24px;
+  border: 1px solid var(--color-edge-deep-strong);
+  background: transparent;
+  color: var(--color-on-surface);
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.info-secondary:hover {
+  background: var(--color-surface-deep-raised);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.info-panel,
+.info-card,
+.stat-card,
+.support-card {
+  border: 1px solid var(--color-edge-deep);
+  background: var(--color-surface-deep);
+}
+
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 300px;
+  padding: 30px;
+  border-radius: 18px;
+}
+
+.panel-icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border-radius: 18px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-primary);
+}
+
+.panel-icon .material-symbols-outlined {
+  font-size: 32px;
+}
+
+.info-panel p {
+  margin: 28px 0 0;
+  color: var(--color-on-surface-variant);
+  font-weight: 800;
+}
+
+.info-panel h2,
+.support-card h2 {
+  font-size: 1.65rem;
+}
+
+.panel-list,
+.support-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.panel-list span,
+.support-list span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-on-surface);
+  font-weight: 800;
+}
+
+.panel-list .material-symbols-outlined,
+.support-list .material-symbols-outlined {
+  color: var(--color-primary);
+  font-size: 20px;
+}
+
+.info-section {
+  padding: 80px 0 92px;
+  background: var(--color-background);
+}
+
+.section-heading {
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+
+.section-heading h2 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+}
+
+.stat-grid,
+.info-card-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.stat-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 18px;
+}
+
+.stat-card {
+  padding: 24px;
+  border-radius: 18px;
+}
+
+.stat-card strong {
+  display: block;
+  color: var(--color-primary);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.stat-card span {
+  display: block;
+  margin-top: 10px;
+  color: var(--color-on-surface);
+  font-weight: 800;
+}
+
+.info-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.info-card {
+  padding: 26px;
+  border-radius: 18px;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.info-card > .material-symbols-outlined {
+  color: var(--color-primary);
+  font-size: 30px;
+}
+
+.info-card:hover {
+  background: var(--color-surface-deep-raised);
+  border-color: var(--color-edge-deep-strong);
+  transform: translateY(-2px);
+}
+
+.info-card h3 {
+  margin: 18px 0 0;
+  color: var(--color-on-surface);
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.info-card p {
+  margin: 10px 0 0;
+  color: var(--color-on-surface-variant);
+  line-height: 1.65;
+}
+
+.contact-section {
+  display: grid;
+  gap: 28px;
+}
+
+.contact-card-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.contact-card {
+  display: flex;
+  gap: 16px;
+  min-height: 180px;
+}
+
+.contact-card > .material-symbols-outlined {
+  flex: 0 0 auto;
+}
+
+.contact-card h3 {
+  margin-top: 0;
+}
+
+.contact-card strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--color-on-surface);
+  font-size: 1rem;
+}
+
+.support-card {
+  position: static;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(320px, 1fr) auto;
+  gap: 28px;
+  align-items: center;
+  padding: 30px;
+  border-radius: 18px;
+}
+
+.support-link {
+  min-width: 170px;
+  margin-top: 0;
+}
+
+html.light .info-hero {
+  background: #f8fafc;
+}
+
+html.light .info-panel,
+html.light .info-card,
+html.light .stat-card,
+html.light .support-card,
+html.light .info-secondary {
+  border-color: #dbe3ef;
+  background: #ffffff;
+}
+
+html.light .info-card:hover,
+html.light .info-secondary:hover {
+  background: #f8fafc;
+  border-color: #a7f3d0;
+}
+
+html.light .info-copy h1,
+html.light .section-heading h2,
+html.light .info-panel h2,
+html.light .support-card h2,
+html.light .info-card h3,
+html.light .contact-card strong,
+html.light .stat-card span,
+html.light .panel-list span,
+html.light .support-list span {
+  color: #0f172a;
+}
+
+html.light .info-copy p,
+html.light .section-heading p,
+html.light .info-panel p,
+html.light .info-card p {
+  color: #475569;
+}
+
+@media (max-width: 960px) {
+  .info-hero-grid,
+  .stat-grid,
+  .info-card-grid,
+  .contact-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-card {
+    min-height: auto;
+  }
+
+  .support-card {
+    grid-template-columns: 1fr;
+  }
+
+  .support-link {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .info-hero {
+    padding: 72px 0 52px;
+  }
+
+  .info-copy h1 {
+    font-size: 2.4rem;
+  }
+
+  .info-actions,
+  .info-primary,
+  .info-secondary {
+    width: 100%;
+  }
+}
