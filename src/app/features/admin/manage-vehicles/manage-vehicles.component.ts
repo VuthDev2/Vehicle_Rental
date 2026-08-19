@@ -50,6 +50,7 @@ export class ManageVehiclesComponent implements OnInit {
   readonly selectedVehicles = signal<Set<string>>(new Set());
   readonly showDeleteConfirm = signal<Vehicle | null>(null);
   readonly showQuickMenu = signal<string | null>(null);
+  readonly uploadingImage = signal(false);
 
   readonly vehicleTypes = VEHICLE_TYPES;
   readonly fuelTypes = FUEL_TYPES;
@@ -277,5 +278,68 @@ export class ManageVehiclesComponent implements OnInit {
       ? this.vehicleService.updateVehicle(id, vehicleData)
       : this.vehicleService.createVehicle(vehicleData)
     ).subscribe(() => { this.showModal.set(false); this.loadVehicles(); });
+  }
+
+  /** Reads the chosen photo, compresses it to a data URL, and stores it on the form. */
+  async onImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please choose an image file.');
+      input.value = '';
+      return;
+    }
+    this.uploadingImage.set(true);
+    try {
+      const dataUrl = await this.compressImage(file);
+      this.form.patchValue({ imageUrl: dataUrl });
+    } catch {
+      alert('Sorry, that image could not be processed. Please try another file.');
+    } finally {
+      this.uploadingImage.set(false);
+      input.value = ''; // allow re-picking the same file
+    }
+  }
+
+  removeImage() {
+    this.form.patchValue({ imageUrl: '' });
+  }
+
+  /** Downscales to max 1200px and re-encodes as JPEG so the stored image stays small. */
+  private compressImage(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (typeof document === 'undefined') {
+        reject();
+        return;
+      }
+      const reader = new FileReader();
+      reader.onerror = () => reject();
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject();
+        img.onload = () => {
+          const MAX = 1200;
+          let { width, height } = img;
+          if (width > MAX || height > MAX) {
+            const scale = MAX / Math.max(width, height);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(reader.result as string);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.82));
+        };
+        img.src = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
   }
 }
