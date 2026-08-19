@@ -1,146 +1,140 @@
+/* ============================================================
+   PAYMENT HISTORY — Dark premium design
+   ============================================================ */
+
 :host {
   display: block;
+  width: 100%;
 }
 
-.payments-panel {
-  background: var(--color-surface-deep);
+/* ---- Shimmer ---- */
+.shimmer-dark {
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-deep-raised) 25%,
+    var(--color-edge-deep) 50%,
+    var(--color-surface-deep-raised) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ---- Status badges ---- */
+.pm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 9999px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pm-badge.badge-success { background: rgba(16,185,129,0.1);  color: #10b981; border: 1px solid rgba(16,185,129,0.25); }
+.pm-badge.badge-pending { background: rgba(245,158,11,0.1);  color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+.pm-badge.badge-failed  { background: rgba(239,68,68,0.1);   color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+.pm-badge.badge-info    { background: rgba(59,130,246,0.1);  color: #3b82f6; border: 1px solid rgba(59,130,246,0.25); }
+
+.status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.status-dot.warning { background: #f59e0b; }
+.status-dot.info    { background: #3b82f6; }
+.status-dot.success { background: #10b981; }
+.status-dot.danger  { background: #ef4444; }
+
+/* ---- Filter buttons ---- */
+.pm-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
   border: 1px solid var(--color-edge-deep);
-  border-radius: 18px;
-}
-
-.payments-panel .text-on-surface,
-.payments-panel h1,
-.payments-panel h2,
-.payments-panel p {
-  color: var(--color-on-surface);
-}
-
-.payments-panel .text-on-surface-variant,
-.payments-panel .text-outline {
+  background: var(--color-surface-deep-raised);
   color: var(--color-on-surface-variant);
+  transition: all 0.18s ease;
 }
 
-.payments-card {
-  background: var(--color-surface-deep-raised);
-  border: 1px solid var(--color-edge-deep);
-  border-radius: 14px;
+.pm-filter-btn:hover { border-color: var(--color-primary); color: var(--color-on-surface); }
+
+.pm-filter-btn.is-active {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #10b981;
 }
 
-.payments-action {
-  min-height: 48px;
-  border-radius: 12px;
-  background: var(--color-surface-deep-raised);
-  border-color: var(--color-edge-deep-strong);
-  color: var(--color-on-surface);
-}
-
-.payments-filter {
-  background: var(--color-surface-deep-raised);
-  border: 1px solid var(--color-edge-deep);
-  color: var(--color-on-surface-variant);
-}
-
-.payments-filter.is-active {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.32);
-  color: var(--color-primary);
-}
-
-.payments-count {
+.pm-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  font-size: 0.65rem;
+  font-weight: 900;
   background: var(--color-surface-container-low);
-  color: inherit;
+  color: var(--color-on-surface-variant);
 }
 
-.payments-table {
-  overflow: hidden;
+/* ---- Outline button ---- */
+.pm-outline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.2rem;
+  border-radius: 10px;
+  background: var(--color-surface-deep-raised);
   border: 1px solid var(--color-edge-deep);
-  border-radius: 14px;
+  color: var(--color-on-surface-variant);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
 }
 
-.payments-table-head {
+.pm-outline-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+/* ---- Method chip ---- */
+.pm-method-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
   background: var(--color-surface-deep-raised);
-  border-bottom: 1px solid var(--color-edge-deep);
+  border: 1px solid var(--color-edge-deep);
   color: var(--color-on-surface-variant);
 }
 
-.payments-row {
-  border-bottom: 1px solid var(--color-edge-deep);
+/* ---- Table grid layout ---- */
+.pm-table-row-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.8fr 0.8fr 0.8fr;
+  gap: 1rem;
 }
 
-.payments-row:hover {
-  background: var(--color-surface-deep-raised);
-}
-
-.payments-row:last-child {
-  border-bottom: 0;
-}
-
-.payments-panel .chip {
-  background: var(--color-surface-deep-raised);
-  border-color: var(--color-edge-deep);
-  color: var(--color-on-surface-variant);
-}
-
-:host-context(html.light) .payments-panel {
-  background: #ffffff;
-  border-color: #dbe3ef;
-}
-
-:host-context(html.light) .payments-panel .text-on-surface,
-:host-context(html.light) .payments-panel h1,
-:host-context(html.light) .payments-panel h2,
-:host-context(html.light) .payments-panel p {
-  color: #0f172a !important;
-}
-
-:host-context(html.light) .payments-panel .text-on-surface-variant,
-:host-context(html.light) .payments-panel .text-outline {
-  color: #475569 !important;
-}
-
-:host-context(html.light) .payments-card,
-:host-context(html.light) .payments-action,
-:host-context(html.light) .payments-table,
-:host-context(html.light) .payments-filter {
-  background: #ffffff;
-  border-color: #cbd5e1;
-}
-
-:host-context(html.light) .payments-action:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
-}
-
-:host-context(html.light) .payments-table-head {
-  background: #f8fafc;
-  border-color: #dbe3ef;
-  color: #475569;
-}
-
-:host-context(html.light) .payments-row {
-  border-color: #e2e8f0;
-}
-
-:host-context(html.light) .payments-row:hover {
-  background: #f8fafc;
-}
-
-:host-context(html.light) .payments-filter {
-  color: #334155;
-}
-
-:host-context(html.light) .payments-filter.is-active {
-  background: #e7f8ef;
-  border-color: #a7f3d0;
-  color: #059669;
-}
-
-:host-context(html.light) .payments-count {
-  background: #e2e8f0;
-}
-
-:host-context(html.light) .payments-panel .chip {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  color: #334155;
+@media (min-width: 1024px) {
+  article .grid { display: grid; grid-template-columns: 1.2fr 1fr 0.8fr 0.8fr 0.8fr; gap: 1rem; }
 }
