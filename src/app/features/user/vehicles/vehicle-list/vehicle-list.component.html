@@ -1,64 +1,64 @@
-<div class="explore-wrapper">
+<div class="p-6 sm:p-8 lg:p-10 min-h-full" style="background: var(--color-background); color: var(--color-on-surface)">
 
-  <!-- ====================== HEADER ====================== -->
+  <!-- ===== HEADER ===== -->
   <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
     <div>
-      <h1 class="page-title">Explore Fleet</h1>
-      <p class="page-subtitle">
+      <h1 class="text-2xl font-black tracking-tight text-white">Explore Fleet</h1>
+      <p class="text-sm mt-1" style="color: var(--color-on-surface-variant)">
         Browse and reserve verified vehicles available across Phnom Penh, Siem Reap, and Sihanoukville.
       </p>
     </div>
-
     @if (!loading()) {
-      <div class="count-pill self-start sm:self-auto">
-        <span class="count-dot"></span>
+      <div class="available-pill self-start sm:self-auto">
+        <span class="avail-live-dot"></span>
         <span>{{ filtered.length }} vehicles available</span>
       </div>
     }
   </div>
 
-  <!-- ====================== FILTER TOOLBAR ====================== -->
-  <div class="filter-toolbar">
+  <!-- ===== FILTER TOOLBAR ===== -->
+  <div class="rounded-2xl border mb-6 p-4"
+       style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
     <div class="flex flex-wrap items-center gap-3">
 
       <!-- Search -->
-      <div class="filter-input-wrapper">
-        <span class="material-symbols-outlined filter-icon">search</span>
+      <div class="filter-input-wrap">
+        <span class="material-symbols-outlined filter-icon-inner">search</span>
         <input
           type="text"
           [ngModel]="searchTerm()"
           (ngModelChange)="setSearchTerm($event)"
           aria-label="Search vehicles"
           placeholder="Search by name, brand, or model..."
-          class="filter-input"
+          class="dark-filter-input"
         />
       </div>
 
       <!-- Category -->
-      <div class="filter-select-wrapper">
-        <span class="material-symbols-outlined filter-icon">category</span>
+      <div class="filter-select-wrap">
+        <span class="material-symbols-outlined filter-icon-inner">category</span>
         <select
           [ngModel]="selectedType()"
           (ngModelChange)="setSelectedType($event)"
           aria-label="Filter by vehicle type"
-          class="filter-select"
+          class="dark-filter-select"
         >
           <option value="">All Categories</option>
           @for (t of types; track t) {
             <option [value]="t">{{ t }}</option>
           }
         </select>
-        <span class="material-symbols-outlined filter-chevron">expand_more</span>
+        <span class="material-symbols-outlined filter-chevron-inner">expand_more</span>
       </div>
 
       <!-- Sort -->
-      <div class="filter-select-wrapper">
-        <span class="material-symbols-outlined filter-icon">sort</span>
+      <div class="filter-select-wrap">
+        <span class="material-symbols-outlined filter-icon-inner">sort</span>
         <select
           [ngModel]="sortBy()"
           (ngModelChange)="setSortBy($event)"
           aria-label="Sort vehicles"
-          class="filter-select"
+          class="dark-filter-select"
         >
           <option value="featured">Featured First</option>
           <option value="price-asc">Price: Low to High</option>
@@ -66,28 +66,24 @@
           <option value="rating">Top Rated</option>
           <option value="name">Name (A to Z)</option>
         </select>
-        <span class="material-symbols-outlined filter-chevron">expand_more</span>
+        <span class="material-symbols-outlined filter-chevron-inner">expand_more</span>
       </div>
 
-      <!-- Available Only Toggle -->
+      <!-- Available Only -->
       <button
         type="button"
         (click)="toggleOnlyAvailable()"
         [attr.aria-pressed]="onlyAvailable()"
-        class="filter-toggle-btn"
+        class="dark-filter-toggle"
         [class.active]="onlyAvailable()"
       >
         <span class="material-symbols-outlined text-base">check_circle</span>
         Available Only
       </button>
 
-      <!-- Clear Filters -->
+      <!-- Clear -->
       @if (searchTerm() || selectedType() || onlyAvailable() || sortBy() !== 'featured') {
-        <button
-          type="button"
-          (click)="resetFilters()"
-          class="filter-clear-btn"
-        >
+        <button type="button" (click)="resetFilters()" class="dark-filter-clear">
           <span class="material-symbols-outlined text-base">close</span>
           Clear
         </button>
@@ -95,60 +91,56 @@
     </div>
   </div>
 
-  <!-- ====================== LOADING SKELETONS ====================== -->
+  <!-- ===== LOADING SKELETONS ===== -->
   @if (loading()) {
     <div class="vehicles-grid">
       @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-        <div class="skeleton-card">
-          <div class="skeleton-img"></div>
-          <div style="padding: 1.25rem 1.5rem 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
-            <div class="skeleton-line" style="height: 12px; width: 40%"></div>
-            <div class="skeleton-line" style="height: 18px; width: 70%"></div>
-            <div class="skeleton-line" style="height: 12px; width: 55%"></div>
-            <div class="skeleton-line" style="height: 40px; width: 100%; margin-top: 0.5rem; border-radius: 10px;"></div>
+        <div class="rounded-2xl overflow-hidden border" style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
+          <div class="h-44 shimmer-dark"></div>
+          <div class="p-4 flex flex-col gap-3">
+            <div class="h-3 w-2/5 rounded shimmer-dark"></div>
+            <div class="h-5 w-3/4 rounded shimmer-dark"></div>
+            <div class="h-3 w-1/2 rounded shimmer-dark"></div>
+            <div class="h-10 w-full rounded-xl mt-2 shimmer-dark"></div>
           </div>
         </div>
       }
     </div>
 
-  <!-- ====================== EMPTY STATE ====================== -->
+  <!-- ===== EMPTY STATE ===== -->
   } @else if (filtered.length === 0) {
-    <div class="empty-state">
-      <div class="empty-icon-box">
-        <span class="material-symbols-outlined" style="font-size: 2rem;">search_off</span>
+    <div class="rounded-2xl border p-16 text-center"
+         style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
+      <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5"
+           style="background: var(--color-surface-deep-raised); border: 1px solid var(--color-edge-deep)">
+        <span class="material-symbols-outlined text-3xl" style="color: var(--color-on-surface-variant)">search_off</span>
       </div>
-      <h2 class="empty-title">No matching vehicles found</h2>
-      <p class="empty-sub">
+      <h2 class="text-xl font-black text-white mb-2">No matching vehicles found</h2>
+      <p class="text-sm mb-6" style="color: var(--color-on-surface-variant)">
         No fleet results matched your current search filters. Try clearing or broadening your criteria.
       </p>
-      <button type="button" (click)="resetFilters()" class="btn-clear-filters">
+      <button type="button" (click)="resetFilters()" class="dark-btn-outline inline-flex items-center gap-2">
         <span class="material-symbols-outlined text-base">tune</span>
         Clear All Filters
       </button>
     </div>
 
-  <!-- ====================== VEHICLE CARDS GRID ====================== -->
+  <!-- ===== VEHICLE CARDS GRID ===== -->
   } @else {
     <div class="vehicles-grid">
       @for (vehicle of paginated; track vehicle._id) {
         <div class="vcard">
-          <!-- Image Header with Link -->
+          <!-- Image -->
           <a [routerLink]="['/customer/explore', vehicle._id]" class="vcard-img-wrap">
             @if (vehicle.images?.[0]) {
-              <img
-                [src]="vehicle.images[0]"
-                [alt]="vehicle.name"
-                class="vcard-img"
-              />
+              <img [src]="vehicle.images[0]" [alt]="vehicle.name" class="vcard-img" />
             } @else {
               <div class="vcard-img-placeholder">
-                <span class="material-symbols-outlined" style="font-size: 2.5rem;">directions_car</span>
+                <span class="material-symbols-outlined" style="font-size: 2.5rem; color: var(--color-on-surface-variant)">directions_car</span>
               </div>
             }
-
-            <!-- Type Tag -->
+            <!-- Type badge -->
             <span class="vcard-type-tag">{{ vehicle.type }}</span>
-
             <!-- Availability -->
             <span class="vcard-avail-badge" [class.available]="vehicle.available" [class.booked]="!vehicle.available">
               <span class="avail-dot" [class.green]="vehicle.available" [class.gray]="!vehicle.available"></span>
@@ -156,19 +148,15 @@
             </span>
           </a>
 
-          <!-- Card Body -->
+          <!-- Body -->
           <div class="vcard-body">
             <div>
-              <!-- Name & Price Row -->
+              <!-- Name + Price -->
               <div class="vcard-header-row">
                 <div style="min-width: 0;">
-                  <p class="vcard-meta">
-                    {{ vehicle.brand || vehicle.type }}{{ vehicle.year ? ' · ' + vehicle.year : '' }}
-                  </p>
+                  <p class="vcard-meta">{{ vehicle.brand || vehicle.type }}{{ vehicle.year ? ' · ' + vehicle.year : '' }}</p>
                   <h2 class="vcard-name">
-                    <a [routerLink]="['/customer/explore', vehicle._id]" class="vcard-title-link">
-                      {{ vehicle.name }}
-                    </a>
+                    <a [routerLink]="['/customer/explore', vehicle._id]" class="vcard-title-link">{{ vehicle.name }}</a>
                   </h2>
                 </div>
                 <div class="vcard-price">
@@ -177,7 +165,7 @@
                 </div>
               </div>
 
-              <!-- Rating & Location -->
+              <!-- Rating + Location -->
               <div class="vcard-rating-row">
                 <div class="vcard-stars">
                   <span class="material-symbols-outlined">star</span>
@@ -213,11 +201,8 @@
               </div>
             </div>
 
-            <!-- Prominent Action Button matching Dashboard Reserve button -->
-            <a
-              [routerLink]="['/customer/explore', vehicle._id]"
-              class="btn-reserve"
-            >
+            <!-- CTA Button -->
+            <a [routerLink]="['/customer/explore', vehicle._id]" class="btn-reserve">
               <span>View Details & Book</span>
               <span class="material-symbols-outlined text-sm">arrow_forward</span>
             </a>
@@ -226,36 +211,17 @@
       }
     </div>
 
-    <!-- ====================== PAGINATION ====================== -->
+    <!-- ===== PAGINATION ===== -->
     @if (totalPages > 1) {
       <div class="pagination-bar">
-        <button
-          type="button"
-          (click)="page.set(page() - 1)"
-          [disabled]="page() === 1"
-          class="page-nav-btn"
-        >
+        <button type="button" (click)="page.set(page() - 1)" [disabled]="page() === 1" class="page-nav-btn">
           <span class="material-symbols-outlined text-sm">chevron_left</span>
           Prev
         </button>
-
         @for (p of pages; track p) {
-          <button
-            type="button"
-            (click)="page.set(p)"
-            class="page-btn"
-            [class.active]="p === page()"
-          >
-            {{ p }}
-          </button>
+          <button type="button" (click)="page.set(p)" class="page-btn" [class.active]="p === page()">{{ p }}</button>
         }
-
-        <button
-          type="button"
-          (click)="page.set(page() + 1)"
-          [disabled]="page() === totalPages"
-          class="page-nav-btn"
-        >
+        <button type="button" (click)="page.set(page() + 1)" [disabled]="page() === totalPages" class="page-nav-btn">
           Next
           <span class="material-symbols-outlined text-sm">chevron_right</span>
         </button>
