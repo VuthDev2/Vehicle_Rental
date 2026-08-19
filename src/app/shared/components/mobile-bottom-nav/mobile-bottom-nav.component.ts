@@ -10,7 +10,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class MobileBottomNavComponent {
   readonly tabs = [
-    { label: 'Dashboard', icon: 'dashboard', path: '/customer/dashboard' },
+    { label: 'Home', icon: 'home', path: '/customer/dashboard' },
     { label: 'Explore', icon: 'explore', path: '/customer/explore' },
     { label: 'Bookings', icon: 'receipt_long', path: '/customer/bookings' },
     { label: 'Payments', icon: 'payments', path: '/customer/payments' },

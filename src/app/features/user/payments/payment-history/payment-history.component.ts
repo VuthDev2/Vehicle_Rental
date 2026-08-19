@@ -26,6 +26,7 @@ export type PaymentFilter = 'all' | 'succeeded' | 'pending' | 'refunded' | 'fail
   standalone: true,
   imports: [DatePipe, RouterLink],
   templateUrl: './payment-history.component.html',
+  styleUrl: './payment-history.component.css',
 })
 export class PaymentHistoryComponent implements OnInit {
   private readonly paymentService = inject(PaymentService);
@@ -88,6 +89,16 @@ export class PaymentHistoryComponent implements OnInit {
     });
   });
 
+  readonly latestPayment = computed(() => {
+    return [...this.payments()].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )[0];
+  });
+
+  readonly activeFilterCount = computed(() => {
+    return Number(this.filter() !== 'all') + Number(this.methodFilter() !== 'all');
+  });
+
   get stats() {
     const all = this.payments();
     const succeeded = all.filter((p) => p.status === 'succeeded');
@@ -143,7 +154,15 @@ export class PaymentHistoryComponent implements OnInit {
     return STATUS_CONFIG[status]?.class || 'badge-neutral';
   }
 
+  getTransactionRef(p: Payment): string {
+    return (p.transactionId || p._id || '').slice(-10).toUpperCase();
+  }
+
   getStatusDot(status: string): string {
     return STATUS_CONFIG[status]?.dot || 'neutral';
+  }
+
+  getStatusLabel(status: string): string {
+    return STATUS_CONFIG[status]?.label || status;
   }
 }

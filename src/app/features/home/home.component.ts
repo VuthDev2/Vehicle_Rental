@@ -114,7 +114,7 @@ export class HomeComponent {
     {
       icon: 'payments',
       title: 'Secure Payments',
-      desc: 'Multiple payment methods supported. All transactions are encrypted and fully secure.',
+      desc: 'Pay through ABA PayWay QR with encrypted checkout and tracked booking confirmation.',
       iconBg: 'rgba(245,158,11,0.12)',
       iconColor: '#f59e0b',
     },

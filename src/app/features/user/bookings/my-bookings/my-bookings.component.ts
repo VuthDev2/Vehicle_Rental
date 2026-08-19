@@ -25,6 +25,7 @@ export type BookingFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'can
   standalone: true,
   imports: [DatePipe, RouterLink],
   templateUrl: './my-bookings.component.html',
+  styleUrl: './my-bookings.component.css',
 })
 export class MyBookingsComponent implements OnInit {
   private readonly bookingService = inject(BookingService);

@@ -103,8 +103,8 @@ export class DataService {
   ]);
 
   readonly payments = signal<Payment[]>([
-    { _id: 'p1', bookingId: 'b1', userId: 'u1', amount: 436, method: 'Card', status: 'succeeded', transactionId: 'SIM-873920', createdAt: '2026-06-28T00:00:00Z' },
-    { _id: 'p2', bookingId: 'b2', userId: 'u1', amount: 96, method: 'PayPal', status: 'succeeded', transactionId: 'SIM-719244', createdAt: '2026-06-07T00:00:00Z' },
+    { _id: 'p1', bookingId: 'b1', userId: 'u1', amount: 436, method: 'ABA Pay', status: 'succeeded', transactionId: 'ABA-873920', createdAt: '2026-06-28T00:00:00Z' },
+    { _id: 'p2', bookingId: 'b2', userId: 'u1', amount: 96, method: 'ABA Pay', status: 'succeeded', transactionId: 'ABA-719244', createdAt: '2026-06-07T00:00:00Z' },
   ]);
 
   readonly totalRevenue = computed(() => this.payments().filter((payment) => payment.status === 'succeeded').reduce((sum, payment) => sum + payment.amount, 0));

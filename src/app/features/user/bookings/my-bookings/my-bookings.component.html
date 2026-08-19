@@ -1,76 +1,76 @@
-<div class="page-container">
-  <div class="page-header flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+<div class="bookings-wrapper">
+  <!-- ====================== HEADER ====================== -->
+  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
     <div>
-      <p class="eyebrow">Customer</p>
-      <h1>My Bookings</h1>
-      <p>Manage your vehicle reservations</p>
+      <h1 class="page-title">My Bookings</h1>
+      <p class="page-subtitle">
+        Track your active rentals, view pickup schedules, and manage reservation payments.
+      </p>
     </div>
-    <a routerLink="/customer/explore" class="btn-primary text-sm px-5 py-2.5 whitespace-nowrap">
-      <span class="material-symbols-outlined">add</span>
-      New Booking
+
+    <a
+      routerLink="/customer/explore"
+      class="btn-new-reservation self-start sm:self-auto"
+    >
+      <span class="material-symbols-outlined text-base">add</span>
+      New Reservation
     </a>
   </div>
 
   @if (loadError()) {
-    <div class="rounded-2xl border border-red-500/25 bg-red-500/5 p-10 text-center">
-      <p class="text-sm font-bold text-red-400">Couldn't load your bookings.</p>
-      <button type="button" (click)="loadBookings()" class="mt-4 btn-secondary text-sm">
-        <span class="material-symbols-outlined">refresh</span>
-        Try again
+    <!-- Error State -->
+    <div class="error-card">
+      <span class="material-symbols-outlined text-4xl text-red-500 mb-2">error</span>
+      <p class="text-sm font-bold text-red-600">Unable to load your reservations.</p>
+      <button
+        type="button"
+        (click)="loadBookings()"
+        class="mt-4 btn-outline inline-flex items-center gap-2"
+      >
+        <span class="material-symbols-outlined text-base">refresh</span>
+        Retry Connection
       </button>
     </div>
   } @else {
+    <!-- ====================== STATS OVERVIEW ====================== -->
     @if (!loading()) {
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+      <div class="stats-grid">
         @for (s of stats; track s.label) {
-          <div
-            class="relative rounded-2xl border border-edge-deep bg-surface-deep p-4 sm:p-5 overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-edge-deep-strong hover:shadow-[0_12px_32px_-16px_rgba(0,0,0,0.6),0_0_0_1px_rgba(16,185,129,0.08)]"
-          >
-            <div
-              class="absolute -top-10 -right-10 w-28 h-28 rounded-full blur-2xl opacity-20 pointer-events-none"
-              [style]="'background: ' + s.color"
-            ></div>
-            <div
-              class="relative w-11 h-11 rounded-xl flex items-center justify-center"
-              [style]="'background: ' + s.bg + '; box-shadow: 0 0 22px -6px ' + s.color"
-            >
-              <span class="material-symbols-outlined text-[22px]" [style]="'color: ' + s.color">{{
-                s.icon
-              }}</span>
+          <div class="stat-card">
+            <div class="flex items-center justify-between">
+              <span class="stat-label">{{ s.label }}</span>
+              <div
+                class="stat-icon-box"
+                [style.background]="s.bg"
+              >
+                <span class="material-symbols-outlined text-xl" [style.color]="s.color">
+                  {{ s.icon }}
+                </span>
+              </div>
             </div>
-            <p class="relative mt-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant">
-              {{ s.label }}
-            </p>
-            <p class="relative text-2xl font-black tracking-tight text-on-surface mt-1">
+            <div class="stat-value">
               {{ s.value }}
-            </p>
+            </div>
           </div>
         }
       </div>
     }
 
-    <!-- Status filter tabs -->
+    <!-- ====================== FILTER TABS ====================== -->
     @if (!loading() && bookings().length > 0) {
-      <div class="flex gap-2 overflow-x-auto pb-1 mb-5 -mx-1 px-1">
+      <div class="filter-tabs">
         @for (tab of tabs(); track tab.key) {
           <button
             type="button"
             (click)="setFilter(tab.key)"
-            class="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold whitespace-nowrap transition-all border focus-ring"
-            [class]="
-              filter() === tab.key
-                ? 'bg-primary/15 text-primary border-primary/30 shadow-[0_0_18px_-4px_rgba(16,185,129,0.5)]'
-                : 'bg-surface-deep text-on-surface-variant border-edge-deep hover:border-edge-deep-strong hover:text-on-surface'
-            "
+            class="tab-btn"
+            [class.active]="filter() === tab.key"
           >
-            {{ tab.label }}
+            <span>{{ tab.label }}</span>
             <span
-              class="rounded-full px-2 py-0.5 text-[10px] font-black"
-              [class]="
-                filter() === tab.key
-                  ? 'bg-primary/20 text-primary'
-                  : 'bg-white/5 text-outline'
-              "
+              class="tab-count"
+              [class.active]="filter() === tab.key"
+              [class.inactive]="filter() !== tab.key"
             >
               {{ tab.count }}
             </span>
@@ -79,169 +79,69 @@
       </div>
     }
 
+    <!-- ====================== CONTENT SECTION ====================== -->
     @if (loading()) {
-      <div class="flex flex-col gap-4">
+      <div class="bookings-list">
         @for (i of [1, 2, 3]; track i) {
-          <div class="rounded-2xl border border-edge-deep bg-surface-deep p-5">
-            <div class="flex gap-4">
-              <div class="w-16 h-16 rounded-xl skeleton flex-shrink-0"></div>
+          <div class="booking-card">
+            <div class="flex flex-col sm:flex-row gap-5">
+              <div class="skeleton-box w-full sm:w-28 h-28 flex-shrink-0"></div>
               <div class="flex-1 space-y-3">
-                <div class="h-5 w-1/3 skeleton"></div>
-                <div class="h-4 w-1/2 skeleton"></div>
+                <div class="skeleton-line h-5 w-1/3"></div>
+                <div class="skeleton-line h-4 w-1/2"></div>
+                <div class="skeleton-line h-6 w-1/4 mt-4"></div>
               </div>
             </div>
           </div>
         }
       </div>
     } @else if (bookings().length === 0) {
-      <div class="relative overflow-hidden rounded-3xl border border-edge-deep bg-surface-deep">
-        <div
-          class="absolute inset-0 pointer-events-none"
-          style="
-            background:
-              radial-gradient(620px 240px at 85% -10%, rgba(16, 185, 129, 0.22), transparent 60%),
-              radial-gradient(520px 220px at 8% 115%, rgba(59, 130, 246, 0.16), transparent 60%);
-          "
-        ></div>
-        <div class="relative p-7 sm:p-10 lg:p-12">
-          <div class="flex flex-col lg:flex-row lg:items-center gap-10">
-            <div class="flex-1">
-              <span class="badge badge-success mb-4">Quick Start</span>
-              <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-on-surface">
-                Ready to hit the road?
-              </h2>
-              <p class="text-sm text-on-surface-variant mt-2 max-w-md leading-relaxed">
-                Your bookings will live here. Explore the fleet, reserve a vehicle in
-                minutes, and track everything from one place.
-              </p>
-
-              <ol class="mt-8 flex flex-col gap-5">
-                @for (step of gettingStarted; track step.title; let i = $index) {
-                  <li class="flex items-start gap-4">
-                    <div class="flex flex-col items-center flex-shrink-0">
-                      <div
-                        class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black"
-                        style="
-                          background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(59, 130, 246, 0.12));
-                          color: #34d399;
-                          border: 1px solid rgba(16, 185, 129, 0.25);
-                          box-shadow: 0 0 18px -4px rgba(16, 185, 129, 0.4);
-                        "
-                      >
-                        {{ i + 1 }}
-                      </div>
-                      @if (!$last) {
-                        <div class="w-px flex-1 my-1" style="background: var(--color-edge-deep)"></div>
-                      }
-                    </div>
-                    <div class="pt-0.5">
-                      <p class="text-sm font-bold text-on-surface flex items-center gap-2">
-                        <span class="material-symbols-outlined text-base text-primary">{{
-                          step.icon
-                        }}</span>
-                        {{ step.title }}
-                      </p>
-                      <p class="text-xs text-on-surface-variant mt-0.5">{{ step.desc }}</p>
-                    </div>
-                  </li>
-                }
-              </ol>
-
-              <div class="mt-9 flex flex-col sm:flex-row gap-3">
-                <a routerLink="/customer/explore" class="btn-primary px-7 py-3 text-sm">
-                  <span class="material-symbols-outlined">search</span>
-                  Browse Vehicles
-                </a>
-                <a routerLink="/customer/profile" class="btn-secondary px-7 py-3 text-sm">
-                  <span class="material-symbols-outlined">person</span>
-                  Complete Profile
-                </a>
-              </div>
-            </div>
-
-            <div class="hidden lg:block flex-shrink-0">
-              <div class="relative w-64 max-w-full">
-                <div
-                  class="absolute inset-0 rounded-3xl opacity-40 blur-2xl"
-                  style="background: linear-gradient(135deg, #10b981, #3b82f6)"
-                ></div>
-                <div
-                  class="relative aspect-square rounded-3xl p-12 flex items-center justify-center"
-                  style="
-                    background:
-                      linear-gradient(160deg, rgba(16, 185, 129, 0.16), rgba(59, 130, 246, 0.08)),
-                      var(--color-surface-deep);
-                    border: 1px solid rgba(16, 185, 129, 0.2);
-                  "
-                >
-                  <div
-                    class="absolute top-5 left-5 rounded-xl px-3 py-2 text-xs font-black"
-                    style="
-                      background: rgba(16, 185, 129, 0.14);
-                      color: #34d399;
-                      border: 1px solid rgba(16, 185, 129, 0.3);
-                    "
-                  >
-                    From $99/day
-                  </div>
-                  <div
-                    class="absolute bottom-5 right-5 rounded-xl px-3 py-2 text-[11px] font-bold"
-                    style="
-                      background: rgba(11, 15, 25, 0.7);
-                      color: #94a3b8;
-                      border: 1px solid var(--color-edge-deep);
-                    "
-                  >
-                    24/7 concierge
-                  </div>
-                  <div
-                    class="w-24 h-24 rounded-3xl flex items-center justify-center"
-                    style="
-                      background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(16, 185, 129, 0.08));
-                      border: 1px solid rgba(16, 185, 129, 0.3);
-                      box-shadow: 0 20px 40px -12px rgba(16, 185, 129, 0.35);
-                    "
-                  >
-                    <span class="material-symbols-outlined text-6xl" style="color: #34d399"
-                      >directions_car</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Empty Total Bookings State -->
+      <div class="empty-state">
+        <div class="empty-icon-box">
+          <span class="material-symbols-outlined text-3xl">receipt_long</span>
+        </div>
+        <h2 class="empty-title">No reservations yet</h2>
+        <p class="empty-sub">
+          Your active and past rental bookings will appear here once you reserve a vehicle.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a routerLink="/customer/explore" class="btn-explore">
+            <span class="material-symbols-outlined text-base">search</span>
+            Explore Vehicles
+          </a>
+          <a routerLink="/customer/profile" class="btn-outline">
+            <span class="material-symbols-outlined text-base">person</span>
+            Review Profile
+          </a>
         </div>
       </div>
     } @else if (filteredBookings().length === 0) {
-      <div class="rounded-2xl border border-edge-deep bg-surface-deep p-12 text-center">
-        <div
-          class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
-          style="background: rgba(255, 255, 255, 0.04)"
-        >
-          <span class="material-symbols-outlined text-3xl text-outline">filter_alt_off</span>
+      <!-- Empty Filtered Category State -->
+      <div class="empty-state">
+        <div class="empty-icon-box">
+          <span class="material-symbols-outlined text-2xl">filter_alt_off</span>
         </div>
-        <h2 class="text-lg font-bold text-on-surface mb-1">No {{ filter() }} bookings</h2>
-        <p class="text-sm text-on-surface-variant">
-          There are no bookings in this category right now.
+        <h2 class="empty-title">No {{ filter() }} bookings</h2>
+        <p class="empty-sub">
+          There are no reservations matching the {{ filter() }} filter.
         </p>
         <button
           type="button"
           (click)="setFilter('all')"
-          class="btn-secondary text-sm mt-5 px-6 py-2.5"
+          class="btn-outline"
         >
-          Show all bookings
+          View All Bookings
         </button>
       </div>
     } @else {
-      <div class="flex flex-col gap-4">
+      <!-- Bookings List -->
+      <div class="bookings-list">
         @for (booking of filteredBookings(); track booking._id) {
-          <div
-            class="rounded-2xl border border-edge-deep/70 bg-surface-deep p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-16px_rgba(0,0,0,0.6)] hover:border-primary/30"
-          >
-            <div class="flex flex-col sm:flex-row gap-4">
-              <div
-                class="w-full sm:w-24 h-40 sm:h-24 rounded-xl overflow-hidden flex-shrink-0 bg-surface-deep-raised relative"
-              >
+          <div class="booking-card">
+            <div class="flex flex-col sm:flex-row gap-5">
+              <!-- Vehicle Thumbnail -->
+              <div class="booking-thumb">
                 @if (getVehicleImage(booking.vehicleId)) {
                   <img
                     [src]="getVehicleImage(booking.vehicleId)"
@@ -249,80 +149,87 @@
                     alt="{{ getVehicleName(booking.vehicleId) }}"
                   />
                 } @else {
-                  <div class="w-full h-full flex items-center justify-center">
-                    <span class="material-symbols-outlined text-3xl text-outline"
-                      >directions_car</span
-                    >
+                  <div class="booking-thumb-placeholder">
+                    <span class="material-symbols-outlined text-3xl">directions_car</span>
                   </div>
                 }
               </div>
 
-              <div class="flex-1 min-w-0">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <div class="min-w-0">
-                    <h3 class="font-bold text-on-surface text-base truncate">
-                      {{ getVehicleName(booking.vehicleId) }}
-                    </h3>
-                    @if (getVehicleMeta(booking.vehicleId)) {
-                      <p class="text-xs text-on-surface-variant mt-0.5">
-                        {{ getVehicleMeta(booking.vehicleId) }}
+              <!-- Booking Details -->
+              <div class="flex-1 min-w-0 flex flex-col justify-between">
+                <div>
+                  <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                    <div class="min-w-0">
+                      <h3 class="booking-vehicle-name truncate">
+                        {{ getVehicleName(booking.vehicleId) }}
+                      </h3>
+                      @if (getVehicleMeta(booking.vehicleId)) {
+                        <p class="booking-vehicle-meta">
+                          {{ getVehicleMeta(booking.vehicleId) }}
+                        </p>
+                      }
+                      <p class="booking-date-row">
+                        <span class="material-symbols-outlined">calendar_month</span>
+                        <span>{{ booking.startDate | date: 'mediumDate' }} to {{ booking.endDate | date: 'mediumDate' }}</span>
                       </p>
-                    }
-                    <p class="text-sm text-on-surface-variant flex items-center gap-1.5 mt-1">
-                      <span class="material-symbols-outlined text-base">calendar_month</span>
-                      {{ booking.startDate | date: 'mediumDate' }} —
-                      {{ booking.endDate | date: 'mediumDate' }}
-                    </p>
-                  </div>
-                  <div class="flex items-baseline gap-1 flex-shrink-0">
-                    <span class="text-xl font-black text-secondary">${{ booking.totalPrice }}</span>
-                  </div>
-                </div>
+                    </div>
 
-                <div class="flex flex-wrap items-center gap-2 mt-3">
-                  <span [class]="'badge ' + getStatusClass(booking.status)">
-                    <span [class]="'status-dot ' + getStatusDot(booking.status)"></span>
-                    {{ booking.status }}
-                  </span>
-                  <span [class]="'badge ' + getPaymentClass(booking.paymentStatus)">
-                    <span [class]="'status-dot ' + getPaymentDot(booking.paymentStatus)"></span>
-                    {{ booking.paymentStatus }}
-                  </span>
-                  <span class="chip">
-                    <span class="material-symbols-outlined">schedule</span>
-                    {{ rentalLabel(booking) }}
-                  </span>
-                  @if (getVehicleLocation(booking.vehicleId)) {
-                    <span class="chip">
-                      <span class="material-symbols-outlined">location_on</span>
-                      {{ getVehicleLocation(booking.vehicleId) }}
+                    <div class="flex items-baseline gap-1 sm:text-right flex-shrink-0">
+                      <span class="booking-price">${{ booking.totalPrice }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Status Chips Row -->
+                  <div class="flex flex-wrap items-center gap-2 mt-3.5">
+                    <span [class]="'status-pill ' + booking.status">
+                      <span [class]="'status-dot ' + getStatusDot(booking.status)"></span>
+                      <span>{{ booking.status }}</span>
                     </span>
-                  }
-                </div>
-              </div>
 
-              @if (showActions(booking)) {
-                <div class="flex sm:flex-col gap-2 flex-shrink-0">
-                  @if (booking.paymentStatus === 'unpaid' && booking.status !== 'cancelled') {
-                    <a
-                      [routerLink]="['/customer/checkout', booking._id]"
-                      class="btn-primary text-xs px-4 py-2.5 whitespace-nowrap"
-                    >
-                      <span class="material-symbols-outlined text-sm">payments</span>
-                      Pay Now
-                    </a>
-                  }
-                  @if (booking.status === 'pending') {
-                    <button
-                      (click)="cancel(booking._id)"
-                      class="flex items-center justify-center gap-1.5 rounded-xl border border-red-500/30 px-4 py-2.5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-all whitespace-nowrap"
-                    >
-                      <span class="material-symbols-outlined text-sm">close</span>
-                      Cancel
-                    </button>
-                  }
+                    <span [class]="'payment-pill ' + booking.paymentStatus">
+                      <span [class]="'status-dot ' + getPaymentDot(booking.paymentStatus)"></span>
+                      <span>{{ booking.paymentStatus }}</span>
+                    </span>
+
+                    <span class="info-chip">
+                      <span class="material-symbols-outlined">schedule</span>
+                      {{ rentalLabel(booking) }}
+                    </span>
+
+                    @if (getVehicleLocation(booking.vehicleId)) {
+                      <span class="info-chip location">
+                        <span class="material-symbols-outlined">location_on</span>
+                        {{ getVehicleLocation(booking.vehicleId) }}
+                      </span>
+                    }
+                  </div>
                 </div>
-              }
+
+                <!-- Actions Bottom Row -->
+                @if (showActions(booking)) {
+                  <div class="booking-actions">
+                    @if (booking.paymentStatus === 'unpaid' && booking.status !== 'cancelled') {
+                      <a
+                        [routerLink]="['/customer/checkout', booking._id]"
+                        class="btn-pay"
+                      >
+                        <span class="material-symbols-outlined text-sm">payments</span>
+                        Pay ${{ booking.totalPrice }}
+                      </a>
+                    }
+                    @if (booking.status === 'pending') {
+                      <button
+                        type="button"
+                        (click)="cancel(booking._id)"
+                        class="btn-cancel"
+                      >
+                        <span class="material-symbols-outlined text-sm">close</span>
+                        Cancel
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
             </div>
           </div>
         }

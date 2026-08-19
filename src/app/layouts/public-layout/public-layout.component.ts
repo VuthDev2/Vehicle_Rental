@@ -26,9 +26,9 @@ export class PublicLayoutComponent {
   }
 
   readonly navLinks = [
-    { path: '/', label: 'Home', exact: true },
-    { path: '/about', label: 'About', exact: false },
-    { path: '/contact', label: 'Contact', exact: false },
+    { path: '/', label: 'Home', icon: 'home', exact: true },
+    { path: '/about', label: 'About', icon: 'info', exact: false },
+    { path: '/contact', label: 'Contact', icon: 'call', exact: false },
   ];
 
   readonly socials = [

@@ -1,24 +1,36 @@
 .nav-link {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 0.875rem;
+  font-weight: 750;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.nav-link::after {
-  content: '';
-  position: absolute;
-  left: 1rem;
-  right: 1rem;
-  bottom: 4px;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 0.25s ease;
+.nav-link .material-symbols-outlined {
+  font-size: 1.05rem;
 }
 
-.nav-link:hover::after,
-.nav-link.active-nav-link::after {
-  transform: scaleX(1);
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff !important;
+}
+
+.nav-link.active-nav-link {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: var(--color-primary) !important;
 }
 
 @keyframes mobile-menu-in {
@@ -34,4 +46,186 @@
 
 .mobile-menu {
   animation: mobile-menu-in 0.25s ease;
+}
+
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--color-on-surface-variant);
+  font-size: 0.875rem;
+  font-weight: 750;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.mobile-nav-link:hover {
+  background: var(--color-surface-deep-raised);
+  border-color: var(--color-edge-deep);
+  color: var(--color-on-surface);
+}
+
+.mobile-nav-link.active-nav-link {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: var(--color-primary);
+}
+
+.public-brand-name {
+  color: #ffffff;
+}
+
+.public-action-button {
+  min-width: 112px;
+  height: 46px;
+  padding: 0 20px;
+  border: 1px solid var(--color-edge-deep);
+  background: transparent;
+  color: var(--color-on-surface-variant);
+}
+
+.public-action-button:hover {
+  background: var(--color-surface-deep-raised);
+  border-color: var(--color-outline-variant);
+  color: var(--color-on-surface);
+}
+
+.public-header.is-scrolled .public-brand-name {
+  color: var(--color-on-surface);
+}
+
+.public-header.is-scrolled .nav-link {
+  color: var(--color-on-surface-variant) !important;
+}
+
+.public-header.is-scrolled .nav-link:hover,
+.public-header.is-scrolled .active-nav-link {
+  color: var(--color-on-surface) !important;
+}
+
+.public-header.is-scrolled .nav-link:hover {
+  background: var(--color-surface-deep-raised);
+  border-color: var(--color-edge-deep);
+}
+
+.public-header.is-scrolled .active-nav-link {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: var(--color-primary) !important;
+}
+
+.public-header button {
+  border-color: var(--color-edge-deep) !important;
+  color: var(--color-on-surface-variant) !important;
+}
+
+.public-header:not(.is-scrolled) button,
+.public-header:not(.is-scrolled) .nav-link {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.public-header:not(.is-scrolled) button {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+:host-context(html.light) .public-brand-name {
+  color: #0f172a;
+}
+
+:host-context(html.light) .public-header:not(.is-scrolled) .nav-link,
+:host-context(html.light) .public-header:not(.is-scrolled) button {
+  color: #475569 !important;
+}
+
+:host-context(html.light) .public-header:not(.is-scrolled) .nav-link:hover,
+:host-context(html.light) .public-header:not(.is-scrolled) .active-nav-link {
+  color: #0f172a !important;
+}
+
+:host-context(html.light) .public-header:not(.is-scrolled) .nav-link:hover {
+  background: #f8fafc;
+  border-color: #dbe3ef;
+}
+
+:host-context(html.light) .public-header:not(.is-scrolled) .active-nav-link,
+:host-context(html.light) .public-header.is-scrolled .active-nav-link {
+  background: #e7f8ef;
+  border-color: #a7f3d0;
+  color: #059669 !important;
+}
+
+:host-context(html.light) .public-header:not(.is-scrolled) button {
+  border-color: #dbe3ef !important;
+}
+
+:host-context(html.light) .mobile-menu {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-color: #dbe3ef !important;
+}
+
+:host-context(html.light) .mobile-nav-link {
+  color: #334155;
+}
+
+:host-context(html.light) .mobile-nav-link:hover {
+  background: #f8fafc;
+  border-color: #dbe3ef;
+  color: #0f172a;
+}
+
+:host-context(html.light) .mobile-nav-link.active-nav-link {
+  background: #e7f8ef;
+  border-color: #a7f3d0;
+  color: #059669;
+}
+
+footer {
+  border-top-color: var(--color-edge-deep) !important;
+}
+
+footer .text-white,
+footer h4,
+footer .font-black {
+  color: var(--color-on-surface) !important;
+}
+
+:host-context(html.light) footer h4,
+:host-context(html.light) footer .font-black,
+:host-context(html.light) footer .text-white {
+  color: #0f172a !important;
+}
+
+:host-context(html.light) footer p,
+:host-context(html.light) footer a,
+:host-context(html.light) footer div,
+:host-context(html.light) footer span {
+  color: #334155 !important;
+}
+
+:host-context(html.light) footer a:hover,
+:host-context(html.light) footer .hover\:text-emerald-400:hover {
+  color: #047857 !important;
+}
+
+:host-context(html.light) footer .material-symbols-outlined {
+  color: #059669 !important;
+}
+
+footer p,
+footer a,
+footer span {
+  color: var(--color-on-surface-variant) !important;
+}
+
+footer .material-symbols-outlined {
+  color: var(--color-primary) !important;
+}
+
+footer .font-black {
+  color: var(--color-on-surface) !important;
 }

@@ -1,330 +1,203 @@
-<div class="page-container">
-  <!-- ============ WELCOME HERO ============ -->
-  <div
-    class="relative overflow-hidden rounded-3xl border border-edge-deep bg-surface-deep p-6 sm:p-8"
-  >
-    <div
-      class="absolute inset-0 pointer-events-none"
-      style="
-        background:
-          radial-gradient(700px 260px at 90% -20%, rgba(16, 185, 129, 0.22), transparent 60%),
-          radial-gradient(520px 220px at 0% 120%, rgba(59, 130, 246, 0.14), transparent 60%);
-      "
-    ></div>
-    <div class="relative flex flex-col lg:flex-row lg:items-center gap-6">
-      <div class="flex-1">
-        <p class="eyebrow">Dashboard</p>
-        <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-on-surface">
-          {{ greeting() }}, {{ firstName }}
-        </h1>
-        <p
-          class="mt-1.5 text-sm text-on-surface-variant flex items-center gap-1.5"
-        >
-          <span class="material-symbols-outlined text-base">calendar_today</span>
-          {{ todayLabel }}
-        </p>
-        <div class="mt-5 flex flex-wrap gap-3">
-          <a routerLink="/customer/explore" class="btn-primary text-sm">
-            <span class="material-symbols-outlined">search</span>
-            Explore Fleet
-          </a>
-          <a routerLink="/customer/bookings" class="btn-secondary text-sm">
-            <span class="material-symbols-outlined">receipt_long</span>
-            My Bookings
-          </a>
-        </div>
-      </div>
-      <div class="hidden lg:block flex-shrink-0">
-        <div
-          class="w-40 h-28 rounded-2xl flex items-center justify-center"
-          style="
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(59, 130, 246, 0.08));
-            border: 1px solid rgba(16, 185, 129, 0.22);
-            box-shadow: 0 20px 40px -16px rgba(16, 185, 129, 0.3);
-          "
-        >
-          <span class="material-symbols-outlined text-5xl" style="color: #34d399"
-            >directions_car</span
-          >
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="home-wrapper">
 
-  <!-- ============ STATS ============ -->
-  @if (!loading()) {
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
-      @for (s of stats; track s.label) {
-        <div
-          class="relative rounded-2xl border border-edge-deep bg-surface-deep p-4 sm:p-5 overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-edge-deep-strong hover:shadow-[0_12px_32px_-16px_rgba(0,0,0,0.6),0_0_0_1px_rgba(16,185,129,0.08)]"
-        >
-          <div
-            class="absolute -top-10 -right-10 w-28 h-28 rounded-full blur-2xl opacity-20 pointer-events-none"
-            [style]="'background: ' + s.color"
-          ></div>
-          <div
-            class="relative w-11 h-11 rounded-xl flex items-center justify-center"
-            [style]="'background: ' + s.bg + '; box-shadow: 0 0 22px -6px ' + s.color"
-          >
-            <span class="material-symbols-outlined text-[22px]" [style]="'color: ' + s.color">{{
-              s.icon
-            }}</span>
+  <!-- ================================================================
+       1. HERO HEADER (No card, spacious typography)
+       ================================================================ -->
+  <header class="home-hero">
+    <p class="hero-date">{{ todayLabel }}</p>
+    <h1 class="hero-title">{{ greeting() }}, {{ firstName }}!</h1>
+    <p class="hero-subtitle">
+      Welcome to your Cambo Rent portal. Explore our premium vehicle fleet available across Cambodia, manage your reservations, and view trip details.
+    </p>
+    <div class="hero-actions">
+      <a routerLink="/customer/explore" class="btn-primary-custom">
+        <span class="material-symbols-outlined">search</span>
+        Explore Available Fleet
+      </a>
+      <a routerLink="/customer/bookings" class="btn-secondary-custom">
+        <span class="material-symbols-outlined">receipt_long</span>
+        My Bookings
+      </a>
+    </div>
+    
+    <div class="hero-meta-summary">
+      <span class="summary-item">
+        <span class="material-symbols-outlined icon">directions_car</span>
+        <strong>{{ totalVehicles() || '50+' }}</strong> vehicles in fleet
+      </span>
+      <span class="summary-divider">·</span>
+      <span class="summary-item">
+        <span class="material-symbols-outlined icon green">check_circle</span>
+        <strong>{{ availableVehicles() || '40+' }}</strong> available now
+      </span>
+      <span class="summary-divider">·</span>
+      <span class="summary-item">
+        <span class="material-symbols-outlined icon orange">location_on</span>
+        Active in <strong>3</strong> cities
+      </span>
+    </div>
+  </header>
+
+  <!-- ================================================================
+       2. ACTIVE RENTAL (Minimalist strip design, no card)
+       ================================================================ -->
+  <section class="home-section active-rental-strip">
+    <div class="section-header-minimal">
+      <h2 class="section-title-minimal">Active Rental</h2>
+    </div>
+
+    @if (loading()) {
+      <div class="skeleton-strip">
+        <div class="skeleton-line" style="height: 20px; width: 60%;"></div>
+      </div>
+    } @else if (nextTrip) {
+      <div class="rental-strip">
+        <div class="rental-strip-left">
+          <div class="rental-thumb">
+            <img
+              [src]="getVehicleImage(nextTrip.vehicleId)"
+              [alt]="getVehicleName(nextTrip.vehicleId)"
+              onerror="this.src='/car_card.png'"
+            />
           </div>
-          <p
-            class="relative mt-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant"
-          >
-            {{ s.label }}
-          </p>
-          <p class="relative text-2xl font-black tracking-tight text-on-surface mt-1">
-            {{ s.value }}
-          </p>
-        </div>
-      }
-    </div>
-  }
-
-  @if (loading()) {
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-      @for (i of [1, 2, 3, 4]; track i) {
-        <div class="rounded-2xl border border-edge-deep bg-surface-deep p-5">
-          <div class="w-11 h-11 rounded-xl skeleton mb-4"></div>
-          <div class="h-3 w-1/2 skeleton mb-2"></div>
-          <div class="h-6 w-1/3 skeleton"></div>
-        </div>
-      }
-    </div>
-  }
-
-  <!-- ============ CONTENT ============ -->
-  @if (loadError()) {
-    <div
-      class="mt-6 rounded-2xl border border-red-500/25 bg-red-500/5 p-8 text-center"
-    >
-      <p class="text-sm font-bold text-red-400">Couldn't load your dashboard.</p>
-      <button
-        type="button"
-        (click)="loadDashboard()"
-        class="mt-4 btn-secondary text-sm"
-      >
-        <span class="material-symbols-outlined">refresh</span>
-        Try again
-      </button>
-    </div>
-  } @else if (!loading() && bookings().length === 0) {
-    <!-- Empty state -->
-    <div
-      class="relative overflow-hidden rounded-3xl border border-edge-deep bg-surface-deep mt-6"
-    >
-      <div
-        class="absolute inset-0 pointer-events-none"
-        style="
-          background:
-            radial-gradient(620px 240px at 85% -10%, rgba(16, 185, 129, 0.22), transparent 60%),
-            radial-gradient(520px 220px at 8% 115%, rgba(59, 130, 246, 0.16), transparent 60%);
-        "
-      ></div>
-      <div class="relative p-7 sm:p-10">
-        <span class="badge badge-success mb-4">Quick Start</span>
-        <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-on-surface">
-          Ready to hit the road?
-        </h2>
-        <p class="text-sm text-on-surface-variant mt-2 max-w-md leading-relaxed">
-          Browse the fleet, reserve a vehicle in minutes, and track everything from
-          here. Your next adventure starts with a single booking.
-        </p>
-        <div class="mt-7 flex flex-col sm:flex-row gap-3">
-          <a routerLink="/customer/explore" class="btn-primary px-7 py-3 text-sm">
-            <span class="material-symbols-outlined">search</span>
-            Browse Vehicles
-          </a>
-          <a routerLink="/customer/profile" class="btn-secondary px-7 py-3 text-sm">
-            <span class="material-symbols-outlined">person</span>
-            Complete Profile
-          </a>
-        </div>
-      </div>
-    </div>
-  } @else if (!loading()) {
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
-      <!-- Next trip highlight -->
-      <div class="xl:col-span-2">
-        @if (nextTrip) {
-          <div class="h-full rounded-2xl border border-edge-deep bg-surface-deep overflow-hidden">
-            <div class="flex flex-col sm:flex-row h-full">
-              <div
-                class="sm:w-48 h-40 sm:h-auto relative flex-shrink-0 bg-surface-deep-raised"
-              >
-                @if (getVehicleImage(nextTrip.vehicleId)) {
-                  <img
-                    [src]="getVehicleImage(nextTrip.vehicleId)"
-                    class="absolute inset-0 w-full h-full object-cover"
-                    alt="{{ getVehicleName(nextTrip.vehicleId) }}"
-                  />
-                } @else {
-                  <div
-                    class="absolute inset-0 flex items-center justify-center"
-                  >
-                    <span class="material-symbols-outlined text-5xl text-outline"
-                      >directions_car</span
-                    >
-                  </div>
-                }
-                <span
-                  class="badge-floating"
-                  style="background: rgba(11, 15, 25, 0.8); color: #34d399"
-                >
-                  {{ startLabel }}
-                </span>
-              </div>
-              <div class="flex-1 p-5 sm:p-6 flex flex-col">
-                <div class="flex items-center justify-between gap-2">
-                  <p class="eyebrow !mb-0">Next Trip</p>
-                  <span [class]="'badge ' + getStatusClass(nextTrip.status)">
-                    <span [class]="'status-dot ' + getStatusDot(nextTrip.status)"></span>
-                    {{ nextTrip.status }}
-                  </span>
-                </div>
-                <h3 class="text-xl font-black text-on-surface mt-2 truncate">
-                  {{ getVehicleName(nextTrip.vehicleId) }}
-                </h3>
-                <p
-                  class="text-sm text-on-surface-variant flex items-center gap-1.5 mt-1"
-                >
-                  <span class="material-symbols-outlined text-base"
-                    >calendar_month</span
-                  >
-                  {{ nextTrip.startDate | date: 'mediumDate' }} —
-                  {{ nextTrip.endDate | date: 'mediumDate' }}
-                </p>
-                <div class="flex flex-wrap items-center gap-2 mt-3">
-                  <span class="chip">
-                    <span class="material-symbols-outlined">schedule</span>
-                    {{ nextTrip.quantity }} × {{ nextTrip.rentalType }}
-                  </span>
-                  @if (getVehicleLocation(nextTrip.vehicleId)) {
-                    <span class="chip">
-                      <span class="material-symbols-outlined">location_on</span>
-                      {{ getVehicleLocation(nextTrip.vehicleId) }}
-                    </span>
-                  }
-                  <span
-                    [class]="'chip ' + (nextTrip.paymentStatus === 'paid' ? 'chip-success' : 'chip-warning')"
-                  >
-                    <span class="material-symbols-outlined">payments</span>
-                    {{ nextTrip.paymentStatus }}
-                  </span>
-                </div>
-                <div
-                  class="mt-auto pt-5 flex flex-col sm:flex-row sm:items-center gap-3"
-                >
-                  <span class="text-2xl font-black text-secondary">
-                    ${{ nextTrip.totalPrice }}
-                  </span>
-                  <div class="sm:ml-auto flex flex-wrap gap-2">
-                    @if (nextTrip.paymentStatus === 'unpaid') {
-                      <a
-                        [routerLink]="['/customer/checkout', nextTrip._id]"
-                        class="btn-primary text-xs px-5 py-2.5 whitespace-nowrap"
-                      >
-                        <span class="material-symbols-outlined text-sm">payments</span>
-                        Pay Now
-                      </a>
-                    }
-                    <a
-                      routerLink="/customer/bookings"
-                      class="btn-secondary text-xs px-5 py-2.5 whitespace-nowrap"
-                    >
-                      View details
-                    </a>
-                  </div>
-                </div>
-              </div>
+          <div class="rental-details">
+            <div class="rental-badges">
+              <span class="rental-type-tag">{{ getVehicleType(nextTrip.vehicleId) }}</span>
+              <span [class]="'status-pill ' + nextTrip.status">
+                <span [class]="'status-dot ' + getStatusDot(nextTrip.status)"></span>
+                {{ getStatusLabel(nextTrip.status) }}
+              </span>
             </div>
-          </div>
-        } @else {
-          <div
-            class="h-full rounded-2xl border border-edge-deep bg-surface-deep p-8 flex flex-col items-center justify-center text-center"
-          >
-            <div
-              class="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-              style="background: rgba(16, 185, 129, 0.1)"
-            >
-              <span class="material-symbols-outlined text-3xl" style="color: #34d399"
-                >event_available</span
-              >
-            </div>
-            <h3 class="text-lg font-bold text-on-surface">No upcoming trips</h3>
-            <p class="text-sm text-on-surface-variant mt-1 max-w-xs">
-              You don't have any active reservations right now. Explore the fleet
-              and book your next ride.
+            <h3 class="rental-name">{{ getVehicleName(nextTrip.vehicleId) }}</h3>
+            <p class="rental-meta">
+              <span class="meta-part">
+                <span class="material-symbols-outlined">calendar_today</span>
+                {{ nextTrip.startDate | date: 'MMM d' }} – {{ nextTrip.endDate | date: 'MMM d, y' }}
+              </span>
+              <span class="meta-part">
+                <span class="material-symbols-outlined">location_on</span>
+                {{ getVehicleLocation(nextTrip.vehicleId) }}
+              </span>
             </p>
-            <a routerLink="/customer/explore" class="btn-primary text-sm mt-5">
-              <span class="material-symbols-outlined">search</span>
-              Find a vehicle
+          </div>
+        </div>
+
+        <div class="rental-strip-right">
+          <div class="countdown-info">
+            <span class="countdown-text">{{ startLabel }}</span>
+            <span class="countdown-days-val">{{ daysUntilNext }} {{ daysUntilNext === 1 ? 'day' : 'days' }}</span>
+          </div>
+          <a routerLink="/customer/bookings" class="btn-strip-action">
+            Manage Trip
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+    } @else {
+      <div class="rental-empty-strip">
+        <span class="material-symbols-outlined icon">info</span>
+        <p class="empty-text">You have no active or upcoming rentals. Ready to travel?</p>
+        <a routerLink="/customer/explore" class="empty-link">
+          Browse vehicles
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+    }
+  </section>
+
+  <!-- ================================================================
+       3. HOW IT WORKS (Subtle Card)
+       ================================================================ -->
+  <section class="home-section">
+    <div class="subtle-card">
+      <div class="section-header-minimal mb-6">
+        <h2 class="section-title-minimal">How It Works</h2>
+        <p class="section-desc-minimal">Book your rental in 3 simple steps — completely paperless.</p>
+      </div>
+
+      <div class="stepper-flow">
+        @for (step of howItWorks; track step.step) {
+          <div class="step-column">
+            <div class="step-icon-wrap" [style.color]="step.color">
+              <span class="step-number">{{ step.step }}</span>
+              <span class="material-symbols-outlined step-symbol">{{ step.icon }}</span>
+            </div>
+            <h3 class="step-title">{{ step.title }}</h3>
+            <p class="step-desc">{{ step.desc }}</p>
+          </div>
+          @if (!$last) {
+            <div class="step-arrow">
+              <span class="material-symbols-outlined">east</span>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       4. OUR FLEET (Subtle Card)
+       ================================================================ -->
+  <section class="home-section">
+    <div class="subtle-card">
+      <div class="section-header-minimal mb-6">
+        <h2 class="section-title-minimal">Browse Our Fleet</h2>
+        <p class="section-desc-minimal">Choose from our diverse categories tailored to your travel needs.</p>
+      </div>
+
+      <div class="fleet-columns">
+        @for (cat of fleetCategories; track cat.label) {
+          <div class="fleet-column-item">
+            <div class="fleet-header">
+              <span class="material-symbols-outlined fleet-icon" [style.color]="cat.color">{{ cat.icon }}</span>
+            </div>
+            <h3 class="fleet-title">{{ cat.label }}</h3>
+            <p class="fleet-desc">{{ cat.description }}</p>
+            <a routerLink="/customer/explore" class="fleet-link" [style.color]="cat.color">
+              Explore {{ cat.label.split('&')[0].trim() }}
+              <span class="material-symbols-outlined">chevron_right</span>
             </a>
           </div>
         }
       </div>
+    </div>
+  </section>
 
-      <!-- Recent activity -->
-      <div
-        class="rounded-2xl border border-edge-deep bg-surface-deep p-5"
-      >
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
-            <span class="material-symbols-outlined text-lg text-primary"
-              >history</span
-            >
-            Recent Activity
-          </h3>
-          <a
-            routerLink="/customer/bookings"
-            class="text-xs font-bold text-primary hover:underline"
-            >View all</a
-          >
-        </div>
-        @for (b of recentBookings; track b._id) {
-          <a
-            [routerLink]="['/customer/bookings']"
-            class="flex items-center gap-3 py-2.5 px-2 -mx-2 rounded-lg transition-colors hover:bg-white/5"
-          >
-            <div
-              class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-surface-deep-raised flex items-center justify-center"
-            >
-              @if (getVehicleImage(b.vehicleId)) {
-                <img
-                  [src]="getVehicleImage(b.vehicleId)"
-                  class="w-full h-full object-cover"
-                  alt=""
-                />
-              } @else {
-                <span class="material-symbols-outlined text-lg text-outline"
-                  >directions_car</span
-                >
-              }
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-bold text-on-surface truncate">
-                {{ getVehicleName(b.vehicleId) }}
-              </p>
-              <p class="text-xs text-on-surface-variant truncate">
-                {{ b.startDate | date: 'mediumDate' }}
-              </p>
-            </div>
-            <div class="flex flex-col items-end gap-1">
-              <span class="text-sm font-black text-secondary"
-                >${{ b.totalPrice }}</span
-              >
-              <span [class]="'badge ' + getStatusClass(b.status)">
-                <span
-                  [class]="'status-dot ' + getStatusDot(b.status)"
-                ></span>
-                {{ b.status }}
-              </span>
-            </div>
-          </a>
+  <!-- ================================================================
+       5. WHY CAMBO RENT (Subtle Card)
+       ================================================================ -->
+  <section class="home-section">
+    <div class="subtle-card">
+      <div class="section-header-minimal mb-6">
+        <h2 class="section-title-minimal">Why Choose Cambo Rent?</h2>
+        <p class="section-desc-minimal">We provide premium service and verified vehicles for a worry-free experience.</p>
+      </div>
+
+      <div class="trust-row">
+        @for (t of trustHighlights; track t.title) {
+          <div class="trust-column-item">
+            <span class="material-symbols-outlined trust-icon" [style.color]="t.color">{{ t.icon }}</span>
+            <h3 class="trust-title">{{ t.title }}</h3>
+            <p class="trust-desc">{{ t.desc }}</p>
+          </div>
         }
       </div>
     </div>
-  }
+  </section>
+
+  <!-- ================================================================
+       6. CITIES COVERED FOOTER
+       ================================================================ -->
+  <footer class="home-footer">
+    <p class="footer-title">Cambo Rent Cambodia</p>
+    <div class="footer-locations">
+      <span class="material-symbols-outlined icon">location_on</span>
+      <span>Phnom Penh</span>
+      <span class="dot">·</span>
+      <span>Siem Reap</span>
+      <span class="dot">·</span>
+      <span>Sihanoukville</span>
+    </div>
+  </footer>
+
 </div>
