@@ -1,9 +1,16 @@
 const User = require('../models/User');
 
+// Escape user-supplied strings before using them in a MongoDB $regex to prevent ReDoS.
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // POST /api/users (admin)
 const createUser = async (req, res, next) => {
   try {
     const { name, email, password, phone, role, isActive } = req.body;
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({ message: 'Password is required and must be at least 6 characters.' });
+    }
 
     const existing = await User.findOne({ email });
     if (existing) {
@@ -14,7 +21,7 @@ const createUser = async (req, res, next) => {
       name,
       email,
       phone: phone || '',
-      passwordHash: password || 'changeme123',
+      passwordHash: password,
       role: role || 'customer',
       isActive: isActive !== undefined ? isActive : true,
     });
@@ -31,9 +38,10 @@ const getUsers = async (req, res, next) => {
     const filter = {};
     if (req.query.role) filter.role = req.query.role;
     if (req.query.query) {
+      const safe = escapeRegex(req.query.query);
       filter.$or = [
-        { name: { $regex: req.query.query, $options: 'i' } },
-        { email: { $regex: req.query.query, $options: 'i' } },
+        { name: { $regex: safe, $options: 'i' } },
+        { email: { $regex: safe, $options: 'i' } },
       ];
     }
 

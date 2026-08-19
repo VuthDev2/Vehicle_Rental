@@ -100,6 +100,28 @@ export class AuthService {
       );
   }
 
+  resetPassword(email: string, otp: string, password: string) {
+    return this.http.post<{ message: string; token: string; user: User }>(`${API}/auth/reset-password`, { email, otp, password }).pipe(
+      tap(({ token, user }) => {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(TOKEN_KEY, token);
+        }
+        this.sessionUser.set(user);
+      })
+    );
+  }
+
+  googleLogin(idToken: string) {
+    return this.http.post<{ token: string; user: User }>(`${API}/auth/google`, { idToken }).pipe(
+      tap(({ token, user }) => {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(TOKEN_KEY, token);
+        }
+        this.sessionUser.set(user);
+      })
+    );
+  }
+
   verifyEmail(email: string, code: string) {
     return this.http
       .post<{ message: string; user: User }>(`${API}/auth/verify-email`, { email, code })

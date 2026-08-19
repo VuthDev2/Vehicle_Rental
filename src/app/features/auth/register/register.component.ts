@@ -26,43 +26,25 @@ export class RegisterComponent {
   readonly error = signal('');
   readonly showPass = signal(false);
 
-  private readonly passwordValue = signal('');
-
   readonly form = this.fb.group({
     name: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    phone: [''],
+    email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@gmail\.com$/)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
+    agreeTerms: [false, Validators.requiredTrue],
   }, { validators: passwordMatchValidator });
 
-  readonly passwordStrength = computed(() => {
-    const pw = this.passwordValue();
-    let score = 0;
-    if (pw.length >= 6) score++;
-    if (pw.length >= 10) score++;
-    if (/[A-Z]/.test(pw) && /[0-9]/.test(pw)) score++;
-    return Math.min(score, 3);
-  });
-
-  readonly strengthLabel = computed(() => {
-    const pw = this.passwordValue();
-    if (!pw) return '';
-    if (pw.length < 6) return 'Too short';
-    if (pw.length < 10) return 'Fair';
-    if (/[A-Z]/.test(pw) && /[0-9]/.test(pw)) return 'Strong';
-    return 'Good';
-  });
+  hasLength = signal(false);
+  hasNumber = signal(false);
+  hasUpper = signal(false);
 
   constructor() {
-    this.form.get('password')?.valueChanges.subscribe(v => this.passwordValue.set(v || ''));
-  }
-
-  strengthColor(level: number): string {
-    const pw = this.passwordValue();
-    if (pw.length < 6) return '#f87171';
-    if (pw.length < 10) return '#fbbf24';
-    return '#34d399';
+    this.form.get('password')?.valueChanges.subscribe(val => {
+      const v = val || '';
+      this.hasLength.set(v.length >= 6);
+      this.hasNumber.set(/\d/.test(v));
+      this.hasUpper.set(/[A-Z]/.test(v));
+    });
   }
 
   onSubmit(): void {
@@ -70,8 +52,8 @@ export class RegisterComponent {
     this.loading.set(true);
     this.error.set('');
 
-    const { name, email, phone, password } = this.form.value;
-    this.auth.register(name!, email!, phone || '', password!).pipe(
+    const { name, email, password } = this.form.value;
+    this.auth.register(name!, email!, '', password!).pipe(
       finalize(() => this.loading.set(false)),
       catchError((err) => {
         this.error.set(err.error?.message || 'Registration failed. Please try again.');

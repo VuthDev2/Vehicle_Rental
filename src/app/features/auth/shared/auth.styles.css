@@ -219,8 +219,8 @@
 
 /* ── Auth header ── */
 .auth-header {
-  margin-bottom: 2rem;
-  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid rgba(15, 23, 42, 0.09);
 }
 
@@ -437,9 +437,9 @@
 
 /* ── Social buttons ── */
 .auth-social-btns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .auth-social-btn {

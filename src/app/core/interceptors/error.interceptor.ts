@@ -8,7 +8,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((err) => {
       if (err.status === 401) {
-        localStorage.removeItem('cr_token');
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('cr_token');
+        }
         router.navigateByUrl('/login');
       }
       return throwError(() => err);

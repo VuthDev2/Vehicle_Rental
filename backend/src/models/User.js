@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    passwordHash: { type: String, required: true, select: false },
+    passwordHash: { type: String, required: function() { return this.authProvider === 'local'; }, select: false },
     phone: { type: String, default: '' },
     role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
     avatar: { type: String, default: '' },
@@ -15,6 +15,8 @@ const userSchema = new mongoose.Schema(
     emailVerificationExpires: { type: Date, default: undefined },
     resetPasswordToken: { type: String, default: undefined },
     resetPasswordExpires: { type: Date, default: undefined },
+    authProvider: { type: String, enum: ['local', 'google'], default: 'local' },
+    googleId: { type: String, sparse: true, unique: true },
   },
   { timestamps: true }
 );
