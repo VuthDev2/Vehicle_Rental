@@ -1,9 +1,61 @@
 :host {
   display: block;
 }
-a.active {
-  color: #ffffff !important;
+
+/* ===== Matcha sidebar ===== */
+.admin-sidebar {
+  background: #1e3326;
+  width: 256px;
 }
+
+/* Desktop: a slim icon rail that expands to full width on hover. */
+@media (min-width: 768px) {
+  .admin-sidebar {
+    width: 80px;
+    overflow-x: hidden;
+    transition: width 0.25s ease;
+  }
+  .admin-sidebar:hover {
+    width: 256px;
+  }
+  /* Labels collapse to zero width while collapsed (so they don't overflow the
+     rail or push icons off-centre) and expand back in on hover. */
+  .admin-sidebar .sb-label {
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    transition: opacity 0.18s ease, max-width 0.25s ease;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .admin-sidebar:hover .sb-label {
+    opacity: 1;
+    max-width: 200px;
+    pointer-events: auto;
+  }
+  /* Centre icons in the collapsed rail; left-align them when expanded. */
+  .admin-sidebar .sb-row {
+    justify-content: center;
+  }
+  .admin-sidebar:hover .sb-row {
+    justify-content: flex-start;
+  }
+}
+
+/* Active nav item — keep the icon/text readable on the matcha background. */
+a.active,
 a.active .material-symbols-outlined {
   color: #ffffff !important;
+}
+
+/* When the sidebar expands on hover, push the page content to the right instead
+   of letting the (fixed) sidebar overlay it. The base offset is `pl-20` (80px);
+   on hover it grows to the full 256px rail width. */
+.admin-main {
+  transition: padding-left 0.25s ease;
+}
+@media (min-width: 768px) {
+  .admin-sidebar:hover ~ .admin-main {
+    padding-left: 256px;
+  }
 }
