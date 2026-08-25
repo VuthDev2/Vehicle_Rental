@@ -1,267 +1,210 @@
-<div class="flex min-h-screen" style="background: var(--color-bg-deep); color: var(--color-on-surface)">
+<div class="flex min-h-screen bg-slate-50/50">
   <!-- ============ MOBILE OVERLAY ============ -->
   @if (sidebarOpen()) {
-    <div
-      class="sidebar-overlay md:hidden"
-      (click)="sidebarOpen.set(false)"
-    ></div>
+  <div class="fixed inset-0 z-30 lg:hidden" style="background: rgba(0, 0, 0, 0.5)" (click)="sidebarOpen.set(false)">
+  </div>
   }
 
-  <!-- ============ SIDEBAR ============ -->
-  <aside
-    #sidebar
-    class="fixed left-0 top-0 z-40 flex h-full flex-col md:translate-x-0"
-    [class.-translate-x-full]="!sidebarOpen()"
-    [class.translate-x-0]="sidebarOpen()"
-    [class.sidebar-collapsed]="sidebarCollapsed()"
-    style="background: var(--color-surface-deep); border-right: 1px solid var(--color-edge-deep)"
-  >
-    <!-- Logo & Toggle Button -->
-    <div
-      class="flex h-20 items-center justify-between px-4 flex-shrink-0 overflow-hidden"
-      style="border-bottom: 1px solid var(--color-edge-deep)"
-    >
-      <div class="flex items-center gap-3 min-w-0 overflow-hidden">
-        <img
-          src="/logo.jpg"
-          alt="Cambo Rent"
-          style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover; flex-shrink: 0"
-          onerror="
-            this.style.display = 'none';
-            this.nextElementSibling.style.display = 'flex';
-          "
-        />
-        <div
-          style="
-            display: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            background: linear-gradient(135deg, #10b981, #059669);
-          "
-        >
-          <span class="material-symbols-outlined text-white text-lg">directions_car</span>
-        </div>
-
-        <div class="flex flex-col leading-tight collapsible-text min-w-0">
-          <span class="text-sm font-black truncate" style="color: var(--color-on-surface); line-height: 1.2;">Cambo Rent</span>
-          <span class="text-[10px] font-bold uppercase tracking-wider truncate" style="color: var(--color-primary); line-height: 1.2;">Customer</span>
-        </div>
-      </div>
-
-      <!-- Desktop Collapse Toggle Button -->
-      <button
-        type="button"
-        (click)="toggleCollapse()"
-        class="hidden md:flex items-center justify-center w-8 h-8 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex-shrink-0 ml-auto"
-        style="color: var(--color-on-surface-variant);"
-        [title]="sidebarCollapsed() ? 'Expand Sidebar' : 'Collapse Sidebar'"
-      >
-        <span class="material-symbols-outlined text-xl transition-transform duration-300">
-          {{ sidebarCollapsed() ? 'chevron_right' : 'menu_open' }}
-        </span>
-      </button>
-    </div>
-
-    <!-- Nav Items -->
-    <div class="flex flex-col flex-1 overflow-y-auto p-3 gap-1 overflow-x-hidden">
-      <p
-        class="text-[10px] font-bold uppercase tracking-widest px-3 mb-2 collapsible-text"
-        style="color: var(--color-on-surface-variant)"
-      >
-        Navigation
-      </p>
-
-      @for (item of navItems; track item.path) {
-        <a
-          [routerLink]="item.path"
-          routerLinkActive="active-nav"
-          #rla="routerLinkActive"
-          (click)="sidebarOpen.set(false)"
-          class="nav-item group flex items-center py-2.5 rounded-xl text-sm font-semibold cursor-pointer relative overflow-hidden"
-          [class.px-3]="!sidebarCollapsed()"
-          [class.px-2.5]="sidebarCollapsed()"
-          [class.active-nav]="rla.isActive"
-          [title]="item.label"
-        >
-          <div
-            class="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 flex-shrink-0"
-            [class]="
-              rla.isActive
-                ? 'text-white'
-                : 'text-on-surface-variant'
-            "
-            [style.background]="rla.isActive ? '' : 'var(--color-surface-container-low)'"
-          >
-            <span class="material-symbols-outlined text-xl">{{ item.icon }}</span>
+  <aside class="customer-sidebar fixed left-0 top-0 z-40 flex h-full flex-col transition-all duration-300 ease-in-out"
+    [class.-translate-x-full]="!sidebarOpen()" [class.lg:translate-x-0]="true">
+    <!-- Logo -->
+    <div class="sidebar-logo"
+      style="padding: 24px 20px 28px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); flex-shrink: 0">
+      <div class="sb-row flex items-center gap-3">
+        <div class="logo-icon-wrapper flex-shrink-0">
+          <img src="/logo.jpg" alt="Cambo Rent" class="logo-img" onerror="
+              this.style.display = 'none';
+              this.nextElementSibling.style.display = 'flex';
+            " />
+          <div class="logo-fallback" style="display: none">
+            <span class="material-symbols-outlined" style="font-size: 24px; color: #ffffff">directions_car</span>
           </div>
-          <span class="collapsible-text ml-3 truncate">{{ item.label }}</span>
-        </a>
-      }
-    </div>
-
-    <!-- User Profile Section -->
-    <div class="p-3 flex-shrink-0 overflow-hidden" style="border-top: 1px solid var(--color-edge-deep)">
-      <!-- User Info Box -->
-      <div
-        class="rounded-2xl p-2.5 mb-2.5 flex items-center gap-3 transition-all hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer overflow-hidden"
-        style="background: var(--color-surface-deep-raised); border: 1px solid var(--color-edge-deep)"
-      >
-        <div
-          class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm text-white shadow-lg flex-shrink-0"
-          style="background: linear-gradient(135deg, #10b981, #059669)"
-          [title]="auth.user()?.name || 'User Profile'"
-        >
-          {{ auth.user()?.name?.charAt(0)?.toUpperCase() || 'U' }}
         </div>
-        <div class="collapsible-text min-w-0 flex-1">
-          <p class="text-sm font-bold truncate" style="color: var(--color-on-surface)">{{ auth.user()?.name }}</p>
-          <p class="text-xs truncate flex items-center gap-1" style="color: var(--color-on-surface-variant)">
-            <span class="status-dot success"></span>
-            Active
+        <div class="sb-label overflow-hidden whitespace-nowrap transition-all duration-300">
+          <h1 style="font-size: 18px; font-weight: 700; color: #ffffff; margin: 0; line-height: 1.2">
+            Cambo Rent
+          </h1>
+          <p
+            style="font-size: 11px; font-weight: 600; color: rgba(255, 255, 255, 0.6); margin: 0; letter-spacing: 0.5px; text-transform: uppercase">
+            Customer
           </p>
         </div>
       </div>
+    </div>
 
-      <!-- Action Buttons Row -->
-      <div class="flex flex-col gap-2">
-        <div class="flex gap-2 justify-center">
-          <a
-            routerLink="/"
-            class="user-action-btn flex-1 min-w-[36px] h-9 rounded-xl flex items-center justify-center text-xs font-semibold hover:bg-white/5 overflow-hidden"
-            style="border: 1px solid var(--color-edge-deep); color: var(--color-on-surface-variant); background: var(--color-surface-deep-raised);"
-            title="Home Page"
-          >
-            <span class="material-symbols-outlined text-base flex-shrink-0">home</span>
-            <span class="collapsible-text ml-1.5">Home</span>
-          </a>
-          <button
-            (click)="confirmLogout()"
-            class="user-action-btn flex-1 min-w-[36px] h-9 rounded-xl flex items-center justify-center text-xs font-semibold hover:brightness-110 overflow-hidden"
-            style="
-              background: rgba(239, 68, 68, 0.1);
-              color: #ef4444;
-              border: 1px solid rgba(239, 68, 68, 0.2);
-            "
-            title="Sign Out"
-          >
-            <span class="material-symbols-outlined text-base flex-shrink-0">logout</span>
-            <span class="collapsible-text ml-1.5">Logout</span>
-          </button>
-        </div>
+    <!-- Navigation -->
+    <nav class="flex-1 flex flex-col gap-0.5 overflow-y-auto overflow-x-hidden" style="padding: 12px 10px">
+      @for (item of navItems; track item.path) {
+      <a [routerLink]="item.path" routerLinkActive="active" #rla="routerLinkActive" (click)="sidebarOpen.set(false)"
+        class="sb-row sb-nav-item flex items-center gap-3 rounded-lg text-sm font-semibold transition-all duration-150"
+        [class.active]="rla.isActive" [title]="item.label"
+        [style.color]="rla.isActive ? '#FFFFFF' : '#FFFFFF'"
+        [style.background]="rla.isActive ? 'rgba(255,255,255,0.16)' : 'transparent'"
+        style="position: relative; padding: 10px 14px"
+        onmouseover="
+          if (!this.classList.contains('active')) {
+            this.style.background = 'rgba(255,255,255,0.09)';
+          }
+        "
+        onmouseout="
+          if (!this.classList.contains('active')) {
+            this.style.background = 'transparent';
+          }
+        ">
+        @if (rla.isActive) {
+        <span style="position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; border-radius: 0 3px 3px 0; background: #e2f3af;"></span>
+        }
+        <span class="material-symbols-outlined flex-shrink-0" style="font-size: 20px; color: #ffffff">{{ item.icon
+          }}</span>
+        <span class="sb-label overflow-hidden whitespace-nowrap transition-all duration-300"
+          style="letter-spacing: 0.2px">{{ item.label }}</span>
+      </a>
+      }
+    </nav>
 
-        <!-- Theme Toggle Button -->
-        <button
-          type="button"
-          (click)="theme.toggleTheme()"
-          class="user-action-btn w-full h-9 rounded-xl text-xs font-semibold hover:bg-white/5 flex items-center justify-center overflow-hidden"
-          style="background: var(--color-surface-deep-raised); color: var(--color-on-surface); border: 1px solid var(--color-edge-deep);"
-          [title]="theme.isDark() ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
-        >
-          <span class="material-symbols-outlined text-base flex-shrink-0">{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</span>
-          <span class="collapsible-text ml-2">{{ theme.isDark() ? 'Light Mode' : 'Dark Mode' }}</span>
-        </button>
-      </div>
+    <!-- Logout -->
+    <div style="border-top: 1px solid rgba(255, 255, 255, 0.14); padding: 12px 10px; flex-shrink: 0">
+      <button type="button" (click)="confirmLogout()"
+        class="sb-row sb-nav-item w-full flex items-center gap-3 rounded-lg text-sm font-semibold transition-all duration-150"
+        title="Sign out" style="color: #ffffff; padding: 10px 14px"
+        onmouseover="this.style.background = 'rgba(255,255,255,0.09)'"
+        onmouseout="this.style.background = 'transparent'">
+        <span class="material-symbols-outlined flex-shrink-0" style="font-size: 20px">logout</span>
+        <span class="sb-label overflow-hidden whitespace-nowrap transition-all duration-300">Logout</span>
+      </button>
     </div>
   </aside>
 
   <!-- ============ MAIN CONTENT ============ -->
-  <div
-    class="flex-1 flex flex-col min-h-screen main-content-wrapper"
-    [style.paddingLeft]="sidebarCollapsed() ? '5rem' : '16rem'"
-    style="min-width: 0"
-  >
+  <div class="customer-main flex-1 flex flex-col min-h-screen transition-all duration-300" style="min-width: 0">
     <!-- Email verification banner -->
     @if (showVerifyBanner()) {
-      <div
-        class="flex items-center gap-3 px-4 md:px-8 py-3 text-sm"
-        style="
+    <div class="flex items-center gap-3 px-4 md:px-8 py-3 text-sm" style="
           background: rgba(245, 158, 11, 0.1);
           border-bottom: 1px solid rgba(245, 158, 11, 0.25);
           color: #fbbf24;
-        "
-      >
-        <span class="material-symbols-outlined text-xl" style="color: #fbbf24">mark_email_unread</span>
-        <p class="flex-1 leading-snug">
-          Please verify your email address to unlock the full Cambo Rent experience.
-        </p>
-        <a
-          routerLink="/verify-email"
-          [queryParams]="{ email: auth.user()?.email }"
-          class="font-bold whitespace-nowrap underline underline-offset-2 transition-opacity hover:opacity-80"
-          style="color: #fbbf24"
-        >
-          Verify now
-        </a>
-        <button
-          type="button"
-          (click)="dismissVerifyBanner()"
-          aria-label="Dismiss email verification reminder"
-          class="rounded-lg p-1 opacity-70 transition-opacity hover:opacity-100"
-        >
-          <span class="material-symbols-outlined text-lg">close</span>
-        </button>
-      </div>
-    }
-    <!-- Mobile Topbar -->
-    <div
-      class="md:hidden flex items-center justify-between px-4 py-3 sticky top-0 z-20"
-      style="
-        background: rgba(11, 15, 25, 0.92);
-        border-bottom: 1px solid var(--color-edge-deep);
-        backdrop-filter: blur(12px);
-      "
-    >
-      <div class="flex items-center gap-2.5">
-        <button
-          type="button"
-          (click)="sidebarOpen.set(true)"
-          class="p-1 text-white hover:text-primary transition-colors"
-          title="Open menu"
-        >
-          <span class="material-symbols-outlined text-2xl">menu</span>
-        </button>
-        <img
-          src="/logo.jpg"
-          alt="Cambo Rent"
-          style="width: 28px; height: 28px; border-radius: 6px; object-fit: cover"
-          onerror="
-            this.style.display = 'none';
-            this.nextElementSibling.style.display = 'flex';
-          "
-        />
-        <div
-          style="
-            display: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #10b981, #059669);
-          "
-        >
-          <span class="material-symbols-outlined text-white text-sm">directions_car</span>
-        </div>
-        <span class="text-sm font-bold text-white">Cambo Rent</span>
-      </div>
-      <div
-        class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shadow-md"
-        style="background: linear-gradient(135deg, #10b981, #059669)"
-      >
-        {{ auth.user()?.name?.charAt(0)?.toUpperCase() || 'U' }}
-      </div>
+        ">
+      <span class="material-symbols-outlined text-xl" style="color: #fbbf24">mark_email_unread</span>
+      <p class="flex-1 leading-snug">
+        Please verify your email address to unlock the full Cambo Rent experience.
+      </p>
+      <a routerLink="/verify-email" [queryParams]="{ email: auth.user()?.email }"
+        class="font-bold whitespace-nowrap underline underline-offset-2 transition-opacity hover:opacity-80"
+        style="color: #fbbf24">
+        Verify now
+      </a>
+      <button type="button" (click)="dismissVerifyBanner()" aria-label="Dismiss email verification reminder"
+        class="rounded-lg p-1 opacity-70 transition-opacity hover:opacity-100">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
     </div>
+    }
+
+    <!-- ============ TOP HEADER ============ -->
+    <header
+      class="flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-8 h-[64px] sm:h-[72px] sticky top-0 z-30 transition-all duration-300 bg-[#064022] lg:bg-white lg:border-b lg:border-gray-100">
+
+      <!-- Left: Logo (Mobile Only) -->
+      <div class="flex items-center gap-3 sm:gap-4 lg:hidden">
+        <button type="button" (click)="toggleSidebar()" class="text-white hover:opacity-80 p-1 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[24px]">menu</span>
+        </button>
+        <div class="w-8 h-8 bg-white rounded-[10px] flex items-center justify-center p-1">
+          <img src="/logo.jpg" alt="Cambo Rent" class="w-full h-full object-contain" />
+        </div>
+        <span class="font-medium text-white text-[16px] tracking-tight">Cambo Rent</span>
+      </div>
+
+
+      <!-- Center: Search Bar (Desktop Only) -->
+      <div class="hidden lg:flex flex-1 max-w-2xl items-center mr-auto ml-4">
+        <div class="relative w-full">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" style="font-size: 20px;">search</span>
+          <input type="text" (input)="onGlobalSearch($event)" placeholder="Search vehicles, locations, or bookings..." class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-[0.95rem] font-medium rounded-full focus:ring-2 focus:ring-[#10b981] focus:border-transparent block pl-12 pr-20 py-2.5 transition-all outline-none shadow-sm">
+          <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-[10px] text-gray-400 font-bold">
+            <span class="px-1.5 py-0.5 rounded border border-gray-200 bg-white shadow-sm">⌘</span>
+            <span class="px-1.5 py-0.5 rounded border border-gray-200 bg-white shadow-sm">K</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Actions -->
+      <div class="flex items-center justify-end gap-3 sm:gap-5 text-white lg:text-gray-600">
+        
+        <!-- Vertical Divider (Desktop Only) -->
+        <div class="w-px h-6 bg-gray-200 hidden lg:block"></div>
+
+        <!-- Dark Mode Toggle (Mobile Only) -->
+        <button type="button" class="lg:hidden text-white hover:opacity-80 transition-opacity flex items-center justify-center w-8 h-8">
+          <span class="material-symbols-outlined text-[20px]" style="font-weight: 600;">dark_mode</span>
+        </button>
+
+        <!-- Notifications -->
+        <button type="button" class="text-white lg:text-gray-500 hover:opacity-80 transition-opacity flex items-center justify-center relative w-8 h-8 sm:w-10 sm:h-10">
+          <span class="material-symbols-outlined text-[22px] sm:text-[24px]">notifications</span>
+          <span class="absolute top-0 right-0 sm:top-1 sm:right-1 w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] bg-[#f97316] rounded-full text-[9px] sm:text-[10px] font-bold flex items-center justify-center text-white border border-[#064022] lg:border-transparent">2</span>
+        </button>
+
+        <!-- Profile -->
+        @if (auth.user(); as user) {
+        <button type="button" (click)="profileMenuOpen.set(!profileMenuOpen())" class="flex items-center gap-1 sm:gap-2.5 hover:opacity-85 transition-opacity pl-1 sm:pl-2">
+          <span class="w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[11px] sm:text-[14px] font-medium text-white border border-white/30 lg:border-transparent bg-transparent lg:bg-[#064022] flex-shrink-0 shadow-sm border border-white/40">
+            {{ user.name?.charAt(0)?.toUpperCase() || 'H' }}
+          </span>
+          <span class="block font-medium text-[14px] text-white lg:text-gray-700 ml-1">{{ userName }}</span>
+          <span class="block material-symbols-outlined text-white/80 lg:text-gray-400" style="font-size: 16px;">expand_more</span>
+        </button>
+        }
+      </div>
+    </header>
 
     <!-- Page Content -->
-    <main class="flex-1 overflow-auto pb-24 md:pb-0 w-full flex flex-col">
+    <main class="flex-1 overflow-auto w-full flex flex-col">
       <router-outlet />
+      <!-- Spacer for mobile bottom nav -->
+      <div class="h-28 lg:hidden flex-shrink-0 w-full"></div>
     </main>
   </div>
 
-  <!-- ============ MOBILE BOTTOM NAV ============ -->
-  <app-mobile-bottom-nav />
+  <!-- ============ PROFILE DROPDOWN ============ -->
+  @if (profileMenuOpen()) {
+  <div class="fixed inset-0 z-40" (click)="profileMenuOpen.set(false)"></div>
+  <div
+    class="fixed top-16 right-4 md:right-8 z-50 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden">
+    @if (auth.user(); as user) {
+    <div class="flex items-center gap-3 px-4 py-4 border-b border-slate-100">
+      <span class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+        style="background: #0B3D20">
+        {{ user.name?.charAt(0)?.toUpperCase() || 'U' }}
+      </span>
+      <div class="min-w-0">
+        <p class="text-sm font-semibold text-slate-800 truncate">{{ user.name }}</p>
+        <p class="text-xs text-slate-500 truncate">{{ user.email }}</p>
+      </div>
+    </div>
+    }
+    <div class="px-2 pb-2 mt-2">
+      <a routerLink="/customer/profile"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors"
+        (click)="profileMenuOpen.set(false)">
+        <span class="material-symbols-outlined" style="font-size: 18px">manage_accounts</span>
+        My Profile
+      </a>
+      <a routerLink="/customer/bookings"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors"
+        (click)="profileMenuOpen.set(false)">
+        <span class="material-symbols-outlined" style="font-size: 18px">receipt_long</span>
+        My Bookings
+      </a>
+      <button type="button" (click)="profileMenuOpen.set(false); confirmLogout()"
+        class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors mt-1">
+        <span class="material-symbols-outlined" style="font-size: 18px">logout</span>
+        Log out
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- Mobile Bottom Navigation -->
+  <app-mobile-bottom-nav></app-mobile-bottom-nav>
 </div>

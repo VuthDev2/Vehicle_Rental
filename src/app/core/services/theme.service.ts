@@ -5,7 +5,7 @@ const STORAGE_KEY = 'camborent_theme';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private readonly themeValue = signal<ThemeMode>('dark');
+  private readonly themeValue = signal<ThemeMode>('light');
 
   readonly theme = this.themeValue.asReadonly();
   readonly isDark = computed(() => this.themeValue() === 'dark');

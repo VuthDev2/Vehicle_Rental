@@ -11,12 +11,12 @@ import { PaymentService } from '../../../../core/services/payment.service';
     <div class="min-h-screen flex items-center justify-center p-4" style="background: var(--color-bg-deep);">
       <div
         class="w-full max-w-md rounded-2xl border p-8 sm:p-10 text-center"
-        style="background: var(--color-surface-deep); border-color: var(--color-edge-deep); box-shadow: 0 24px 70px rgba(0,0,0,0.35);"
+        style="background: var(--color-surface-deep); border-color: var(--color-edge-deep); box-shadow: 0 24px 70px rgba(123, 160, 91, 0.35);"
       >
         @if (status() === 'checking') {
           <div
             class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5"
-            style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.22);"
+            style="background: rgba(123,160,91,0.12); border: 1px solid rgba(123,160,91,0.22);"
           >
             <span class="material-symbols-outlined animate-spin text-5xl text-primary">progress_activity</span>
           </div>
@@ -30,7 +30,7 @@ import { PaymentService } from '../../../../core/services/payment.service';
         } @else if (status() === 'paid') {
           <div
             class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5"
-            style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.22);"
+            style="background: rgba(123,160,91,0.12); border: 1px solid rgba(123,160,91,0.22);"
           >
             <span class="material-symbols-outlined text-5xl text-primary">check_circle</span>
           </div>

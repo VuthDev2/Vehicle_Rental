@@ -3,6 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 const authRoutes = require('./routes/auth.routes');
 const vehicleRoutes = require('./routes/vehicle.routes');
@@ -21,6 +22,7 @@ const app = express();
 
 // Security headers
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(cookieParser());
 
 // CORS – allow Angular dev server
 app.use(cors({
@@ -40,9 +42,13 @@ if (process.env.NODE_ENV !== 'test') {
 // Static files – uploaded images
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Rate limiting
-app.use('/api/auth', authLimiter);
-app.use('/api', apiLimiter);
+// Rate limiting (apiLimiter applies to all /api routes EXCEPT /api/auth which has specific limiters)
+app.use('/api', (req, res, next) => {
+  if (req.path.startsWith('/auth/')) {
+    return next();
+  }
+  return apiLimiter(req, res, next);
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);

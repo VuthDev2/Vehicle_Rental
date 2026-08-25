@@ -12,8 +12,8 @@ export class MobileBottomNavComponent {
   readonly tabs = [
     { label: 'Home', icon: 'home', path: '/customer/dashboard' },
     { label: 'Explore', icon: 'explore', path: '/customer/explore' },
-    { label: 'Bookings', icon: 'receipt_long', path: '/customer/bookings' },
-    { label: 'Payments', icon: 'payments', path: '/customer/payments' },
-    { label: 'Profile', icon: 'manage_accounts', path: '/customer/profile' },
+    { label: 'Bookings', icon: 'calendar_month', path: '/customer/bookings' },
+    { label: 'Payments', icon: 'credit_card', path: '/customer/payments' },
+    { label: 'Profile', icon: 'person', path: '/customer/profile' },
   ];
 }

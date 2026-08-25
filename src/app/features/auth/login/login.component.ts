@@ -56,11 +56,14 @@ export class LoginComponent implements AfterViewInit {
       return;
     }
     
-    google.accounts.id.initialize({
-      client_id: environment.googleClientId,
-      callback: this.handleCredentialResponse.bind(this),
-      locale: 'en'
-    });
+    if (!(window as any)._gsiInitialized) {
+      google.accounts.id.initialize({
+        client_id: environment.googleClientId,
+        callback: this.handleCredentialResponse.bind(this),
+        locale: 'en'
+      });
+      (window as any)._gsiInitialized = true;
+    }
 
     google.accounts.id.renderButton(
       document.getElementById('googleBtn'),

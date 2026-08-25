@@ -75,7 +75,7 @@ import { PaymentService, PaywayForm } from '../../../../core/services/payment.se
               } @else {
                 <div
                   class="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-2xl animate-pulse-glow"
-                  style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.22);"
+                  style="background: rgba(123,160,91,0.12); border: 1px solid rgba(123,160,91,0.22);"
                 >
                   <span class="material-symbols-outlined animate-spin text-6xl text-primary">progress_activity</span>
                 </div>

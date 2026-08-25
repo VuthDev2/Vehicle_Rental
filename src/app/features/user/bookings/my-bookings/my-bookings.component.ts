@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, UpperCasePipe, TitleCasePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BookingService } from '../../../../core/services/booking.service';
 import { Booking } from '../../../../models/booking.model';
@@ -23,7 +23,7 @@ export type BookingFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'can
 @Component({
   selector: 'app-my-bookings',
   standalone: true,
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, UpperCasePipe, TitleCasePipe, DecimalPipe],
   templateUrl: './my-bookings.component.html',
   styleUrl: './my-bookings.component.css',
 })
@@ -33,7 +33,7 @@ export class MyBookingsComponent implements OnInit {
   readonly loading = signal(true);
   readonly loadError = signal(false);
   readonly bookings = signal<Booking[]>([]);
-  readonly filter = signal<BookingFilter>('all');
+  readonly filter = signal<BookingFilter>('pending'); // Default to Upcoming (pending)
 
   ngOnInit() {
     this.loadBookings();
@@ -58,15 +58,11 @@ export class MyBookingsComponent implements OnInit {
   }
 
   readonly tabs = computed(() => {
-    const all = this.bookings();
-    const count = (s: BookingFilter) =>
-      s === 'all' ? all.length : all.filter((b) => b.status === s).length;
     return [
-      { key: 'all' as BookingFilter, label: 'All', count: count('all') },
-      { key: 'pending' as BookingFilter, label: 'Pending', count: count('pending') },
-      { key: 'confirmed' as BookingFilter, label: 'Confirmed', count: count('confirmed') },
-      { key: 'completed' as BookingFilter, label: 'Completed', count: count('completed') },
-      { key: 'cancelled' as BookingFilter, label: 'Cancelled', count: count('cancelled') },
+      { key: 'pending' as BookingFilter, label: 'Upcoming' },
+      { key: 'confirmed' as BookingFilter, label: 'Ongoing' },
+      { key: 'completed' as BookingFilter, label: 'Completed' },
+      { key: 'cancelled' as BookingFilter, label: 'Canceled' },
     ];
   });
 
@@ -104,15 +100,15 @@ export class MyBookingsComponent implements OnInit {
         label: 'Total Bookings',
         value: String(all.length),
         icon: 'receipt_long',
-        bg: 'rgba(59, 130, 246, 0.14)',
+        bg: 'rgba(123, 160, 91, 0.14)',
         color: '#60a5fa',
       },
       {
         label: 'Active',
         value: String(active),
         icon: 'directions_car',
-        bg: 'rgba(16, 185, 129, 0.14)',
-        color: '#34d399',
+        bg: 'rgba(123, 160, 91, 0.14)',
+        color: 'var(--color-primary)',
       },
       {
         label: 'Awaiting Payment',
@@ -125,7 +121,7 @@ export class MyBookingsComponent implements OnInit {
         label: 'Total Spent',
         value: `$${spent.toFixed(2)}`,
         icon: 'savings',
-        bg: 'rgba(139, 92, 246, 0.14)',
+        bg: 'rgba(123, 160, 91, 0.14)',
         color: '#a78bfa',
       },
     ];

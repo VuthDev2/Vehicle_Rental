@@ -1,49 +1,52 @@
 <main class="landing-page">
-  <section class="landing-hero">
-    <div class="hero-media" [style.transform]="'translateY(' + scrollY * 0.18 + 'px)'">
-      <img src="/hero_vehicles.png" alt="Cambo Rent vehicle fleet" />
-      <div class="hero-scrim"></div>
+  <section class="landing-hero-new">
+    <div class="hero-video-bg"
+         [style.transform]="'scale(' + getScrollScale() + ')'"
+         [style.border-radius]="getScrollRadius()"
+         style="overflow: hidden; transform-origin: center top;">
+      <video #heroVideo autoplay muted playsinline (ended)="onVideoEnded(heroVideo)" [src]="videos[currentVideoIndex()]"></video>
+      <div class="hero-overlay"></div>
     </div>
 
-    <div class="section-container hero-content">
-      <div class="hero-copy animate-fade-in-up">
-        <div class="landing-kicker">
-          <span></span>
-          Cambodia vehicle rentals
-        </div>
-        <h1>Cars, motos, and bikes ready when you are.</h1>
-        <p>
-          Book clean, inspected vehicles for city errands, weekend trips, airport transfers, and
-          longer stays across Cambodia.
+    <div class="hero-container section-container">
+      <div class="hero-centered-content">
+        <h1 class="hero-title">
+          Explore Cambodia<br>
+          <span class="hero-highlight">Your Way</span>
+        </h1>
+        <p class="hero-subtitle">
+          Premium cars, motorcycles, and bicycles for every journey.
         </p>
-        <div class="hero-actions">
-          <a routerLink="/register" class="btn-primary landing-primary">
-            <span class="material-symbols-outlined">person_add</span>
-            Create account
+        <div class="hero-cta-group">
+          <a routerLink="/register" class="btn-primary hero-btn-primary">
+            <span class="material-symbols-outlined">rocket_launch</span>
+            Get Started
           </a>
-          <a routerLink="/login" class="landing-secondary">
-            <span class="material-symbols-outlined">login</span>
-            Sign in
+          <a routerLink="/customer/explore" class="hero-btn-secondary">
+            <span class="material-symbols-outlined">directions_car</span>
+            Browse Fleet
           </a>
-        </div>
-
-        <div class="hero-trust">
-          @for (trust of trustPoints; track trust.label) {
-            <div>
-              <span class="material-symbols-outlined">{{ trust.icon }}</span>
-              {{ trust.label }}
-            </div>
-          }
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="hero-summary">
-        @for (stat of heroStats; track stat.label) {
-          <div>
-            <strong>{{ stat.value }}</strong>
-            <span>{{ stat.label }}</span>
-          </div>
-        }
+  <!-- Featured Car – parallax reveal -->
+  <section class="featured-section">
+    <div class="section-container">
+      <div class="featured-card" [style.transform]="getFeaturedTransform()" [style.opacity]="getFeaturedOpacity()">
+        <div class="featured-badge">CARS</div>
+        <img src="/car_card.png" alt="Sedan & SUV rental" class="featured-img" />
+        <div class="featured-overlay"></div>
+        <div class="featured-content">
+          <span class="featured-price">From $35/day</span>
+          <h2>Sedan & SUV</h2>
+          <p>Perfect for family trips and long-distance travel. AC, comfortable seating, and spacious trunks.</p>
+          <a routerLink="/login" class="btn-primary landing-primary featured-cta">
+            <span class="material-symbols-outlined">directions_car</span>
+            Browse Cars
+          </a>
+        </div>
       </div>
     </div>
   </section>

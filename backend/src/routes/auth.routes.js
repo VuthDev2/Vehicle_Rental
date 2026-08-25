@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getMe, verifyEmail, resendVerification, forgotPassword, verifyResetOtp, resetPassword, changePassword, googleLogin } = require('../controllers/authController');
+const { register, login, getMe, verifyEmail, resendVerification, forgotPassword, verifyResetOtp, resetPassword, changePassword, googleLogin, refreshToken, logout } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const { authLimiter, loginLimiter, verificationLimiter } = require('../middleware/rateLimiter');
 const { registerRules, loginRules, verifyEmailRules, resendVerificationRules, forgotPasswordRules, verifyResetOtpRules, resetPasswordRules, changePasswordRules } = require('../middleware/validate');
@@ -15,6 +15,7 @@ router.post('/verify-reset-otp', verificationLimiter, verifyResetOtpRules, verif
 router.post('/reset-password', verificationLimiter, resetPasswordRules, resetPassword);
 router.post('/change-password', protect, changePasswordRules, changePassword);
 router.post('/google', authLimiter, googleLogin);
+router.get('/refresh', refreshToken);
+router.post('/logout', logout);
 
 module.exports = router;
-

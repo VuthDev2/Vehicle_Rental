@@ -5,131 +5,122 @@
   color: var(--color-on-surface);
 }
 
-/* ============================================================
-   SIDEBAR SMOOTH COLLAPSE TRANSITIONS
-   ============================================================ */
-aside {
-  /* NO min-width — it overrides width and breaks the expand animation */
-  width: 16rem;
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
-  overflow-x: hidden;
-  will-change: width;
-  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+/* ===== Matcha sidebar ===== */
+.customer-sidebar {
+  background: #0B3D20;
+  width: 256px;
 }
 
-aside.sidebar-collapsed {
-  width: 5rem;
-}
-
-/* Main content wrapper: padding-left driven by inline [style] binding for true animatability */
-.main-content-wrapper {
-  will-change: padding-left;
-  transition: padding-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Smooth text collapse helper */
-.collapsible-text {
-  white-space: nowrap;
-  opacity: 1;
-  max-width: 220px;
-  overflow: hidden;
-  display: inline-block;
-  vertical-align: middle;
-  will-change: opacity, max-width;
-  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-              max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              margin 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.collapsible-text.flex,
-.collapsible-text.flex-col,
-div.collapsible-text {
-  display: inline-flex !important;
-  flex-direction: column !important;
-}
-
-.sidebar-collapsed .collapsible-text {
-  opacity: 0;
-  max-width: 0 !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  pointer-events: none;
-}
-
-/* Nav Item Styling */
-.nav-item {
+/* ===== Logo styling ===== */
+.logo-icon-wrapper {
   position: relative;
-  color: var(--color-on-surface-variant);
-  border-radius: 12px;
-  border: 1px solid transparent;
-  transition: all 0.2s ease, padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
-.nav-item:hover {
-  background: var(--color-surface-container-low);
-  color: var(--color-on-surface);
+.logo-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
 }
 
-.nav-item.active-nav {
-  font-weight: 700;
+.logo-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  background: #7ba05b;
 }
 
-html.light .nav-item.active-nav {
-  background: #f0fdf4 !important;
-  color: #059669 !important;
-  border-color: #bbf7d0 !important;
+/* Larger icons and text as requested */
+.customer-sidebar .material-symbols-outlined {
+  font-size: 26px !important;
+}
+.customer-sidebar .sb-label {
+  font-size: 16px !important;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
-html.dark .nav-item.active-nav {
-  background: rgba(16, 185, 129, 0.12) !important;
-  color: #34d399 !important;
-  border-color: rgba(16, 185, 129, 0.2) !important;
+/* Desktop: a slim icon rail that expands to full width on hover. */
+@media (min-width: 1024px) {
+  .customer-sidebar {
+    width: 80px;
+    overflow-x: hidden;
+    transition: width 0.25s ease;
+  }
+  .customer-sidebar:hover {
+    width: 256px;
+  }
+  /* Labels collapse to zero width while collapsed (so they don't overflow the
+     rail or push icons off-centre) and expand back in on hover. */
+  .customer-sidebar .sb-label {
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+    transition: opacity 0.18s ease, max-width 0.25s ease;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .customer-sidebar:hover .sb-label {
+    opacity: 1;
+    max-width: 200px;
+    pointer-events: auto;
+  }
+  /* Centre icons in the collapsed rail; left-align them when expanded. */
+  .customer-sidebar .sb-row {
+    justify-content: center;
+  }
+  .customer-sidebar:hover .sb-row {
+    justify-content: flex-start;
+  }
 }
 
-.nav-item.active-nav div:first-child {
-  background: linear-gradient(135deg, #10b981, #059669) !important;
+/* Active nav item — keep the icon/text readable on the matcha background. */
+a.active,
+a.active .material-symbols-outlined {
   color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
-/* Dynamic User Section Button Transitions */
-.user-action-btn {
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+/* When the sidebar expands on hover, push the page content to the right instead
+   of letting the (fixed) sidebar overlay it. The base offset is `pl-20` (80px);
+   on hover it grows to the full 256px rail width. */
+.customer-main {
+  transition: padding-left 0.25s ease;
+  background: #fdfdfc;
+}
+.customer-main > header {
+  min-height: 64px;
+  height: 64px;
+}
+@media (min-width: 1024px) {
+  .customer-sidebar:hover ~ .customer-main {
+    padding-left: 256px;
+  }
+  .customer-main {
+    padding-left: 80px;
+  }
 }
 
-@media (max-width: 768px) {
-  /* On mobile the sidebar is a fixed overlay — reset padding */
-  .main-content-wrapper {
+/* ============================================================
+   MOBILE OVERRIDES
+   ============================================================ */
+@media (max-width: 1023px) {
+  .customer-main {
     padding-left: 0 !important;
-    transition: none;
   }
 
-  aside {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
+  .customer-sidebar {
     width: min(100%, 18rem);
-    transform: translateX(-100%);
-    z-index: 50;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  aside.translate-x-0 {
-    transform: translateX(0);
-  }
-
-  .sidebar-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 40;
-  }
-
-  .nav-item {
-    padding: 14px 16px;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 }

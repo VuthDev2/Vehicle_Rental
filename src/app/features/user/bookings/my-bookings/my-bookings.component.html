@@ -1,203 +1,185 @@
-<div class="p-6 sm:p-8 lg:p-10 min-h-full" style="background: var(--color-background); color: var(--color-on-surface)">
-
-  <!-- ===== HEADER ===== -->
-  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
-    <div>
-      <h1 class="text-2xl font-black tracking-tight text-white">My Bookings</h1>
-      <p class="text-sm mt-1" style="color: var(--color-on-surface-variant)">
-        Track your active rentals, view pickup schedules, and manage reservation payments.
-      </p>
-    </div>
-    <a routerLink="/customer/explore" class="booking-new-btn self-start sm:self-auto">
-      <span class="material-symbols-outlined text-base">add</span>
-      New Reservation
-    </a>
+<div class="min-h-full pb-24 lg:px-12 lg:pb-32 font-sans">
+  <!-- Title -->
+  <div class="px-4 lg:px-0 pt-6 lg:pt-10 pb-2">
+    <h1 class="text-[1.7rem] lg:text-[2.2rem] font-bold text-[#111827] tracking-tight">My Bookings</h1>
   </div>
 
-  @if (loadError()) {
-    <div class="rounded-2xl border p-12 text-center" style="background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2)">
-      <span class="material-symbols-outlined text-4xl text-red-400 mb-3 block">error</span>
-      <p class="text-sm font-bold text-red-400 mb-4">Unable to load your reservations.</p>
-      <button type="button" (click)="loadBookings()" class="dark-btn-outline inline-flex items-center gap-2">
-        <span class="material-symbols-outlined text-base">refresh</span>
-        Retry Connection
+  <!-- Tabs -->
+  <div class="px-4 lg:px-0 flex gap-6 border-b border-gray-200 mt-2 lg:mt-4 overflow-x-auto" style="scrollbar-width: none">
+    @for (tab of tabs(); track tab.key) {
+      <button type="button" (click)="setFilter(tab.key)"
+              class="booking-tab-btn"
+              [class.active]="filter() === tab.key">
+        {{ tab.label }}
       </button>
-    </div>
-  } @else {
-
-    <!-- ===== STAT CARDS ===== -->
-    @if (!loading()) {
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        @for (s of stats; track s.label) {
-          <div class="rounded-2xl p-5 border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-               style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-            <div class="flex items-start justify-between mb-3">
-              <p class="text-xs font-bold uppercase tracking-wider" style="color: var(--color-on-surface-variant)">{{ s.label }}</p>
-              <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                   [style.background]="s.bg">
-                <span class="material-symbols-outlined text-lg" [style.color]="s.color">{{ s.icon }}</span>
-              </div>
-            </div>
-            <p class="text-2xl font-black tracking-tight text-white">{{ s.value }}</p>
-          </div>
-        }
-      </div>
     }
+  </div>
 
-    <!-- ===== FILTER TABS ===== -->
-    @if (!loading() && bookings().length > 0) {
-      <div class="flex gap-2 overflow-x-auto pb-1 mb-5" style="scrollbar-width: none">
-        @for (tab of tabs(); track tab.key) {
-          <button type="button" (click)="setFilter(tab.key)"
-                  class="booking-tab-btn"
-                  [class.active]="filter() === tab.key">
-            <span>{{ tab.label }}</span>
-            <span class="tab-count-badge" [class.active]="filter() === tab.key">{{ tab.count }}</span>
-          </button>
-        }
+  <div class="px-4 lg:px-0 mt-6 lg:mt-10">
+    <h2 class="text-[1.05rem] lg:text-[1.2rem] font-bold text-[#111827] mb-4 lg:mb-6">
+      @if(filter() === 'pending') { Upcoming }
+      @else if(filter() === 'confirmed') { Ongoing }
+      @else if(filter() === 'completed') { Completed }
+      @else if(filter() === 'cancelled') { Canceled }
+      @else { {{ filter() | titlecase }} }
+      Bookings
+    </h2>
+
+    @if (loadError()) {
+      <div class="bg-red-50 border border-red-100 rounded-xl p-8 text-center mt-4">
+        <span class="material-symbols-outlined text-3xl text-red-400 mb-2">error</span>
+        <p class="text-sm font-bold text-red-500 mb-4">Unable to load your reservations.</p>
+        <button type="button" (click)="loadBookings()" class="action-btn">
+          Retry Connection
+        </button>
       </div>
-    }
-
-    <!-- ===== LOADING SKELETONS ===== -->
-    @if (loading()) {
+    } @else if (loading()) {
       <div class="flex flex-col gap-4">
         @for (i of [1, 2, 3]; track i) {
-          <div class="rounded-2xl border p-5" style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-            <div class="flex flex-col sm:flex-row gap-5">
-              <div class="w-full sm:w-28 h-24 rounded-xl shimmer-dark flex-shrink-0"></div>
-              <div class="flex-1 space-y-3">
-                <div class="h-4 w-1/3 rounded shimmer-dark"></div>
-                <div class="h-5 w-2/3 rounded shimmer-dark"></div>
-                <div class="h-3 w-1/2 rounded shimmer-dark"></div>
-                <div class="h-8 w-1/4 rounded-xl mt-3 shimmer-dark"></div>
-              </div>
+          <div class="booking-card flex gap-4">
+            <div class="w-[100px] h-[70px] shimmer-light flex-shrink-0"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-4 w-1/3 rounded shimmer-light"></div>
+              <div class="h-5 w-2/3 rounded shimmer-light"></div>
+              <div class="h-3 w-1/2 rounded shimmer-light"></div>
             </div>
           </div>
         }
       </div>
-
-    } @else if (bookings().length === 0) {
-      <div class="rounded-2xl border p-16 text-center"
-           style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5"
-             style="background: var(--color-surface-deep-raised); border: 1px solid var(--color-edge-deep)">
-          <span class="material-symbols-outlined text-3xl" style="color: var(--color-on-surface-variant)">receipt_long</span>
-        </div>
-        <h2 class="text-xl font-black text-white mb-2">No reservations yet</h2>
-        <p class="text-sm mb-6 max-w-sm mx-auto" style="color: var(--color-on-surface-variant)">
-          Your active and past rental bookings will appear here once you reserve a vehicle.
-        </p>
-        <div class="flex flex-wrap items-center justify-center gap-3">
-          <a routerLink="/customer/explore" class="booking-new-btn">
-            <span class="material-symbols-outlined text-base">search</span>
-            Explore Vehicles
-          </a>
-          <a routerLink="/customer/profile" class="dark-btn-outline">
-            <span class="material-symbols-outlined text-base">person</span>
-            Review Profile
-          </a>
-        </div>
-      </div>
-
     } @else if (filteredBookings().length === 0) {
-      <div class="rounded-2xl border p-12 text-center"
-           style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-             style="background: var(--color-surface-deep-raised); border: 1px solid var(--color-edge-deep)">
-          <span class="material-symbols-outlined text-2xl" style="color: var(--color-on-surface-variant)">filter_alt_off</span>
-        </div>
-        <h2 class="text-lg font-black text-white mb-1">No {{ filter() }} bookings</h2>
-        <p class="text-sm mb-5" style="color: var(--color-on-surface-variant)">There are no reservations matching the {{ filter() }} filter.</p>
-        <button type="button" (click)="setFilter('all')" class="dark-btn-outline">View All Bookings</button>
+      <div class="text-center py-12">
+        <span class="material-symbols-outlined text-4xl text-gray-300 mb-2">receipt_long</span>
+        <h3 class="text-lg font-bold text-slate-800">No bookings found</h3>
+        <p class="text-sm text-gray-500 mt-1">You don't have any reservations in this section.</p>
       </div>
-
     } @else {
-      <!-- ===== BOOKINGS LIST ===== -->
+      <!-- Bookings List -->
       <div class="flex flex-col gap-4">
         @for (booking of filteredBookings(); track booking._id) {
-          <div class="rounded-2xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl p-5"
-               style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-            <div class="flex flex-col sm:flex-row gap-5">
+          <div class="booking-card lg:p-6">
+            <!-- Mobile Header -->
+            <div class="flex items-center justify-between mb-3 border-b border-gray-100 pb-3 lg:hidden">
+              <span class="status-pill {{booking.status.toLowerCase()}}">
+                @if(booking.status === 'pending') { Pending }
+                @else if(booking.status === 'confirmed') { Confirmed }
+                @else if(booking.status === 'completed') { Completed }
+                @else if(booking.status === 'cancelled') { Canceled }
+                @else { {{booking.status}} }
+              </span>
+              <span class="text-[0.75rem] font-medium text-[#6c757d]">Booking ID: #CRB{{ booking._id.substring(booking._id.length - 5) | uppercase }}</span>
+            </div>
 
-              <!-- Vehicle Thumbnail -->
-              <div class="booking-thumb">
-                @if (getVehicleImage(booking.vehicleId)) {
-                  <img [src]="getVehicleImage(booking.vehicleId)"
-                       class="w-full h-full object-cover"
-                       alt="{{ getVehicleName(booking.vehicleId) }}" />
-                } @else {
-                  <div class="flex items-center justify-center w-full h-full" style="color: var(--color-on-surface-variant)">
-                    <span class="material-symbols-outlined text-3xl">directions_car</span>
+            <!-- Horizontal Desktop Container -->
+            <div class="flex flex-col lg:flex-row lg:items-center lg:gap-6">
+              
+              <!-- Image & Specs (Mobile Body) -->
+              <div class="flex gap-4 mb-3 lg:mb-0 lg:w-auto">
+                <img [src]="getVehicleImage(booking.vehicleId) || '/assets/images/default-car.png'" class="booking-thumb lg:!w-[160px] lg:!h-[110px]" alt="Vehicle">
+                
+                <div class="flex-1 min-w-0 pt-1 lg:hidden">
+                  <h3 class="font-bold text-[#111827] text-[1.05rem] mb-1.5 truncate">{{ getVehicleName(booking.vehicleId) }}</h3>
+                  <div class="icon-text text-[#495057]">
+                    <span class="material-symbols-outlined text-[1.1rem]">settings</span>
+                    <span>{{ getVehicleMeta(booking.vehicleId) || 'Automatic • Petrol' }}</span>
                   </div>
-                }
+                  <div class="icon-text text-[#495057]">
+                    <span class="material-symbols-outlined text-[1.1rem]">person</span>
+                    <span>5 Seats</span>
+                  </div>
+                </div>
               </div>
 
-              <!-- Details -->
-              <div class="flex-1 min-w-0 flex flex-col justify-between">
-                <div>
-                  <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-                    <div class="min-w-0">
-                      <h3 class="text-base font-black text-white truncate mb-0.5">
-                        {{ getVehicleName(booking.vehicleId) }}
-                      </h3>
-                      @if (getVehicleMeta(booking.vehicleId)) {
-                        <p class="text-xs" style="color: var(--color-on-surface-variant)">{{ getVehicleMeta(booking.vehicleId) }}</p>
-                      }
-                      <div class="flex items-center gap-1.5 mt-1.5 text-xs" style="color: var(--color-on-surface-variant)">
-                        <span class="material-symbols-outlined text-sm" style="color: var(--color-primary)">calendar_month</span>
-                        <span>{{ booking.startDate | date: 'mediumDate' }} to {{ booking.endDate | date: 'mediumDate' }}</span>
-                      </div>
-                    </div>
-                    <div class="flex items-baseline gap-0.5 flex-shrink-0">
-                      <span class="text-xl font-black text-white">${{ booking.totalPrice }}</span>
-                    </div>
+              <!-- Desktop Middle Content -->
+              <div class="hidden lg:flex flex-1 items-center justify-between min-w-0 pr-6">
+                <!-- Info Column -->
+                <div class="flex-1 pr-4 border-r border-gray-100">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="status-pill {{booking.status.toLowerCase()}}">
+                      @if(booking.status === 'pending') { Pending }
+                      @else if(booking.status === 'confirmed') { Confirmed }
+                      @else if(booking.status === 'completed') { Completed }
+                      @else if(booking.status === 'cancelled') { Canceled }
+                      @else { {{booking.status}} }
+                    </span>
+                    <span class="text-[0.75rem] font-medium text-[#6c757d]">#CRB{{ booking._id.substring(booking._id.length - 5) | uppercase }}</span>
                   </div>
-
-                  <!-- Status Chips -->
-                  <div class="flex flex-wrap items-center gap-2">
-                    <span [class]="'bk-status-pill ' + booking.status">
-                      <span [class]="'status-dot ' + getStatusDot(booking.status)"></span>
-                      <span>{{ booking.status }}</span>
-                    </span>
-                    <span [class]="'bk-payment-pill ' + booking.paymentStatus">
-                      <span [class]="'status-dot ' + getPaymentDot(booking.paymentStatus)"></span>
-                      <span>{{ booking.paymentStatus }}</span>
-                    </span>
-                    <span class="bk-info-chip">
-                      <span class="material-symbols-outlined text-xs">schedule</span>
-                      {{ rentalLabel(booking) }}
-                    </span>
-                    @if (getVehicleLocation(booking.vehicleId)) {
-                      <span class="bk-info-chip">
-                        <span class="material-symbols-outlined text-xs" style="color: var(--color-primary)">location_on</span>
-                        {{ getVehicleLocation(booking.vehicleId) }}
-                      </span>
-                    }
+                  <h3 class="font-bold text-[#111827] text-[1.2rem] mb-2 truncate">{{ getVehicleName(booking.vehicleId) }}</h3>
+                  <div class="flex gap-4">
+                    <div class="icon-text text-[#495057]">
+                      <span class="material-symbols-outlined text-[1.1rem]">settings</span>
+                      <span>{{ getVehicleMeta(booking.vehicleId) || 'Automatic • Petrol' }}</span>
+                    </div>
+                    <div class="icon-text text-[#495057]">
+                      <span class="material-symbols-outlined text-[1.1rem]">person</span>
+                      <span>5 Seats</span>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Actions -->
-                @if (showActions(booking)) {
-                  <div class="flex items-center gap-3 mt-4 pt-4 border-t" style="border-color: var(--color-edge-deep)">
-                    @if (booking.paymentStatus === 'unpaid' && booking.status !== 'cancelled') {
-                      <a [routerLink]="['/customer/checkout', booking._id]" class="bk-btn-pay">
-                        <span class="material-symbols-outlined text-sm">payments</span>
-                        Pay ${{ booking.totalPrice }}
-                      </a>
-                    }
-                    @if (booking.status === 'pending') {
-                      <button type="button" (click)="cancel(booking._id)" class="bk-btn-cancel">
-                        <span class="material-symbols-outlined text-sm">close</span>
-                        Cancel
-                      </button>
-                    }
+                <!-- Dates/Location Column -->
+                <div class="flex-1 pl-6 space-y-2">
+                  <div class="icon-text text-[#495057] text-[0.9rem]">
+                    <span class="material-symbols-outlined text-[1.2rem]">calendar_month</span>
+                    <span>{{ booking.startDate | date: 'MMM dd, yyyy' }} - {{ booking.endDate | date: 'MMM dd, yyyy' }}</span>
                   </div>
-                }
+                  <div class="icon-text text-[#495057] text-[0.9rem]">
+                    <span class="material-symbols-outlined text-[1.2rem]">location_on</span>
+                    <span>{{ getVehicleLocation(booking.vehicleId) || 'Phnom Penh' }}</span>
+                  </div>
+                </div>
               </div>
+
+              <!-- Mobile Footer Dates/Location -->
+              <div class="mb-4 space-y-1.5 lg:hidden">
+                <div class="icon-text text-[#495057] text-[0.8rem]">
+                  <span class="material-symbols-outlined text-[1.1rem]">calendar_month</span>
+                  <span>{{ booking.startDate | date: 'MMM dd, yyyy' }} - {{ booking.endDate | date: 'MMM dd, yyyy' }}</span>
+                </div>
+                <div class="icon-text text-[#495057] text-[0.8rem]">
+                  <span class="material-symbols-outlined text-[1.1rem]">location_on</span>
+                  <span>{{ getVehicleLocation(booking.vehicleId) || 'Phnom Penh' }}</span>
+                </div>
+              </div>
+
+              <!-- Action Footer -->
+              <div class="flex items-center justify-between border-t border-gray-100 pt-3 lg:border-t-0 lg:pt-0 lg:flex-col lg:items-end lg:justify-center lg:gap-3 lg:w-[160px]">
+                <div class="flex items-center gap-1 lg:flex-col lg:items-end lg:gap-0">
+                  <span class="font-bold text-[#111827] lg:text-gray-400 lg:text-[0.75rem] lg:uppercase lg:tracking-wide">Total Price</span>
+                  <span class="total-price lg:text-[1.4rem]">${{ booking.totalPrice | number:'1.2-2' }}</span>
+                </div>
+                
+                <div class="flex gap-2 w-full lg:justify-end">
+                  @if (booking.status === 'pending') {
+                    <button type="button" (click)="cancel(booking._id)" class="action-btn lg:w-full lg:justify-center">
+                      Cancel <span class="material-symbols-outlined text-lg ml-[-4px]">chevron_right</span>
+                    </button>
+                  } @else {
+                    <button type="button" class="action-btn lg:w-full lg:justify-center">
+                      Details <span class="material-symbols-outlined text-lg ml-[-4px]">chevron_right</span>
+                    </button>
+                  }
+                </div>
+              </div>
+
             </div>
           </div>
         }
       </div>
     }
-  }
+
+    <!-- Need Help Section -->
+    <div class="need-help-card">
+      <div class="headset-icon-wrapper">
+        <span class="material-symbols-outlined">support_agent</span>
+      </div>
+      <div class="flex-1 pr-2">
+        <h4 class="font-bold text-[#111827] text-[0.95rem]">Need Help?</h4>
+        <p class="text-[0.75rem] text-[#6c757d] mt-0.5 leading-snug">24/7 support is available for your booking related queries.</p>
+      </div>
+      <button type="button" class="action-btn shadow-sm whitespace-nowrap">
+        Contact Support <span class="material-symbols-outlined text-lg ml-[-4px]">arrow_forward</span>
+      </button>
+    </div>
+
+  </div>
 </div>
