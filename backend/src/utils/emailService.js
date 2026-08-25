@@ -71,12 +71,12 @@ const getEmailTemplate = (title, name, bodyContent, otp = null) => `
                 ${bodyContent}
               </div>
               
-              ${otp ? \`
+              ${otp ? `
               <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 24px; text-align: center; margin: 32px 0;">
                 <p style="margin: 0 0 8px 0; font-size: 14px; color: #166534; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Your Security Code</p>
-                <p style="margin: 0; font-size: 40px; letter-spacing: 12px; font-weight: 800; color: #0ea776;">\${otp}</p>
+                <p style="margin: 0; font-size: 40px; letter-spacing: 12px; font-weight: 800; color: #0ea776;">${otp}</p>
               </div>
-              \` : ''}
+              ` : ''}
               
               <div style="font-size: 16px; line-height: 1.6; color: #475569;">
                 <p style="margin: 0 0 8px 0;">If you didn't request this, you can safely ignore this email.</p>
@@ -88,7 +88,7 @@ const getEmailTemplate = (title, name, bodyContent, otp = null) => `
           <!-- Footer -->
           <tr>
             <td style="background-color: #f1f5f9; padding: 24px 40px; text-align: center; font-size: 13px; color: #64748b; border-top: 1px solid #e2e8f0;">
-              <p style="margin: 0 0 8px 0;">© \${new Date().getFullYear()} Cambo Rent. All rights reserved.</p>
+              <p style="margin: 0 0 8px 0;">© ${new Date().getFullYear()} Cambo Rent. All rights reserved.</p>
               <p style="margin: 0;">This is an automated message, please do not reply.</p>
             </td>
           </tr>
@@ -98,7 +98,7 @@ const getEmailTemplate = (title, name, bodyContent, otp = null) => `
   </table>
 </body>
 </html>
-\`;
+`;
 
 const sendVerificationEmail = (to, name, code) => {
   return sendEmail({
