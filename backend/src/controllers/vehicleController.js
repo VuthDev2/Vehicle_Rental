@@ -1,9 +1,30 @@
 const Vehicle = require('../models/Vehicle');
 const path = require('path');
 const fs = require('fs');
+const { redisClient } = require('../config/redis');
 
 // Escape user-supplied strings before using them in a MongoDB $regex to prevent ReDoS.
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// GET /api/vehicles/stats
+const getVehicleStats = async (req, res, next) => {
+  try {
+    const [totalVehicles, availableVehicles, typeCounts] = await Promise.all([
+      Vehicle.countDocuments(),
+      Vehicle.countDocuments({ available: true }),
+      Vehicle.aggregate([
+        { $group: { _id: '$type', count: { $sum: 1 } } }
+      ])
+    ]);
+
+    const counts = {};
+    typeCounts.forEach(t => counts[t._id || 'Other'] = t.count);
+
+    res.json({ totalVehicles, availableVehicles, typeCounts: counts });
+  } catch (err) {
+    next(err);
+  }
+};
 
 // GET /api/vehicles
 const getVehicles = async (req, res, next) => {
@@ -39,12 +60,29 @@ const getVehicles = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 12;
     const skip = (page - 1) * limit;
 
+    const cacheKey = `vehicles:${JSON.stringify(req.query)}`;
+    
+    // Check Cache
+    if (redisClient.isOpen) {
+      const cached = await redisClient.get(cacheKey);
+      if (cached) {
+        return res.json(JSON.parse(cached));
+      }
+    }
+
     const [vehicles, total] = await Promise.all([
       Vehicle.find(filter).sort(sortQuery).skip(skip).limit(limit),
       Vehicle.countDocuments(filter),
     ]);
 
-    res.json({ vehicles, total, page, totalPages: Math.ceil(total / limit) });
+    const responseData = { vehicles, total, page, totalPages: Math.ceil(total / limit) };
+
+    // Save to Cache for 5 minutes
+    if (redisClient.isOpen) {
+      await redisClient.setEx(cacheKey, 300, JSON.stringify(responseData));
+    }
+
+    res.json(responseData);
   } catch (err) {
     next(err);
   }
@@ -76,6 +114,13 @@ const createVehicle = async (req, res, next) => {
       seats, location, pricing, description, features,
       available: available !== undefined ? available : true,
     });
+    
+    // Invalidate Cache
+    if (redisClient.isOpen) {
+      const keys = await redisClient.keys('vehicles:*');
+      if (keys.length > 0) await redisClient.del(keys);
+    }
+    
     res.status(201).json({ vehicle });
   } catch (err) {
     next(err);
@@ -113,6 +158,13 @@ const updateVehicle = async (req, res, next) => {
       runValidators: true,
     });
     if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
+
+    // Invalidate Cache
+    if (redisClient.isOpen) {
+      const keys = await redisClient.keys('vehicles:*');
+      if (keys.length > 0) await redisClient.del(keys);
+    }
+
     res.json({ vehicle });
   } catch (err) {
     next(err);
@@ -124,6 +176,13 @@ const deleteVehicle = async (req, res, next) => {
   try {
     const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
     if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
+
+    // Invalidate Cache
+    if (redisClient.isOpen) {
+      const keys = await redisClient.keys('vehicles:*');
+      if (keys.length > 0) await redisClient.del(keys);
+    }
+
     res.json({ message: 'Vehicle deleted.' });
   } catch (err) {
     next(err);
@@ -175,4 +234,13 @@ const deleteImage = async (req, res, next) => {
   }
 };
 
-module.exports = { getVehicles, getVehicle, createVehicle, updateVehicle, deleteVehicle, uploadImages, deleteImage };
+module.exports = {
+  getVehicleStats,
+  getVehicles,
+  getVehicle,
+  createVehicle,
+  updateVehicle,
+  deleteVehicle,
+  uploadImages,
+  deleteImage,
+};

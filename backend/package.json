@@ -26,9 +26,12 @@
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
+    "duckduckgo-images-api": "^1.0.5",
     "express": "^5.2.1",
+    "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.5.2",
     "express-validator": "^7.3.2",
     "google-auth-library": "^11.0.2",
@@ -38,7 +41,10 @@
     "morgan": "^1.11.0",
     "multer": "^2.2.0",
     "nodemailer": "^9.0.3",
+    "rate-limit-redis": "^6.0.1",
+    "redis": "^6.2.1",
     "sharp": "^0.35.3",
-    "stripe": "^22.3.1"
+    "stripe": "^22.3.1",
+    "xss-clean": "^0.1.4"
   }
 }

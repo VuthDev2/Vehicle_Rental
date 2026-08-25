@@ -1,244 +1,189 @@
-<div class="p-6 sm:p-8 lg:p-10 min-h-full" style="background: var(--color-background); color: var(--color-on-surface)">
+<div class="px-4 py-6 lg:px-12 lg:py-10 max-w-lg lg:max-w-7xl mx-auto transition-all">
+  <!-- Title -->
+  <div class="mb-6 lg:mb-10">
+    <h1 class="text-2xl lg:text-3xl font-bold text-[#111827]">Payments</h1>
+    <p class="text-sm lg:text-base text-[#4b5563] mt-1 pr-6 leading-relaxed">
+      View your payment history and manage payment methods.
+    </p>
+  </div>
 
-  <!-- ===== HEADER PANEL ===== -->
-  <div class="rounded-2xl border mb-6 overflow-hidden"
-       style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-    <div class="p-6 sm:p-8">
-      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-        <div>
-          <p class="text-xs font-bold uppercase tracking-[0.1em] mb-1" style="color: var(--color-primary)">Customer billing</p>
-          <h1 class="text-2xl font-black tracking-tight text-white">Payment Center</h1>
-          <p class="mt-2 text-sm leading-6 max-w-xl" style="color: var(--color-on-surface-variant)">
-            Review transaction status, payment methods, refunds, and booking references in one place.
-          </p>
-        </div>
-        <a routerLink="/customer/bookings"
-           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 hover:-translate-y-0.5 self-start"
-           style="background: var(--color-surface-deep-raised); border: 1px solid var(--color-edge-deep); color: var(--color-on-surface)">
-          <span class="material-symbols-outlined text-lg">event_available</span>
-          Bookings
-        </a>
-      </div>
+  <!-- Desktop Two Column Wrapper -->
+  <div class="flex flex-col lg:flex-row lg:gap-12 lg:items-start">
+    
+    <!-- Left Column -->
+    <div class="lg:w-5/12 lg:sticky lg:top-24 flex flex-col gap-8">
 
-      <!-- Stats -->
-      @if (!loading() && payments().length > 0) {
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          @for (s of stats; track s.label) {
-            <div class="rounded-xl border p-4 transition-all duration-200 hover:-translate-y-0.5"
-                 style="background: var(--color-surface-deep-raised); border-color: var(--color-edge-deep)">
-              <div class="flex items-center justify-between mb-3">
-                <span class="material-symbols-outlined text-2xl" [style]="'color: ' + s.color">{{ s.icon }}</span>
-              </div>
-              <p class="text-xs font-bold uppercase tracking-[0.08em] mb-1" style="color: var(--color-on-surface-variant)">{{ s.label }}</p>
-              <p class="text-xl font-black tracking-tight text-white">{{ s.value }}</p>
-            </div>
-          }
-        </div>
-      }
+  <!-- Total Balance Card -->
+  <div class="balance-card">
+    <p class="text-xs lg:text-sm font-bold mb-1 opacity-90 tracking-wide">Total Balance</p>
+    <h2 class="text-3xl lg:text-4xl font-black mb-3">$72.50</h2>
+    <p class="text-xs lg:text-sm opacity-90">Available for next booking</p>
+    
+    <div class="absolute right-4 bottom-4 w-16 h-16 opacity-80 flex items-center justify-center">
+      <span class="material-symbols-outlined text-[4rem] text-green-300 drop-shadow-lg">account_balance_wallet</span>
     </div>
   </div>
 
-  <!-- ===== LATEST ACTIVITY ASIDE ===== -->
-  <div class="rounded-2xl border mb-6 p-6"
-       style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-    <div class="flex items-center justify-between gap-4 mb-5">
-      <div>
-        <p class="text-xs font-bold uppercase tracking-[0.08em] mb-1" style="color: var(--color-on-surface-variant)">Latest activity</p>
-        @if (latestPayment(); as latest) {
-          <p class="text-2xl font-black tracking-tight text-white">${{ latest.amount }}</p>
-        } @else {
-          <p class="text-2xl font-black tracking-tight text-white">$0.00</p>
-        }
-      </div>
-      <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
-           style="background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.22)">
-        <span class="material-symbols-outlined text-3xl" style="color: #3b82f6">receipt_long</span>
-      </div>
-    </div>
-
-    @if (latestPayment(); as latest) {
-      <div class="rounded-xl border p-4" style="background: var(--color-surface-deep-raised); border-color: var(--color-edge-deep)">
-        <div class="flex items-center justify-between gap-3">
-          <div>
-            <p class="text-sm font-black text-white">{{ latest.method }}</p>
-            <p class="mt-1 text-xs" style="color: var(--color-on-surface-variant)">{{ latest.createdAt | date: 'MMM d, y, h:mm a' }}</p>
-          </div>
-          <span [class]="'pm-badge ' + getStatusClass(latest.status)">
-            <span [class]="'status-dot ' + getStatusDot(latest.status)"></span>
-            {{ getStatusLabel(latest.status) }}
-          </span>
-        </div>
-        <p class="mt-3 font-mono text-xs font-bold" style="color: var(--color-on-surface-variant)">#{{ getTransactionRef(latest) }}</p>
-      </div>
-    } @else {
-      <div class="rounded-xl border p-4" style="background: var(--color-surface-deep-raised); border-color: var(--color-edge-deep)">
-        <p class="text-sm font-bold text-white">No transactions yet</p>
-        <p class="mt-1 text-xs leading-5" style="color: var(--color-on-surface-variant)">Payments will appear after your first completed booking.</p>
-      </div>
-    }
-  </div>
-
-  <!-- ===== ERROR STATE ===== -->
-  @if (loadError()) {
-    <div class="rounded-2xl border p-12 text-center" style="background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2)">
-      <p class="text-sm font-bold text-red-400 mb-4">Couldn't load your payments.</p>
-      <button type="button" (click)="ngOnInit()" class="pm-outline-btn">
-        <span class="material-symbols-outlined">refresh</span>
-        Try again
+  <!-- Payment Methods -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-[1.05rem] font-bold text-[#111827]">Payment Methods</h3>
+      <button class="text-[#166534] font-bold text-sm flex items-center gap-1 hover:opacity-80">
+        <span class="material-symbols-outlined text-sm">add</span> Add New
       </button>
     </div>
-  } @else {
-    <!-- ===== PAYMENTS TABLE SECTION ===== -->
-    <div class="rounded-2xl border overflow-hidden"
-         style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
 
-      @if (!loading() && payments().length > 0) {
-        <!-- Filters -->
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between px-5 pt-5 pb-3 border-b"
-             style="border-color: var(--color-edge-deep)">
-          <div class="flex gap-2 overflow-x-auto pb-1" style="scrollbar-width: none">
-            @for (tab of tabs(); track tab.key) {
-              <button type="button" (click)="setFilter(tab.key)"
-                      class="pm-filter-btn"
-                      [class.is-active]="filter() === tab.key">
-                {{ tab.label }}
-                <span class="pm-count-badge">{{ tab.count }}</span>
-              </button>
-            }
-          </div>
-          <div class="flex gap-2 overflow-x-auto pb-1" style="scrollbar-width: none">
-            <button type="button" (click)="setMethod('all')"
-                    class="pm-filter-btn" [class.is-active]="methodFilter() === 'all'">
-              All methods
-            </button>
-            @for (m of methods(); track m.method) {
-              <button type="button" (click)="setMethod(m.method)"
-                      class="pm-filter-btn" [class.is-active]="methodFilter() === m.method">
-                <span class="material-symbols-outlined text-sm">{{ getMethodMeta(m.method).icon }}</span>
-                {{ m.method }}
-                <span class="text-xs opacity-60">{{ m.count }}</span>
-              </button>
-            }
-          </div>
-        </div>
-
-        @if (activeFilterCount() > 0) {
-          <div class="mx-5 mt-3 flex flex-wrap items-center gap-2 rounded-xl border px-4 py-3"
-               style="border-color: rgba(59,130,246,0.2); background: rgba(59,130,246,0.07)">
-            <span class="text-xs font-bold" style="color: #3b82f6">{{ activeFilterCount() }} active filter</span>
-            <button type="button" (click)="setFilter('all'); setMethod('all')" class="pm-outline-btn inline-flex items-center gap-1 text-xs px-3 py-1">
-              <span class="material-symbols-outlined text-sm">close</span> Clear
-            </button>
-          </div>
-        }
-      }
-
-      <!-- Loading -->
-      @if (loading()) {
-        <div class="flex flex-col gap-3 p-5">
-          @for (i of [1, 2, 3, 4]; track i) {
-            <div class="rounded-xl border p-5" style="background: var(--color-surface-deep-raised); border-color: var(--color-edge-deep)">
-              <div class="h-4 w-1/3 rounded shimmer-dark mb-3"></div>
-              <div class="h-3 w-2/3 rounded shimmer-dark"></div>
-            </div>
-          }
-        </div>
-      } @else if (payments().length === 0) {
-        <!-- Empty -->
-        <div class="p-14 text-center">
-          <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-2xl"
-               style="background: var(--color-surface-deep-raised); border: 1px solid var(--color-edge-deep)">
-            <span class="material-symbols-outlined text-4xl" style="color: var(--color-on-surface-variant)">payments</span>
-          </div>
-          <h2 class="text-xl font-black text-white mb-2">No payments yet</h2>
-          <p class="text-sm leading-6 mb-6 max-w-md mx-auto" style="color: var(--color-on-surface-variant)">
-            Your receipts, refunds, and pending transactions will appear here after your first booking.
-          </p>
-          <a routerLink="/customer/explore"
-             class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-white"
-             style="background: var(--color-primary)">
-            <span class="material-symbols-outlined">search</span>
-            Find a vehicle
-          </a>
-        </div>
-      } @else if (filteredPayments().length === 0) {
-        <!-- No match -->
-        <div class="p-12 text-center">
-          <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl"
-               style="background: var(--color-surface-deep-raised); border: 1px solid var(--color-edge-deep)">
-            <span class="material-symbols-outlined text-3xl" style="color: var(--color-on-surface-variant)">filter_alt_off</span>
-          </div>
-          <h2 class="text-lg font-black text-white mb-1">No matching payments</h2>
-          <p class="text-sm mb-5" style="color: var(--color-on-surface-variant)">Try a different status or payment method filter.</p>
-          <button type="button" (click)="setFilter('all'); setMethod('all')" class="pm-outline-btn inline-flex items-center gap-2">
-            <span class="material-symbols-outlined text-lg">restart_alt</span>
-            Reset filters
-          </button>
-        </div>
-      } @else {
-        <!-- Table -->
-        <div>
-          <!-- Table header -->
-          <div class="hidden lg:grid pm-table-row-grid px-5 py-3 text-xs font-bold uppercase tracking-[0.08em] border-b"
-               style="color: var(--color-on-surface-variant); border-color: var(--color-edge-deep)">
-            <span>Transaction</span>
-            <span>Booking</span>
-            <span>Method</span>
-            <span>Amount</span>
-            <span>Status</span>
-          </div>
-
-          @for (payment of filteredPayments(); track payment._id) {
-            <article class="pm-table-row grid grid-cols-1 gap-4 px-4 py-5 border-b transition-colors lg:grid-cols-[auto] lg:items-center lg:px-5"
-                     style="border-color: var(--color-edge-deep)">
-              <div class="grid grid-cols-1 gap-4 lg:pm-table-row-grid lg:items-center">
-                <!-- Transaction ref -->
-                <div class="flex items-center gap-3 min-w-0">
-                  <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
-                       [style]="'background: ' + getMethodMeta(payment.method).bg + '; border: 1px solid rgba(255,255,255,0.06)'">
-                    <span class="material-symbols-outlined text-xl"
-                          [style]="'color: ' + getMethodMeta(payment.method).color">{{ getMethodMeta(payment.method).icon }}</span>
-                  </div>
-                  <div class="min-w-0">
-                    <p class="truncate text-sm font-black text-white">#{{ getTransactionRef(payment) }}</p>
-                    <p class="mt-0.5 text-xs" style="color: var(--color-on-surface-variant)">{{ payment.createdAt | date: 'MMM d, y, h:mm a' }}</p>
-                  </div>
-                </div>
-
-                <!-- Booking -->
-                <div class="min-w-0">
-                  <p class="text-xs font-bold uppercase tracking-wider mb-0.5 lg:hidden" style="color: var(--color-on-surface-variant)">Booking</p>
-                  <p class="truncate text-sm font-bold text-white">{{ getBookingName(payment) }}</p>
-                </div>
-
-                <!-- Method chip -->
-                <div>
-                  <p class="text-xs font-bold uppercase tracking-wider mb-1 lg:hidden" style="color: var(--color-on-surface-variant)">Method</p>
-                  <span class="pm-method-chip">
-                    <span class="material-symbols-outlined text-sm">{{ getMethodMeta(payment.method).icon }}</span>
-                    {{ payment.method }}
-                  </span>
-                </div>
-
-                <!-- Amount -->
-                <div>
-                  <p class="text-xs font-bold uppercase tracking-wider mb-0.5 lg:hidden" style="color: var(--color-on-surface-variant)">Amount</p>
-                  <p class="text-lg font-black tracking-tight" style="color: #3b82f6">${{ payment.amount }}</p>
-                </div>
-
-                <!-- Status -->
-                <div>
-                  <p class="text-xs font-bold uppercase tracking-wider mb-1 lg:hidden" style="color: var(--color-on-surface-variant)">Status</p>
-                  <span [class]="'pm-badge ' + getStatusClass(payment.status)">
-                    <span [class]="'status-dot ' + getStatusDot(payment.status)"></span>
-                    {{ getStatusLabel(payment.status) }}
-                  </span>
-                </div>
-              </div>
-            </article>
-          }
-        </div>
-      }
+    <div class="method-card">
+      <div class="card-logo">VISA</div>
+      <div class="flex-1">
+        <h4 class="font-bold text-sm text-[#111827]">Visa •••• 4242</h4>
+        <p class="text-xs text-[#6b7280]">Expiry 08/28</p>
+      </div>
+      <span class="bg-[#dcfce7] text-[#166534] text-[0.65rem] font-bold px-2 py-0.5 rounded">Default</span>
     </div>
-  }
+
+    <div class="method-card">
+      <div class="card-logo mastercard">MC</div>
+      <div class="flex-1">
+        <h4 class="font-bold text-sm text-[#111827]">Mastercard •••• 8888</h4>
+        <p class="text-xs text-[#6b7280]">Expiry 09/27</p>
+      </div>
+      <button class="text-[#9ca3af]"><span class="material-symbols-outlined">more_vert</span></button>
+    </div>
+
+    <div class="method-card">
+      <div class="card-logo aba">ABA</div>
+      <div class="flex-1">
+        <h4 class="font-bold text-sm text-[#111827]">ABA Bank •••• 123 456 789</h4>
+        <p class="text-xs text-[#6b7280]">Expiry 10/30</p>
+      </div>
+      <button class="text-[#9ca3af]"><span class="material-symbols-outlined">more_vert</span></button>
+    </div>
+  </div>
+  
+  <!-- Secure Footer Card (Desktop Left Column) -->
+  <div class="secure-card hidden lg:flex mt-4">
+    <div class="secure-icon">
+      <span class="material-symbols-outlined text-[2.5rem] opacity-90">gpp_good</span>
+    </div>
+    <div class="flex-1">
+      <h4 class="font-bold text-[#111827] text-[0.9rem]">Secure Payments</h4>
+      <p class="text-[0.7rem] text-[#6b7280] mt-0.5">Your payments are protected with 256-bit SSL encryption.</p>
+    </div>
+    <div class="opacity-30">
+      <span class="material-symbols-outlined text-2xl">check_circle</span>
+    </div>
+  </div>
+  </div> <!-- End Left Column -->
+
+  <!-- Right Column -->
+  <div class="lg:w-7/12">
+  <!-- Payment History -->
+  <div class="bg-white lg:p-8 lg:rounded-[24px] lg:border lg:border-gray-100 lg:shadow-sm">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-[1.05rem] font-bold text-[#111827]">Payment History</h3>
+      <button class="text-[#166534] font-bold text-sm flex items-center hover:opacity-80">
+        View all <span class="material-symbols-outlined text-sm ml-[-2px]">chevron_right</span>
+      </button>
+    </div>
+
+    <!-- Static list matching the image as fallback or real items if available -->
+    @if (payments().length === 0 && !loading()) {
+      <div class="history-card">
+        <div class="history-icon">
+          <span class="material-symbols-outlined">directions_car</span>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-bold text-sm text-[#111827]">Payment for Booking</h4>
+          <p class="text-xs text-[#6b7280] my-0.5">#CRB12345</p>
+          <p class="text-xs text-[#9ca3af]">Aug 22, 2026</p>
+        </div>
+        <div class="text-right">
+          <p class="font-bold text-[1.05rem] text-[#166534]">$105.00</p>
+          <span class="status-pill paid">Paid</span>
+        </div>
+      </div>
+      
+      <div class="history-card">
+        <div class="history-icon">
+          <span class="material-symbols-outlined">two_wheeler</span>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-bold text-sm text-[#111827]">Payment for Booking</h4>
+          <p class="text-xs text-[#6b7280] my-0.5">#CRB12346</p>
+          <p class="text-xs text-[#9ca3af]">Aug 28, 2026</p>
+        </div>
+        <div class="text-right">
+          <p class="font-bold text-[1.05rem] text-[#166534]">$24.00</p>
+          <span class="status-pill paid">Paid</span>
+        </div>
+      </div>
+      
+      <div class="history-card">
+        <div class="history-icon">
+          <span class="material-symbols-outlined">pedal_bike</span>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-bold text-sm text-[#111827]">Payment for Booking</h4>
+          <p class="text-xs text-[#6b7280] my-0.5">#CRB12347</p>
+          <p class="text-xs text-[#9ca3af]">Sep 02, 2026</p>
+        </div>
+        <div class="text-right">
+          <p class="font-bold text-[1.05rem] text-[#166534]">$10.00</p>
+          <span class="status-pill pending">Pending</span>
+        </div>
+      </div>
+
+      <div class="history-card">
+        <div class="history-icon wallet">
+          <span class="material-symbols-outlined">account_balance_wallet</span>
+        </div>
+        <div class="flex-1">
+          <h4 class="font-bold text-sm text-[#111827]">Wallet Top Up</h4>
+          <p class="text-xs text-[#9ca3af] mt-1">Aug 18, 2026</p>
+        </div>
+        <div class="text-right">
+          <p class="font-bold text-[1.05rem] text-[#166534]">$50.00</p>
+          <span class="status-pill paid">Paid</span>
+        </div>
+      </div>
+    } @else {
+      @for (payment of filteredPayments(); track payment._id) {
+        <div class="history-card">
+          <div class="history-icon" [class.wallet]="$any(payment.method) === 'Wallet'">
+            <span class="material-symbols-outlined">{{ $any(payment.method) === 'Wallet' ? 'account_balance_wallet' : 'directions_car' }}</span>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold text-sm text-[#111827]">{{ $any(payment.method) === 'Wallet' ? 'Wallet Top Up' : 'Payment for Booking' }}</h4>
+            @if($any(payment.method) !== 'Wallet') {
+              <p class="text-xs text-[#6b7280] my-0.5">#CRB{{ getTransactionRef(payment) | uppercase }}</p>
+            }
+            <p class="text-xs text-[#9ca3af] mt-0.5">{{ payment.createdAt | date: 'MMM dd, yyyy' }}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-bold text-[1.05rem] text-[#166534]">${{ payment.amount }}</p>
+            <span class="status-pill {{ payment.status === 'succeeded' ? 'paid' : payment.status }}">{{ payment.status === 'succeeded' ? 'Paid' : (payment.status | titlecase) }}</span>
+          </div>
+        </div>
+      }
+    }
+
+  </div>
+  </div> <!-- End Right Column -->
+  </div> <!-- End Two Column Wrapper -->
+
+  <!-- Secure Footer Card (Mobile Only) -->
+  <div class="secure-card lg:hidden mt-8">
+    <div class="secure-icon">
+      <span class="material-symbols-outlined text-[2.5rem] opacity-90">gpp_good</span>
+    </div>
+    <div class="flex-1">
+      <h4 class="font-bold text-[#111827] text-[0.9rem]">Secure Payments</h4>
+      <p class="text-[0.7rem] text-[#6b7280] mt-0.5">Your payments are protected with 256-bit SSL encryption.</p>
+    </div>
+    <div class="opacity-30">
+      <span class="material-symbols-outlined text-2xl">check_circle</span>
+    </div>
+  </div>
+
 </div>

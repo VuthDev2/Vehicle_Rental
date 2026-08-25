@@ -31,6 +31,10 @@ export class VehicleService {
     return this.http.get<VehicleListResponse>(`${API}/vehicles`, { params });
   }
 
+  getVehicleStats() {
+    return this.http.get<{ totalVehicles: number, availableVehicles: number, typeCounts: Record<string, number> }>(`${API}/vehicles/stats`);
+  }
+
   getVehicle(id: string) {
     return this.http.get<{ vehicle: Vehicle }>(`${API}/vehicles/${id}`);
   }

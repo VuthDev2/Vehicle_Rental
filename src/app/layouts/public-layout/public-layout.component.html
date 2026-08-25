@@ -3,10 +3,11 @@
   <header
     class="public-header fixed top-0 z-50 w-full transition-all duration-300"
     [class.is-scrolled]="scrolled"
-    [style.background]="theme.isDark() ? 'rgba(10,15,30,0.97)' : 'rgba(255,255,255,0.96)'"
-    [style.border-bottom]="'1px solid var(--color-edge-deep)'"
-    [style.box-shadow]="'none'"
+    [style.background]="scrolled ? 'rgba(11, 61, 32, 0.9)' : 'transparent'"
+    [style.border-bottom]="scrolled ? '1px solid var(--color-edge-deep)' : '1px solid transparent'"
+    [style.box-shadow]="scrolled ? '0 4px 30px rgba(0, 0, 0, 0.05)' : 'none'"
     [style.backdrop-filter]="scrolled ? 'blur(20px)' : 'none'"
+    [style.-webkit-backdrop-filter]="scrolled ? 'blur(20px)' : 'none'"
   >
     <nav
       class="max-w-[1280px] mx-auto px-[clamp(20px,5vw,72px)] h-20 flex items-center justify-between"
@@ -45,7 +46,7 @@
       </a>
 
       <!-- Desktop Nav Links -->
-      <div class="hidden md:flex items-center gap-1">
+      <div class="hidden md:flex items-center gap-6">
         @for (link of navLinks; track link.path) {
           <a
             [routerLink]="link.path"
@@ -53,38 +54,37 @@
             [routerLinkActiveOptions]="{ exact: link.exact }"
             class="nav-link"
           >
-            <span class="material-symbols-outlined">{{ link.icon }}</span>
-            {{ link.label }}</a
-          >
+            {{ link.label }}
+          </a>
         }
         <a
           [routerLink]="auth.isAuthenticated() ? '/customer/explore' : '/login'"
+          routerLinkActive="active-nav-link"
           class="nav-link"
         >
-          <span class="material-symbols-outlined">directions_car</span>
           Fleet
         </a>
       </div>
 
       <!-- Auth Actions (Desktop) -->
-      <div class="hidden md:flex items-center gap-2">
+      <div class="hidden md:flex items-center gap-4">
         <button
           type="button"
           (click)="theme.toggleTheme()"
-          class="public-action-button flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
+          class="theme-toggle-btn flex items-center justify-center transition-all hover:bg-white/10"
           [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
-          style="border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8"
         >
-          <span class="material-symbols-outlined text-lg">{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</span>
-          {{ theme.isDark() ? 'Light' : 'Dark' }}
+          <span class="material-symbols-outlined">{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</span>
         </button>
         <a
           routerLink="/login"
-          class="public-action-button flex items-center justify-center rounded-xl text-sm font-semibold transition-all hover:bg-white/5"
+          class="nav-link sign-in-link"
         >
           Sign In
         </a>
-        <a routerLink="/register" class="btn-primary public-action-button text-sm"> Sign Up </a>
+        <a routerLink="/register" class="btn-primary public-signup-btn">
+          Sign Up
+        </a>
       </div>
 
       <!-- Mobile Menu Toggle -->

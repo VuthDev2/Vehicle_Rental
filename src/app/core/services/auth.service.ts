@@ -143,9 +143,28 @@ export class AuthService {
       .pipe(tap(({ user }) => this.updateUser(user)));
   }
 
+  refreshToken(): Observable<string> {
+    return this.http.get<{ token: string }>(`${API}/auth/refresh`).pipe(
+      tap((res) => {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(TOKEN_KEY, res.token);
+        }
+      }),
+      map((res) => res.token)
+    );
+  }
+
   logout(): void {
-    this.clearSession();
-    this.router.navigateByUrl('/login');
+    this.http.post(`${API}/auth/logout`, {}).subscribe({
+      next: () => {
+        this.clearSession();
+        this.router.navigateByUrl('/login');
+      },
+      error: () => {
+        this.clearSession();
+        this.router.navigateByUrl('/login');
+      }
+    });
   }
 
   updateUser(user: User): void {

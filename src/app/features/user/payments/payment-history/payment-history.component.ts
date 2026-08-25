@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PaymentService } from '../../../../core/services/payment.service';
 import { Payment } from '../../../../models/payment.model';
@@ -14,7 +14,7 @@ const STATUS_CONFIG: Record<string, { class: string; dot: string; label: string 
 const METHOD_META: Record<string, { icon: string; bg: string; color: string }> = {
   Card: { icon: 'credit_card', bg: 'rgba(59, 130, 246, 0.12)', color: '#60a5fa' },
   PayPal: { icon: 'account_balance', bg: 'rgba(56, 132, 255, 0.14)', color: '#7aa7ff' },
-  'ABA Pay': { icon: 'smartphone', bg: 'rgba(16, 185, 129, 0.12)', color: '#34d399' },
+  'ABA Pay': { icon: 'smartphone', bg: 'rgba(123, 160, 91, 0.12)', color: 'var(--color-primary)' },
   Wing: { icon: 'mobile_friendly', bg: 'rgba(236, 72, 153, 0.12)', color: '#f472b6' },
   Cash: { icon: 'payments', bg: 'rgba(245, 158, 11, 0.12)', color: '#fbbf24' },
 };
@@ -24,7 +24,7 @@ export type PaymentFilter = 'all' | 'succeeded' | 'pending' | 'refunded' | 'fail
 @Component({
   selector: 'app-payment-history',
   standalone: true,
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, TitleCasePipe, UpperCasePipe],
   templateUrl: './payment-history.component.html',
   styleUrl: './payment-history.component.css',
 })
@@ -110,8 +110,8 @@ export class PaymentHistoryComponent implements OnInit {
         label: 'Total Paid',
         value: `$${totalPaid.toFixed(2)}`,
         icon: 'savings',
-        bg: 'rgba(16, 185, 129, 0.12)',
-        color: '#34d399',
+        bg: 'rgba(123, 160, 91, 0.12)',
+        color: 'var(--color-primary)',
       },
       {
         label: 'Successful',
@@ -131,7 +131,7 @@ export class PaymentHistoryComponent implements OnInit {
         label: 'Refunded',
         value: String(refunded),
         icon: 'currency_exchange',
-        bg: 'rgba(139, 92, 246, 0.12)',
+        bg: 'rgba(123, 160, 91, 0.12)',
         color: '#a78bfa',
       },
     ];

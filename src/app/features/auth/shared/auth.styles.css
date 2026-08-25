@@ -233,6 +233,54 @@
   line-height: 1.08;
 }
 
+.auth-title--typewriter {
+  display: inline-block;
+  min-height: 2.8rem;
+  margin: 0 0 0.6rem;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 0.12em solid rgba(10, 25, 48, 0.8);
+  width: 0;
+  max-width: 100%;
+  animation:
+    typewriter 3.2s steps(13, end) infinite alternate,
+    caret 0.8s step-end infinite;
+}
+
+.auth-title-text {
+  display: inline-block;
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: #0a1930;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+}
+
+@keyframes typewriter {
+  0% {
+    width: 0;
+  }
+  45% {
+    width: 100%;
+  }
+  60% {
+    width: 100%;
+  }
+  100% {
+    width: 0;
+  }
+}
+
+@keyframes caret {
+  0%,
+  100% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: rgba(10, 25, 48, 0.8);
+  }
+}
+
 .auth-subtitle {
   margin: 0;
   font-size: 1rem;

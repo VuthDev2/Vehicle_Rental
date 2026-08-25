@@ -1,4 +1,4 @@
-import { Component, signal, HostListener } from '@angular/core';
+import { Component, signal, HostListener, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -8,12 +8,63 @@ import { RouterLink } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent {
+export class HomeComponent implements AfterViewInit {
   scrollY = 0;
+  featuredProgress = 0; // 0 = off-screen below, 1 = fully revealed
+  
+  videos = ['/premium.mp4', '/drive.mp4'];
+  currentVideoIndex = signal(0);
+
+  onVideoEnded(videoElement: HTMLVideoElement) {
+    this.currentVideoIndex.update(i => (i + 1) % this.videos.length);
+    setTimeout(() => {
+      videoElement.load();
+      videoElement.play();
+    }, 0);
+  }
+  
+  ngAfterViewInit() {
+    // Video initialized in template
+  }
 
   @HostListener('window:scroll')
   onScroll(): void {
     this.scrollY = window.scrollY;
+    this.updateFeaturedProgress();
+  }
+
+  private updateFeaturedProgress(): void {
+    const section = document.querySelector('.featured-section');
+    if (!section) return;
+    const rect = section.getBoundingClientRect();
+    const viewH = window.innerHeight;
+    // Start revealing when section enters bottom of viewport,
+    // fully revealed when it reaches center.
+    const raw = 1 - (rect.top / viewH);
+    this.featuredProgress = Math.max(0, Math.min(1, raw));
+  }
+
+  /** Parallax: image rises 80px → 0px as user scrolls into view */
+  getFeaturedTransform(): string {
+    const offset = (1 - this.featuredProgress) * 80;
+    const scale = 0.92 + this.featuredProgress * 0.08;
+    return `translateY(${offset}px) scale(${scale})`;
+  }
+
+  /** Fade in as user scrolls */
+  getFeaturedOpacity(): string {
+    return `${Math.min(1, this.featuredProgress * 1.5)}`;
+  }
+
+  getScrollScale(): number {
+    // Shrink the video from 1.0 down to 0.8 as user scrolls down
+    return Math.max(0.8, 1 - this.scrollY * 0.0008);
+  }
+
+  getScrollRadius(): string {
+    // Increase border radius as it shrinks
+    const radius = Math.min(32, this.scrollY * 0.05);
+    return `${radius}px`;
   }
 
   readonly fleetCards = [

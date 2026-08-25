@@ -4,8 +4,18 @@
 
 /* ===== Matcha sidebar ===== */
 .admin-sidebar {
-  background: #1e3326;
+  background: #0B3D20;
   width: 256px;
+}
+
+/* Larger icons and text as requested */
+.admin-sidebar .material-symbols-outlined {
+  font-size: 26px !important;
+}
+.admin-sidebar .sb-label {
+  font-size: 16px !important;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 /* Desktop: a slim icon rail that expands to full width on hover. */
@@ -57,5 +67,26 @@ a.active .material-symbols-outlined {
 @media (min-width: 768px) {
   .admin-sidebar:hover ~ .admin-main {
     padding-left: 256px;
+  }
+}
+
+/* ============================================================
+   MOBILE OVERRIDES
+   ============================================================ */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* On mobile, let the whole sidebar scroll naturally */
+  .admin-sidebar nav {
+    flex: 1 0 auto;
+    overflow-y: visible !important;
   }
 }

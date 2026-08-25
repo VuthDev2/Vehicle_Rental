@@ -1,4 +1,4 @@
-<div class="flex min-h-screen" style="background: var(--color-background)">
+<div class="flex min-h-screen" style="background: linear-gradient(135deg, #fdfbf7 0%, #f4f5f0 100%);">
   <!-- ============ MOBILE OVERLAY ============ -->
   @if (sidebarOpen()) {
     <div
@@ -137,8 +137,7 @@
   <div class="admin-main flex-1 flex flex-col min-h-screen" [class.pl-20]="!isMobile" style="min-width: 0">
     <!-- Mobile Topbar -->
     <div
-      class="md:hidden flex items-center justify-between px-4 py-3 sticky top-0 z-20 border-b"
-      style="background: var(--color-surface); border-color: rgba(255,255,255,0.08)"
+      class="md:hidden flex items-center justify-between px-4 py-3 sticky top-0 z-20 bg-white border-b border-slate-100"
     >
       <button
         (click)="sidebarOpen.set(!sidebarOpen())"
@@ -172,7 +171,7 @@
             >directions_car</span
           >
         </div>
-        <span class="text-sm font-bold" style="color: var(--color-on-surface)">Cambo Rent</span>
+        <span class="text-sm font-bold text-slate-800">Cambo Rent</span>
       </div>
       <div class="flex items-center gap-2">
         <button
@@ -191,7 +190,7 @@
             type="button"
             (click)="profileMenuOpen.set(!profileMenuOpen())"
             class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white"
-            style="background: #1e3326"
+            style="background: #0B3D20"
           >
             {{ user.name?.charAt(0)?.toUpperCase() || 'A' }}
           </button>
@@ -200,64 +199,73 @@
     </div>
 
     <!-- ============ DESKTOP TOP HEADER ============ -->
-    <header
-      class="hidden md:flex items-center justify-between gap-4 px-8 h-16 bg-white border-b border-slate-100 sticky top-0 z-20"
-    >
-      <!-- Breadcrumb / current section -->
-      <div class="flex items-center gap-1.5 text-sm">
-        <span class="text-slate-400">Admin</span>
-        <span class="material-symbols-outlined text-slate-300" style="font-size: 16px"
-          >chevron_right</span
-        >
-        <span class="font-semibold text-slate-700">{{ pageTitle() }}</span>
+    <header class="hidden md:flex items-center gap-4 px-6 h-[4.5rem] sticky top-0 z-20 bg-white/80 backdrop-blur-2xl border-b border-slate-100">
+
+      <!-- Left: Page context -->
+      <div class="flex items-center gap-2 text-sm text-slate-400 font-medium flex-shrink-0">
+        <span class="material-symbols-outlined" style="font-size:16px;color:#0B3D20">dashboard</span>
+        <span class="text-slate-700 font-semibold">Dashboard</span>
       </div>
 
-      <div class="flex items-center gap-2">
+      <!-- Center: Search bar -->
+      <div class="flex-1 flex justify-center">
+        <div class="relative flex items-center w-full max-w-[34rem] h-[2.6rem] bg-slate-50 hover:bg-white border border-slate-200 hover:border-slate-300 rounded-2xl shadow-sm hover:shadow-md focus-within:bg-white focus-within:border-[#0B3D20]/30 focus-within:ring-4 focus-within:ring-[#0B3D20]/5 transition-all duration-300 group">
+          <span class="material-symbols-outlined absolute left-4 text-slate-400 group-focus-within:text-[#0B3D20] transition-colors" style="font-size:19px">search</span>
+          <input
+            type="text"
+            placeholder="Search anything..."
+            class="w-full h-full pl-11 pr-[4.5rem] bg-transparent border-none outline-none text-[14px] text-slate-700 placeholder:text-slate-400 font-medium"
+          />
+          <div class="absolute right-3 flex items-center gap-0.5 h-[22px] px-2 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-400 shadow-sm">
+            ⌘ K
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Actions -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+
         <!-- Notifications -->
         <button
           type="button"
-          class="relative w-10 h-10 inline-flex items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 transition-colors"
+          class="relative w-9 h-9 inline-flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 transition-all duration-200 shadow-sm"
         >
-          <span class="material-symbols-outlined leading-none" style="font-size: 18px"
-            >notifications</span
-          >
-          <span
-            class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"
-          ></span>
+          <span class="material-symbols-outlined" style="font-size:19px">notifications</span>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
         </button>
 
         <!-- Dark mode toggle -->
         <button
           type="button"
           (click)="theme.toggleTheme()"
-          class="w-10 h-10 inline-flex items-center justify-center rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:bg-slate-100 transition-colors"
           [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+          class="w-9 h-9 inline-flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 transition-all duration-200 shadow-sm"
         >
-          <span class="material-symbols-outlined leading-none" style="font-size: 18px">{{
+          <span class="material-symbols-outlined" style="font-size:19px">{{
             theme.isDark() ? 'light_mode' : 'dark_mode'
           }}</span>
         </button>
+
+        <div class="w-px h-5 bg-slate-200 mx-1"></div>
 
         <!-- Profile -->
         @if (auth.user(); as user) {
           <button
             type="button"
             (click)="profileMenuOpen.set(!profileMenuOpen())"
-            class="flex items-center gap-2.5 pl-1.5 pr-3 py-1.5 rounded-xl border border-transparent hover:bg-slate-50 hover:border-slate-200 transition-colors"
+            class="flex items-center gap-2.5 px-2 py-1.5 rounded-2xl border border-transparent hover:bg-slate-50 hover:border-slate-200 transition-all duration-200"
           >
             <span
-              class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-              style="background: #1e3326"
+              class="w-8 h-8 rounded-full flex items-center justify-center text-white text-[13px] font-bold flex-shrink-0"
+              style="background: #0B3D20"
             >
-              {{ user.name?.charAt(0)?.toUpperCase() || 'A' }}
+              {{ user.name?.charAt(0)?.toUpperCase() || 'V' }}
             </span>
-            <span class="text-left leading-tight">
-              <span class="block text-sm font-semibold text-slate-700">{{ user.name }}</span>
-              <span class="block text-[11px] text-slate-400">Administrator</span>
+            <span class="text-left leading-tight hidden sm:block">
+              <span class="block text-[13px] font-bold text-slate-800">{{ user.name }}</span>
+              <span class="block text-[11px] font-medium text-slate-500">Administrator</span>
             </span>
-            <span class="material-symbols-outlined text-slate-400" style="font-size: 18px"
-              >expand_more</span
-            >
+            <span class="material-symbols-outlined text-slate-400 hidden sm:block" style="font-size:16px">expand_more</span>
           </button>
         }
       </div>
@@ -273,37 +281,35 @@
   @if (profileMenuOpen()) {
     <div class="fixed inset-0 z-40" (click)="profileMenuOpen.set(false)"></div>
     <div
-      class="fixed top-16 right-4 md:right-8 z-50 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden"
+      class="fixed top-16 right-4 md:right-8 z-50 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden"
     >
       @if (auth.user(); as user) {
         <div class="flex items-center gap-3 px-4 py-4 border-b border-slate-100">
           <span
             class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-            style="background: #1e3326"
+            style="background: #0B3D20"
           >
-            {{ user.name?.charAt(0)?.toUpperCase() || 'A' }}
+            {{ user.name?.charAt(0)?.toUpperCase() || 'V' }}
           </span>
           <div class="min-w-0">
             <p class="text-sm font-semibold text-slate-800 truncate">{{ user.name }}</p>
-            <p class="text-xs text-slate-400 truncate">{{ user.email }}</p>
+            <p class="text-xs text-slate-500 truncate">{{ user.email }}</p>
           </div>
         </div>
       }
-      <div class="p-1.5">
-        <button
-          type="button"
-          (click)="theme.toggleTheme()"
-          class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+      <div class="px-2 pb-2 mt-2">
+        <a
+          routerLink="/admin/settings"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors"
+          (click)="profileMenuOpen.set(false)"
         >
-          <span class="material-symbols-outlined text-slate-400" style="font-size: 18px">{{
-            theme.isDark() ? 'light_mode' : 'dark_mode'
-          }}</span>
-          {{ theme.isDark() ? 'Light mode' : 'Dark mode' }}
-        </button>
+          <span class="material-symbols-outlined" style="font-size: 18px">settings</span>
+          Settings
+        </a>
         <button
           type="button"
           (click)="profileMenuOpen.set(false); auth.logout()"
-          class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+          class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors mt-1"
         >
           <span class="material-symbols-outlined" style="font-size: 18px">logout</span>
           Log out

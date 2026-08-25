@@ -9,6 +9,30 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 
+const signRefreshToken = (id) =>
+  jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN });
+
+const sendTokenResponse = async (user, statusCode, res, extraData = {}) => {
+  const token = signToken(user._id);
+  const refreshToken = signRefreshToken(user._id);
+
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  user.passwordHash = undefined;
+  user.refreshToken = undefined;
+
+  const cookieOptions = {
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  };
+
+  res.cookie('refreshToken', refreshToken, cookieOptions);
+  res.status(statusCode).json({ token, user, ...extraData });
+};
+
 const VERIFICATION_CODE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 /** Generate a 6-digit code plus its sha256 hash for storage. */
@@ -43,11 +67,7 @@ const register = async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
     const mailResult = await sendVerificationEmail(user.email, user.name, code);
 
-    const token = signToken(user._id);
-
-    res.status(201).json({
-      token,
-      user,
+    await sendTokenResponse(user, 201, res, {
       ...(mailResult.sent ? {} : { devCode: code }),
     });
   } catch (err) {
@@ -73,10 +93,7 @@ const login = async (req, res, next) => {
       return res.status(403).json({ message: 'Account is disabled.' });
     }
 
-    const token = signToken(user._id);
-    user.passwordHash = undefined;
-
-    res.json({ token, user });
+    await sendTokenResponse(user, 200, res);
   } catch (err) {
     next(err);
   }
@@ -232,10 +249,7 @@ const resetPassword = async (req, res, next) => {
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    const token = signToken(user._id);
-    user.passwordHash = undefined;
-
-    res.json({ message: 'Password reset successful.', token, user });
+    await sendTokenResponse(user, 200, res, { message: 'Password reset successful.' });
   } catch (err) {
     next(err);
   }
@@ -309,12 +323,60 @@ const googleLogin = async (req, res, next) => {
       return res.status(403).json({ message: 'Account is disabled.' });
     }
 
-    const token = signToken(user._id);
-
-    res.json({ token, user });
+    await sendTokenResponse(user, 200, res);
   } catch (err) {
     next(err);
   }
 };
 
-module.exports = { register, login, getMe, verifyEmail, resendVerification, forgotPassword, verifyResetOtp, resetPassword, changePassword, googleLogin };
+// GET /api/auth/refresh
+const refreshToken = async (req, res, next) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) return res.status(401).json({ message: 'Not authenticated. No refresh token.' });
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    } catch (err) {
+      return res.status(401).json({ message: 'Invalid or expired refresh token.' });
+    }
+
+    const user = await User.findById(decoded.id).select('+refreshToken');
+    if (!user || user.refreshToken !== token) {
+      return res.status(401).json({ message: 'Invalid refresh token.' });
+    }
+    
+    if (!user.isActive) {
+      return res.status(403).json({ message: 'Account is disabled.' });
+    }
+
+    await sendTokenResponse(user, 200, res);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// POST /api/auth/logout
+const logout = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.cookies;
+    
+    if (refreshToken) {
+      const decoded = jwt.decode(refreshToken);
+      if (decoded && decoded.id) {
+         await User.findByIdAndUpdate(decoded.id, { refreshToken: undefined });
+      }
+    }
+
+    res.cookie('refreshToken', 'loggedout', {
+      expires: new Date(Date.now() + 10 * 1000),
+      httpOnly: true,
+    });
+    res.json({ message: 'Logged out successfully.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { register, login, getMe, verifyEmail, resendVerification, forgotPassword, verifyResetOtp, resetPassword, changePassword, googleLogin, refreshToken, logout };

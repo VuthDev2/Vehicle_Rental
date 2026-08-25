@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpires: { type: Date, default: undefined },
     authProvider: { type: String, enum: ['local', 'google'], default: 'local' },
     googleId: { type: String, sparse: true, unique: true },
+    refreshToken: { type: String, select: false },
   },
   { timestamps: true }
 );
@@ -34,6 +35,7 @@ userSchema.methods.comparePassword = function (password) {
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.passwordHash;
+  delete obj.refreshToken;
   return obj;
 };
 

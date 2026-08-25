@@ -1,274 +1,381 @@
-<div class="p-6 sm:p-8 lg:p-10 min-h-full" style="background: var(--color-background); color: var(--color-on-surface)">
+<!-- ================= MAIN DASHBOARD ================= -->
+<main class="main-content">
 
-  <!-- ===== HERO HEADER ===== -->
-  <div class="mb-8">
-    <p class="text-xs font-bold uppercase tracking-[0.12em] mb-2" style="color: var(--color-on-surface-variant)">
-      {{ todayLabel }}
-    </p>
-    <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-white mb-2">
-      {{ greeting() }},
-      <span style="color: var(--color-primary)">{{ firstName }}</span>!
-    </h1>
-    <p class="text-sm leading-relaxed mb-6 max-w-2xl" style="color: var(--color-on-surface-variant)">
-      Welcome to your Cambo Rent portal. Explore our premium vehicle fleet available across Cambodia, manage your reservations, and view trip details.
-    </p>
-
-    <!-- CTA Buttons -->
-    <div class="flex flex-wrap gap-3 mb-8">
-      <a routerLink="/customer/explore"
-         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110"
-         style="background: var(--color-primary); box-shadow: 0 4px 14px rgba(16,185,129,0.3)">
-        <span class="material-symbols-outlined text-base">search</span>
-        Explore Available Fleet
-      </a>
-      <a routerLink="/customer/bookings"
-         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 hover:-translate-y-0.5"
-         style="background: var(--color-surface-deep); border: 1px solid var(--color-edge-deep); color: var(--color-on-surface)">
-        <span class="material-symbols-outlined text-base">receipt_long</span>
-        My Bookings
-      </a>
-    </div>
-
-    <!-- Stat Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="rounded-2xl p-5 border transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-           style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-             style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.2)">
-          <span class="material-symbols-outlined text-xl" style="color: var(--color-primary)">directions_car</span>
-        </div>
-        <p class="text-2xl font-black tracking-tight text-white mb-0.5">{{ totalVehicles() || '50+' }}</p>
-        <p class="text-xs font-semibold uppercase tracking-wider" style="color: var(--color-on-surface-variant)">Vehicles in Fleet</p>
+  <!-- ================= HERO SECTION ================= -->
+  <section class="hero-section">
+    <div class="hero-content max-w-7xl mx-auto w-full">
+      <div class="hero-text-col">
+        <h1 class="hero-greeting">
+          Good morning,<br>
+          <span class="hero-name">{{ firstName }}</span>
+        </h1>
+        <p class="hero-subtitle">
+          Find the perfect vehicle for your journey.
+        </p>
       </div>
 
-      <div class="rounded-2xl p-5 border transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-           style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-        <div class="flex items-start justify-between mb-4">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-               style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.2)">
-            <span class="material-symbols-outlined text-xl" style="color: #10b981">check_circle</span>
+      <!-- Hero Visual -->
+      <div class="hero-visual">
+        <img src="/hero_perfect_fleet.png" alt="Cambo Rent Fleet" class="hero-banner-img" />
+      </div>
+    </div>
+    
+    <!-- ================= HERO SEARCH CARD ================= -->
+    <div class="hero-search-card-wrapper max-w-7xl mx-auto w-full">
+      <div class="hero-search-card">
+        <div class="search-card-header">
+          <div class="search-icon-circle">
+            <span class="material-symbols-outlined">search</span>
           </div>
-          <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background: rgba(16,185,129,0.1); color: #10b981">Live</span>
+          <div class="search-header-text">
+            <h3>Find Your Ride</h3>
+            <p>Book a car, bike or moto in just a few steps.</p>
+          </div>
         </div>
-        <p class="text-2xl font-black tracking-tight text-white mb-0.5">{{ availableVehicles() || '40+' }}</p>
-        <p class="text-xs font-semibold uppercase tracking-wider" style="color: var(--color-on-surface-variant)">Available Now</p>
-      </div>
-
-      <div class="rounded-2xl p-5 border transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-           style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-             style="background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.2)">
-          <span class="material-symbols-outlined text-xl" style="color: #f59e0b">location_on</span>
+        <div class="search-card-body">
+          <div class="search-card-inputs">
+            <!-- Pick-up Location -->
+            <div class="search-field location">
+              <span class="material-symbols-outlined icon">location_on</span>
+              <div class="field-text">
+                <span class="label">Pick-up Location</span>
+                <div class="value-row">
+                  <span class="value">Phnom Penh</span>
+                  <span class="material-symbols-outlined chevron">expand_more</span>
+                </div>
+              </div>
+            </div>
+            <!-- Dates Row (Mobile) -->
+            <div class="search-dates-row">
+              <!-- Pick-up Date -->
+              <div class="search-field">
+                <span class="material-symbols-outlined icon">calendar_month</span>
+                <div class="field-text">
+                  <span class="label">Pick-up Date</span>
+                  <span class="value">Aug 22, 2026</span>
+                </div>
+              </div>
+              <!-- Return Date -->
+              <div class="search-field">
+                <span class="material-symbols-outlined icon">calendar_month</span>
+                <div class="field-text">
+                  <span class="label">Return Date</span>
+                  <span class="value">Aug 25, 2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Action -->
+          <a routerLink="/customer/explore" class="search-action-btn">
+            <span>Search Vehicles</span>
+            <span class="material-symbols-outlined">chevron_right</span>
+          </a>
         </div>
-        <p class="text-2xl font-black tracking-tight text-white mb-0.5">3</p>
-        <p class="text-xs font-semibold uppercase tracking-wider" style="color: var(--color-on-surface-variant)">Active Cities</p>
-      </div>
-
-      <div class="rounded-2xl p-5 border transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-           style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-             style="background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2)">
-          <span class="material-symbols-outlined text-xl" style="color: #3b82f6">support_agent</span>
-        </div>
-        <p class="text-2xl font-black tracking-tight text-white mb-0.5">24/7</p>
-        <p class="text-xs font-semibold uppercase tracking-wider" style="color: var(--color-on-surface-variant)">Customer Support</p>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ===== ACTIVE RENTAL ===== -->
-  <div class="rounded-2xl border mb-6 overflow-hidden"
-       style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-    <div class="flex items-center justify-between px-6 py-4 border-b"
-         style="border-color: var(--color-edge-deep)">
-      <div>
-        <h2 class="text-base font-bold text-white">Active Rental</h2>
-        <p class="text-xs mt-0.5" style="color: var(--color-on-surface-variant)">Your current or next upcoming trip</p>
-      </div>
-      <a routerLink="/customer/bookings"
-         class="text-xs font-semibold flex items-center gap-1 transition-opacity hover:opacity-70"
-         style="color: var(--color-primary)">
-        View all <span class="material-symbols-outlined text-sm">north_east</span>
+  <!-- ================= BROWSE BY TYPE ================= -->
+  <section class="section-container max-w-7xl mx-auto w-full mt-10">
+    <div class="section-top-bar">
+      <h2 class="section-heading">Browse by Type</h2>
+      <a routerLink="/customer/explore" class="section-link">
+        <span>View all</span>
+        <span class="material-symbols-outlined">chevron_right</span>
       </a>
     </div>
 
-    <div class="p-6">
-      @if (loading()) {
-        <div class="flex items-center gap-4">
-          <div class="w-24 h-16 rounded-xl flex-shrink-0 shimmer-box"></div>
-          <div class="flex-1 space-y-2.5">
-            <div class="h-3 w-1/3 rounded shimmer-box"></div>
-            <div class="h-5 w-2/3 rounded shimmer-box"></div>
-            <div class="h-3 w-1/2 rounded shimmer-box"></div>
+    <div class="category-cards-grid">
+      <!-- Cars -->
+      <a routerLink="/customer/explore" [queryParams]="{ type: 'Sedan' }" class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon-badge">
+            <span class="material-symbols-outlined">directions_car</span>
+          </div>
+          <div class="type-text-group">
+            <h3>Cars</h3>
+            <p>{{ categoryCountLabel('Sedan') || '24 Vehicles' }}</p>
           </div>
         </div>
-      } @else if (nextTrip) {
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-          <div class="w-full sm:w-28 h-20 rounded-xl overflow-hidden flex-shrink-0 border"
-               style="border-color: var(--color-edge-deep); background: var(--color-surface-deep-raised)">
-            <img [src]="getVehicleImage(nextTrip.vehicleId)"
-                 [alt]="getVehicleName(nextTrip.vehicleId)"
-                 class="w-full h-full object-cover"
-                 onerror="this.src='/car_card.png'" />
+        <div class="type-card-img-wrap">
+          <img src="/camry.jpg" alt="Cars" />
+        </div>
+      </a>
+      
+      <!-- Motos -->
+      <a routerLink="/customer/explore" [queryParams]="{ type: 'Scooter' }" class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon-badge">
+            <span class="material-symbols-outlined">two_wheeler</span>
           </div>
-
-          <div class="flex-1 min-w-0">
-            <div class="flex flex-wrap items-center gap-2 mb-2">
-              <span class="text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide"
-                    style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2)">
-                {{ getVehicleType(nextTrip.vehicleId) }}
-              </span>
-              <span [class]="'rental-status-pill ' + nextTrip.status">
-                <span [class]="'status-dot ' + getStatusDot(nextTrip.status)"></span>
-                {{ getStatusLabel(nextTrip.status) }}
-              </span>
-            </div>
-            <h3 class="text-lg font-black text-white truncate mb-1.5">{{ getVehicleName(nextTrip.vehicleId) }}</h3>
-            <div class="flex flex-wrap items-center gap-4 text-xs" style="color: var(--color-on-surface-variant)">
-              <span class="flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm" style="color: var(--color-primary)">calendar_today</span>
-                {{ nextTrip.startDate | date: 'MMM d' }} – {{ nextTrip.endDate | date: 'MMM d, y' }}
-              </span>
-              @if (getVehicleLocation(nextTrip.vehicleId)) {
-                <span class="flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-sm" style="color: #f59e0b">location_on</span>
-                  {{ getVehicleLocation(nextTrip.vehicleId) }}
-                </span>
-              }
-            </div>
+          <div class="type-text-group">
+            <h3>Motorbikes</h3>
+            <p>{{ categoryCountLabel('Scooter') || '18 Vehicles' }}</p>
           </div>
+        </div>
+        <div class="type-card-img-wrap">
+          <img src="/click.jpg" alt="Motorbikes" />
+        </div>
+      </a>
 
-          <div class="flex items-center gap-4 flex-shrink-0">
-            <div class="text-right">
-              <p class="text-xs font-bold uppercase tracking-wider mb-0.5" style="color: var(--color-on-surface-variant)">
-                {{ startLabel }}
-              </p>
-              <p class="text-xl font-black" style="color: var(--color-primary)">
-                {{ daysUntilNext }} {{ daysUntilNext === 1 ? 'day' : 'days' }}
-              </p>
+      <!-- Bicycles -->
+      <a routerLink="/customer/explore" [queryParams]="{ type: 'Bicycle' }" class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon-badge">
+            <span class="material-symbols-outlined">pedal_bike</span>
+          </div>
+          <div class="type-text-group">
+            <h3>Motos</h3>
+            <p>{{ categoryCountLabel('Bicycle') || '15 Vehicles' }}</p>
+          </div>
+        </div>
+        <div class="type-card-img-wrap">
+          <img src="/scoopy.jpg" alt="Motos" />
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ================= FEATURED VEHICLES ================= -->
+  <section class="section-container max-w-7xl mx-auto w-full mt-8">
+    <div class="section-top-bar">
+      <h2 class="section-heading">Featured Vehicles</h2>
+      <a routerLink="/customer/explore" class="section-link">
+        <span>View all</span>
+        <span class="material-symbols-outlined">chevron_right</span>
+      </a>
+    </div>
+
+    <div class="featured-cards-grid">
+      <!-- Card 1: Toyota Camry -->
+      <article class="vehicle-featured-card">
+        <div class="vcard-top-badges">
+          <span class="vcard-badge popular">Popular</span>
+          <button type="button" class="vcard-fav-btn" aria-label="Favorite">
+            <span class="material-symbols-outlined">favorite_border</span>
+          </button>
+        </div>
+        <div class="vcard-img-box">
+          <img src="/camry.jpg" alt="Toyota Camry" />
+        </div>
+        <div class="vcard-body">
+          <h3 class="vcard-title">Toyota Camry</h3>
+          <div class="vcard-specs">
+            <span><span class="material-symbols-outlined">settings</span>Automatic</span>
+            <span class="spec-dot">•</span>
+            <span><span class="material-symbols-outlined">person</span>5 Seats</span>
+            <span class="spec-dot">•</span>
+            <span><span class="material-symbols-outlined">local_gas_station</span>Petrol</span>
+          </div>
+          <div class="vcard-footer">
+            <div class="vcard-price">
+              <strong>$35</strong>
+              <span>/ day</span>
             </div>
-            <a routerLink="/customer/bookings"
-               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 hover:-translate-y-0.5"
-               style="background: var(--color-surface-deep-raised); border: 1px solid var(--color-edge-deep); color: var(--color-on-surface)">
-              Manage <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            <a routerLink="/customer/explore" class="vcard-btn">
+              <span>View Details</span>
+              <span class="material-symbols-outlined">chevron_right</span>
             </a>
           </div>
         </div>
-      } @else {
-        <div class="flex items-center gap-4 py-3">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-               style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15)">
-            <span class="material-symbols-outlined text-xl" style="color: var(--color-primary)">directions_car</span>
+      </article>
+
+      <!-- Card 2: Honda Click 125i -->
+      <article class="vehicle-featured-card">
+        <div class="vcard-top-badges">
+          <span class="vcard-badge popular">Popular</span>
+          <button type="button" class="vcard-fav-btn" aria-label="Favorite">
+            <span class="material-symbols-outlined">favorite_border</span>
+          </button>
+        </div>
+        <div class="vcard-img-box">
+          <img src="/click.jpg" alt="Honda Click 125i" />
+        </div>
+        <div class="vcard-body">
+          <h3 class="vcard-title">Honda Click 125i</h3>
+          <div class="vcard-specs">
+            <span><span class="material-symbols-outlined">settings</span>Automatic</span>
+            <span class="spec-dot">•</span>
+            <span><span class="material-symbols-outlined">person</span>2 Seats</span>
+            <span class="spec-dot">•</span>
+            <span><span class="material-symbols-outlined">local_gas_station</span>Petrol</span>
           </div>
-          <div class="flex-1">
-            <p class="text-sm font-bold text-white mb-0.5">No active or upcoming rentals</p>
-            <p class="text-xs" style="color: var(--color-on-surface-variant)">Ready to hit the road? Explore our fleet and book your next trip.</p>
+          <div class="vcard-footer">
+            <div class="vcard-price">
+              <strong>$12</strong>
+              <span>/ day</span>
+            </div>
+            <a routerLink="/customer/explore" class="vcard-btn">
+              <span>View Details</span>
+              <span class="material-symbols-outlined">chevron_right</span>
+            </a>
           </div>
-          <a routerLink="/customer/explore"
-             class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all duration-200 hover:-translate-y-0.5 flex-shrink-0"
-             style="background: var(--color-primary)">
-            Browse <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </div>
+      </article>
+
+      <!-- Card 3: Honda Scoopy -->
+      <article class="vehicle-featured-card">
+        <div class="vcard-top-badges">
+          <span class="vcard-badge new">New</span>
+          <button type="button" class="vcard-fav-btn" aria-label="Favorite">
+            <span class="material-symbols-outlined">favorite_border</span>
+          </button>
+        </div>
+        <div class="vcard-img-box">
+          <img src="/scoopy.jpg" alt="Honda Scoopy" />
+        </div>
+        <div class="vcard-body">
+          <h3 class="vcard-title">Honda Scoopy</h3>
+          <div class="vcard-specs">
+            <span><span class="material-symbols-outlined">settings</span>Automatic</span>
+            <span class="spec-dot">•</span>
+            <span><span class="material-symbols-outlined">person</span>2 Seats</span>
+            <span class="spec-dot">•</span>
+            <span><span class="material-symbols-outlined">local_gas_station</span>Petrol</span>
+          </div>
+          <div class="vcard-footer">
+            <div class="vcard-price">
+              <strong>$8</strong>
+              <span>/ day</span>
+            </div>
+            <a routerLink="/customer/explore" class="vcard-btn">
+              <span>View Details</span>
+              <span class="material-symbols-outlined">chevron_right</span>
+            </a>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Carousel Dots -->
+    <div class="carousel-dots-row" style="margin-top: 10px;">
+      <div class="dot active" style="background: #064022;"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </section>
+
+  <!-- ================= STATISTICS BAR ================= -->
+  <section class="section-container max-w-7xl mx-auto w-full mt-8">
+    <div class="stats-strip-card">
+      <!-- Item 1: Vehicles In Fleet -->
+      <div class="stat-strip-item">
+        <div class="stat-circle-icon green">
+          <span class="material-symbols-outlined">directions_car</span>
+        </div>
+        <div class="stat-text-box">
+          <strong>45</strong>
+          <span>Vehicles<br>In Fleet</span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="stat-divider"></div>
+
+      <!-- Item 2: Available Now -->
+      <div class="stat-strip-item">
+        <div class="stat-circle-icon green-outline">
+          <span class="material-symbols-outlined">check_circle</span>
+        </div>
+        <div class="stat-text-box">
+          <strong>32</strong>
+          <span>Available<br>Now</span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="stat-divider"></div>
+
+      <!-- Item 3: Currently Booked -->
+      <div class="stat-strip-item">
+        <div class="stat-circle-icon blue">
+          <span class="material-symbols-outlined">calendar_month</span>
+        </div>
+        <div class="stat-text-box">
+          <strong>8</strong>
+          <span>Currently<br>Booked</span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="stat-divider"></div>
+
+      <!-- Item 4: Your Bookings -->
+      <div class="stat-strip-item">
+        <div class="stat-circle-icon orange">
+          <span class="material-symbols-outlined">assignment</span>
+        </div>
+        <div class="stat-text-box">
+          <strong>3</strong>
+          <span>Your<br>Bookings</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= UPCOMING BOOKING & PROMOTION GRID ================= -->
+  <section class="section-container bottom-deals-section max-w-7xl mx-auto w-full mt-8 mb-12">
+    <div class="bottom-deals-grid">
+
+      <!-- 1. Upcoming Booking Card -->
+      <article class="deal-card upcoming-card">
+        <div class="deal-card-header">
+          <h2>Upcoming Booking</h2>
+        </div>
+
+        <div class="upcoming-booking-body">
+          <div class="upcoming-thumb-wrap">
+            <img src="/camry.jpg" alt="Toyota Camry" />
+          </div>
+          <div class="upcoming-details-wrap">
+            <div class="upcoming-title-row">
+              <strong>Toyota Camry</strong>
+              <span class="status-pill confirmed">Confirmed</span>
+            </div>
+            <p class="upcoming-meta">
+              <span class="material-symbols-outlined">calendar_month</span>
+              Aug 22, 2026 - Aug 25, 2026
+            </p>
+            <p class="upcoming-meta">
+              <span class="material-symbols-outlined">location_on</span>
+              Phnom Penh
+            </p>
+          </div>
+        </div>
+
+        <div class="upcoming-card-footer">
+          <span class="upcoming-total-price">Total: $105.00</span>
+          <a routerLink="/customer/bookings" class="vcard-btn outline">
+            <span>View Booking</span>
+            <span class="material-symbols-outlined">chevron_right</span>
           </a>
         </div>
-      }
-    </div>
-  </div>
+      </article>
 
-  <!-- ===== HOW IT WORKS ===== -->
-  <div class="rounded-2xl border mb-6 p-6 sm:p-8"
-       style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-    <div class="mb-6">
-      <h2 class="text-xl font-black text-white tracking-tight mb-1">How It Works</h2>
-      <p class="text-sm" style="color: var(--color-on-surface-variant)">Book your rental in 3 simple steps — completely paperless.</p>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
-      @for (step of howItWorks; track step.step) {
-        <div class="flex flex-col gap-3">
-          <div class="flex items-center justify-between">
-            <div class="w-11 h-11 rounded-xl flex items-center justify-center"
-                 [style.background]="step.color + '18'"
-                 [style.border]="'1px solid ' + step.color + '33'">
-              <span class="material-symbols-outlined text-xl" [style.color]="step.color">{{ step.icon }}</span>
-            </div>
-            <span class="text-5xl font-black" style="color: var(--color-edge-deep)">{{ step.step }}</span>
-          </div>
-          <h3 class="text-base font-black text-white">{{ step.title }}</h3>
-          <p class="text-sm leading-relaxed" style="color: var(--color-on-surface-variant)">{{ step.desc }}</p>
+      <!-- 2. Weekend Special Promotion Card -->
+      <article class="deal-card promo-offer-card">
+        <!-- Angkor watermark + Discount Tag watermark -->
+        <div class="promo-bg-watermark"></div>
+        <div class="promo-discount-tag">
+          <span>%</span>
         </div>
-      }
-    </div>
-  </div>
 
-  <!-- ===== BROWSE FLEET ===== -->
-  <div class="rounded-2xl border mb-6 p-6 sm:p-8"
-       style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h2 class="text-xl font-black text-white tracking-tight mb-1">Browse Our Fleet</h2>
-        <p class="text-sm" style="color: var(--color-on-surface-variant)">Choose from diverse categories tailored to your travel needs.</p>
-      </div>
-      <a routerLink="/customer/explore"
-         class="text-xs font-semibold flex items-center gap-1 transition-opacity hover:opacity-70"
-         style="color: var(--color-primary)">
-        View all <span class="material-symbols-outlined text-sm">north_east</span>
-      </a>
-    </div>
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      @for (cat of fleetCategories; track cat.label) {
-        <a routerLink="/customer/explore"
-           class="group rounded-xl p-4 border transition-all duration-200 hover:-translate-y-1 hover:shadow-lg block"
-           style="background: var(--color-surface-deep-raised); border-color: var(--color-edge-deep)">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
-               [style.background]="cat.color + '15'"
-               [style.border]="'1px solid ' + cat.color + '25'">
-            <span class="material-symbols-outlined text-xl" [style.color]="cat.color">{{ cat.icon }}</span>
-          </div>
-          <h3 class="text-sm font-bold text-white mb-1">{{ cat.label }}</h3>
-          <p class="text-xs leading-relaxed mb-3" style="color: var(--color-on-surface-variant)">{{ cat.description }}</p>
-          <div class="flex items-center gap-1 text-xs font-bold"
-               [style.color]="cat.color">
-            Explore
-            <span class="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform duration-200">chevron_right</span>
-          </div>
-        </a>
-      }
-    </div>
-  </div>
-
-  <!-- ===== WHY CAMBO RENT ===== -->
-  <div class="rounded-2xl border p-6 sm:p-8"
-       style="background: var(--color-surface-deep); border-color: var(--color-edge-deep)">
-    <div class="mb-6">
-      <h2 class="text-xl font-black text-white tracking-tight mb-1">Why Choose Cambo Rent?</h2>
-      <p class="text-sm" style="color: var(--color-on-surface-variant)">We provide premium service and verified vehicles for a worry-free experience.</p>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
-      @for (t of trustHighlights; track t.title) {
-        <div class="flex flex-col gap-3">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-               [style.background]="t.color + '15'"
-               [style.border]="'1px solid ' + t.color + '25'">
-            <span class="material-symbols-outlined text-xl" [style.color]="t.color">{{ t.icon }}</span>
-          </div>
-          <h3 class="text-base font-black text-white">{{ t.title }}</h3>
-          <p class="text-sm leading-relaxed" style="color: var(--color-on-surface-variant)">{{ t.desc }}</p>
+        <div class="promo-content-left">
+          <span class="promo-badge-tag">Weekend Special</span>
+          <h2 class="promo-discount-title">10% OFF</h2>
+          <p class="promo-desc">For all cars, bikes and motos<br>on weekend rentals.</p>
+          <a routerLink="/customer/explore" class="promo-action-btn">
+            <span>Explore Now</span>
+            <span class="material-symbols-outlined">chevron_right</span>
+          </a>
         </div>
-      }
-    </div>
-  </div>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="mt-8 pt-6 border-t flex items-center justify-between gap-4 flex-wrap"
-          style="border-color: var(--color-edge-deep)">
-    <p class="text-xs font-bold" style="color: var(--color-on-surface-variant)">Cambo Rent Cambodia</p>
-    <div class="flex items-center gap-2 text-xs font-semibold" style="color: var(--color-on-surface-variant)">
-      <span class="material-symbols-outlined text-base" style="color: var(--color-primary)">location_on</span>
-      <span>Phnom Penh</span>
-      <span style="color: var(--color-edge-deep-strong)">·</span>
-      <span>Siem Reap</span>
-      <span style="color: var(--color-edge-deep-strong)">·</span>
-      <span>Sihanoukville</span>
-    </div>
-  </footer>
+        <!-- 3-Vehicles Cutout Visual on bottom right -->
+        <div class="promo-vehicles-visual">
+          <img class="promo-composite-image" src="/car_card_transparent.png" alt="Promo Vehicles" />
+        </div>
+      </article>
 
-</div>
+    </div>
+  </section>
+</main>
