@@ -21,7 +21,7 @@ export const routes: Routes = [
   { path: 'login', canActivate: [guestGuard], loadComponent: () => import('./features/auth/login/login.component').then((m) => m.LoginComponent) },
   { path: 'register', canActivate: [guestGuard], loadComponent: () => import('./features/auth/register/register.component').then((m) => m.RegisterComponent) },
   { path: 'forgot-password', canActivate: [guestGuard], loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent) },
-  { path: 'reset-password/:token', canActivate: [guestGuard], loadComponent: () => import('./features/auth/reset-password/reset-password.component').then((m) => m.ResetPasswordComponent) },
+  { path: 'reset-password', canActivate: [guestGuard], loadComponent: () => import('./features/auth/reset-password/reset-password.component').then((m) => m.ResetPasswordComponent) },
   // Verification is authenticated by email + code (not the session), so it stays open to all users.
   { path: 'verify-email', loadComponent: () => import('./features/auth/verify-email/verify-email.component').then((m) => m.VerifyEmailComponent) },
   // ABA PayWay hosted-checkout return page (verifies payment, marks booking paid).

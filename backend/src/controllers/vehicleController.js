@@ -2,6 +2,9 @@ const Vehicle = require('../models/Vehicle');
 const path = require('path');
 const fs = require('fs');
 
+// Escape user-supplied strings before using them in a MongoDB $regex to prevent ReDoS.
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // GET /api/vehicles
 const getVehicles = async (req, res, next) => {
   try {
@@ -10,11 +13,12 @@ const getVehicles = async (req, res, next) => {
     const filter = {};
 
     if (query) {
+      const safe = escapeRegex(query);
       filter.$or = [
-        { name: { $regex: query, $options: 'i' } },
-        { brand: { $regex: query, $options: 'i' } },
-        { model: { $regex: query, $options: 'i' } },
-        { location: { $regex: query, $options: 'i' } },
+        { name: { $regex: safe, $options: 'i' } },
+        { brand: { $regex: safe, $options: 'i' } },
+        { model: { $regex: safe, $options: 'i' } },
+        { location: { $regex: safe, $options: 'i' } },
       ];
     }
     if (type) filter.type = type;
@@ -60,7 +64,18 @@ const getVehicle = async (req, res, next) => {
 // POST /api/vehicles (admin)
 const createVehicle = async (req, res, next) => {
   try {
-    const vehicle = await Vehicle.create(req.body);
+    // Whitelist allowed fields to prevent mass assignment of internal fields
+    // like `rating`, `trips`, `available` etc.
+    const {
+      name, brand, model, year, type, fuel, transmission,
+      seats, location, pricing, description, features, available,
+    } = req.body;
+
+    const vehicle = await Vehicle.create({
+      name, brand, model, year, type, fuel, transmission,
+      seats, location, pricing, description, features,
+      available: available !== undefined ? available : true,
+    });
     res.status(201).json({ vehicle });
   } catch (err) {
     next(err);
@@ -70,7 +85,30 @@ const createVehicle = async (req, res, next) => {
 // PUT /api/vehicles/:id (admin)
 const updateVehicle = async (req, res, next) => {
   try {
-    const vehicle = await Vehicle.findByIdAndUpdate(req.params.id, req.body, {
+    // Whitelist allowed fields — prevent overwriting internal computed fields
+    // such as `rating` and `trips` through the API.
+    const {
+      name, brand, model, year, type, fuel, transmission,
+      seats, location, pricing, description, features, available,
+    } = req.body;
+
+    const updates = {
+      ...(name !== undefined && { name }),
+      ...(brand !== undefined && { brand }),
+      ...(model !== undefined && { model }),
+      ...(year !== undefined && { year }),
+      ...(type !== undefined && { type }),
+      ...(fuel !== undefined && { fuel }),
+      ...(transmission !== undefined && { transmission }),
+      ...(seats !== undefined && { seats }),
+      ...(location !== undefined && { location }),
+      ...(pricing !== undefined && { pricing }),
+      ...(description !== undefined && { description }),
+      ...(features !== undefined && { features }),
+      ...(available !== undefined && { available }),
+    };
+
+    const vehicle = await Vehicle.findByIdAndUpdate(req.params.id, updates, {
       new: true,
       runValidators: true,
     });

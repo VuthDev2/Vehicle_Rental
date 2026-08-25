@@ -38,8 +38,15 @@ const forgotPasswordRules = [
 ];
 
 const resetPasswordRules = [
-  param('token').notEmpty().withMessage('Reset token is required'),
+  body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail(),
+  body('otp').matches(/^\d{6}$/).withMessage('OTP must be 6 digits'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  handleValidation,
+];
+
+const verifyResetOtpRules = [
+  body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail(),
+  body('otp').matches(/^\d{6}$/).withMessage('OTP must be 6 digits'),
   handleValidation,
 ];
 
@@ -127,6 +134,7 @@ module.exports = {
   verifyEmailRules,
   resendVerificationRules,
   forgotPasswordRules,
+  verifyResetOtpRules,
   resetPasswordRules,
   changePasswordRules,
   createVehicleRules,

@@ -2,7 +2,7 @@ import { environment } from '../../../../environments/environment';
 
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { catchError, finalize, of } from 'rxjs';
 import { AuthLayoutComponent } from '../shared/auth-layout.component';
@@ -18,6 +18,7 @@ const API = environment.apiUrl;
 export class ForgotPasswordComponent {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
 
   readonly loading = signal(false);
   readonly error = signal('');
@@ -47,6 +48,9 @@ export class ForgotPasswordComponent {
       if (!res) return;
       this.success.set(true);
       if (res.devToken) this.devToken.set(res.devToken);
+      
+      // Navigate to reset password page and pass email in state
+      this.router.navigate(['/reset-password'], { state: { email } });
     });
   }
 
