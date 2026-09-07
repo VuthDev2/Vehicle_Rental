@@ -1,26 +1,10 @@
-const Vehicle = require('../models/Vehicle');
-const path = require('path');
-const fs = require('fs');
-const { redisClient } = require('../config/redis');
-
-// Escape user-supplied strings before using them in a MongoDB $regex to prevent ReDoS.
-const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const vehicleService = require('../services/vehicleService');
 
 // GET /api/vehicles/stats
 const getVehicleStats = async (req, res, next) => {
   try {
-    const [totalVehicles, availableVehicles, typeCounts] = await Promise.all([
-      Vehicle.countDocuments(),
-      Vehicle.countDocuments({ available: true }),
-      Vehicle.aggregate([
-        { $group: { _id: '$type', count: { $sum: 1 } } }
-      ])
-    ]);
-
-    const counts = {};
-    typeCounts.forEach(t => counts[t._id || 'Other'] = t.count);
-
-    res.json({ totalVehicles, availableVehicles, typeCounts: counts });
+    const stats = await vehicleService.getVehicleStats();
+    res.json(stats);
   } catch (err) {
     next(err);
   }
@@ -29,60 +13,8 @@ const getVehicleStats = async (req, res, next) => {
 // GET /api/vehicles
 const getVehicles = async (req, res, next) => {
   try {
-    const { query, type, fuel, transmission, location, minPrice, maxPrice, available, sort } = req.query;
-
-    const filter = {};
-
-    if (query) {
-      const safe = escapeRegex(query);
-      filter.$or = [
-        { name: { $regex: safe, $options: 'i' } },
-        { brand: { $regex: safe, $options: 'i' } },
-        { model: { $regex: safe, $options: 'i' } },
-        { location: { $regex: safe, $options: 'i' } },
-      ];
-    }
-    if (type) filter.type = type;
-    if (fuel) filter.fuel = fuel;
-    if (transmission) filter.transmission = transmission;
-    if (location) filter.location = { $regex: location, $options: 'i' };
-    if (available === 'true') filter.available = true;
-    if (minPrice) filter['pricing.day'] = { $gte: Number(minPrice) };
-    if (maxPrice) filter['pricing.day'] = { ...filter['pricing.day'], $lte: Number(maxPrice) };
-
-    let sortQuery = { createdAt: -1 };
-    if (sort === 'price_asc') sortQuery = { 'pricing.day': 1 };
-    if (sort === 'price_desc') sortQuery = { 'pricing.day': -1 };
-    if (sort === 'rating') sortQuery = { rating: -1 };
-    if (sort === 'trips') sortQuery = { trips: -1 };
-
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 12;
-    const skip = (page - 1) * limit;
-
-    const cacheKey = `vehicles:${JSON.stringify(req.query)}`;
-    
-    // Check Cache
-    if (redisClient.isOpen) {
-      const cached = await redisClient.get(cacheKey);
-      if (cached) {
-        return res.json(JSON.parse(cached));
-      }
-    }
-
-    const [vehicles, total] = await Promise.all([
-      Vehicle.find(filter).sort(sortQuery).skip(skip).limit(limit),
-      Vehicle.countDocuments(filter),
-    ]);
-
-    const responseData = { vehicles, total, page, totalPages: Math.ceil(total / limit) };
-
-    // Save to Cache for 5 minutes
-    if (redisClient.isOpen) {
-      await redisClient.setEx(cacheKey, 300, JSON.stringify(responseData));
-    }
-
-    res.json(responseData);
+    const data = await vehicleService.getVehicles(req.query);
+    res.json(data);
   } catch (err) {
     next(err);
   }
@@ -91,7 +23,7 @@ const getVehicles = async (req, res, next) => {
 // GET /api/vehicles/:id
 const getVehicle = async (req, res, next) => {
   try {
-    const vehicle = await Vehicle.findById(req.params.id);
+    const vehicle = await vehicleService.getVehicleById(req.params.id);
     if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
     res.json({ vehicle });
   } catch (err) {
@@ -109,17 +41,10 @@ const createVehicle = async (req, res, next) => {
       seats, location, pricing, description, features, available,
     } = req.body;
 
-    const vehicle = await Vehicle.create({
+    const vehicle = await vehicleService.createVehicle({
       name, brand, model, year, type, fuel, transmission,
-      seats, location, pricing, description, features,
-      available: available !== undefined ? available : true,
+      seats, location, pricing, description, features, available,
     });
-    
-    // Invalidate Cache
-    if (redisClient.isOpen) {
-      const keys = await redisClient.keys('vehicles:*');
-      if (keys.length > 0) await redisClient.del(keys);
-    }
     
     res.status(201).json({ vehicle });
   } catch (err) {
@@ -131,7 +56,6 @@ const createVehicle = async (req, res, next) => {
 const updateVehicle = async (req, res, next) => {
   try {
     // Whitelist allowed fields — prevent overwriting internal computed fields
-    // such as `rating` and `trips` through the API.
     const {
       name, brand, model, year, type, fuel, transmission,
       seats, location, pricing, description, features, available,
@@ -153,17 +77,8 @@ const updateVehicle = async (req, res, next) => {
       ...(available !== undefined && { available }),
     };
 
-    const vehicle = await Vehicle.findByIdAndUpdate(req.params.id, updates, {
-      new: true,
-      runValidators: true,
-    });
+    const vehicle = await vehicleService.updateVehicle(req.params.id, updates);
     if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
-
-    // Invalidate Cache
-    if (redisClient.isOpen) {
-      const keys = await redisClient.keys('vehicles:*');
-      if (keys.length > 0) await redisClient.del(keys);
-    }
 
     res.json({ vehicle });
   } catch (err) {
@@ -174,14 +89,8 @@ const updateVehicle = async (req, res, next) => {
 // DELETE /api/vehicles/:id (admin)
 const deleteVehicle = async (req, res, next) => {
   try {
-    const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
+    const vehicle = await vehicleService.deleteVehicle(req.params.id);
     if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
-
-    // Invalidate Cache
-    if (redisClient.isOpen) {
-      const keys = await redisClient.keys('vehicles:*');
-      if (keys.length > 0) await redisClient.del(keys);
-    }
 
     res.json({ message: 'Vehicle deleted.' });
   } catch (err) {
@@ -195,13 +104,10 @@ const uploadImages = async (req, res, next) => {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: 'No files uploaded.' });
     }
-    const imageUrls = req.files.map((f) => `/uploads/${f.filename}`);
-    const vehicle = await Vehicle.findByIdAndUpdate(
-      req.params.id,
-      { $push: { images: { $each: imageUrls } } },
-      { new: true }
-    );
+    
+    const { vehicle, imageUrls } = await vehicleService.addImages(req.params.id, req.files);
     if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
+    
     res.json({ vehicle, imageUrls });
   } catch (err) {
     next(err);
@@ -211,25 +117,16 @@ const uploadImages = async (req, res, next) => {
 // DELETE /api/vehicles/:id/images/:imageIndex (admin)
 const deleteImage = async (req, res, next) => {
   try {
-    const vehicle = await Vehicle.findById(req.params.id);
-    if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
-
     const index = parseInt(req.params.imageIndex);
-    if (isNaN(index) || index < 0 || index >= vehicle.images.length) {
-      return res.status(400).json({ message: 'Invalid image index.' });
-    }
-
-    const imageUrl = vehicle.images[index];
-    vehicle.images.splice(index, 1);
-    await vehicle.save();
-
-    // Delete physical file
-    const filename = path.basename(imageUrl);
-    const filepath = path.join(__dirname, '../../uploads', filename);
-    if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
+    const vehicle = await vehicleService.deleteImage(req.params.id, index);
+    
+    if (!vehicle) return res.status(404).json({ message: 'Vehicle not found.' });
 
     res.json({ vehicle, message: 'Image deleted.' });
   } catch (err) {
+    if (err.message === 'Invalid image index.') {
+      return res.status(400).json({ message: err.message });
+    }
     next(err);
   }
 };

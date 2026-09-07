@@ -7,6 +7,7 @@ import { Vehicle } from '../../../../models/vehicle.model';
 
 const STATUS_CONFIG: Record<string, { class: string; dot: string; label: string }> = {
   pending: { class: 'badge-warning', dot: 'warning', label: 'Pending' },
+  pending_verification: { class: 'badge-warning', dot: 'warning', label: 'Verification Required' },
   confirmed: { class: 'badge-info', dot: 'info', label: 'Confirmed' },
   completed: { class: 'badge-success', dot: 'success', label: 'Completed' },
   cancelled: { class: 'badge-danger', dot: 'danger', label: 'Cancelled' },
@@ -14,16 +15,17 @@ const STATUS_CONFIG: Record<string, { class: string; dot: string; label: string 
 
 const PAYMENT_CONFIG: Record<string, { class: string; dot: string; label: string }> = {
   unpaid: { class: 'badge-warning', dot: 'warning', label: 'Unpaid' },
+  partially_paid: { class: 'badge-warning', dot: 'warning', label: 'Deposit Paid' },
   paid: { class: 'badge-success', dot: 'success', label: 'Paid' },
   refunded: { class: 'badge-info', dot: 'info', label: 'Refunded' },
 };
 
-export type BookingFilter = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
+export type BookingFilter = 'all' | 'pending' | 'pending_verification' | 'confirmed' | 'completed' | 'cancelled';
 
 @Component({
   selector: 'app-my-bookings',
   standalone: true,
-  imports: [DatePipe, UpperCasePipe, TitleCasePipe, DecimalPipe],
+  imports: [DatePipe, UpperCasePipe, TitleCasePipe, DecimalPipe, RouterLink],
   templateUrl: './my-bookings.component.html',
   styleUrl: './my-bookings.component.css',
 })
@@ -60,6 +62,7 @@ export class MyBookingsComponent implements OnInit {
   readonly tabs = computed(() => {
     return [
       { key: 'pending' as BookingFilter, label: 'Upcoming' },
+      { key: 'pending_verification' as BookingFilter, label: 'Needs Verification' },
       { key: 'confirmed' as BookingFilter, label: 'Ongoing' },
       { key: 'completed' as BookingFilter, label: 'Completed' },
       { key: 'cancelled' as BookingFilter, label: 'Canceled' },
@@ -89,7 +92,7 @@ export class MyBookingsComponent implements OnInit {
   get stats() {
     const all = this.bookings();
     const active = all.filter(
-      (b) => b.status === 'pending' || b.status === 'confirmed'
+      (b) => b.status === 'pending' || b.status === 'pending_verification' || b.status === 'confirmed'
     ).length;
     const unpaid = all.filter((b) => b.paymentStatus === 'unpaid').length;
     const spent = all
@@ -148,6 +151,11 @@ export class MyBookingsComponent implements OnInit {
   getVehicleName(v: string | Vehicle | any): string {
     if (typeof v === 'string') return v;
     return v?.name || 'Unknown Vehicle';
+  }
+
+  getVehicleIdStr(v: string | Vehicle | any): string {
+    if (typeof v === 'object' && v?._id) return v._id;
+    return typeof v === 'string' ? v : '';
   }
 
   getVehicleMeta(v: string | Vehicle | any): string {

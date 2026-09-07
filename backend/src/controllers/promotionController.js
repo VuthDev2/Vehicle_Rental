@@ -1,4 +1,5 @@
 const Promotion = require('../models/Promotion');
+const Booking = require('../models/Booking');
 
 // GET /api/promotions (admin)
 const getPromotions = async (req, res, next) => {
@@ -48,12 +49,15 @@ const deletePromotion = async (req, res, next) => {
 // POST /api/promotions/validate
 const validatePromotion = async (req, res, next) => {
   try {
-    const { code, amount } = req.body;
+    const { code, amount, rentalDays = 1 } = req.body;
     const promo = await Promotion.findOne({ code: code.toUpperCase(), active: true });
 
     if (!promo) return res.status(404).json({ valid: false, message: 'Invalid promo code.' });
 
     const now = new Date();
+    if (promo.validFrom && promo.validFrom > now) {
+      return res.json({ valid: false, message: 'Promo code is not yet active.' });
+    }
     if (promo.expiresAt && promo.expiresAt < now) {
       return res.json({ valid: false, message: 'Promo code has expired.' });
     }
@@ -62,6 +66,19 @@ const validatePromotion = async (req, res, next) => {
     }
     if (amount < promo.minAmount) {
       return res.json({ valid: false, message: `Minimum order of $${promo.minAmount} required.` });
+    }
+    if (promo.minDays > 1 && rentalDays < promo.minDays) {
+      return res.json({ valid: false, message: `This promo code requires a minimum rental period of ${promo.minDays} days.` });
+    }
+    
+    if (promo.isForNewUsersOnly) {
+      const pastBookingsCount = await Booking.countDocuments({
+        userId: req.user._id,
+        status: { $nin: ['cancelled'] }
+      });
+      if (pastBookingsCount > 0) {
+        return res.json({ valid: false, message: 'This promo code is only valid for first-time users.' });
+      }
     }
 
     const discount = promo.discountType === 'percent'

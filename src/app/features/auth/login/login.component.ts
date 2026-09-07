@@ -1,10 +1,11 @@
-import { Component, inject, signal, AfterViewInit, NgZone } from '@angular/core';
+import { Component, inject, signal, AfterViewInit, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { AuthLayoutComponent } from '../shared/auth-layout.component';
 import { environment } from '../../../../environments/environment';
+import { SeoService } from '../../../core/services/seo.service';
 
 declare var google: any;
 
@@ -14,11 +15,19 @@ declare var google: any;
   imports: [ReactiveFormsModule, RouterLink, AuthLayoutComponent],
   templateUrl: './login.component.html',
 })
-export class LoginComponent implements AfterViewInit {
+export class LoginComponent implements OnInit, AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly ngZone = inject(NgZone);
+  private readonly seoService = inject(SeoService);
+
+  ngOnInit() {
+    this.seoService.updateSeoTags({
+      title: 'Log In - Cambo Rent',
+      description: 'Log in to your Cambo Rent account to book vehicles and manage rentals.'
+    });
+  }
 
   readonly loading = signal(false);
   readonly error = signal('');

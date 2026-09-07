@@ -39,4 +39,10 @@ export class UserService {
   deleteUser(id: string) {
     return this.http.delete<{ message: string }>(`${API}/users/${id}`);
   }
+
+  uploadIdDocument(file: File) {
+    const formData = new FormData();
+    formData.append('idDocument', file);
+    return this.http.post<{ message: string, user: User }>(`${API}/users/upload-id`, formData);
+  }
 }

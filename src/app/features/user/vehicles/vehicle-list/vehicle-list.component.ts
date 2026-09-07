@@ -1,10 +1,11 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
+import { Component, inject, signal, computed, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { VehicleService } from '../../../../core/services/vehicle.service';
 import { Vehicle, VehicleFilter } from '../../../../models/vehicle.model';
 import { SearchService } from '../../../../core/services/search.service';
+import { SeoService } from '../../../../core/services/seo.service';
 
 @Component({
   selector: 'app-vehicle-list',
@@ -13,9 +14,17 @@ import { SearchService } from '../../../../core/services/search.service';
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.css',
 })
-export class VehicleListComponent {
+export class VehicleListComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
   private readonly searchService = inject(SearchService);
+  private readonly seoService = inject(SeoService);
+
+  ngOnInit() {
+    this.seoService.updateSeoTags({
+      title: 'Browse Vehicles - Cambo Rent',
+      description: 'Explore our fleet of premium cars, motorcycles, and bicycles available for rent across Cambodia. Find the perfect ride for your next journey.',
+    });
+  }
 
   readonly loading = signal(true);
   readonly vehicles = signal<Vehicle[]>([]);
@@ -39,11 +48,11 @@ export class VehicleListComponent {
 
   /** Type filter tabs shown in the horizontal scrollable row */
   readonly displayTypes: { label: string; value: string; icon: string }[] = [
-    { label: 'Bicycles', value: 'Bicycle', icon: 'pedal_bike' },
-    { label: 'Motos',    value: 'Motorcycle', icon: 'two_wheeler' },
-    { label: 'Cars',     value: 'Sedan', icon: 'directions_car' },
+    { label: 'Bicycles', value: 'Bike,E-Bike', icon: 'pedal_bike' },
+    { label: 'Motos',    value: 'Motorcycle,Scooter', icon: 'two_wheeler' },
+    { label: 'Cars',     value: 'Car,Sedan', icon: 'directions_car' },
     { label: 'SUVs',     value: 'SUV', icon: 'airport_shuttle' },
-    { label: 'Vans',     value: 'Van', icon: 'airport_shuttle' },
+    { label: 'Vans',     value: 'Van,Truck', icon: 'airport_shuttle' },
   ];
 
   constructor() {
@@ -82,7 +91,11 @@ export class VehicleListComponent {
 
     this.vehicleService.getVehicles(filter, pageNum, this.pageSize).subscribe({
       next: (res) => {
-        this.vehicles.set(res.vehicles || []);
+        if (pageNum === 1) {
+          this.vehicles.set(res.vehicles || []);
+        } else {
+          this.vehicles.update(prev => [...prev, ...(res.vehicles || [])]);
+        }
         this.totalPages.set(res.totalPages || 1);
         this.totalItems.set(res.total || 0);
         this.loading.set(false);
@@ -106,8 +119,10 @@ export class VehicleListComponent {
     this.openSections.set(s);
   }
 
-  get pages(): number[] {
-    return Array.from({ length: this.totalPages() }, (_, i) => i + 1);
+  loadMore() {
+    if (this.page() < this.totalPages()) {
+      this.page.update(p => p + 1);
+    }
   }
 
   resetFilters() {

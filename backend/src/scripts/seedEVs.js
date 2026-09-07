@@ -18,7 +18,7 @@ const newVehicles = [
     images: ["/byd.jpg"],
     description: "A wildly popular, modern electric SUV with a premium interior and excellent range.",
     features: ["Electric", "Automatic", "5 Seats", "AC", "Panoramic Sunroof", "360 Camera"],
-    pricing: { hour: 6, day: 40, week: 240, month: 900, year: 0 },
+    pricing: { hour: 6, day: 40, week: 240, month: 900, year: 9000 },
     available: true,
     rating: 4.9,
     trips: 45
@@ -36,7 +36,7 @@ const newVehicles = [
     images: ["/tesla.jpg"],
     description: "Experience the future of driving with Autopilot and unmatched electric performance.",
     features: ["Electric", "Automatic", "5 Seats", "AC", "Autopilot", "Glass Roof"],
-    pricing: { hour: 10, day: 65, week: 390, month: 1400, year: 0 },
+    pricing: { hour: 10, day: 65, week: 390, month: 1400, year: 14000 },
     available: true,
     rating: 5.0,
     trips: 22

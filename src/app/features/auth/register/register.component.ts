@@ -1,9 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { AuthLayoutComponent } from '../shared/auth-layout.component';
+import { SeoService } from '../../../core/services/seo.service';
 
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value;
@@ -17,10 +18,18 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
   imports: [ReactiveFormsModule, RouterLink, AuthLayoutComponent],
   templateUrl: './register.component.html',
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly seoService = inject(SeoService);
+
+  ngOnInit() {
+    this.seoService.updateSeoTags({
+      title: 'Create Account - Cambo Rent',
+      description: 'Sign up for a Cambo Rent account to easily book cars, motorcycles, and bicycles.'
+    });
+  }
 
   readonly loading = signal(false);
   readonly error = signal('');

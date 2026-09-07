@@ -307,11 +307,13 @@ export class ManageSettingsComponent implements OnInit {
           this.originalConfig = JSON.stringify(this.cfg);
         }
       },
+      error: () => {},
     });
     this.adminService.getHealth().subscribe({
       next: (res) => {
         if (res) this.health.set(res);
       },
+      error: () => {},
     });
   }
 

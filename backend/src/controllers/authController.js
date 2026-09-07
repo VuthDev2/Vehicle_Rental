@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
-const { sendPasswordResetEmail, sendVerificationEmail } = require('../utils/emailService');
+const { sendPasswordResetEmail, sendVerificationEmail, sendNewLoginAlertEmail } = require('../utils/emailService');
+const UAParser = require('ua-parser-js');
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -92,6 +93,13 @@ const login = async (req, res, next) => {
     if (!user.isActive) {
       return res.status(403).json({ message: 'Account is disabled.' });
     }
+
+    // Send New Login Alert asynchronously
+    const parser = new UAParser(req.headers['user-agent']);
+    const os = parser.getOS().name || 'Unknown OS';
+    const browser = parser.getBrowser().name || 'Unknown Browser';
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Unknown IP';
+    sendNewLoginAlertEmail(user.email, user.name, os, browser, ip).catch(err => console.error('Failed to send login alert:', err));
 
     await sendTokenResponse(user, 200, res);
   } catch (err) {
@@ -322,6 +330,13 @@ const googleLogin = async (req, res, next) => {
     if (!user.isActive) {
       return res.status(403).json({ message: 'Account is disabled.' });
     }
+
+    // Send New Login Alert asynchronously
+    const parser = new UAParser(req.headers['user-agent']);
+    const os = parser.getOS().name || 'Unknown OS';
+    const browser = parser.getBrowser().name || 'Unknown Browser';
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Unknown IP';
+    sendNewLoginAlertEmail(user.email, user.name, os, browser, ip).catch(err => console.error('Failed to send login alert:', err));
 
     await sendTokenResponse(user, 200, res);
   } catch (err) {

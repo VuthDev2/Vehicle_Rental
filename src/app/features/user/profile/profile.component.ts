@@ -44,6 +44,18 @@ export class ProfileComponent {
   readonly showCurrentPass = signal(false);
   readonly showNewPass = signal(false);
 
+  readonly activeModal = signal<'personal' | 'security' | 'coming-soon' | null>(null);
+
+  openModal(modal: 'personal' | 'security' | 'coming-soon'): void {
+    if (modal === 'personal') this.resetForm();
+    if (modal === 'security') this.passwordForm.reset();
+    this.activeModal.set(modal);
+  }
+
+  closeModal(): void {
+    this.activeModal.set(null);
+  }
+
   readonly profileCompletion = computed(() => {
     const user = this.auth.user();
     const checks = [!!user?.name, !!user?.email, !!user?.phone, !!user?.emailVerified, !!user?.avatar];

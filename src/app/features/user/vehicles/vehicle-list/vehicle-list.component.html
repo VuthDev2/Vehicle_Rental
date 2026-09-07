@@ -17,7 +17,7 @@
       <!-- Desktop Inner Search -->
       <div class="relative w-[180px] xl:w-[220px]">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
-        <input type="text" [ngModel]="searchTerm()" (ngModelChange)="setSearchTerm($event)" placeholder="Search models..." class="w-full bg-slate-100/70 border-none text-slate-700 text-[13px] font-bold rounded-full pl-9 pr-3 py-2 outline-none focus:ring-2 focus:ring-[#064022]/20">
+        <input id="search-desktop" type="text" [ngModel]="searchTerm()" (ngModelChange)="setSearchTerm($event)" placeholder="Search models..." class="w-full bg-slate-100/70 border-none text-slate-700 text-[13px] font-bold rounded-full pl-9 pr-3 py-2 outline-none focus:ring-2 focus:ring-[#064022]/20">
       </div>
 
       <!-- Desktop Category Chips -->
@@ -56,7 +56,7 @@
           <span class="material-symbols-outlined text-[16px]">tune</span> Filters
         </button>
         <div class="relative w-[160px]">
-          <select [ngModel]="sortBy()" (ngModelChange)="setSortBy($event)" class="w-full appearance-none bg-slate-100/70 border-none rounded-full text-[13px] font-bold text-slate-700 pl-4 pr-8 py-2 outline-none cursor-pointer hover:bg-slate-200 transition-colors">
+          <select id="sort-desktop" [ngModel]="sortBy()" (ngModelChange)="setSortBy($event)" class="w-full appearance-none bg-slate-100/70 border-none rounded-full text-[13px] font-bold text-slate-700 pl-4 pr-8 py-2 outline-none cursor-pointer hover:bg-slate-200 transition-colors">
             <option value="featured">Sort: Recommended</option>
             <option value="price-asc">Price: Low to High</option>
             <option value="price-desc">Price: High to Low</option>
@@ -192,7 +192,7 @@
         </div>
         <h2 class="text-lg font-black text-slate-800 mb-2">No vehicles found</h2>
         <p class="text-sm text-slate-500 mb-6">Try clearing or broadening your search criteria.</p>
-        <button type="button" (click)="resetFilters()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold text-white bg-[#064022]">
+        <button id="btn-reset-filters" type="button" (click)="resetFilters()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold text-white bg-[#064022]">
           Clear All Filters
         </button>
       </div>
@@ -211,11 +211,11 @@
             <!-- Type Badge -->
             <span class="absolute top-3 left-3 sm:top-4 sm:left-4 z-20 text-[10px] sm:text-[11px] font-bold text-white px-3 py-1 rounded-full shadow-sm tracking-wide"
                   [ngClass]="{
-                    'bg-[#16a34a]': vehicle.type === 'Bicycle',
-                    'bg-[#2563eb]': vehicle.type === 'Motorcycle',
-                    'bg-[#7e22ce]': vehicle.type !== 'Bicycle' && vehicle.type !== 'Motorcycle'
+                    'bg-[#16a34a]': vehicle.type === 'Bike' || vehicle.type === 'E-Bike',
+                    'bg-[#2563eb]': vehicle.type === 'Motorcycle' || vehicle.type === 'Scooter',
+                    'bg-[#7e22ce]': vehicle.type !== 'Bike' && vehicle.type !== 'E-Bike' && vehicle.type !== 'Motorcycle' && vehicle.type !== 'Scooter'
                   }">
-              {{ vehicle.type === 'Bicycle' ? 'Bike' : (vehicle.type === 'Motorcycle' ? 'Moto' : 'Car') }}
+              {{ vehicle.type }}
             </span>
 
             <!-- Image -->
@@ -233,12 +233,12 @@
               
               <!-- Specs row -->
               <p class="text-[11px] sm:text-[12px] text-slate-500 font-medium mb-3 sm:mb-4 flex items-center gap-1 flex-wrap">
-                @if (vehicle.type === 'Bicycle') {
+                @if (vehicle.type === 'Bike' || vehicle.type === 'E-Bike') {
                   <span>21 Speed</span> <span class="text-slate-300">•</span> <span>Gear</span>
-                } @else if (vehicle.type === 'Motorcycle') {
+                } @else if (vehicle.type === 'Motorcycle' || vehicle.type === 'Scooter') {
                   <span>125cc</span> <span class="text-slate-300">•</span> <span>Auto</span>
                 } @else {
-                  <span>Auto</span> <span class="text-slate-300">•</span> <span>5 Seats</span>
+                  <span>{{ vehicle.transmission || 'Auto' }}</span> <span class="text-slate-300">•</span> <span>{{ vehicle.seats || 5 }} Seats</span>
                 }
               </p>
 
@@ -255,7 +255,7 @@
               </div>
 
               <!-- CTA -->
-              <a [routerLink]="['/customer/explore', vehicle._id]" class="mt-auto flex items-center justify-center gap-1.5 py-2 sm:py-2.5 bg-[#f0fdf4] text-[#16a34a] border border-[#bbf7d0] rounded-xl text-[12px] sm:text-[13px] font-bold hover:bg-[#16a34a] hover:border-[#16a34a] hover:text-white transition-all shadow-sm group/btn w-full">
+              <a [id]="'btn-view-details-' + vehicle._id" [routerLink]="['/customer/explore', vehicle._id]" class="mt-auto flex items-center justify-center gap-1.5 py-2 sm:py-2.5 bg-[#f0fdf4] text-[#16a34a] border border-[#bbf7d0] rounded-xl text-[12px] sm:text-[13px] font-bold hover:bg-[#16a34a] hover:border-[#16a34a] hover:text-white transition-all shadow-sm group/btn w-full">
                 View Details
                 <span class="material-symbols-outlined text-[14px] sm:text-[16px] transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
               </a>
@@ -264,20 +264,19 @@
         }
       </div>
 
-      <!-- Pagination -->
-      @if (totalPages() > 1) {
-        <div class="flex items-center justify-center gap-1 sm:gap-2 mt-8 sm:mt-12 flex-wrap">
-          <button type="button" (click)="page.set(page() - 1)" [disabled]="page() === 1" class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 disabled:opacity-40 shadow-sm">
-            <span class="material-symbols-outlined text-sm">chevron_left</span>
-          </button>
-          @for (p of pages; track p) {
-            <button type="button" (click)="page.set(p)" class="w-9 h-9 rounded-full text-[13px] font-bold transition shadow-sm"
-              [class]="p === page() ? 'bg-[#064022] text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'">
-              {{ p }}
-            </button>
-          }
-          <button type="button" (click)="page.set(page() + 1)" [disabled]="page() === totalPages()" class="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 disabled:opacity-40 shadow-sm">
-            <span class="material-symbols-outlined text-sm">chevron_right</span>
+      <!-- Pagination (Load More) -->
+      @if (page() < totalPages()) {
+        <div class="flex items-center justify-center mt-10 sm:mt-12">
+          <button type="button" (click)="loadMore()" [disabled]="loading()" class="group relative inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white border-2 border-[#166534]/20 rounded-full font-black text-[#166534] tracking-wide shadow-sm hover:bg-[#f0fdf4] hover:border-[#166534]/30 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:bg-white overflow-hidden">
+            <span class="relative z-10 flex items-center gap-2">
+              @if (loading()) {
+                <span class="material-symbols-outlined animate-spin text-[1.2rem]">progress_activity</span>
+                Loading...
+              } @else {
+                Load More Vehicles
+                <span class="material-symbols-outlined text-[1.2rem] transition-transform group-hover:translate-y-1">expand_more</span>
+              }
+            </span>
           </button>
         </div>
       }

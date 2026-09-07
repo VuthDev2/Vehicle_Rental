@@ -9,7 +9,10 @@ const promotionSchema = new mongoose.Schema(
     minAmount:     { type: Number, default: 0 },
     maxUses:       { type: Number, default: null },
     usedCount:     { type: Number, default: 0 },
+    validFrom:     { type: Date, default: null },
     expiresAt:     { type: Date, default: null },
+    isForNewUsersOnly: { type: Boolean, default: false },
+    minDays:       { type: Number, default: 1 },
     active:        { type: Boolean, default: true },
   },
   { timestamps: true }

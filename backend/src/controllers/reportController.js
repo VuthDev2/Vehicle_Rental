@@ -56,33 +56,23 @@ const getRevenue = async (req, res, next) => {
 // GET /api/reports/popular-vehicles
 const getPopularVehicles = async (req, res, next) => {
   try {
-    const data = await Booking.aggregate([
-      { $match: { status: { $in: ['confirmed', 'completed'] } } },
-      { $group: { _id: '$vehicleId', count: { $sum: 1 }, revenue: { $sum: '$totalPrice' } } },
-      { $sort: { count: -1 } },
-      { $limit: 10 },
-      {
-        $lookup: {
-          from: 'vehicles',
-          localField: '_id',
-          foreignField: '_id',
-          as: 'vehicle',
-        },
-      },
-      { $unwind: '$vehicle' },
-      {
-        $project: {
-          name: '$vehicle.name',
-          brand: '$vehicle.brand',
-          type: '$vehicle.type',
-          images: '$vehicle.images',
-          count: 1,
-          revenue: 1,
-        },
-      },
-    ]);
+    const vehicles = await Vehicle.find()
+      .sort({ trips: -1 })
+      .limit(4)
+      .select('name brand type images trips');
 
-    res.json({ vehicles: data });
+    const totalTrips = vehicles.reduce((sum, v) => sum + (v.trips || 0), 0) || 1;
+
+    const mapped = vehicles.map(v => ({
+      name: v.name,
+      brand: v.brand,
+      type: v.type,
+      images: v.images,
+      count: Math.round(((v.trips || 0) / totalTrips) * 100), // Treat count as percentage for the UI
+      revenue: 0
+    }));
+
+    res.json({ vehicles: mapped });
   } catch (err) {
     next(err);
   }

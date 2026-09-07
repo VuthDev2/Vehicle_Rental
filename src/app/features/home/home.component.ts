@@ -1,5 +1,6 @@
-import { Component, signal, HostListener, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, signal, HostListener, ViewChild, ElementRef, AfterViewInit, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-home',
@@ -8,7 +9,15 @@ import { RouterLink } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit {
+  private readonly seoService = inject(SeoService);
+
+  ngOnInit() {
+    this.seoService.updateSeoTags({
+      title: 'Cambo Rent - Premium Vehicle Rental in Cambodia',
+      description: 'Rent premium cars, motorcycles, and bicycles in Cambodia. Explore Phnom Penh and Siem Reap with Cambo Rent. Fully insured, 24/7 support, doorstep delivery.',
+    });
+  }
   scrollY = 0;
   featuredProgress = 0; // 0 = off-screen below, 1 = fully revealed
   

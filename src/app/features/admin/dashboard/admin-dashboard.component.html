@@ -10,7 +10,7 @@
 
     <!-- ===== Stat cards ===== -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-      @for (s of statCards; track s.label) {
+      @for (s of statCards(); track s.label) {
         <div
           class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-200"
         >
@@ -71,7 +71,7 @@
           </button>
         </div>
         <div class="space-y-5">
-          @for (v of vehicles; track v.name) {
+          @for (v of vehicles(); track v.name) {
             <div>
               <div class="flex items-center justify-between mb-1.5">
                 <div>
@@ -128,29 +128,29 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
-            @for (b of recentBookings; track b.id) {
+            @for (b of recentBookings(); track b._id) {
               <tr class="hover:bg-slate-50/60 transition-colors cursor-pointer">
-                <td class="px-6 py-4 text-xs font-mono text-slate-500">{{ b.id }}</td>
+                <td class="px-6 py-4 text-xs font-mono text-slate-500">{{ b._id | slice:0:8 }}</td>
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-2.5">
                     <div
                       class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
                       style="background: #1e3326"
                     >
-                      {{ b.customer.charAt(0) }}
+                      {{ getBookingCustomer(b).charAt(0) }}
                     </div>
-                    <span class="text-sm font-medium text-slate-700">{{ b.customer }}</span>
+                    <span class="text-sm font-medium text-slate-700">{{ getBookingCustomer(b) }}</span>
                   </div>
                 </td>
-                <td class="px-6 py-4 text-sm text-slate-600">{{ b.vehicle }}</td>
-                <td class="px-6 py-4 text-sm text-slate-500">{{ b.date }}</td>
-                <td class="px-6 py-4 text-sm font-semibold text-slate-800">{{ b.amount }}</td>
+                <td class="px-6 py-4 text-sm text-slate-600">{{ getBookingVehicle(b) }}</td>
+                <td class="px-6 py-4 text-sm text-slate-500">{{ (b.createdAt || b.startDate) | date:'mediumDate' }}</td>
+                <td class="px-6 py-4 text-sm font-semibold text-slate-800">${{ b.totalPrice }}</td>
                 <td class="px-6 py-4">
                   <span
                     class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-semibold"
                     [class]="statusStyles[b.status]"
                   >
-                    {{ b.status }}
+                    {{ b.status | titlecase }}
                   </span>
                 </td>
               </tr>

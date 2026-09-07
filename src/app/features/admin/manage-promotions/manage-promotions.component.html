@@ -537,228 +537,229 @@
         <div
           style="
             background: #ffffff;
-            border-radius: 14px;
-            border: 1px solid #f0f0f0;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            transition: all 0.2s;
+            border-radius: 16px;
+            border: 1px solid #eaebf0;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
+            position: relative;
           "
           onmouseover="
-            this.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
-            this.style.borderColor = '#E5E7EB';
+            this.style.boxShadow = '0 16px 40px rgba(0,0,0,0.08)';
+            this.style.transform = 'translateY(-4px)';
+            this.style.borderColor = '#d1d5db';
           "
           onmouseout="
-            this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
-            this.style.borderColor = '#F0F0F0';
+            this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.02)';
+            this.style.transform = 'translateY(0)';
+            this.style.borderColor = '#eaebf0';
           "
         >
-          <!-- Card Header -->
-          <div class="flex items-start justify-between mb-3">
-            <div>
+          <!-- Top Accent line -->
+          <div style="height: 5px; width: 100%; background: linear-gradient(90deg, #005dac, #3980f4);"></div>
+          
+          <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
+            <!-- Card Header -->
+            <div class="flex items-start justify-between mb-4">
+              <div style="display: inline-flex; align-items: center; background: #f3f4f6; padding: 6px 12px; border-radius: 6px; border: 1px dashed #d1d5db;">
+                <span class="material-symbols-outlined" style="font-size: 16px; color: #6b7280; margin-right: 6px;">confirmation_number</span>
+                <span
+                  style="
+                    font-family: 'SF Mono', 'Fira Code', monospace;
+                    font-size: 14px;
+                    font-weight: 800;
+                    color: #1a1a2e;
+                    letter-spacing: 1.5px;
+                    text-transform: uppercase;
+                  "
+                  >{{ promo.code }}</span
+                >
+              </div>
               <span
-                style="
-                  font-family: 'SF Mono', 'Fira Code', monospace;
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: #6b7280;
-                  letter-spacing: 1px;
-                  text-transform: uppercase;
-                "
-                >{{ promo.code }}</span
-              >
-            </div>
-            <span
-              style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; letter-spacing: 0.3px;
-                  background: {{
-                getStatus(promo) === 'active'
-                  ? '#E7F5ED'
-                  : getStatus(promo) === 'expired'
-                    ? '#FFEAEA'
-                    : '#F3F4F6'
-              }};
-                  color: {{
-                getStatus(promo) === 'active'
-                  ? '#059669'
-                  : getStatus(promo) === 'expired'
-                    ? '#DC2626'
-                    : '#6B7280'
-              }};
-                  border: 1px solid {{
-                getStatus(promo) === 'active'
-                  ? '#D1FAE5'
-                  : getStatus(promo) === 'expired'
-                    ? '#FEE2E2'
-                    : '#E5E7EB'
-              }};"
-            >
-              <span
-                style="width: 5px; height: 5px; border-radius: 50%;
+                style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
                     background: {{
+                  getStatus(promo) === 'active'
+                    ? '#E7F5ED'
+                    : getStatus(promo) === 'expired'
+                      ? '#FFEAEA'
+                      : '#F3F4F6'
+                }};
+                    color: {{
                   getStatus(promo) === 'active'
                     ? '#059669'
                     : getStatus(promo) === 'expired'
                       ? '#DC2626'
-                      : '#9CA3AF'
+                      : '#6B7280'
                 }};"
               >
-              </span>
-              {{ getStatusLabel(promo) }}
-            </span>
-          </div>
-
-          <!-- Discount Display -->
-          <div class="mb-3">
-            <span
-              style="
-                font-size: 32px;
-                font-weight: 900;
-                color: #005dac;
-                letter-spacing: -1px;
-                line-height: 1.1;
-              "
-            >
-              {{ promo.discountType === 'percent' ? promo.value + '%' : '$' + promo.value }}
-            </span>
-            <span style="font-size: 14px; font-weight: 600; color: #6b7280; margin-left: 4px">
-              {{ promo.discountType === 'percent' ? 'OFF' : 'OFF' }}
-            </span>
-          </div>
-
-          <!-- Description -->
-          <p style="font-size: 13px; color: #6b7280; margin: 0 0 16px; line-height: 1.4; flex: 1">
-            {{ promo.description || 'No description' }}
-          </p>
-
-          <!-- Usage Progress -->
-          <div class="mb-4">
-            <div class="flex items-center justify-between mb-1">
-              <span style="font-size: 11px; font-weight: 600; color: #6b7280">Usage</span>
-              <span style="font-size: 12px; font-weight: 700; color: #1a1a2e">
-                {{ promo.usedCount }}{{ promo.maxUses ? '/' + promo.maxUses : '' }}
+                {{ getStatusLabel(promo) }}
               </span>
             </div>
-            <div
-              style="
-                width: 100%;
-                height: 6px;
-                border-radius: 3px;
-                background: #f0efef;
-                overflow: hidden;
-              "
-            >
-              @let usagePct =
-                promo.maxUses
-                  ? (promo.usedCount / promo.maxUses) * 100
-                  : promo.usedCount > 0
-                    ? 50
-                    : 0;
+
+            <!-- Discount Display -->
+            <div class="mb-4">
+              <div style="display: flex; align-items: baseline;">
+                <span
+                  style="
+                    font-size: 42px;
+                    font-weight: 900;
+                    color: #005dac;
+                    letter-spacing: -2px;
+                    line-height: 1;
+                  "
+                >
+                  {{ promo.discountType === 'percent' ? promo.value + '%' : '$' + promo.value }}
+                </span>
+                <span style="font-size: 16px; font-weight: 800; color: #6b7280; margin-left: 6px; text-transform: uppercase; letter-spacing: 1px;">
+                  OFF
+                </span>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <p style="font-size: 14px; color: #4b5563; margin: 0 0 20px; line-height: 1.5; flex: 1;">
+              {{ promo.description || 'No description available for this promotion.' }}
+            </p>
+
+            <!-- Usage Progress -->
+            <div class="mb-4">
+              <div class="flex items-center justify-between mb-2">
+                <span style="font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px;">Redemptions</span>
+                <span style="font-size: 13px; font-weight: 800; color: #1a1a2e">
+                  {{ promo.usedCount }}{{ promo.maxUses ? ' / ' + promo.maxUses : '' }}
+                </span>
+              </div>
               <div
-                style="height: 100%; border-radius: 3px; background: linear-gradient(90deg, #005DAC, #3980F4); width: {{
-                  usagePct > 100 ? 100 : usagePct
-                }}%; transition: width 0.5s ease;"
-              ></div>
+                style="
+                  width: 100%;
+                  height: 8px;
+                  border-radius: 4px;
+                  background: #f0efef;
+                  overflow: hidden;
+                "
+              >
+                @let usagePct =
+                  promo.maxUses
+                    ? (promo.usedCount / promo.maxUses) * 100
+                    : promo.usedCount > 0
+                      ? 50
+                      : 0;
+                <div
+                  style="height: 100%; border-radius: 4px; background: linear-gradient(90deg, #005DAC, #3980F4); width: {{
+                    usagePct > 100 ? 100 : usagePct
+                  }}%; transition: width 0.5s ease;"
+                ></div>
+              </div>
             </div>
-          </div>
 
-          <!-- Details Row -->
-          <div class="flex items-center justify-between pt-3" style="border-top: 1px solid #f3f4f6">
-            <div class="flex items-center gap-1">
-              <span class="material-symbols-outlined" style="font-size: 14px; color: #9ca3af"
-                >payments</span
-              >
-              <span style="font-size: 12px; color: #6b7280; font-weight: 500"
-                >Min \${{ promo.minAmount }}</span
-              >
+            <!-- Divider (Perforated edge) -->
+            <div style="border-top: 2px dashed #e5e7eb; margin: 16px -24px; position: relative;">
+              <!-- Left cutout -->
+              <div style="position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; background: #f8f9fa; border-radius: 50%; border-right: 1px solid #eaebf0;"></div>
+              <!-- Right cutout -->
+              <div style="position: absolute; right: -10px; top: -10px; width: 20px; height: 20px; background: #f8f9fa; border-radius: 50%; border-left: 1px solid #eaebf0;"></div>
             </div>
-            <div class="flex items-center gap-1">
-              <span class="material-symbols-outlined" style="font-size: 14px; color: #9ca3af"
-                >calendar_today</span
-              >
-              <span
-                style="font-size: 12px; color: {{
-                  isExpired(promo) ? '#DC2626' : '#6B7280'
-                }}; font-weight: 500;"
-              >
-                {{ promo.expiresAt ? (promo.expiresAt | date: 'mediumDate') : 'No expiry' }}
-              </span>
-            </div>
-          </div>
 
-          <!-- Actions -->
-          <div
-            class="flex items-center justify-end gap-2 mt-4 pt-3"
-            style="border-top: 1px solid #f3f4f6"
-          >
-            <button
-              (click)="openDetailDrawer(promo)"
-              style="
-                width: 32px;
-                height: 32px;
-                border: none;
-                border-radius: 8px;
-                background: transparent;
-                cursor: pointer;
-                color: #9ca3af;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.15s;
-              "
-              onmouseover="
-                this.style.background = '#F3F4F6';
-                this.style.color = '#374151';
-              "
-              onmouseout="
-                this.style.background = 'transparent';
-                this.style.color = '#9CA3AF';
-              "
-              title="View details"
+            <!-- Details Row -->
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex flex-col gap-1">
+                <span style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px;">Min Order</span>
+                <span style="font-size: 13px; color: #1a1a2e; font-weight: 700"
+                  >${{ promo.minAmount }}</span
+                >
+              </div>
+              <div class="flex flex-col gap-1 text-right">
+                <span style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px;">Valid Until</span>
+                <span
+                  style="font-size: 13px; font-weight: 700; color: {{
+                    isExpired(promo) ? '#DC2626' : '#1a1a2e'
+                  }};"
+                >
+                  {{ promo.expiresAt ? (promo.expiresAt | date: 'MMM d, yyyy') : 'No expiry' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div
+              class="flex items-center justify-between"
             >
-              <span class="material-symbols-outlined" style="font-size: 18px">visibility</span>
-            </button>
-            <button
-              (click)="toggleActive(promo)"
-              style="width: 32px; height: 32px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-                          background: {{ promo.active ? '#FFEAEA' : '#E7F5ED' }}; color: {{
-                promo.active ? '#DC2626' : '#059669'
-              }};"
-              onmouseover="this.style.opacity = '0.8'"
-              onmouseout="this.style.opacity = '1'"
-              title="{{ promo.active ? 'Disable' : 'Enable' }}"
-            >
-              <span class="material-symbols-outlined" style="font-size: 18px">{{
-                promo.active ? 'toggle_off' : 'toggle_on'
-              }}</span>
-            </button>
-            <button
-              (click)="deletePromo(promo._id)"
-              style="
-                width: 32px;
-                height: 32px;
-                border: none;
-                border-radius: 8px;
-                background: transparent;
-                cursor: pointer;
-                color: #9ca3af;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.15s;
-              "
-              onmouseover="
-                this.style.background = '#FFEAEA';
-                this.style.color = '#DC2626';
-              "
-              onmouseout="
-                this.style.background = 'transparent';
-                this.style.color = '#9CA3AF';
-              "
-              title="Delete"
-            >
-              <span class="material-symbols-outlined" style="font-size: 18px">delete</span>
-            </button>
+              <button
+                (click)="toggleActive(promo)"
+                style="padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; transition: all 0.2s;
+                            background: {{ promo.active ? '#FFF5F5' : '#ECFDF5' }}; color: {{
+                  promo.active ? '#DC2626' : '#059669'
+                }};"
+                onmouseover="this.style.opacity = '0.8'"
+                onmouseout="this.style.opacity = '1'"
+              >
+                <span class="material-symbols-outlined" style="font-size: 18px">{{
+                  promo.active ? 'block' : 'check_circle'
+                }}</span>
+                {{ promo.active ? 'Disable' : 'Enable' }}
+              </button>
+
+              <div class="flex gap-2">
+                <button
+                  (click)="openDetailDrawer(promo)"
+                  style="
+                    width: 36px;
+                    height: 36px;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    background: #ffffff;
+                    cursor: pointer;
+                    color: #6b7280;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s;
+                  "
+                  onmouseover="
+                    this.style.background = '#F9FAFB';
+                    this.style.color = '#111827';
+                  "
+                  onmouseout="
+                    this.style.background = '#ffffff';
+                    this.style.color = '#6b7280';
+                  "
+                  title="View details"
+                >
+                  <span class="material-symbols-outlined" style="font-size: 18px">edit</span>
+                </button>
+                <button
+                  (click)="deletePromo(promo._id)"
+                  style="
+                    width: 36px;
+                    height: 36px;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    background: #ffffff;
+                    cursor: pointer;
+                    color: #6b7280;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s;
+                  "
+                  onmouseover="
+                    this.style.background = '#FEF2F2';
+                    this.style.color = '#DC2626';
+                    this.style.border = '1px solid #FCA5A5';
+                  "
+                  onmouseout="
+                    this.style.background = '#ffffff';
+                    this.style.color = '#6b7280';
+                    this.style.border = '1px solid #e5e7eb';
+                  "
+                  title="Delete"
+                >
+                  <span class="material-symbols-outlined" style="font-size: 18px">delete</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       }

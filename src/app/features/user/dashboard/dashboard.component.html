@@ -6,7 +6,7 @@
     <div class="hero-content max-w-7xl mx-auto w-full">
       <div class="hero-text-col">
         <h1 class="hero-greeting">
-          Good morning,<br>
+          <span class="whitespace-nowrap inline-block">Good morning,</span><br>
           <span class="hero-name">{{ firstName }}</span>
         </h1>
         <p class="hero-subtitle">
@@ -87,7 +87,7 @@
 
     <div class="category-cards-grid">
       <!-- Cars -->
-      <a routerLink="/customer/explore" [queryParams]="{ type: 'Sedan' }" class="type-card">
+      <a routerLink="/customer/explore" [queryParams]="{ type: 'Car,Sedan' }" class="type-card">
         <div class="type-card-header">
           <div class="type-icon-badge">
             <span class="material-symbols-outlined">directions_car</span>
@@ -103,7 +103,7 @@
       </a>
       
       <!-- Motos -->
-      <a routerLink="/customer/explore" [queryParams]="{ type: 'Scooter' }" class="type-card">
+      <a routerLink="/customer/explore" [queryParams]="{ type: 'Motorcycle,Scooter' }" class="type-card">
         <div class="type-card-header">
           <div class="type-icon-badge">
             <span class="material-symbols-outlined">two_wheeler</span>
@@ -119,18 +119,18 @@
       </a>
 
       <!-- Bicycles -->
-      <a routerLink="/customer/explore" [queryParams]="{ type: 'Bicycle' }" class="type-card">
+      <a routerLink="/customer/explore" [queryParams]="{ type: 'Bike,E-Bike' }" class="type-card">
         <div class="type-card-header">
           <div class="type-icon-badge">
             <span class="material-symbols-outlined">pedal_bike</span>
           </div>
           <div class="type-text-group">
-            <h3>Motos</h3>
+            <h3>Bicycles</h3>
             <p>{{ categoryCountLabel('Bicycle') || '15 Vehicles' }}</p>
           </div>
         </div>
         <div class="type-card-img-wrap">
-          <img src="/scoopy.jpg" alt="Motos" />
+          <img src="/scoopy.jpg" alt="Bicycles" />
         </div>
       </a>
     </div>
@@ -147,104 +147,43 @@
     </div>
 
     <div class="featured-cards-grid">
-      <!-- Card 1: Toyota Camry -->
-      <article class="vehicle-featured-card">
-        <div class="vcard-top-badges">
-          <span class="vcard-badge popular">Popular</span>
-          <button type="button" class="vcard-fav-btn" aria-label="Favorite">
-            <span class="material-symbols-outlined">favorite_border</span>
-          </button>
-        </div>
-        <div class="vcard-img-box">
-          <img src="/camry.jpg" alt="Toyota Camry" />
-        </div>
-        <div class="vcard-body">
-          <h3 class="vcard-title">Toyota Camry</h3>
-          <div class="vcard-specs">
-            <span><span class="material-symbols-outlined">settings</span>Automatic</span>
-            <span class="spec-dot">•</span>
-            <span><span class="material-symbols-outlined">person</span>5 Seats</span>
-            <span class="spec-dot">•</span>
-            <span><span class="material-symbols-outlined">local_gas_station</span>Petrol</span>
+      @for (vehicle of featuredVehicles(); track vehicle._id) {
+        <article class="vehicle-featured-card">
+          <div class="vcard-top-badges">
+            @if (vehicle.rating && vehicle.rating >= 4.8) {
+              <span class="vcard-badge popular">Popular</span>
+            } @else {
+              <span class="vcard-badge new">New</span>
+            }
+            <button type="button" class="vcard-fav-btn" aria-label="Favorite">
+              <span class="material-symbols-outlined">favorite_border</span>
+            </button>
           </div>
-          <div class="vcard-footer">
-            <div class="vcard-price">
-              <strong>$35</strong>
-              <span>/ day</span>
+          <div class="vcard-img-box">
+            <img [src]="getVehicleImage(vehicle)" [alt]="getVehicleName(vehicle)" />
+          </div>
+          <div class="vcard-body">
+            <h3 class="vcard-title">{{ getVehicleName(vehicle) }}</h3>
+            <div class="vcard-specs">
+              <span><span class="material-symbols-outlined">settings</span>{{ vehicle.transmission || 'Automatic' }}</span>
+              <span class="spec-dot">•</span>
+              <span><span class="material-symbols-outlined">person</span>{{ vehicle.seats || 2 }} Seats</span>
+              <span class="spec-dot">•</span>
+              <span><span class="material-symbols-outlined">local_gas_station</span>{{ vehicle.fuel || 'Petrol' }}</span>
             </div>
-            <a routerLink="/customer/explore" class="vcard-btn">
-              <span>View Details</span>
-              <span class="material-symbols-outlined">chevron_right</span>
-            </a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Card 2: Honda Click 125i -->
-      <article class="vehicle-featured-card">
-        <div class="vcard-top-badges">
-          <span class="vcard-badge popular">Popular</span>
-          <button type="button" class="vcard-fav-btn" aria-label="Favorite">
-            <span class="material-symbols-outlined">favorite_border</span>
-          </button>
-        </div>
-        <div class="vcard-img-box">
-          <img src="/click.jpg" alt="Honda Click 125i" />
-        </div>
-        <div class="vcard-body">
-          <h3 class="vcard-title">Honda Click 125i</h3>
-          <div class="vcard-specs">
-            <span><span class="material-symbols-outlined">settings</span>Automatic</span>
-            <span class="spec-dot">•</span>
-            <span><span class="material-symbols-outlined">person</span>2 Seats</span>
-            <span class="spec-dot">•</span>
-            <span><span class="material-symbols-outlined">local_gas_station</span>Petrol</span>
-          </div>
-          <div class="vcard-footer">
-            <div class="vcard-price">
-              <strong>$12</strong>
-              <span>/ day</span>
+            <div class="vcard-footer">
+              <div class="vcard-price">
+                <strong>${{ vehicle.pricing?.day || 0 }}</strong>
+                <span>/ day</span>
+              </div>
+              <a [routerLink]="['/customer/vehicles', vehicle._id]" class="vcard-btn">
+                <span>View Details</span>
+                <span class="material-symbols-outlined">chevron_right</span>
+              </a>
             </div>
-            <a routerLink="/customer/explore" class="vcard-btn">
-              <span>View Details</span>
-              <span class="material-symbols-outlined">chevron_right</span>
-            </a>
           </div>
-        </div>
-      </article>
-
-      <!-- Card 3: Honda Scoopy -->
-      <article class="vehicle-featured-card">
-        <div class="vcard-top-badges">
-          <span class="vcard-badge new">New</span>
-          <button type="button" class="vcard-fav-btn" aria-label="Favorite">
-            <span class="material-symbols-outlined">favorite_border</span>
-          </button>
-        </div>
-        <div class="vcard-img-box">
-          <img src="/scoopy.jpg" alt="Honda Scoopy" />
-        </div>
-        <div class="vcard-body">
-          <h3 class="vcard-title">Honda Scoopy</h3>
-          <div class="vcard-specs">
-            <span><span class="material-symbols-outlined">settings</span>Automatic</span>
-            <span class="spec-dot">•</span>
-            <span><span class="material-symbols-outlined">person</span>2 Seats</span>
-            <span class="spec-dot">•</span>
-            <span><span class="material-symbols-outlined">local_gas_station</span>Petrol</span>
-          </div>
-          <div class="vcard-footer">
-            <div class="vcard-price">
-              <strong>$8</strong>
-              <span>/ day</span>
-            </div>
-            <a routerLink="/customer/explore" class="vcard-btn">
-              <span>View Details</span>
-              <span class="material-symbols-outlined">chevron_right</span>
-            </a>
-          </div>
-        </div>
-      </article>
+        </article>
+      }
     </div>
 
     <!-- Carousel Dots -->
@@ -264,7 +203,7 @@
           <span class="material-symbols-outlined">directions_car</span>
         </div>
         <div class="stat-text-box">
-          <strong>45</strong>
+          <strong>{{ totalVehicles() || 0 }}</strong>
           <span>Vehicles<br>In Fleet</span>
         </div>
       </div>
@@ -278,7 +217,7 @@
           <span class="material-symbols-outlined">check_circle</span>
         </div>
         <div class="stat-text-box">
-          <strong>32</strong>
+          <strong>{{ availableVehicles() || 0 }}</strong>
           <span>Available<br>Now</span>
         </div>
       </div>
@@ -292,7 +231,7 @@
           <span class="material-symbols-outlined">calendar_month</span>
         </div>
         <div class="stat-text-box">
-          <strong>8</strong>
+          <strong>{{ stats[2].value }}</strong>
           <span>Currently<br>Booked</span>
         </div>
       </div>
@@ -306,7 +245,7 @@
           <span class="material-symbols-outlined">assignment</span>
         </div>
         <div class="stat-text-box">
-          <strong>3</strong>
+          <strong>{{ stats[3].value }}</strong>
           <span>Your<br>Bookings</span>
         </div>
       </div>
@@ -372,7 +311,7 @@
 
         <!-- 3-Vehicles Cutout Visual on bottom right -->
         <div class="promo-vehicles-visual">
-          <img class="promo-composite-image" src="/car_card_transparent.png" alt="Promo Vehicles" />
+          <img class="promo-composite-image" src="/mg_zsev.png" alt="Promo Vehicles" />
         </div>
       </article>
 

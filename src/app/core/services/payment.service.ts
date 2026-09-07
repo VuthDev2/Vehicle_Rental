@@ -12,6 +12,12 @@ export interface PaymentListResponse {
   total: number;
   page: number;
   totalPages: number;
+  stats?: {
+    totalRevenue: number;
+    totalPending: number;
+    totalFailed: number;
+    totalRefunded: number;
+  };
 }
 
 export interface PaywayForm {
@@ -137,16 +143,7 @@ export class PaymentService {
 
   getPayments(page = 1, limit = 20) {
     const params = new HttpParams().set('page', page).set('limit', limit);
-    return this.http.get<PaymentListResponse>(`${API}/payments`, { params }).pipe(
-      map((res) => {
-        if (environment.production || res.payments.length > 0) return res;
-        return samplePaymentResponse(page, limit);
-      }),
-      catchError((err) => {
-        if (environment.production) throw err;
-        return of(samplePaymentResponse(page, limit));
-      })
-    );
+    return this.http.get<PaymentListResponse>(`${API}/payments`, { params });
   }
 
   createPayment(bookingId: string, method: string) {
@@ -154,13 +151,13 @@ export class PaymentService {
   }
 
   /** Ask the backend for a signed ABA PayWay purchase form for a booking. */
-  createPaywayForm(bookingId: string) {
-    return this.http.post<PaywayForm>(`${API}/payments/payway/create`, { bookingId });
+  createPaywayForm(bookingId: string, paymentType: 'full' | 'deposit' = 'full') {
+    return this.http.post<PaywayForm>(`${API}/payments/payway/create`, { bookingId, paymentType });
   }
 
   /** Generate an ABA KHQR for a booking to display in-app. */
-  createPaywayQr(bookingId: string) {
-    return this.http.post<PaywayQr>(`${API}/payments/payway/qr`, { bookingId });
+  createPaywayQr(bookingId: string, paymentType: 'full' | 'deposit' = 'full') {
+    return this.http.post<PaywayQr>(`${API}/payments/payway/qr`, { bookingId, paymentType });
   }
 
   /** Demo/manual confirmation — mark a PayWay transaction as paid. */

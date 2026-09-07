@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-simple-page',
@@ -7,12 +8,21 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
   templateUrl: './simple-page.component.html',
   styleUrl: './simple-page.component.css',
 })
-export class SimplePageComponent {
-  readonly route = inject(ActivatedRoute);
+export class SimplePageComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly seoService = inject(SeoService);
+
   readonly title = this.route.snapshot.data['title'] as string;
   readonly body = this.route.snapshot.data['body'] as string;
   readonly pageType = this.route.snapshot.routeConfig?.path ?? 'about';
   readonly isContact = this.pageType === 'contact';
+
+  ngOnInit() {
+    this.seoService.updateSeoTags({
+      title: `${this.title} - Cambo Rent`,
+      description: this.body || 'Learn more about Cambo Rent.'
+    });
+  }
 
   readonly aboutStats = [
     { value: '24/7', label: 'Customer support' },

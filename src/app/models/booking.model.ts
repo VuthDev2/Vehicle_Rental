@@ -1,5 +1,5 @@
-export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
-export type PaymentStatus = 'unpaid' | 'paid' | 'refunded';
+export type BookingStatus = 'pending' | 'pending_approval' | 'pending_verification' | 'confirmed' | 'active' | 'cancelled' | 'completed';
+export type PaymentStatus = 'unpaid' | 'partially_paid' | 'paid' | 'refunded';
 export type RentalType = 'hour' | 'day' | 'week' | 'month' | 'year';
 
 export interface Booking {
@@ -13,7 +13,11 @@ export interface Booking {
   totalPrice: number;
   discount: number;
   status: BookingStatus;
+  paymentMethod?: 'online' | 'pay_at_store';
   paymentStatus: PaymentStatus;
+  paymentType?: 'full' | 'deposit';
+  amountPaid?: number;
+  balanceDue?: number;
   notes?: string;
   promoCode?: string;
   createdAt?: string;

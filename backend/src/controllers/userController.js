@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const ActivityLog = require('../models/ActivityLog');
 
 // Escape user-supplied strings before using them in a MongoDB $regex to prevent ReDoS.
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -26,6 +27,18 @@ const createUser = async (req, res, next) => {
       isActive: isActive !== undefined ? isActive : true,
     });
 
+    if (req.user && req.user.role === 'admin') {
+      await ActivityLog.create({
+        adminId: req.user._id,
+        adminName: req.user.name,
+        action: 'Create User',
+        resource: 'User',
+        resourceId: user._id,
+        details: `Created user ${user.email}`,
+        ip: req.ip
+      });
+    }
+
     res.status(201).json({ user });
   } catch (err) {
     next(err);
@@ -35,7 +48,8 @@ const createUser = async (req, res, next) => {
 // GET /api/users (admin)
 const getUsers = async (req, res, next) => {
   try {
-    const filter = {};
+    // Default to excluding admins so they don't show up in the customer management list
+    const filter = { role: { $ne: 'admin' } };
     if (req.query.role) filter.role = req.query.role;
     if (req.query.query) {
       const safe = escapeRegex(req.query.query);
@@ -94,6 +108,18 @@ const updateUser = async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
     if (!user) return res.status(404).json({ message: 'User not found.' });
 
+    if (req.user.role === 'admin') {
+      await ActivityLog.create({
+        adminId: req.user._id,
+        adminName: req.user.name,
+        action: 'Update User',
+        resource: 'User',
+        resourceId: user._id,
+        details: `Updated fields: ${Object.keys(updates).join(', ')}`,
+        ip: req.ip
+      });
+    }
+
     res.json({ user });
   } catch (err) {
     next(err);
@@ -105,10 +131,47 @@ const deleteUser = async (req, res, next) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found.' });
+
+    await ActivityLog.create({
+      adminId: req.user._id,
+      adminName: req.user.name,
+      action: 'Delete User',
+      resource: 'User',
+      resourceId: user._id,
+      details: `Deleted user ${user.email}`,
+      ip: req.ip
+    });
+
     res.json({ message: 'User deleted.' });
   } catch (err) {
     next(err);
   }
 };
 
-module.exports = { createUser, getUsers, getUser, updateUser, deleteUser };
+// POST /api/users/upload-id
+const uploadIdDocument = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded.' });
+    }
+
+    // Assuming the file path from multer/resizeAndSave is something like 'uploads/filename.jpg'
+    // The path stored in DB should be relative or a full URL depending on static file serving setup.
+    // Given the upload middleware uses `dest: '../../uploads'`, let's store the filename.
+    const relativePath = `/uploads/${req.file.filename}`;
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { idDocumentUrl: relativePath, idVerified: true },
+      { new: true }
+    );
+
+    if (!user) return res.status(404).json({ message: 'User not found.' });
+
+    res.json({ message: 'ID Document uploaded successfully.', user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { createUser, getUsers, getUser, updateUser, deleteUser, uploadIdDocument };

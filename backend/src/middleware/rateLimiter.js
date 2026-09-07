@@ -36,7 +36,7 @@ const loginLimiter = createLimiter({
 // General API routes.
 const apiLimiter = createLimiter({
   windowMs: 15 * 60 * 1000,
-  max: 200,
+  max: 5000,
   message: { message: 'Too many requests. Please try again later.' },
 });
 

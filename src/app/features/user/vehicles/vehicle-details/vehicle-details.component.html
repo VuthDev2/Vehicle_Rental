@@ -215,8 +215,22 @@
               Reserve This Vehicle
             </h2>
 
-            <!-- Segmented Daily / Hourly Switcher -->
-            <div class="segmented-control">
+            @if (!vehicle()!.available) {
+              <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; margin-bottom: 1rem;">
+                <span class="material-symbols-outlined text-xl">error</span>
+                <span style="font-weight: 600;">This vehicle is currently unavailable for rent.</span>
+              </div>
+            } @else {
+              <!-- Segmented Daily / Hourly Switcher -->
+              <div class="segmented-control" style="flex-wrap: wrap;">
+              <button
+                type="button"
+                (click)="setRentalType('hourly')"
+                class="segment-btn"
+                [class.active]="rentalType() === 'hourly'"
+              >
+                Hourly
+              </button>
               <button
                 type="button"
                 (click)="setRentalType('daily')"
@@ -227,13 +241,22 @@
               </button>
               <button
                 type="button"
-                (click)="setRentalType('hourly')"
+                (click)="setRentalType('monthly')"
                 class="segment-btn"
-                [class.active]="rentalType() === 'hourly'"
+                [class.active]="rentalType() === 'monthly'"
               >
-                Hourly
+                Monthly
+              </button>
+              <button
+                type="button"
+                (click)="setRentalType('yearly')"
+                class="segment-btn"
+                [class.active]="rentalType() === 'yearly'"
+              >
+                Yearly
               </button>
             </div>
+            }
           </div>
 
           <!-- Dates Grid -->
@@ -317,7 +340,7 @@
             <div>
               <div class="est-label">Estimated Total</div>
               <div class="est-breakdown">
-                {{ estimateUnits }} {{ rentalType() === 'hourly' ? 'hours' : 'days' }} × {{ qty() }} {{ qty() > 1 ? 'vehicles' : 'vehicle' }}
+                {{ estimateUnits }} {{ rentalType() === 'hourly' ? 'hours' : (rentalType() === 'monthly' ? 'months' : (rentalType() === 'yearly' ? 'years' : 'days')) }} × {{ qty() }} {{ qty() > 1 ? 'vehicles' : 'vehicle' }}
               </div>
             </div>
             <div class="est-amount">
@@ -325,11 +348,55 @@
             </div>
           </div>
 
+          <!-- Payment Method Selector -->
+          <div class="form-group-grid" style="margin-bottom: 1.5rem;">
+            <div style="grid-column: 1 / -1;">
+              <label class="input-label">Payment Method</label>
+              <div class="segmented-control">
+                <button
+                  type="button"
+                  (click)="paymentMethod.set('online')"
+                  class="segment-btn flex-1"
+                  [class.active]="paymentMethod() === 'online'"
+                >
+                  <span class="material-symbols-outlined text-[18px]">credit_card</span>
+                  Pay Online
+                </button>
+                <button
+                  type="button"
+                  (click)="paymentMethod.set('pay_at_store')"
+                  class="segment-btn flex-1"
+                  [class.active]="paymentMethod() === 'pay_at_store'"
+                >
+                  <span class="material-symbols-outlined text-[18px]">storefront</span>
+                  Pay at Store
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Digital Agreement Checkbox -->
+          <div class="agreement-box" style="margin-bottom: 1.5rem; background: var(--color-bg-deep); border: 1px solid var(--color-edge-deep); padding: 1rem; border-radius: 0.75rem;">
+            <label style="display: flex; gap: 0.75rem; align-items: flex-start; cursor: pointer;">
+              <input 
+                id="checkbox-agreement"
+                type="checkbox" 
+                [ngModel]="agreementAccepted()"
+                (ngModelChange)="agreementAccepted.set($event)"
+                style="margin-top: 0.25rem; accent-color: var(--color-primary); width: 1.25rem; height: 1.25rem; cursor: pointer;"
+              />
+              <span style="font-size: 0.875rem; color: var(--color-on-surface-variant); line-height: 1.4;">
+                I have read and digitally sign the <a href="#" style="color: var(--color-primary); font-weight: bold; text-decoration: underline;" (click)="$event.preventDefault()">Rental Agreement</a>, acknowledging the terms, late fees, and damage policies.
+              </span>
+            </label>
+          </div>
+
           <!-- Action Button -->
           <button
+            id="btn-book-submit"
             type="button"
             (click)="book()"
-            [disabled]="submitting() || !vehicle()!.available"
+            [disabled]="submitting() || !vehicle()!.available || !agreementAccepted()"
             class="btn-book-submit"
           >
             @if (submitting()) {
@@ -338,6 +405,9 @@
             } @else if (!vehicle()!.available) {
               <span class="material-symbols-outlined text-lg">block</span>
               <span>Currently Unavailable</span>
+            } @else if (!agreementAccepted()) {
+              <span class="material-symbols-outlined text-lg">edit_document</span>
+              <span>Accept Agreement to Book</span>
             } @else {
               <span class="material-symbols-outlined text-lg">shopping_cart_checkout</span>
               <span>Book & Proceed to Checkout</span>

@@ -11,9 +11,9 @@
 
 .booking-tab-btn {
   padding: 0.75rem 0;
-  font-size: 0.95rem;
+  font-size: 14px;
   font-weight: 600;
-  color: #6c757d;
+  color: #64748b;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
@@ -31,88 +31,93 @@
 .booking-card {
   background: #ffffff;
   border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  border: 1px solid #f1f3f5;
+  padding: 16px;
+  margin-bottom: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  border: 1px solid #f1f5f9;
 }
 
 .status-pill {
-  display: inline-block;
-  padding: 0.25rem 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
   border-radius: 99px;
-  font-size: 0.7rem;
+  font-size: 11px;
   font-weight: 700;
 }
 
-.status-pill.confirmed { background: #e6f4ea; color: #137333; }
-.status-pill.pending { background: #fef3c7; color: #d97706; }
-.status-pill.completed { background: #e0e7ff; color: #4338ca; }
-.status-pill.cancelled { background: #fee2e2; color: #dc2626; }
-
-.booking-thumb {
-  width: 100px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 8px;
-}
+.status-pill.confirmed { background: #e8f5e9; color: #1b5e20; }
+.status-pill.pending { background: #fff8e1; color: #d84315; }
+.status-pill.completed { background: #f1f5f9; color: #475569; }
+.status-pill.cancelled { background: #fef2f2; color: #dc2626; }
 
 .icon-text {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  color: #495057;
-  font-size: 0.85rem;
-  margin-bottom: 0.35rem;
+  gap: 6px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .icon-text .material-symbols-outlined {
-  font-size: 1.1rem;
-  color: #6c757d;
+  font-size: 16px;
+  color: #94a3b8;
 }
 
-.total-price {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #064022;
+.icon-text.dark {
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.icon-text.dark .material-symbols-outlined {
+  color: #0f172a;
 }
 
 .action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.2rem;
-  padding: 0.45rem 0.9rem;
-  border: 1px solid #dee2e6;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border: 1px solid #e2e8f0;
   border-radius: 99px;
-  background: white;
-  color: #212529;
-  font-size: 0.85rem;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 13px;
   font-weight: 600;
   text-decoration: none;
+  transition: background 0.2s;
+}
+
+.action-btn:hover {
+  background: #f8fafc;
 }
 
 .action-btn .material-symbols-outlined {
-  font-size: 1.1rem;
+  font-size: 16px;
 }
 
 .need-help-card {
   background: #ffffff;
   border-radius: 12px;
-  padding: 1.25rem;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  border: 1px solid #f1f3f5;
+  gap: 16px;
+  margin-top: 16px;
+  margin-bottom: 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  border: 1px solid #f1f5f9;
 }
 
 .headset-icon-wrapper {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #f8f9fa;
+  background: #e8f5e9;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,7 +125,7 @@
 }
 
 .headset-icon-wrapper .material-symbols-outlined {
-  font-size: 1.5rem;
+  font-size: 24px;
   color: #064022;
 }
 
@@ -129,6 +134,14 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 8px;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 @keyframes shimmer {

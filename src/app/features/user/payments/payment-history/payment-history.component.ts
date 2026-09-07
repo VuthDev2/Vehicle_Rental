@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
-import { DatePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
+import { DatePipe, TitleCasePipe, UpperCasePipe, SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PaymentService } from '../../../../core/services/payment.service';
 import { Payment } from '../../../../models/payment.model';
@@ -24,7 +24,7 @@ export type PaymentFilter = 'all' | 'succeeded' | 'pending' | 'refunded' | 'fail
 @Component({
   selector: 'app-payment-history',
   standalone: true,
-  imports: [DatePipe, TitleCasePipe, UpperCasePipe],
+  imports: [DatePipe, TitleCasePipe, UpperCasePipe, SlicePipe],
   templateUrl: './payment-history.component.html',
   styleUrl: './payment-history.component.css',
 })

@@ -18,7 +18,7 @@ const newVehicles = [
     images: ["/pg1.jpg"],
     description: "The rugged, adventure-ready Yamaha PG-1.",
     features: ["114cc", "Manual", "Off-road capable"],
-    pricing: { hour: 3, day: 15, week: 80, month: 250, year: 0 },
+    pricing: { hour: 3, day: 15, week: 80, month: 250, year: 2500 },
     available: true,
     rating: 4.9,
     trips: 45
@@ -36,7 +36,7 @@ const newVehicles = [
     images: ["/zoomer.jpg"],
     description: "The stylish and unique naked scooter.",
     features: ["110cc", "Automatic", "Under-seat storage"],
-    pricing: { hour: 2, day: 14, week: 75, month: 220, year: 0 },
+    pricing: { hour: 2, day: 14, week: 75, month: 220, year: 2200 },
     available: true,
     rating: 4.6,
     trips: 210
@@ -54,7 +54,7 @@ const newVehicles = [
     images: ["/click.jpg"],
     description: "Sporty and powerful automatic scooter.",
     features: ["160cc", "Automatic", "Smart Key"],
-    pricing: { hour: 3, day: 16, week: 90, month: 280, year: 0 },
+    pricing: { hour: 3, day: 16, week: 90, month: 280, year: 2800 },
     available: true,
     rating: 4.8,
     trips: 130

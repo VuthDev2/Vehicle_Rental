@@ -1,13 +1,21 @@
 <div class="min-h-full pb-24 font-sans max-w-lg lg:max-w-5xl mx-auto lg:px-8 transition-all">
   <!-- Profile Header -->
   <div class="profile-header lg:mt-8 lg:mb-10 lg:p-8 lg:rounded-[24px]">
-    <div class="profile-avatar lg:w-20 lg:h-20 lg:text-3xl">
+    <label class="profile-avatar lg:w-20 lg:h-20 lg:text-3xl cursor-pointer relative group block">
+      <input type="file" (change)="onAvatarSelected($event)" accept="image/*" class="hidden" [disabled]="avatarSubmitting()" />
       @if (avatarUrl) {
         <img [src]="avatarUrl" [alt]="(auth.user()?.name || 'Profile') + ' photo'" class="h-full w-full object-cover rounded-full" />
       } @else {
         {{ initials }}
       }
-    </div>
+      <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        @if (avatarSubmitting()) {
+          <span class="material-symbols-outlined animate-spin text-white">progress_activity</span>
+        } @else {
+          <span class="material-symbols-outlined text-white">photo_camera</span>
+        }
+      </div>
+    </label>
     <div class="flex-1 min-w-0">
       <h1 class="text-xl font-bold text-[#111827] truncate">{{ auth.user()?.name || 'My Profile' }}</h1>
       <p class="text-[0.8rem] text-[#4b5563] mt-1">{{ auth.user()?.phone || '+855 12 345 678' }}</p>
@@ -24,7 +32,7 @@
     <div>
       <h2 class="section-title lg:text-xl">Account</h2>
       <div class="menu-list">
-        <button class="menu-item">
+        <button class="menu-item" (click)="openModal('personal')">
           <div class="menu-icon"><span class="material-symbols-outlined">person_outline</span></div>
           <div class="menu-content">
             <h3 class="menu-title">Personal Information</h3>
@@ -32,7 +40,7 @@
           </div>
           <div class="chevron"><span class="material-symbols-outlined text-xl">chevron_right</span></div>
         </button>
-        <button class="menu-item">
+        <button class="menu-item" (click)="openModal('coming-soon')">
           <div class="menu-icon"><span class="material-symbols-outlined">badge</span></div>
           <div class="menu-content">
             <h3 class="menu-title">Driver License</h3>
@@ -40,7 +48,7 @@
           </div>
           <div class="chevron"><span class="material-symbols-outlined text-xl">chevron_right</span></div>
         </button>
-        <button class="menu-item">
+        <button class="menu-item" (click)="openModal('coming-soon')">
           <div class="menu-icon"><span class="material-symbols-outlined">location_on</span></div>
           <div class="menu-content">
             <h3 class="menu-title">Addresses</h3>
@@ -48,7 +56,7 @@
           </div>
           <div class="chevron"><span class="material-symbols-outlined text-xl">chevron_right</span></div>
         </button>
-        <button class="menu-item">
+        <button class="menu-item" (click)="openModal('coming-soon')">
           <div class="menu-icon"><span class="material-symbols-outlined">notifications_active</span></div>
           <div class="menu-content">
             <h3 class="menu-title">Notification Settings</h3>
@@ -56,11 +64,19 @@
           </div>
           <div class="chevron"><span class="material-symbols-outlined text-xl">chevron_right</span></div>
         </button>
-        <button class="menu-item">
+        <button class="menu-item" (click)="openModal('security')">
           <div class="menu-icon"><span class="material-symbols-outlined">lock_outline</span></div>
           <div class="menu-content">
             <h3 class="menu-title">Security</h3>
             <p class="menu-desc">Change password, biometric, etc.</p>
+          </div>
+          <div class="chevron"><span class="material-symbols-outlined text-xl">chevron_right</span></div>
+        </button>
+        <button class="menu-item" (click)="theme.toggleTheme()">
+          <div class="menu-icon"><span class="material-symbols-outlined">{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</span></div>
+          <div class="menu-content">
+            <h3 class="menu-title">Theme</h3>
+            <p class="menu-desc">Toggle light or dark theme</p>
           </div>
           <div class="chevron"><span class="material-symbols-outlined text-xl">chevron_right</span></div>
         </button>
@@ -71,7 +87,7 @@
     <div>
       <h2 class="section-title lg:text-xl">More</h2>
       <div class="menu-list">
-        <button class="menu-item">
+        <button class="menu-item" (click)="openModal('coming-soon')">
           <div class="menu-icon"><span class="material-symbols-outlined">account_balance_wallet</span></div>
           <div class="menu-content">
             <h3 class="menu-title">My Wallet</h3>
@@ -79,7 +95,7 @@
           </div>
           <div class="chevron"><span class="material-symbols-outlined text-xl">chevron_right</span></div>
         </button>
-        <button class="menu-item">
+        <button class="menu-item" (click)="openModal('coming-soon')">
           <div class="menu-icon"><span class="material-symbols-outlined">redeem</span></div>
           <div class="menu-content">
             <h3 class="menu-title">Refer & Earn</h3>
@@ -87,7 +103,7 @@
           </div>
           <div class="chevron"><span class="material-symbols-outlined text-xl">chevron_right</span></div>
         </button>
-        <button class="menu-item">
+        <button class="menu-item" (click)="openModal('coming-soon')">
           <div class="menu-icon"><span class="material-symbols-outlined">headset_mic</span></div>
           <div class="menu-content">
             <h3 class="menu-title">Help & Support</h3>
@@ -95,7 +111,7 @@
           </div>
           <div class="chevron"><span class="material-symbols-outlined text-xl">chevron_right</span></div>
         </button>
-        <button class="menu-item">
+        <button class="menu-item" (click)="openModal('coming-soon')">
           <div class="menu-icon"><span class="material-symbols-outlined">description</span></div>
           <div class="menu-content">
             <h3 class="menu-title">Terms & Conditions</h3>
@@ -103,7 +119,7 @@
           </div>
           <div class="chevron"><span class="material-symbols-outlined text-xl">chevron_right</span></div>
         </button>
-        <button class="menu-item">
+        <button class="menu-item" (click)="openModal('coming-soon')">
           <div class="menu-icon"><span class="material-symbols-outlined">info</span></div>
           <div class="menu-content">
             <h3 class="menu-title">About Cambo Rent</h3>
@@ -122,4 +138,152 @@
       Logout
     </button>
   </div>
+
+  <!-- Modal Overlay -->
+  @if (activeModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-[#0a1118]/60 p-4 backdrop-blur-md transition-all duration-300" (click)="closeModal()">
+      <div class="w-full max-w-md rounded-3xl bg-white p-6 lg:p-8 shadow-2xl border border-white/20 transform transition-all" (click)="$event.stopPropagation()">
+        
+        <!-- Personal Information Modal -->
+        @if (activeModal() === 'personal') {
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-2xl font-black text-[#111827] tracking-tight">Personal Info</h2>
+              <p class="text-sm text-gray-500 mt-1">Update your account details</p>
+            </div>
+            <button (click)="closeModal()" class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors">
+              <span class="material-symbols-outlined text-[1.4rem]">close</span>
+            </button>
+          </div>
+          
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="space-y-5">
+              <div>
+                <label class="block text-sm font-bold text-[#111827] mb-2">Full Name</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-4 text-gray-400">person</span>
+                  <input type="text" formControlName="name" class="w-full rounded-2xl border-2 border-gray-100 bg-gray-50/50 pl-11 pr-4 py-3.5 text-[0.95rem] font-medium text-gray-900 placeholder-gray-400 focus:bg-white focus:border-[#166534] focus:ring-4 focus:ring-[#166534]/10 outline-none transition-all" placeholder="Enter your full name" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-[#111827] mb-2">Phone Number</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-4 text-gray-400">call</span>
+                  <input type="tel" formControlName="phone" class="w-full rounded-2xl border-2 border-gray-100 bg-gray-50/50 pl-11 pr-4 py-3.5 text-[0.95rem] font-medium text-gray-900 placeholder-gray-400 focus:bg-white focus:border-[#166534] focus:ring-4 focus:ring-[#166534]/10 outline-none transition-all" placeholder="Enter your phone number" />
+                </div>
+              </div>
+            </div>
+            
+            @if (error()) {
+              <div class="mt-6 rounded-2xl bg-red-50 p-4 text-sm font-bold text-red-600 border border-red-100/50 flex items-center gap-3">
+                <span class="material-symbols-outlined text-red-500 text-[1.2rem]">error</span>
+                <p>{{ error() }}</p>
+              </div>
+            }
+            @if (success()) {
+              <div class="mt-6 rounded-2xl bg-[#f0fdf4] p-4 text-sm font-bold text-[#166534] border border-[#dcfce7]/50 flex items-center gap-3">
+                <span class="material-symbols-outlined text-[#16a34a] text-[1.2rem]">check_circle</span>
+                <p>Profile updated successfully!</p>
+              </div>
+            }
+            
+            <button type="submit" [disabled]="form.invalid || submitting()" class="w-full rounded-2xl bg-[#166534] text-white py-4 mt-8 font-black tracking-wide text-[0.95rem] shadow-lg shadow-[#166534]/20 hover:bg-[#14532d] hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:hover:translate-y-0">
+              @if (submitting()) {
+                <span class="material-symbols-outlined animate-spin align-middle mr-2 text-[1.2rem]">progress_activity</span>
+                Saving...
+              } @else {
+                Save Changes
+              }
+            </button>
+          </form>
+        }
+
+        <!-- Security Modal -->
+        @if (activeModal() === 'security') {
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-2xl font-black text-[#111827] tracking-tight">Security</h2>
+              <p class="text-sm text-gray-500 mt-1">Change your password</p>
+            </div>
+            <button (click)="closeModal()" class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors">
+              <span class="material-symbols-outlined text-[1.4rem]">close</span>
+            </button>
+          </div>
+          
+          <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+            <div class="space-y-5">
+              <div>
+                <label class="block text-sm font-bold text-[#111827] mb-2">Current Password</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-4 text-gray-400">lock</span>
+                  <input [type]="showCurrentPass() ? 'text' : 'password'" formControlName="currentPassword" class="w-full rounded-2xl border-2 border-gray-100 bg-gray-50/50 pl-11 pr-12 py-3.5 text-[0.95rem] font-medium text-gray-900 placeholder-gray-400 focus:bg-white focus:border-[#166534] focus:ring-4 focus:ring-[#166534]/10 outline-none transition-all" placeholder="Enter current password" />
+                  <button type="button" (click)="showCurrentPass.set(!showCurrentPass())" class="absolute right-4 text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[1.2rem]">{{ showCurrentPass() ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-[#111827] mb-2">New Password</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-4 text-[#166534]">key</span>
+                  <input [type]="showNewPass() ? 'text' : 'password'" formControlName="newPassword" class="w-full rounded-2xl border-2 border-gray-100 bg-gray-50/50 pl-11 pr-12 py-3.5 text-[0.95rem] font-medium text-gray-900 placeholder-gray-400 focus:bg-white focus:border-[#166534] focus:ring-4 focus:ring-[#166534]/10 outline-none transition-all" placeholder="Enter new password" />
+                  <button type="button" (click)="showNewPass.set(!showNewPass())" class="absolute right-4 text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[1.2rem]">{{ showNewPass() ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-[#111827] mb-2">Confirm Password</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-4 text-gray-400">password</span>
+                  <input [type]="showNewPass() ? 'text' : 'password'" formControlName="confirmPassword" class="w-full rounded-2xl border-2 border-gray-100 bg-gray-50/50 pl-11 pr-4 py-3.5 text-[0.95rem] font-medium text-gray-900 placeholder-gray-400 focus:bg-white focus:border-[#166534] focus:ring-4 focus:ring-[#166534]/10 outline-none transition-all" placeholder="Confirm new password" />
+                </div>
+                @if (passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched) {
+                  <p class="mt-2 text-xs font-bold text-red-500 pl-2 flex items-center gap-1"><span class="material-symbols-outlined text-[1rem]">error</span> Passwords do not match</p>
+                }
+              </div>
+            </div>
+            
+            @if (pwError()) {
+              <div class="mt-6 rounded-2xl bg-red-50 p-4 text-sm font-bold text-red-600 border border-red-100/50 flex items-center gap-3">
+                <span class="material-symbols-outlined text-red-500 text-[1.2rem]">error</span>
+                <p>{{ pwError() }}</p>
+              </div>
+            }
+            @if (pwSuccess()) {
+              <div class="mt-6 rounded-2xl bg-[#f0fdf4] p-4 text-sm font-bold text-[#166534] border border-[#dcfce7]/50 flex items-center gap-3">
+                <span class="material-symbols-outlined text-[#16a34a] text-[1.2rem]">check_circle</span>
+                <p>Password changed successfully!</p>
+              </div>
+            }
+            
+            <button type="submit" [disabled]="passwordForm.invalid || pwSubmitting()" class="w-full rounded-2xl bg-[#166534] text-white py-4 mt-8 font-black tracking-wide text-[0.95rem] shadow-lg shadow-[#166534]/20 hover:bg-[#14532d] hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:hover:translate-y-0">
+              @if (pwSubmitting()) {
+                <span class="material-symbols-outlined animate-spin align-middle mr-2 text-[1.2rem]">progress_activity</span>
+                Updating...
+              } @else {
+                Update Password
+              }
+            </button>
+          </form>
+        }
+
+        <!-- Coming Soon Modal -->
+        @if (activeModal() === 'coming-soon') {
+          <div class="text-center py-6">
+            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-blue-50 text-blue-500 mb-6">
+              <span class="material-symbols-outlined text-[3rem]">construction</span>
+            </div>
+            <h2 class="text-2xl font-black text-[#111827] tracking-tight mb-2">Coming Soon</h2>
+            <p class="text-sm text-gray-500 mb-8 leading-relaxed">
+              We're working hard to bring this feature to you. Stay tuned for our next update!
+            </p>
+            <button (click)="closeModal()" class="w-full rounded-2xl bg-gray-100 text-[#111827] py-4 font-black tracking-wide text-[0.95rem] hover:bg-gray-200 transition-colors">
+              Got it
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>

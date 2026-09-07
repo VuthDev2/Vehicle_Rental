@@ -106,9 +106,6 @@
 
       <!-- Left: Logo (Mobile Only) -->
       <div class="flex items-center gap-3 sm:gap-4 lg:hidden">
-        <button type="button" (click)="toggleSidebar()" class="text-white hover:opacity-80 p-1 flex items-center justify-center">
-          <span class="material-symbols-outlined text-[24px]">menu</span>
-        </button>
         <div class="w-8 h-8 bg-white rounded-[10px] flex items-center justify-center p-1">
           <img src="/logo.jpg" alt="Cambo Rent" class="w-full h-full object-contain" />
         </div>
@@ -134,25 +131,26 @@
         <!-- Vertical Divider (Desktop Only) -->
         <div class="w-px h-6 bg-gray-200 hidden lg:block"></div>
 
-        <!-- Dark Mode Toggle (Mobile Only) -->
-        <button type="button" class="lg:hidden text-white hover:opacity-80 transition-opacity flex items-center justify-center w-8 h-8">
-          <span class="material-symbols-outlined text-[20px]" style="font-weight: 600;">dark_mode</span>
-        </button>
+        <!-- Dark Mode Toggle removed from here (Moved to settings) -->
 
         <!-- Notifications -->
-        <button type="button" class="text-white lg:text-gray-500 hover:opacity-80 transition-opacity flex items-center justify-center relative w-8 h-8 sm:w-10 sm:h-10">
-          <span class="material-symbols-outlined text-[22px] sm:text-[24px]">notifications</span>
-          <span class="absolute top-0 right-0 sm:top-1 sm:right-1 w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] bg-[#f97316] rounded-full text-[9px] sm:text-[10px] font-bold flex items-center justify-center text-white border border-[#064022] lg:border-transparent">2</span>
-        </button>
+        <div class="relative">
+          <button type="button" (click)="notificationMenuOpen.set(!notificationMenuOpen()); profileMenuOpen.set(false)" class="text-white lg:text-gray-500 hover:opacity-80 transition-opacity flex items-center justify-center relative w-8 h-8 sm:w-10 sm:h-10">
+            <span class="material-symbols-outlined text-[22px] sm:text-[24px]">notifications</span>
+            @if (notifications.unreadCount() > 0) {
+              <span class="absolute top-0 right-0 sm:top-1 sm:right-1 w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] bg-[#f97316] rounded-full text-[9px] sm:text-[10px] font-bold flex items-center justify-center text-white border border-[#064022] lg:border-transparent">{{ notifications.unreadCount() }}</span>
+            }
+          </button>
+        </div>
 
         <!-- Profile -->
         @if (auth.user(); as user) {
-        <button type="button" (click)="profileMenuOpen.set(!profileMenuOpen())" class="flex items-center gap-1 sm:gap-2.5 hover:opacity-85 transition-opacity pl-1 sm:pl-2">
+        <button type="button" (click)="profileMenuOpen.set(!profileMenuOpen()); notificationMenuOpen.set(false)" class="flex items-center gap-1 sm:gap-2.5 hover:opacity-85 transition-opacity pl-1 sm:pl-2">
           <span class="w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[11px] sm:text-[14px] font-medium text-white border border-white/30 lg:border-transparent bg-transparent lg:bg-[#064022] flex-shrink-0 shadow-sm border border-white/40">
             {{ user.name?.charAt(0)?.toUpperCase() || 'H' }}
           </span>
-          <span class="block font-medium text-[14px] text-white lg:text-gray-700 ml-1">{{ userName }}</span>
-          <span class="block material-symbols-outlined text-white/80 lg:text-gray-400" style="font-size: 16px;">expand_more</span>
+          <span class="hidden md:block font-medium text-[14px] text-white lg:text-gray-700 ml-1">{{ userName }}</span>
+          <span class="hidden md:block material-symbols-outlined text-white/80 lg:text-gray-400" style="font-size: 16px;">expand_more</span>
         </button>
         }
       </div>
@@ -201,6 +199,61 @@
         <span class="material-symbols-outlined" style="font-size: 18px">logout</span>
         Log out
       </button>
+    </div>
+  </div>
+  }
+
+  <!-- ============ NOTIFICATIONS DROPDOWN ============ -->
+  @if (notificationMenuOpen()) {
+  <div class="fixed inset-0 z-40" (click)="notificationMenuOpen.set(false)"></div>
+  <div class="fixed top-16 right-4 md:right-20 z-50 w-80 md:w-96 bg-white rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden flex flex-col max-h-[80vh]">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+      <h3 class="font-bold text-slate-800 text-[15px]">Notifications</h3>
+      @if (notifications.unreadCount() > 0) {
+        <button (click)="notifications.markAllAsRead().subscribe()" class="text-xs font-semibold text-[#0B3D20] hover:text-[#064022]">Mark all as read</button>
+      }
+    </div>
+    
+    <div class="overflow-y-auto flex-1 p-2 space-y-1">
+      @if (notifications.notifications().length === 0) {
+        <div class="py-8 text-center flex flex-col items-center">
+          <div class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+            <span class="material-symbols-outlined text-slate-300 text-2xl">notifications_off</span>
+          </div>
+          <p class="text-slate-500 text-sm font-medium">No notifications yet</p>
+        </div>
+      } @else {
+        @for (notif of notifications.notifications(); track notif._id) {
+          <button (click)="handleNotificationClick(notif)" 
+            class="w-full text-left p-3 rounded-xl hover:bg-slate-50 transition-colors flex gap-3 group relative"
+            [class.bg-slate-50]="!notif.read"
+            [class.border]="!notif.read"
+            [class.border-slate-100]="!notif.read">
+            
+            @if (!notif.read) {
+              <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#f97316] rounded-r-full"></div>
+            }
+            
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+              [class.bg-[#0B3D20]/10]="notif.type === 'booking'"
+              [class.bg-blue-500/10]="notif.type === 'system'"
+              [class.bg-amber-500/10]="notif.type === 'promotion'">
+              <span class="material-symbols-outlined text-[18px]"
+                [class.text-[#0B3D20]]="notif.type === 'booking'"
+                [class.text-blue-600]="notif.type === 'system'"
+                [class.text-amber-600]="notif.type === 'promotion'">
+                {{ notif.type === 'booking' ? 'receipt_long' : notif.type === 'promotion' ? 'local_offer' : 'info' }}
+              </span>
+            </div>
+            
+            <div class="flex-1 min-w-0 py-0.5">
+              <p class="text-[13px] font-semibold text-slate-800 mb-0.5" [class.font-bold]="!notif.read">{{ notif.title }}</p>
+              <p class="text-[12px] text-slate-500 leading-snug">{{ notif.message }}</p>
+              <p class="text-[10px] font-medium text-slate-400 mt-1.5">{{ notif.createdAt | date:'short' }}</p>
+            </div>
+          </button>
+        }
+      }
     </div>
   </div>
   }

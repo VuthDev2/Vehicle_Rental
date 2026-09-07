@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BookingService } from '../../../core/services/booking.service';
 import { Booking, BookingStatus } from '../../../models/booking.model';
@@ -7,6 +7,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 const STATUS_STYLE: Record<string, { bg: string; color: string; border: string; dot: string }> = {
   pending:    { bg: '#FFFBEB', color: '#D97706', border: '#FDE68A', dot: '#F59E0B' },
+  pending_verification: { bg: '#FFFBEB', color: '#EA580C', border: '#FDE68A', dot: '#EA580C' },
   confirmed:  { bg: '#EFF6FF', color: '#005DAC', border: '#DBEAFE', dot: '#3980F4' },
   active:     { bg: '#ECFDF5', color: '#059669', border: '#A7F3D0', dot: '#10B981' },
   completed:  { bg: '#F0FDF4', color: '#16A34A', border: '#BBF7D0', dot: '#22C55E' },
@@ -15,15 +16,17 @@ const STATUS_STYLE: Record<string, { bg: string; color: string; border: string; 
 };
 
 const PAYMENT_STYLE: Record<string, { bg: string; color: string; border: string; dot: string }> = {
-  paid:     { bg: '#ECFDF5', color: '#059669', border: '#A7F3D0', dot: '#10B981' },
-  unpaid:   { bg: '#FFFBEB', color: '#D97706', border: '#FDE68A', dot: '#F59E0B' },
-  refunded: { bg: '#F3F4F6', color: '#6B7280', border: '#E5E7EB', dot: '#9CA3AF' },
-  failed:   { bg: '#FEF2F2', color: '#DC2626', border: '#FECACA', dot: '#F87171' },
+  paid:           { bg: '#ECFDF5', color: '#059669', border: '#A7F3D0', dot: '#10B981' },
+  partially_paid: { bg: '#FEF3C7', color: '#D97706', border: '#FDE68A', dot: '#F59E0B' },
+  unpaid:         { bg: '#FFFBEB', color: '#D97706', border: '#FDE68A', dot: '#F59E0B' },
+  refunded:       { bg: '#F3F4F6', color: '#6B7280', border: '#E5E7EB', dot: '#9CA3AF' },
+  failed:         { bg: '#FEF2F2', color: '#DC2626', border: '#FECACA', dot: '#F87171' },
 };
 
 const QUICK_FILTERS = [
   { key: null, label: 'All' },
   { key: 'pending', label: 'Pending' },
+  { key: 'pending_verification', label: 'Verification' },
   { key: 'confirmed', label: 'Confirmed' },
   { key: 'active', label: 'Active' },
   { key: 'completed', label: 'Completed' },
@@ -51,7 +54,7 @@ const CUSTOMER_AVATARS = ['#005DAC', '#7C3AED', '#059669', '#DC2626', '#D97706',
 @Component({
   selector: 'app-manage-bookings',
   standalone: true,
-  imports: [DatePipe, FormsModule],
+  imports: [DatePipe, DecimalPipe, FormsModule],
   templateUrl: './manage-bookings.component.html',
 })
 export class ManageBookingsComponent implements OnInit {
@@ -252,6 +255,12 @@ export class ManageBookingsComponent implements OnInit {
     }
   }
 
+  markBalancePaid(id: string) {
+    if (confirm('Mark the remaining balance as paid? This assumes the customer paid in person.')) {
+      this.bookingService.markBalancePaid(id).subscribe(() => this.loadBookings());
+    }
+  }
+
   bulkApprove() {
     const ids = Array.from(this.selectedBookings());
     ids.forEach(id => this.bookingService.updateBookingStatus(id, 'confirmed').subscribe());
@@ -269,13 +278,21 @@ export class ManageBookingsComponent implements OnInit {
   getStatusBadge(status: string): { bg: string; color: string; border: string; dot: string; label: string } | null {
     const s = STATUS_STYLE[status];
     if (!s) return null;
-    return { ...s, label: status.charAt(0).toUpperCase() + status.slice(1) };
+    let label = status.charAt(0).toUpperCase() + status.slice(1);
+    if (status === 'pending_verification') label = 'Verification Req.';
+    return { ...s, label };
   }
 
   getPaymentBadge(status: string): { bg: string; color: string; border: string; dot: string; label: string } | null {
     const s = PAYMENT_STYLE[status];
     if (!s) return null;
-    const labels: Record<string, string> = { paid: 'Paid', unpaid: 'Pending', refunded: 'Refunded', failed: 'Failed' };
+    const labels: Record<string, string> = { 
+      paid: 'Paid', 
+      partially_paid: 'Deposit Paid',
+      unpaid: 'Pending', 
+      refunded: 'Refunded', 
+      failed: 'Failed' 
+    };
     return { ...s, label: labels[status] || status };
   }
 
