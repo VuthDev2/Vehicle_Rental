@@ -93,7 +93,7 @@
 
 .hero-text-col {
   width: 100%;
-  max-width: 50%;
+  max-width: 60%;
   flex: 1;
 }
 
@@ -120,7 +120,7 @@
 
 .hero-visual {
   display: block;
-  width: 55%;
+  width: 45%;
   position: relative;
   right: -10px;
   top: 10px;
@@ -215,12 +215,9 @@
 .search-card-inputs {
   display: flex;
   flex-direction: row;
-  gap: 8px;
-  overflow-x: auto;
+  gap: 4px;
+  overflow: hidden;
   padding-bottom: 4px;
-}
-.search-card-inputs::-webkit-scrollbar {
-  display: none;
 }
 
 .search-dates-row {
@@ -230,49 +227,64 @@
 .search-field {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: 12px;
+  gap: 4px;
+  padding: 6px 4px;
+  border-radius: 8px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
-  flex: 0 0 auto;
-  min-width: 140px;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .search-field.location {
-  min-width: 160px;
+  min-width: 0;
+  flex: 1.2 1 0;
 }
 
 .search-field .icon {
   color: #0f172a;
-  font-size: 18px;
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
 .search-field .field-text {
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-width: 0;
 }
 
 .search-field .label {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 500;
   color: #64748b;
   margin-bottom: 2px;
   text-transform: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .search-field .value {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   color: #0f172a;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .value-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 2px;
+}
+
+.value-row .chevron {
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
 .search-action-btn {
@@ -297,10 +309,34 @@
     align-items: center;
   }
   .search-card-inputs {
+    gap: 8px;
     overflow-x: visible;
   }
   .search-dates-row {
     display: contents;
+  }
+  .search-field {
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    flex: 0 0 auto;
+    min-width: 140px;
+  }
+  .search-field.location {
+    min-width: 160px;
+    flex: 0 0 auto;
+  }
+  .search-field .icon {
+    font-size: 18px;
+  }
+  .search-field .label {
+    font-size: 10px;
+  }
+  .search-field .value {
+    font-size: 13px;
+  }
+  .value-row .chevron {
+    font-size: 18px;
   }
   .search-action-btn {
     width: auto;
@@ -357,71 +393,78 @@
    BROWSE BY TYPE CARDS
    ============================================================ */
 .category-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  overflow-x: auto;
   gap: 12px;
-  padding: 4px 0 20px;
+  padding: 4px 4px 20px;
+  scroll-snap-type: x mandatory;
+}
+
+.category-cards-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .type-card {
+  position: relative;
   background: #ffffff;
-  border: 1px solid #f1f5f9;
-  border-radius: 16px;
-  padding: 12px;
+  border-radius: 20px;
+  padding: 16px;
   min-height: 160px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   text-decoration: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
   transition: all 0.3s ease;
+  flex: 0 0 145px;
+  scroll-snap-align: center;
+  border: 1px solid #f1f5f9;
 }
 
 .type-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   border-color: #e2e8f0;
 }
 
 .type-card-header {
   display: flex;
-  align-items: flex-start;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .type-icon-badge {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #eef5ee;
-  color: #064022;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #0f172a;
 }
 
 .type-icon-badge .material-symbols-outlined {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .type-text-group h3 {
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 700;
   color: #0f172a;
   margin: 0;
 }
 
 .type-text-group p {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: #64748b;
-  margin: 0;
+  margin: 2px 0 0;
 }
 
 .type-card-img-wrap {
   width: 100%;
-  height: 90px;
+  height: 80px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -429,13 +472,27 @@
   transition: transform 0.3s ease;
 }
 
+.type-card:hover .type-card-img-wrap {
+  transform: scale(1.05);
+}
+
+.type-card-img-wrap img {
+  max-width: 90%;
+  max-height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
 @media (min-width: 768px) {
   .category-cards-grid {
-    gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    overflow-x: visible;
   }
   .type-card {
-    padding: 24px;
     min-height: 200px;
+    flex: auto;
+    padding: 24px;
   }
   .type-card-header {
     flex-direction: row;
@@ -459,17 +516,6 @@
     height: 120px;
     margin-top: 16px;
   }
-}
-
-.type-card:hover .type-card-img-wrap {
-  transform: scale(1.05);
-}
-
-.type-card-img-wrap img {
-  max-width: 90%;
-  max-height: 100%;
-  object-fit: contain;
-  mix-blend-mode: multiply;
 }
 
 /* ============================================================
@@ -557,11 +603,11 @@
 
 .vcard-img-box {
   width: 100%;
-  height: 180px;
+  height: 108px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px 0;
+  margin: 12px 0;
 }
 
 .vcard-img-box img {
@@ -952,9 +998,11 @@
 }
 
 .promo-composite-image {
-  max-width: 140px;
-  max-height: 90%;
+  max-width: 100%;
+  max-height: 115%;
   object-fit: contain;
+  margin-right: -10px;
+  margin-bottom: -10px;
 }
 
 /* ============================================================

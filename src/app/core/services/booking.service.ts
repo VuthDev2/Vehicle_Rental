@@ -21,6 +21,7 @@ export interface CreateBookingPayload {
   quantity: number;
   notes?: string;
   promoCode?: string;
+  paymentMethod?: 'online' | 'pay_at_store';
 }
 
 @Injectable({ providedIn: 'root' })
@@ -47,5 +48,9 @@ export class BookingService {
 
   updateBookingStatus(id: string, status: BookingStatus) {
     return this.http.patch<{ booking: Booking }>(`${API}/bookings/${id}/status`, { status });
+  }
+
+  markBalancePaid(id: string) {
+    return this.http.patch<{ booking: Booking }>(`${API}/bookings/${id}/mark-balance-paid`, {});
   }
 }

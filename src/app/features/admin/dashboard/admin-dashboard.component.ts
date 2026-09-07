@@ -1,56 +1,106 @@
-import { AfterViewInit, Component, ElementRef, PLATFORM_ID, ViewChild, inject } from '@angular/core';
-import { DatePipe, isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, PLATFORM_ID, ViewChild, inject, signal, OnInit } from '@angular/core';
+import { DatePipe, isPlatformBrowser, SlicePipe, TitleCasePipe } from '@angular/common';
 import { Chart } from 'chart.js/auto';
+import { ReportService } from '../../../core/services/report.service';
+import { BookingService } from '../../../core/services/booking.service';
+import { Booking } from '../../../models/booking.model';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [DatePipe],
+  imports: [DatePipe, SlicePipe, TitleCasePipe],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css',
 })
-export class AdminDashboardComponent implements AfterViewInit {
+export class AdminDashboardComponent implements OnInit, AfterViewInit {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly reportService = inject(ReportService);
+  private readonly bookingService = inject(BookingService);
+
   readonly today = new Date();
 
   @ViewChild('revenueChart') revenueChart?: ElementRef<HTMLCanvasElement>;
+  private chartInstance?: Chart;
 
-  readonly statCards = [
-    { label: 'Total Vehicles', value: '184', change: '+12%', positive: true, icon: 'directions_car' },
-    { label: 'Total Users', value: '42,590', change: '+8%', positive: true, icon: 'group' },
-    { label: 'Active Bookings', value: '312', change: '+3%', positive: true, icon: 'event_available' },
-    { label: 'Monthly Revenue', value: '$142.8k', change: '+18%', positive: true, icon: 'credit_card' },
-  ];
-
-  readonly vehicles = [
-    { name: 'Toyota Camry', type: 'Sedan', bookings: 85, trend: 12 },
-    { name: 'Honda Wave', type: 'Motorcycle', bookings: 70, trend: 8 },
-    { name: 'Lexus LX600', type: 'SUV', bookings: 55, trend: 3 },
-    { name: 'Yamaha NMAX', type: 'Scooter', bookings: 35, trend: -2 },
-  ];
+  readonly statCards = signal<any[]>([]);
+  readonly vehicles = signal<any[]>([]);
+  readonly recentBookings = signal<Booking[]>([]);
 
   readonly tableHeaders = ['Booking ID', 'Customer', 'Vehicle', 'Date', 'Amount', 'Status'];
 
-  readonly recentBookings = [
-    { id: 'BK-2847', customer: 'Sophea Keo', vehicle: 'Toyota Camry', date: 'Aug 18, 2026', amount: '$320', status: 'Confirmed' },
-    { id: 'BK-2846', customer: 'Dara Chan', vehicle: 'Lexus LX600', date: 'Aug 17, 2026', amount: '$680', status: 'Active' },
-    { id: 'BK-2845', customer: 'Maly Pov', vehicle: 'Honda Wave', date: 'Aug 17, 2026', amount: '$85', status: 'Completed' },
-    { id: 'BK-2844', customer: 'Visal Ros', vehicle: 'Yamaha NMAX', date: 'Aug 16, 2026', amount: '$110', status: 'Pending' },
-    { id: 'BK-2843', customer: 'Sreymom Lim', vehicle: 'Toyota Camry', date: 'Aug 15, 2026', amount: '$290', status: 'Confirmed' },
-  ];
-
   readonly statusStyles: Record<string, string> = {
-    Confirmed: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-    Active: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-    Completed: 'bg-slate-100 text-slate-600 ring-1 ring-slate-200',
-    Pending: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
+    confirmed: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
+    active: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
+    completed: 'bg-slate-100 text-slate-600 ring-1 ring-slate-200',
+    pending: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
+    cancelled: 'bg-red-50 text-red-700 ring-1 ring-red-200',
   };
 
-  ngAfterViewInit(): void {
-    // Chart.js needs a real canvas — skip during server-side rendering.
-    if (!isPlatformBrowser(this.platformId) || !this.revenueChart) return;
+  ngOnInit(): void {
+    this.loadDashboardData();
+  }
+
+  loadDashboardData(): void {
+    this.reportService.getDashboard().subscribe({
+      next: (res) => {
+        const stats = [
+          { label: 'Total Vehicles', value: res.summary.totalVehicles.toString(), change: '+0%', positive: true, icon: 'directions_car' },
+          { label: 'Total Users', value: res.summary.totalUsers.toString(), change: '+0%', positive: true, icon: 'group' },
+          { label: 'Active Bookings', value: res.kpi.activeRentals.toString(), change: '+0%', positive: true, icon: 'event_available' },
+          { label: 'Monthly Revenue', value: '$' + res.revenueBreakdown.thisMonth.toLocaleString(), change: '+0%', positive: true, icon: 'credit_card' },
+        ];
+        this.statCards.set(stats);
+      },
+      error: () => {}
+    });
+
+    this.reportService.getPopularVehicles().subscribe({
+      next: (res) => {
+        // Map the backend structure to what the template expects
+        const mappedVehicles = res.vehicles.slice(0, 4).map(v => ({
+          name: v.name,
+          type: v.type,
+          bookings: v.count,
+          trend: 0 // Optional: Backend might not provide trend
+        }));
+        this.vehicles.set(mappedVehicles);
+      },
+      error: () => {}
+    });
+
+    this.bookingService.getBookings(undefined, 1, 5).subscribe({
+      next: (res) => {
+        this.recentBookings.set(res.bookings);
+      },
+      error: () => {}
+    });
+    
+    if (isPlatformBrowser(this.platformId)) {
+        this.reportService.getRevenue(6).subscribe({
+          next: (res) => {
+            this.updateChart(res.revenue);
+          },
+          error: () => {}
+        });
+    }
+  }
+
+  updateChart(revenueData: any[]): void {
+    if (!this.revenueChart || !isPlatformBrowser(this.platformId)) return;
+
+    // The backend returns an array of { _id: { year, month }, total, count }
+    // We should sort it chronologically just in case, but assume it's sorted or sort it:
+    const sortedData = [...revenueData].sort((a, b) => {
+        if (a._id.year !== b._id.year) return a._id.year - b._id.year;
+        return a._id.month - b._id.month;
+    });
+
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const labels = sortedData.map(d => monthNames[d._id.month - 1]);
+    const data = sortedData.map(d => d.total);
 
     const canvas = this.revenueChart.nativeElement;
     const ctx = canvas.getContext('2d');
+    
     let fill: string | CanvasGradient = 'rgba(45,90,61,0.12)';
     if (ctx) {
       const gradient = ctx.createLinearGradient(0, 0, 0, 220);
@@ -59,14 +109,18 @@ export class AdminDashboardComponent implements AfterViewInit {
       fill = gradient;
     }
 
-    new Chart(canvas, {
+    if (this.chartInstance) {
+        this.chartInstance.destroy();
+    }
+
+    this.chartInstance = new Chart(canvas, {
       type: 'line',
       data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        labels: labels,
         datasets: [
           {
             label: 'Revenue',
-            data: [82000, 74000, 68000, 91000, 108000, 142800],
+            data: data,
             borderColor: '#2d5a3d',
             borderWidth: 2.5,
             backgroundColor: fill,
@@ -107,5 +161,20 @@ export class AdminDashboardComponent implements AfterViewInit {
         },
       },
     });
+  }
+  
+  ngAfterViewInit(): void {
+      // The chart will be initialized after the data is loaded in updateChart.
+  }
+
+  // Helpers for template formatting
+  getBookingCustomer(booking: Booking): string {
+    const u = booking.userId;
+    return typeof u === 'object' && u !== null ? u.name : 'Walk-in';
+  }
+
+  getBookingVehicle(booking: Booking): string {
+    const v = booking.vehicleId;
+    return typeof v === 'object' && v !== null ? v.name : 'Unknown';
   }
 }

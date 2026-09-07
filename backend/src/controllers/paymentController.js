@@ -19,7 +19,7 @@ const generateTransactionId = () =>
 // POST /api/payments
 const createPayment = async (req, res, next) => {
   try {
-    const { bookingId, method } = req.body;
+    const { bookingId, method, paymentType = 'full' } = req.body;
 
     const booking = await Booking.findById(bookingId)
       .populate('vehicleId', 'name images')
@@ -37,12 +37,14 @@ const createPayment = async (req, res, next) => {
     let status = 'pending';
     let transactionId = '';
 
+    const amountToCharge = paymentType === 'deposit' ? booking.totalPrice / 2 : booking.totalPrice;
+
     if (stripe && method === 'Card') {
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(booking.totalPrice * 100),
+        amount: Math.round(amountToCharge * 100),
         currency: 'usd',
-        metadata: { bookingId: booking._id.toString() },
-        description: `Cambo Rent - ${booking.vehicleId?.name || 'Vehicle'} rental`,
+        metadata: { bookingId: booking._id.toString(), paymentType },
+        description: `Cambo Rent - ${booking.vehicleId?.name || 'Vehicle'} rental (${paymentType})`,
       });
       status = 'succeeded';
       transactionId = paymentIntent.id;
@@ -59,20 +61,31 @@ const createPayment = async (req, res, next) => {
     const payment = await Payment.create({
       bookingId,
       userId: req.user._id,
-      amount: booking.totalPrice,
+      amount: amountToCharge,
       method,
       status,
+      paymentType,
       transactionId,
     });
 
     if (status === 'succeeded') {
+      const newAmountPaid = (booking.amountPaid || 0) + amountToCharge;
+      const balanceDue = booking.totalPrice - newAmountPaid;
+      const newPaymentStatus = newAmountPaid >= booking.totalPrice ? 'paid' : 'partially_paid';
+      const newBookingStatus = (booking.rentalType === 'month' || booking.rentalType === 'year') ? 'pending_verification' : 'confirmed';
+
       await Booking.findByIdAndUpdate(bookingId, {
-        paymentStatus: 'paid',
-        status: 'confirmed',
+        paymentStatus: newPaymentStatus,
+        status: newBookingStatus,
+        amountPaid: newAmountPaid,
+        balanceDue: balanceDue,
+        paymentType: paymentType === 'deposit' ? 'deposit' : booking.paymentType,
       });
 
-      booking.status = 'confirmed';
-      booking.paymentStatus = 'paid';
+      booking.status = newBookingStatus;
+      booking.paymentStatus = newPaymentStatus;
+      booking.amountPaid = newAmountPaid;
+      booking.balanceDue = balanceDue;
 
       const user = booking.userId;
       const vehicle = booking.vehicleId;
@@ -98,7 +111,7 @@ const getPayments = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const [payments, total] = await Promise.all([
+    const [payments, total, stats] = await Promise.all([
       Payment.find(filter)
         .populate({
           path: 'bookingId',
@@ -110,9 +123,42 @@ const getPayments = async (req, res, next) => {
         .skip(skip)
         .limit(limit),
       Payment.countDocuments(filter),
+      Payment.aggregate([
+        { $match: filter },
+        { 
+          $group: {
+            _id: '$status',
+            count: { $sum: 1 },
+            amount: { $sum: '$amount' }
+          }
+        }
+      ])
     ]);
 
-    res.json({ payments, total, page, totalPages: Math.ceil(total / limit) });
+    let totalRevenue = 0;
+    let totalPending = 0;
+    let totalFailed = 0;
+    let totalRefunded = 0;
+
+    stats.forEach(stat => {
+      if (stat._id === 'succeeded') totalRevenue += stat.amount;
+      if (stat._id === 'pending') totalPending += stat.count;
+      if (stat._id === 'failed') totalFailed += stat.count;
+      if (stat._id === 'refunded') totalRefunded += stat.count;
+    });
+
+    res.json({ 
+      payments, 
+      total, 
+      page, 
+      totalPages: Math.ceil(total / limit),
+      stats: {
+        totalRevenue,
+        totalPending,
+        totalFailed,
+        totalRefunded
+      }
+    });
   } catch (err) {
     next(err);
   }
@@ -127,9 +173,21 @@ const markPaid = async (tranId) => {
     await payment.save();
   }
 
+  const existingBooking = await Booking.findById(payment.bookingId);
+  const newAmountPaid = (existingBooking.amountPaid || 0) + payment.amount;
+  const balanceDue = existingBooking.totalPrice - newAmountPaid;
+  const newPaymentStatus = newAmountPaid >= existingBooking.totalPrice ? 'paid' : 'partially_paid';
+  const newBookingStatus = (existingBooking.rentalType === 'month' || existingBooking.rentalType === 'year') ? 'pending_verification' : 'confirmed';
+
   const booking = await Booking.findByIdAndUpdate(
     payment.bookingId,
-    { paymentStatus: 'paid', status: 'confirmed' },
+    { 
+      paymentStatus: newPaymentStatus, 
+      status: newBookingStatus,
+      amountPaid: newAmountPaid,
+      balanceDue: balanceDue,
+      paymentType: payment.paymentType === 'deposit' ? 'deposit' : existingBooking.paymentType
+    },
     { new: true }
   )
     .populate('vehicleId')
@@ -152,7 +210,7 @@ const markPaid = async (tranId) => {
 // Returns the signed fields + action URL the browser posts to ABA PayWay.
 const createPaywayForm = async (req, res, next) => {
   try {
-    const { bookingId } = req.body;
+    const { bookingId, paymentType = 'full' } = req.body;
 
     const booking = await Booking.findById(bookingId)
       .populate('vehicleId', 'name')
@@ -171,6 +229,8 @@ const createPaywayForm = async (req, res, next) => {
 
     const tranId = generateTranId();
 
+    const amountToCharge = paymentType === 'deposit' ? booking.totalPrice / 2 : booking.totalPrice;
+
     // Record a pending ABA Pay payment keyed by tran_id so the callback/confirm
     // step can reconcile it later.
     await Payment.findOneAndUpdate(
@@ -178,9 +238,10 @@ const createPaywayForm = async (req, res, next) => {
       {
         bookingId,
         userId: req.user._id,
-        amount: booking.totalPrice,
+        amount: amountToCharge,
         method: 'ABA Pay',
         status: 'pending',
+        paymentType,
         transactionId: tranId,
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -195,12 +256,12 @@ const createPaywayForm = async (req, res, next) => {
 
     const payload = buildPurchase({
       tranId,
-      amount: booking.totalPrice,
+      amount: amountToCharge,
       items: [
         {
           name: booking.vehicleId?.name || 'Vehicle Rental',
           quantity: 1,
-          price: Number(booking.totalPrice),
+          price: Number(amountToCharge),
         },
       ],
       firstname,
@@ -209,7 +270,7 @@ const createPaywayForm = async (req, res, next) => {
       phone: booking.userId.phone || '',
       returnUrl: `${backend}/api/payments/payway/callback`,
       continueSuccessUrl: `${frontend}/payment/return?tran_id=${tranId}`,
-      cancelUrl: `${frontend}/vehicles/${booking.vehicleId?._id || ''}`,
+      cancelUrl: `${frontend}/customer/bookings`,
     });
 
     res.json(payload);
@@ -266,7 +327,7 @@ const confirmPaywayTransaction = async (req, res, next) => {
 // in-page. Also records a pending ABA Pay payment keyed by tran_id.
 const createPaywayQr = async (req, res, next) => {
   try {
-    const { bookingId } = req.body;
+    const { bookingId, paymentType = 'full' } = req.body;
 
     const booking = await Booking.findById(bookingId)
       .populate('vehicleId', 'name')
@@ -284,14 +345,17 @@ const createPaywayQr = async (req, res, next) => {
 
     const tranId = generateTranId();
 
+    const amountToCharge = paymentType === 'deposit' ? booking.totalPrice / 2 : booking.totalPrice;
+
     await Payment.findOneAndUpdate(
       { bookingId, status: 'pending' },
       {
         bookingId,
         userId: req.user._id,
-        amount: booking.totalPrice,
+        amount: amountToCharge,
         method: 'ABA Pay',
         status: 'pending',
+        paymentType,
         transactionId: tranId,
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -303,12 +367,12 @@ const createPaywayQr = async (req, res, next) => {
 
     const data = await requestKhqr({
       tranId,
-      amount: booking.totalPrice,
+      amount: amountToCharge,
       items: [
         {
           name: booking.vehicleId?.name || 'Vehicle Rental',
           quantity: 1,
-          price: Number(booking.totalPrice),
+          price: Number(amountToCharge),
         },
       ],
       firstname,
@@ -326,7 +390,7 @@ const createPaywayQr = async (req, res, next) => {
     res.json({
       tranId,
       bookingId: booking._id,
-      amount: booking.totalPrice,
+      amount: amountToCharge,
       qrImage: data.qrImage || '',
       qrString: data.qrString || '',
     });

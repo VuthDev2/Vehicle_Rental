@@ -1,72 +1,24 @@
-<div
-  class="reports-page"
-  style="
-    background: #f8f9fa;
-    min-height: 100vh;
-    padding: 28px 32px;
-    font-family: 'Inter', system-ui, sans-serif;
-  "
->
+<div class="reports-page bg-slate-50 min-h-screen px-8 py-7 font-sans text-slate-800">
   <!-- ==================== HEADER ==================== -->
   <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
     <div>
       <div class="flex items-center gap-3">
-        <h1
-          style="
-            font-size: 26px;
-            font-weight: 800;
-            color: #1a1a2e;
-            margin: 0;
-            letter-spacing: -0.5px;
-          "
-        >
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight m-0">
           Reports & Analytics
         </h1>
-        <span
-          style="
-            background: #e5eeff;
-            color: #005dac;
-            padding: 2px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            line-height: 28px;
-          "
-          >v2.0</span
-        >
+        <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold">v2.0</span>
       </div>
-      <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0">
+      <p class="text-sm text-slate-500 mt-1">
         Monitor business performance with real-time insights
       </p>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <div
-        style="
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
-          border-radius: 10px;
-          padding: 4px 12px 4px 4px;
-        "
-      >
-        <span class="material-symbols-outlined" style="font-size: 16px; color: #9ca3af"
-          >calendar_month</span
-        >
+      <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-lg p-1 pr-3 shadow-sm">
+        <span class="material-symbols-outlined text-slate-400 text-base ml-2">calendar_month</span>
         <select
           [(ngModel)]="selectedPeriod"
           (ngModelChange)="onFilterChange()"
-          style="
-            border: none;
-            background: transparent;
-            font-size: 13px;
-            font-weight: 600;
-            color: #1a1a2e;
-            outline: none;
-            cursor: pointer;
-            padding: 4px 4px 4px 0;
-          "
+          class="border-none bg-transparent text-sm font-semibold text-slate-800 outline-none cursor-pointer focus:ring-0 py-1"
         >
           <option value="7">Last 7 Days</option>
           <option value="30">Last 30 Days</option>
@@ -76,31 +28,10 @@
           <option value="all">All Time</option>
         </select>
       </div>
-      <div
-        style="
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
-          border-radius: 10px;
-          padding: 4px 12px 4px 4px;
-        "
-      >
-        <span class="material-symbols-outlined" style="font-size: 16px; color: #9ca3af"
-          >compare_arrows</span
-        >
+      <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-lg p-1 pr-3 shadow-sm">
+        <span class="material-symbols-outlined text-slate-400 text-base ml-2">compare_arrows</span>
         <select
-          style="
-            border: none;
-            background: transparent;
-            font-size: 13px;
-            font-weight: 600;
-            color: #1a1a2e;
-            outline: none;
-            cursor: pointer;
-            padding: 4px 4px 4px 0;
-          "
+          class="border-none bg-transparent text-sm font-semibold text-slate-800 outline-none cursor-pointer focus:ring-0 py-1"
         >
           <option>Compare Period</option>
           <option>Previous Period</option>
@@ -108,57 +39,15 @@
         </select>
       </div>
       <button
-        style="
-          border: 1px solid #e5e7eb;
-          border-radius: 10px;
-          background: #ffffff;
-          padding: 8px 16px;
-          font-size: 13px;
-          font-weight: 600;
-          color: #374151;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          transition: all 0.15s;
-        "
-        onmouseover="
-          this.style.background = '#F9FAFB';
-          this.style.borderColor = '#D1D5DB';
-        "
-        onmouseout="
-          this.style.background = '#FFFFFF';
-          this.style.borderColor = '#E5E7EB';
-        "
+        class="border border-slate-200 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-700 cursor-pointer flex items-center gap-2 transition-all duration-200 hover:bg-slate-50 hover:shadow-sm"
       >
-        <span class="material-symbols-outlined" style="font-size: 16px">file_download</span>
+        <span class="material-symbols-outlined text-base">file_download</span>
         Export
       </button>
       <button
-        style="
-          border: 1px solid #e5e7eb;
-          border-radius: 10px;
-          background: #ffffff;
-          padding: 8px 16px;
-          font-size: 13px;
-          font-weight: 600;
-          color: #374151;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          transition: all 0.15s;
-        "
-        onmouseover="
-          this.style.background = '#F9FAFB';
-          this.style.borderColor = '#D1D5DB';
-        "
-        onmouseout="
-          this.style.background = '#FFFFFF';
-          this.style.borderColor = '#E5E7EB';
-        "
+        class="border border-slate-200 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-700 cursor-pointer flex items-center gap-2 transition-all duration-200 hover:bg-slate-50 hover:shadow-sm"
       >
-        <span class="material-symbols-outlined" style="font-size: 16px">picture_as_pdf</span>
+        <span class="material-symbols-outlined text-base">picture_as_pdf</span>
         Download PDF
       </button>
     </div>
@@ -166,959 +55,257 @@
 
   @if (loading()) {
     <!-- ==================== LOADING ==================== -->
-    <div class="grid grid-cols-4 gap-5 mb-8">
-      @for (i of [1, 2, 3, 4, 5, 6, 7]; track i) {
-        <div
-          style="
-            background: #ffffff;
-            border-radius: 12px;
-            border: 1px solid #f0f0f0;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-          "
-        >
-          <div
-            class="skeleton"
-            style="height: 12px; width: 50%; border-radius: 4px; margin-bottom: 10px"
-          ></div>
-          <div
-            class="skeleton"
-            style="height: 28px; width: 40%; border-radius: 6px; margin-bottom: 8px"
-          ></div>
-          <div class="skeleton" style="height: 12px; width: 30%; border-radius: 4px"></div>
+    <div class="grid grid-cols-4 gap-6 mb-8">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
+          <div class="skeleton h-3 w-1/2 rounded mb-2.5"></div>
+          <div class="skeleton h-7 w-2/5 rounded-md mb-2"></div>
+          <div class="skeleton h-3 w-1/3 rounded"></div>
         </div>
       }
     </div>
-    <div class="grid grid-cols-2 gap-5 mb-8">
-      <div
-        style="background: #ffffff; border-radius: 12px; border: 1px solid #f0f0f0; padding: 24px"
-      >
-        <div
-          class="skeleton"
-          style="height: 18px; width: 40%; border-radius: 4px; margin-bottom: 20px"
-        ></div>
-        <div class="skeleton" style="height: 260px; width: 100%; border-radius: 8px"></div>
+    <div class="grid grid-cols-12 gap-6 mb-8">
+      <div class="col-span-8 bg-white rounded-xl border border-slate-100 p-6 shadow-sm">
+        <div class="skeleton h-4 w-1/3 rounded mb-5"></div>
+        <div class="skeleton h-[300px] w-full rounded-lg"></div>
       </div>
-      <div
-        style="background: #ffffff; border-radius: 12px; border: 1px solid #f0f0f0; padding: 24px"
-      >
-        <div
-          class="skeleton"
-          style="height: 18px; width: 40%; border-radius: 4px; margin-bottom: 20px"
-        ></div>
-        <div class="skeleton" style="height: 260px; width: 100%; border-radius: 8px"></div>
+      <div class="col-span-4 bg-white rounded-xl border border-slate-100 p-6 shadow-sm">
+        <div class="skeleton h-4 w-1/2 rounded mb-5"></div>
+        <div class="skeleton h-[300px] w-full rounded-lg"></div>
       </div>
-    </div>
-    <div style="background: #ffffff; border-radius: 12px; border: 1px solid #f0f0f0; padding: 24px">
-      <div
-        class="skeleton"
-        style="height: 18px; width: 30%; border-radius: 4px; margin-bottom: 20px"
-      ></div>
-      <div class="skeleton" style="height: 200px; width: 100%; border-radius: 8px"></div>
     </div>
   } @else if (isEmpty()) {
     <!-- ==================== EMPTY STATE ==================== -->
-    <div
-      style="
-        background: #ffffff;
-        border-radius: 16px;
-        border: 1px solid #f0f0f0;
-        text-align: center;
-        padding: 100px 20px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-      "
-    >
-      <div
-        style="
-          width: 120px;
-          height: 120px;
-          border-radius: 50%;
-          background: #f3f4f6;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 24px;
-        "
-      >
-        <span class="material-symbols-outlined" style="font-size: 56px; color: #9ca3af"
-          >analytics</span
-        >
+    <div class="bg-white rounded-2xl border border-slate-100 text-center py-24 px-5 shadow-sm">
+      <div class="w-24 h-24 rounded-full bg-slate-50 flex items-center justify-center mx-auto mb-6">
+        <span class="material-symbols-outlined text-5xl text-slate-400">analytics</span>
       </div>
-      <p style="font-size: 22px; font-weight: 800; color: #1a1a2e; margin: 0 0 8px">
-        No report data available yet
+      <p class="text-2xl font-extrabold text-slate-900 m-0 mb-2">No report data available yet</p>
+      <p class="text-sm text-slate-500 max-w-md mx-auto mb-8">
+        Analytics will appear after bookings and payments are recorded. Start by adding vehicles and processing customer bookings.
       </p>
-      <p
-        style="
-          font-size: 15px;
-          color: #6b7280;
-          margin: 0 0 32px;
-          max-width: 480px;
-          margin-left: auto;
-          margin-right: auto;
-        "
-      >
-        Analytics will appear after bookings and payments are recorded. Start by adding vehicles and
-        processing customer bookings.
-      </p>
-      <div style="display: flex; align-items: center; justify-content: center; gap: 12px">
-        <span
-          style="
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: #9ca3af;
-            background: #f3f4f6;
-            padding: 6px 14px;
-            border-radius: 8px;
-          "
-        >
-          <span class="material-symbols-outlined" style="font-size: 16px">directions_car</span>
+      <div class="flex items-center justify-center gap-3">
+        <span class="flex items-center gap-1.5 text-sm font-semibold text-slate-500 bg-slate-50 px-4 py-2 rounded-lg">
+          <span class="material-symbols-outlined text-lg">directions_car</span>
           Add Vehicles
         </span>
-        <span
-          style="
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            color: #9ca3af;
-            background: #f3f4f6;
-            padding: 6px 14px;
-            border-radius: 8px;
-          "
-        >
-          <span class="material-symbols-outlined" style="font-size: 16px">receipt_long</span>
+        <span class="flex items-center gap-1.5 text-sm font-semibold text-slate-500 bg-slate-50 px-4 py-2 rounded-lg">
+          <span class="material-symbols-outlined text-lg">receipt_long</span>
           Create Booking
         </span>
       </div>
     </div>
   } @else {
-    <!-- ==================== EXECUTIVE SUMMARY ==================== -->
-    <div class="grid grid-cols-4 gap-4 mb-8">
+    <!-- ==================== ROW 1: EXECUTIVE SUMMARY ==================== -->
+    <div class="grid grid-cols-4 gap-6 mb-8">
       @for (insight of executiveInsights(); track insight.label) {
         <div
-          style="background: linear-gradient(135deg, {{
-            insight.bg
-          }}, #FFFFFF); border-radius: 12px; border: 1px solid {{
-            insight.border
-          }}; padding: 16px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: all 0.2s; cursor: default;"
-          onmouseover="
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
-          "
-          onmouseout="
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
-          "
+          class="rounded-xl border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-default"
+          [style.background]="'linear-gradient(135deg, ' + insight.bg + ' 0%, #ffffff 100%)'"
+          [style.borderColor]="insight.border"
         >
-          <div class="flex items-center gap-2 mb-2">
+          <div class="flex items-center gap-2.5 mb-3">
             <span
-              style="width: 28px; height: 28px; border-radius: 8px; background: {{
-                insight.badgeBg
-              }}; display: flex; align-items: center; justify-content: center;"
+              class="w-8 h-8 rounded-lg flex items-center justify-center"
+              [style.background]="insight.badgeBg"
             >
               <span
-                class="material-symbols-outlined"
-                style="font-size: 16px; color: {{ insight.color }};"
+                class="material-symbols-outlined text-[18px]"
+                [style.color]="insight.color"
                 >{{ insight.icon }}</span
               >
             </span>
             <span
-              style="font-size: 11px; font-weight: 700; color: {{
-                insight.color
-              }}; text-transform: uppercase; letter-spacing: 0.3px;"
+              class="text-xs font-bold uppercase tracking-wide"
+              [style.color]="insight.color"
               >{{ insight.label }}</span
             >
           </div>
-          <p style="font-size: 14px; font-weight: 600; color: #1a1a2e; margin: 0; line-height: 1.5">
+          <p class="text-[15px] font-bold text-slate-900 m-0 leading-relaxed">
             {{ insight.text }}
           </p>
         </div>
       }
     </div>
 
-    <!-- ==================== KPI SUMMARY CARDS ==================== -->
-    <div class="grid grid-cols-3 lg:grid-cols-7 gap-4 mb-8">
-      @for (kpi of kpiCards(); track kpi.label) {
-        <div
-          style="
-            background: #ffffff;
-            border-radius: 12px;
-            border: 1px solid #f0f0f0;
-            padding: 18px 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            transition: all 0.2s;
-            cursor: default;
-          "
-          onmouseover="
-            this.style.transform = 'translateY(-3px)';
-            this.style.boxShadow = '0 12px 32px rgba(0,0,0,0.1)';
-          "
-          onmouseout="
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
-          "
-        >
-          <div class="flex items-center gap-2 mb-2">
-            <div
-              style="width: 32px; height: 32px; border-radius: 8px; background: {{
-                kpi.bg
-              }}; display: flex; align-items: center; justify-content: center;"
-            >
-              <span
-                class="material-symbols-outlined"
-                style="font-size: 16px; color: {{ kpi.color }};"
-                >{{ kpi.icon }}</span
-              >
-            </div>
-            <span style="font-size: 16px; font-weight: 800; color: #1a1a2e; margin: 0">{{
-              kpi.value
-            }}</span>
-          </div>
-          <span style="font-size: 11px; font-weight: 500; color: #6b7280">{{ kpi.label }}</span>
-          <div style="margin-top: 4px">
-            <span
-              style="display: inline-flex; align-items: center; gap: 2px; font-size: 11px; font-weight: 700; color: {{
-                kpi.trendColor
-              }};"
-            >
-              <span class="material-symbols-outlined" style="font-size: 14px">{{
-                kpi.trendIcon
-              }}</span>
-              {{ kpi.trend }}
-            </span>
-          </div>
-        </div>
-      }
-    </div>
-
-    <!-- ==================== REVENUE ANALYTICS CHART ==================== -->
-    <div
-      style="
-        background: #ffffff;
-        border-radius: 14px;
-        border: 1px solid #f0f0f0;
-        padding: 24px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        margin-bottom: 24px;
-      "
-    >
-      <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <div>
-          <h2
-            style="
-              font-size: 18px;
-              font-weight: 800;
-              color: #1a1a2e;
-              margin: 0;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-            "
-          >
-            Revenue Analytics
-            <span
-              style="
-                font-size: 11px;
-                font-weight: 600;
-                color: #6b7280;
-                background: #f3f4f6;
-                padding: 2px 10px;
-                border-radius: 6px;
-              "
-              >Interactive</span
-            >
-          </h2>
-        </div>
-        <div class="flex items-center gap-2 flex-wrap">
-          <div style="display: flex; background: #f3f4f6; border-radius: 8px; padding: 2px">
-            @for (m of metrics; track m) {
-              <button
-                (click)="setMetric(m)"
-                [style.background]="selectedMetric() === m ? '#FFFFFF' : 'transparent'"
-                [style.color]="selectedMetric() === m ? '#1A1A2E' : '#6B7280'"
-                [style.boxShadow]="selectedMetric() === m ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'"
-                style="
-                  border: none;
-                  border-radius: 6px;
-                  padding: 5px 12px;
-                  font-size: 12px;
-                  font-weight: 600;
-                  cursor: pointer;
-                  transition: all 0.15s;
-                "
-                onmouseover="this.style.color = '#1A1A2E'"
-                onmouseout="this.style.color = this.getAttribute('data-color')"
-                [attr.data-color]="selectedMetric() === m ? '#1A1A2E' : '#6B7280'"
-              >
-                {{ m.charAt(0).toUpperCase() + m.slice(1) }}
-              </button>
-            }
-          </div>
-          <div style="display: flex; background: #f3f4f6; border-radius: 8px; padding: 2px">
-            @for (ct of chartTypes; track ct) {
-              <button
-                (click)="setChartType(ct)"
-                [style.background]="selectedChartType() === ct ? '#FFFFFF' : 'transparent'"
-                [style.color]="selectedChartType() === ct ? '#1A1A2E' : '#6B7280'"
-                [style.boxShadow]="
-                  selectedChartType() === ct ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
-                "
-                style="
-                  border: none;
-                  border-radius: 6px;
-                  padding: 5px 10px;
-                  font-size: 12px;
-                  font-weight: 600;
-                  cursor: pointer;
-                  display: flex;
-                  align-items: center;
-                  gap: 4px;
-                  transition: all 0.15s;
-                "
-                (mouseover)="hoverBtn($event)"
-                (mouseout)="unhoverBtn($event, selectedChartType() === ct)"
-              >
-                <span class="material-symbols-outlined" style="font-size: 14px">{{
-                  ct === 'line' ? 'show_chart' : ct === 'bar' ? 'bar_chart' : 'stacked_line_chart'
-                }}</span>
-                {{ ct.charAt(0).toUpperCase() + ct.slice(1) }}
-              </button>
-            }
-          </div>
-          <div style="display: flex; background: #f3f4f6; border-radius: 8px; padding: 2px">
-            @for (p of periods; track p) {
-              <button
-                (click)="setChartPeriod(p)"
-                [style.background]="chartPeriod() === p ? '#FFFFFF' : 'transparent'"
-                [style.color]="chartPeriod() === p ? '#1A1A2E' : '#6B7280'"
-                [style.boxShadow]="chartPeriod() === p ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'"
-                style="
-                  border: none;
-                  border-radius: 6px;
-                  padding: 5px 10px;
-                  font-size: 11px;
-                  font-weight: 700;
-                  cursor: pointer;
-                  transition: all 0.15s;
-                  text-transform: uppercase;
-                  letter-spacing: 0.3px;
-                "
-                (mouseover)="hoverBtn($event)"
-                (mouseout)="unhoverBtn($event, chartPeriod() === p)"
-              >
-                {{ p }}
-              </button>
-            }
-          </div>
-        </div>
-      </div>
-      <div style="position: relative; height: 300px">
-        <canvas #revenueChart></canvas>
-      </div>
-      <div class="flex items-center gap-6 mt-4 pt-4" style="border-top: 1px solid #f3f4f6">
-        <span
-          style="
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: #6b7280;
-            cursor: pointer;
-          "
-          (click)="toggleLegendItem(0)"
-        >
-          <span
-            style="
-              width: 10px;
-              height: 10px;
-              border-radius: 3px;
-              background: #005dac;
-              display: inline-block;
-            "
-          ></span>
-          {{
-            selectedMetric() === 'revenue'
-              ? 'Total Revenue'
-              : selectedMetric() === 'bookings'
-                ? 'Total Bookings'
-                : selectedMetric() === 'profit'
-                  ? 'Total Profit'
-                  : 'Total Expenses'
-          }}
-        </span>
-        <span
-          style="
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: #6b7280;
-            cursor: pointer;
-          "
-          (click)="toggleLegendItem(1)"
-        >
-          <span
-            style="
-              width: 10px;
-              height: 10px;
-              border-radius: 3px;
-              background: #93c5fd;
-              display: inline-block;
-            "
-          ></span>
-          Previous Period
-        </span>
-      </div>
-    </div>
-
-    <!-- ==================== BOOKING ANALYTICS + FLEET UTILIZATION ==================== -->
-    <div class="grid grid-cols-2 gap-5 mb-8">
-      <!-- Booking Analytics -->
-      <div
-        style="
-          background: #ffffff;
-          border-radius: 14px;
-          border: 1px solid #f0f0f0;
-          padding: 24px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        "
-      >
-        <div class="flex items-center justify-between mb-4">
+    <!-- ==================== ROW 2: REVENUE CHART + QUICK INSIGHTS ==================== -->
+    <div class="grid grid-cols-12 gap-6 mb-8">
+      <div class="col-span-8 bg-white rounded-xl border border-slate-100 p-6 shadow-sm h-full">
+        <div class="flex items-center justify-between mb-6">
           <div>
-            <h3 style="font-size: 16px; font-weight: 800; color: #1a1a2e; margin: 0">
-              Booking Analytics
+            <h3 class="text-lg font-extrabold text-slate-900 m-0 flex items-center gap-2">
+              Revenue Analytics
+              <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Interactive</span>
             </h3>
-            <p style="font-size: 12px; color: #6b7280; margin: 2px 0 0">Status breakdown</p>
           </div>
-          <div style="display: flex; background: #f3f4f6; border-radius: 6px; padding: 2px">
-            <button
-              (click)="setDoughnutType('doughnut')"
-              style="border: none; border-radius: 5px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s;
-                          background: {{
-                doughnutType() === 'doughnut' ? '#FFFFFF' : 'transparent'
-              }};
-                          color: {{ doughnutType() === 'doughnut' ? '#1A1A2E' : '#6B7280' }};
-                          box-shadow: {{
-                doughnutType() === 'doughnut' ? '0 1px 2px rgba(0,0,0,0.08)' : 'none'
-              }};"
-            >
-              Doughnut
-            </button>
-            <button
-              (click)="setDoughnutType('pie')"
-              style="border: none; border-radius: 5px; padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s;
-                          background: {{ doughnutType() === 'pie' ? '#FFFFFF' : 'transparent' }};
-                          color: {{ doughnutType() === 'pie' ? '#1A1A2E' : '#6B7280' }};
-                          box-shadow: {{
-                doughnutType() === 'pie' ? '0 1px 2px rgba(0,0,0,0.08)' : 'none'
-              }};"
-            >
-              Pie
-            </button>
-          </div>
-        </div>
-        <div style="position: relative; height: 260px">
-          <canvas #bookingChart></canvas>
-        </div>
-        <div class="flex items-center justify-center gap-4 mt-3 flex-wrap">
-          @for (s of bookingStatusData(); track s.label) {
-            <span
-              style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #6b7280"
-            >
-              <span
-                style="width: 8px; height: 8px; border-radius: 2px; background: {{
-                  s.color
-                }}; display: inline-block;"
-              ></span>
-              {{ s.label }}
-              <strong style="color: #1a1a2e">{{ s.value }}</strong>
-            </span>
-          }
-        </div>
-      </div>
-
-      <!-- Fleet Utilization -->
-      <div
-        style="
-          background: #ffffff;
-          border-radius: 14px;
-          border: 1px solid #f0f0f0;
-          padding: 24px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        "
-      >
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 style="font-size: 16px; font-weight: 800; color: #1a1a2e; margin: 0">
-              Fleet Utilization
-            </h3>
-            <p style="font-size: 12px; color: #6b7280; margin: 2px 0 0">
-              Vehicle usage by category
-            </p>
-          </div>
-          <span
-            style="
-              background: #e7f5ed;
-              color: #059669;
-              padding: 4px 12px;
-              border-radius: 20px;
-              font-size: 12px;
-              font-weight: 700;
-            "
-          >
-            {{ fleetUtilizationPercent() }}% Overall
-          </span>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 16px">
-          @for (f of fleetData(); track f.label) {
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <span style="font-size: 13px; font-weight: 600; color: #1a1a2e">{{ f.label }}</span>
-                <span style="font-size: 13px; font-weight: 700; color: #1a1a2e"
-                  >{{ f.percent }}%</span
+          <div class="flex items-center gap-3">
+            <div class="flex bg-slate-100 rounded-lg p-1">
+              @for (m of metrics; track m) {
+                <button
+                  (click)="setMetric(m)"
+                  [class.bg-white]="selectedMetric() === m"
+                  [class.text-slate-900]="selectedMetric() === m"
+                  [class.shadow-sm]="selectedMetric() === m"
+                  [class.text-slate-500]="selectedMetric() !== m"
+                  class="border-none rounded-md px-3 py-1.5 text-xs font-bold capitalize cursor-pointer transition-all duration-200 hover:text-slate-900"
                 >
-              </div>
-              <div
-                style="
-                  width: 100%;
-                  height: 10px;
-                  border-radius: 6px;
-                  background: #f3f4f6;
-                  overflow: hidden;
-                "
-              >
-                <div
-                  style="height: 100%; border-radius: 6px; width: {{
-                    f.percent
-                  }}%; background: linear-gradient(90deg, {{ f.color }}, {{
-                    f.color
-                  }}cc); transition: width 0.8s ease;"
-                ></div>
-              </div>
-              <span style="font-size: 11px; color: #6b7280; margin-top: 2px; display: block"
-                >{{ f.count }} vehicles</span
-              >
+                  {{ m }}
+                </button>
+              }
             </div>
-          }
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== REVENUE BREAKDOWN + TOP VEHICLES + CUSTOMER ANALYTICS ==================== -->
-    <div class="grid grid-cols-12 gap-5 mb-8">
-      <!-- Revenue Breakdown -->
-      <div class="col-span-3">
-        <div
-          style="
-            background: #ffffff;
-            border-radius: 14px;
-            border: 1px solid #f0f0f0;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            height: 100%;
-          "
-        >
-          <h3 style="font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0 0 16px">
-            Revenue Breakdown
-          </h3>
-          @for (r of revenueBreakdown(); track r.label) {
-            <div
-              style="padding: 12px 0; border-bottom: {{ !$last ? '1px solid #F3F4F6' : 'none' }};"
-            >
-              <span style="font-size: 12px; font-weight: 500; color: #6b7280">{{ r.label }}</span>
-              <p style="font-size: 20px; font-weight: 800; color: #1a1a2e; margin: 2px 0 0">
-                \${{ r.value.toLocaleString() }}
-              </p>
-            </div>
-          }
-        </div>
-      </div>
-
-      <!-- Top Performing Vehicles -->
-      <div class="col-span-5">
-        <div
-          style="
-            background: #ffffff;
-            border-radius: 14px;
-            border: 1px solid #f0f0f0;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            height: 100%;
-          "
-        >
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h3 style="font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0">
-                Top Performing Vehicles
-              </h3>
-              <p style="font-size: 12px; color: #6b7280; margin: 1px 0 0">
-                By booking count & revenue
-              </p>
-            </div>
-            <span style="font-size: 11px; font-weight: 600; color: #005dac; cursor: pointer"
-              >View All</span
-            >
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 12px">
-            @for (v of topVehicles(); track v._id; let i = $index) {
-              <div class="flex items-center gap-3" style="padding: 6px 0">
-                <span
-                  style="width: 24px; height: 24px; border-radius: 6px; background: {{
-                    i < 3 ? '#E5EEFF' : '#F3F4F6'
-                  }}; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: {{
-                    i < 3 ? '#005DAC' : '#6B7280'
-                  }}; flex-shrink: 0;"
-                  >{{ i + 1 }}</span
+            <div class="flex bg-slate-100 rounded-lg p-1">
+              @for (ct of chartTypes; track ct) {
+                <button
+                  (click)="setChartType(ct)"
+                  [class.bg-white]="selectedChartType() === ct"
+                  [class.text-slate-900]="selectedChartType() === ct"
+                  [class.shadow-sm]="selectedChartType() === ct"
+                  [class.text-slate-500]="selectedChartType() !== ct"
+                  class="border-none rounded-md px-3 py-1.5 text-xs font-bold capitalize cursor-pointer flex items-center gap-1 transition-all duration-200 hover:text-slate-900"
                 >
-                <div
-                  style="
-                    width: 36px;
-                    height: 36px;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    flex-shrink: 0;
-                    background: #e5e7eb;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  "
+                  <span class="material-symbols-outlined text-[14px]">{{ ct === 'line' ? 'show_chart' : ct === 'bar' ? 'bar_chart' : 'stacked_line_chart' }}</span>
+                  {{ ct }}
+                </button>
+              }
+            </div>
+            <div class="flex bg-slate-100 rounded-lg p-1">
+              @for (p of periods; track p) {
+                <button
+                  (click)="setChartPeriod(p)"
+                  [class.bg-white]="chartPeriod() === p"
+                  [class.text-slate-900]="chartPeriod() === p"
+                  [class.shadow-sm]="chartPeriod() === p"
+                  [class.text-slate-500]="chartPeriod() !== p"
+                  class="border-none rounded-md px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wide cursor-pointer transition-all duration-200 hover:text-slate-900"
                 >
-                  @if (v.images?.[0]) {
-                    <img [src]="v.images[0]" style="width: 100%; height: 100%; object-fit: cover" />
-                  } @else {
-                    <span class="material-symbols-outlined" style="font-size: 18px; color: #9ca3af"
-                      >directions_car</span
-                    >
-                  }
-                </div>
-                <div style="flex: 1; min-width: 0">
-                  <p
-                    style="
-                      font-size: 13px;
-                      font-weight: 700;
-                      color: #1a1a2e;
-                      margin: 0;
-                      white-space: nowrap;
-                      overflow: hidden;
-                      text-overflow: ellipsis;
-                    "
-                  >
-                    {{ v.name }}
-                  </p>
-                  <p style="font-size: 11px; color: #6b7280; margin: 0">
-                    {{ v.count }} bookings · \${{ v.revenue.toLocaleString() }} revenue
-                  </p>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-
-      <!-- Customer Analytics -->
-      <div class="col-span-4">
-        <div
-          style="
-            background: #ffffff;
-            border-radius: 14px;
-            border: 1px solid #f0f0f0;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            height: 100%;
-          "
-        >
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h3 style="font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0">
-                Customer Analytics
-              </h3>
-              <p style="font-size: 12px; color: #6b7280; margin: 1px 0 0">Customer segments</p>
-            </div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 20px">
-            <div style="position: relative; width: 140px; height: 140px; flex-shrink: 0">
-              <canvas #customerChart style="width: 140px; height: 140px"></canvas>
-            </div>
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 10px">
-              @for (c of customerData(); track c.label) {
-                <div class="flex items-center gap-2">
-                  <span
-                    style="width: 8px; height: 8px; border-radius: 2px; background: {{
-                      c.color
-                    }}; display: inline-block; flex-shrink: 0;"
-                  ></span>
-                  <span style="font-size: 12px; font-weight: 600; color: #1a1a2e; flex: 1">{{
-                    c.label
-                  }}</span>
-                  <span style="font-size: 12px; font-weight: 700; color: #1a1a2e">{{
-                    c.value
-                  }}</span>
-                  <span style="font-size: 11px; color: #6b7280">({{ c.percent }}%)</span>
-                </div>
+                  {{ p }}
+                </button>
               }
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- ==================== POPULAR CATEGORIES + MONTHLY TABLE + RECENT ACTIVITY ==================== -->
-    <div class="grid grid-cols-12 gap-5 mb-8">
-      <!-- Popular Vehicle Categories -->
-      <div class="col-span-4">
-        <div
-          style="
-            background: #ffffff;
-            border-radius: 14px;
-            border: 1px solid #f0f0f0;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-          "
-        >
-          <h3 style="font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0 0 16px">
-            Popular Categories
-          </h3>
-          <div style="position: relative; height: 200px">
-            <canvas #categoryChart></canvas>
+        <div class="relative h-[300px] w-full">
+          <canvas #revenueChart></canvas>
+        </div>
+        <div class="flex items-center gap-6 mt-4 pl-4">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+            <span class="text-xs font-bold text-slate-500 capitalize">Total {{ selectedMetric() }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-200"></span>
+            <span class="text-xs font-bold text-slate-500">Previous Period</span>
           </div>
         </div>
       </div>
 
-      <!-- Monthly Revenue Table -->
-      <div class="col-span-8">
-        <div
-          style="
-            background: #ffffff;
-            border-radius: 14px;
-            border: 1px solid #f0f0f0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            overflow: hidden;
-          "
-        >
-          <div style="padding: 16px 20px; border-bottom: 1px solid #f3f4f6">
-            <div class="flex items-center justify-between">
-              <h3 style="font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0">
-                Monthly Revenue
-              </h3>
-              <span style="font-size: 11px; font-weight: 600; color: #005dac; cursor: pointer"
-                >View Full Report</span
-              >
-            </div>
+      <!-- Quick Insights -->
+      <div class="col-span-4 bg-white rounded-xl border border-slate-100 p-6 shadow-sm h-full">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 m-0">
+              Quick Insights
+            </h3>
+            <p class="text-[11px] font-medium text-slate-500 m-0 mt-0.5">
+              AI-generated business intelligence
+            </p>
           </div>
-          <div style="overflow-x: auto">
-            <table style="width: 100%; border-collapse: collapse; font-size: 13px">
-              <thead>
-                <tr style="background: #f9fafb">
-                  <th
-                    style="
-                      padding: 10px 20px;
-                      text-align: left;
-                      font-size: 11px;
-                      font-weight: 700;
-                      color: #6b7280;
-                      text-transform: uppercase;
-                      letter-spacing: 0.5px;
-                    "
-                  >
-                    Month
-                  </th>
-                  <th
-                    style="
-                      padding: 10px 20px;
-                      text-align: right;
-                      font-size: 11px;
-                      font-weight: 700;
-                      color: #6b7280;
-                      text-transform: uppercase;
-                      letter-spacing: 0.5px;
-                    "
-                  >
-                    Bookings
-                  </th>
-                  <th
-                    style="
-                      padding: 10px 20px;
-                      text-align: right;
-                      font-size: 11px;
-                      font-weight: 700;
-                      color: #6b7280;
-                      text-transform: uppercase;
-                      letter-spacing: 0.5px;
-                    "
-                  >
-                    Revenue
-                  </th>
-                  <th
-                    style="
-                      padding: 10px 20px;
-                      text-align: right;
-                      font-size: 11px;
-                      font-weight: 700;
-                      color: #6b7280;
-                      text-transform: uppercase;
-                      letter-spacing: 0.5px;
-                    "
-                  >
-                    Growth
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (row of monthlyData(); track row.month) {
-                  <tr
-                    style="border-bottom: 1px solid #f3f4f6; transition: background 0.15s"
-                    onmouseover="this.style.background = '#FAFBFC'"
-                    onmouseout="this.style.background = 'transparent'"
-                  >
-                    <td style="padding: 12px 20px; font-weight: 700; color: #1a1a2e">
-                      {{ row.month }}
-                    </td>
-                    <td
-                      style="
-                        padding: 12px 20px;
-                        text-align: right;
-                        font-weight: 600;
-                        color: #1a1a2e;
-                      "
-                    >
-                      {{ row.bookings }}
-                    </td>
-                    <td
-                      style="
-                        padding: 12px 20px;
-                        text-align: right;
-                        font-weight: 700;
-                        color: #005dac;
-                      "
-                    >
-                      \${{ row.revenue.toLocaleString() }}
-                    </td>
-                    <td style="padding: 12px 20px; text-align: right">
-                      <span
-                        style="display: inline-flex; align-items: center; gap: 2px; font-weight: 700; color: {{
-                          row.growth >= 0 ? '#059669' : '#DC2626'
-                        }};"
-                      >
-                        <span class="material-symbols-outlined" style="font-size: 14px">{{
-                          row.growth >= 0 ? 'trending_up' : 'trending_down'
-                        }}</span>
-                        {{ row.growth >= 0 ? '+' : '' }}{{ row.growth }}%
-                      </span>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+          <span class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[18px] text-indigo-600">auto_awesome</span>
+          </span>
         </div>
-      </div>
-    </div>
-
-    <!-- ==================== RECENT ACTIVITY + QUICK INSIGHTS ==================== -->
-    <div class="grid grid-cols-2 gap-5">
-      <!-- Recent Activity -->
-      <div
-        style="
-          background: #ffffff;
-          border-radius: 14px;
-          border: 1px solid #f0f0f0;
-          padding: 20px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        "
-      >
-        <h3 style="font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0 0 16px">
-          Recent Activity
-        </h3>
-        <div style="display: flex; flex-direction: column; gap: 0">
-          @for (activity of recentActivity(); track activity.label) {
+        <div class="flex flex-col gap-3">
+          @for (insight of quickInsights(); track insight.text) {
             <div
-              style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: {{
-                !$last ? '1px solid #F3F4F6' : 'none'
-              }};"
+              class="flex items-start gap-3 p-4 rounded-xl border"
+              [style.background]="insight.bg"
+              [style.border-color]="insight.border"
             >
-              <div
-                style="width: 34px; height: 34px; border-radius: 10px; background: {{
-                  activity.bg
-                }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;"
+              <span class="text-base" [style.color]="insight.color">{{ insight.icon }}</span>
+              <p class="text-sm font-semibold text-slate-800 m-0 leading-relaxed">
+                {{ insight.text }}
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== ROW 3: TOP VEHICLES + RECENT ACTIVITY ==================== -->
+    <div class="grid grid-cols-12 gap-6 mb-8">
+      <!-- Top Performing Vehicles -->
+      <div class="col-span-6 bg-white rounded-xl border border-slate-100 p-6 shadow-sm h-full">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 m-0">
+              Top Performing Vehicles
+            </h3>
+            <p class="text-[11px] font-medium text-slate-500 m-0 mt-0.5">
+              By booking count & revenue
+            </p>
+          </div>
+          <span class="text-[11px] font-bold text-indigo-600 cursor-pointer hover:text-indigo-800 transition-colors">View All</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          @for (v of topVehicles(); track v._id; let i = $index) {
+            <div class="flex items-center gap-3 py-2 border-b border-slate-50 last:border-0">
+              <span
+                class="w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-bold shrink-0"
+                [class.bg-indigo-50]="i < 3"
+                [class.text-indigo-600]="i < 3"
+                [class.bg-slate-50]="i >= 3"
+                [class.text-slate-500]="i >= 3"
+                >{{ i + 1 }}</span
               >
-                <span
-                  class="material-symbols-outlined"
-                  style="font-size: 18px; color: {{ activity.color }};"
-                  >{{ activity.icon }}</span
-                >
+              <div class="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-100 flex items-center justify-center">
+                @if (v.images?.[0]) {
+                  <img [src]="v.images[0]" class="w-full h-full object-cover" />
+                } @else {
+                  <span class="material-symbols-outlined text-[20px] text-slate-400">directions_car</span>
+                }
               </div>
-              <div style="flex: 1; min-width: 0">
-                <p style="font-size: 13px; font-weight: 600; color: #1a1a2e; margin: 0">
-                  {{ activity.label }}
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-slate-900 m-0 truncate">
+                  {{ v.name }}
                 </p>
-                <p style="font-size: 11px; color: #6b7280; margin: 1px 0 0">
-                  {{ activity.detail }}
+                <p class="text-[11px] font-medium text-slate-500 m-0 mt-0.5">
+                  {{ v.count }} bookings · \${{ v.revenue.toLocaleString() }} revenue
                 </p>
               </div>
-              <span style="font-size: 11px; color: #9ca3af; white-space: nowrap; flex-shrink: 0">{{
-                activity.time
-              }}</span>
             </div>
           }
         </div>
       </div>
 
-      <!-- Quick Insights -->
-      <div
-        style="
-          background: #ffffff;
-          border-radius: 14px;
-          border: 1px solid #f0f0f0;
-          padding: 20px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        "
-      >
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 style="font-size: 14px; font-weight: 800; color: #1a1a2e; margin: 0">
-              Quick Insights
-            </h3>
-            <p style="font-size: 12px; color: #6b7280; margin: 1px 0 0">
-              AI-generated business intelligence
-            </p>
-          </div>
-          <span
-            style="
-              width: 28px;
-              height: 28px;
-              border-radius: 8px;
-              background: #f3f0ff;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            "
-          >
-            <span class="material-symbols-outlined" style="font-size: 16px; color: #7c3aed"
-              >auto_awesome</span
-            >
-          </span>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 12px">
-          @for (insight of quickInsights(); track insight.text) {
-            <div
-              style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; background: {{
-                insight.bg
-              }}; border-radius: 10px; border: 1px solid {{ insight.border }};"
-            >
-              <span style="font-size: 14px; color: {{ insight.color }};">{{ insight.icon }}</span>
-              <p
-                style="
-                  font-size: 13px;
-                  font-weight: 500;
-                  color: #1a1a2e;
-                  margin: 0;
-                  line-height: 1.5;
-                "
+      <!-- Recent Activity -->
+      <div class="col-span-6 bg-white rounded-xl border border-slate-100 p-6 shadow-sm h-full">
+        <h3 class="text-base font-extrabold text-slate-900 mb-5 m-0">
+          Recent Activity
+        </h3>
+        <div class="flex flex-col">
+          @for (activity of recentActivity(); track activity.label) {
+            <div class="flex items-start gap-3 py-3 border-b border-slate-50 last:border-0">
+              <div
+                class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+                [style.background]="activity.bg"
               >
-                {{ insight.text }}
-              </p>
+                <span
+                  class="material-symbols-outlined text-[18px]"
+                  [style.color]="activity.color"
+                  >{{ activity.icon }}</span
+                >
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-slate-900 m-0 truncate">
+                  {{ activity.label }}
+                </p>
+                <p class="text-xs font-medium text-slate-500 m-0 mt-1 truncate">
+                  {{ activity.detail }}
+                </p>
+              </div>
+              <span class="text-[11px] font-bold text-slate-400 whitespace-nowrap shrink-0">{{
+                activity.time
+              }}</span>
             </div>
           }
         </div>

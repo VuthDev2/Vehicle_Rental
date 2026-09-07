@@ -144,4 +144,22 @@ const sendBookingConfirmationEmail = (to, name, booking) => {
   });
 };
 
-module.exports = { sendEmail, sendVerificationEmail, sendPasswordResetEmail, sendBookingConfirmationEmail };
+const sendNewLoginAlertEmail = (to, name, os, browser, ip) => {
+  return sendEmail({
+    to,
+    subject: 'Security Alert: New Login to Your Account',
+    html: getEmailTemplate(
+      'New Login Detected',
+      name,
+      `<p style="margin: 0 0 16px 0;">We noticed a new login to your Cambo Rent account.</p>
+       <ul style="margin: 0 0 16px 0; padding-left: 20px;">
+         <li><strong>Device/OS:</strong> ${os}</li>
+         <li><strong>Browser:</strong> ${browser}</li>
+         <li><strong>IP Address:</strong> ${ip}</li>
+       </ul>
+       <p style="margin: 0;">If this was you, you don't need to do anything. If you didn't authorize this login, please reset your password immediately.</p>`
+    ),
+  });
+};
+
+module.exports = { sendEmail, sendVerificationEmail, sendPasswordResetEmail, sendBookingConfirmationEmail, sendNewLoginAlertEmail };

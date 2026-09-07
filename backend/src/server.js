@@ -18,6 +18,10 @@ connectDB().then(async () => {
   await connectRedis();
 
   const app = require('./app');
+  const startCronJobs = require('./utils/cronJobs');
+  
+  // Start the background cron jobs
+  startCronJobs();
   
   server = app.listen(PORT, () => {
     console.log(`🚀 Cambo Rent API running on http://localhost:${PORT}`);

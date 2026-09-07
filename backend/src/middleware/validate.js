@@ -88,12 +88,13 @@ const createBookingRules = [
   body('quantity').isInt({ min: 1 }).withMessage('Quantity must be at least 1'),
   body('promoCode').optional().trim(),
   body('notes').optional().trim(),
+  body('paymentMethod').optional().isIn(['online', 'pay_at_store']).withMessage('Invalid payment method'),
   handleValidation,
 ];
 
 const createPaymentRules = [
   body('bookingId').isMongoId().withMessage('Valid booking ID is required'),
-  body('method').isIn(['Card', 'PayPal', 'Cash', 'ABA Pay', 'Wing']).withMessage('Invalid payment method'),
+  body('method').isIn(['Card', 'PayPal', 'Cash', 'ABA Pay', 'Wing', 'pay_at_store']).withMessage('Invalid payment method'),
   handleValidation,
 ];
 
@@ -124,7 +125,7 @@ const updateUserRules = [
 ];
 
 const updateBookingStatusRules = [
-  body('status').isIn(['pending', 'confirmed', 'cancelled', 'completed']).withMessage('Invalid status'),
+  body('status').isIn(['pending', 'pending_approval', 'pending_verification', 'confirmed', 'active', 'cancelled', 'completed']).withMessage('Invalid status'),
   handleValidation,
 ];
 

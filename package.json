@@ -24,7 +24,6 @@
     "@angular/router": "22.0.4",
     "@angular/service-worker": "22.0.4",
     "@angular/ssr": "22.0.4",
-    "bootstrap": "^5.3.8",
     "chart.js": "^4.5.1",
     "dayjs": "^1.11.21",
     "express": "^5.1.0",

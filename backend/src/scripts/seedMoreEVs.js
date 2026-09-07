@@ -10,35 +10,35 @@ const vehicles = [
     file: 'byd_seal', query: 'BYD Seal car white background isolated',
     data: {
       name: "BYD Seal", brand: "BYD", model: "Seal", year: 2024, type: "Car", fuel: "Electric", transmission: "Automatic", seats: 5, location: "Phnom Penh",
-      images: ["/byd_seal.jpg"], description: "A sleek and powerful electric sedan with cutting-edge tech.", features: ["Electric", "Automatic", "AC", "Leather Seats"], pricing: { hour: 8, day: 50, week: 300, month: 1100, year: 0 }, available: true, rating: 4.8, trips: 15
+      images: ["/byd_seal.jpg"], description: "A sleek and powerful electric sedan with cutting-edge tech.", features: ["Electric", "Automatic", "AC", "Leather Seats"], pricing: { hour: 8, day: 50, week: 300, month: 1100, year: 11000 }, available: true, rating: 4.8, trips: 15
     }
   },
   { 
     file: 'niu_nqi', query: 'NIU NQi electric scooter profile white background isolated',
     data: {
       name: "NIU NQi", brand: "NIU", model: "NQi Sport", year: 2023, type: "Motorcycle", fuel: "Electric", transmission: "Automatic", seats: 2, location: "Phnom Penh",
-      images: ["/niu_nqi.jpg"], description: "Smart electric scooter perfect for city commuting.", features: ["Electric", "Automatic", "Smart App"], pricing: { hour: 2, day: 12, week: 70, month: 250, year: 0 }, available: true, rating: 4.7, trips: 80
+      images: ["/niu_nqi.jpg"], description: "Smart electric scooter perfect for city commuting.", features: ["Electric", "Automatic", "Smart App"], pricing: { hour: 2, day: 12, week: 70, month: 250, year: 2500 }, available: true, rating: 4.7, trips: 80
     }
   },
   {
     file: 'super_soco', query: 'Super Soco TC motorcycle profile white background isolated',
     data: {
       name: "Super Soco TC Max", brand: "Super Soco", model: "TC Max", year: 2023, type: "Motorcycle", fuel: "Electric", transmission: "Automatic", seats: 2, location: "Phnom Penh",
-      images: ["/super_soco.jpg"], description: "Café racer style electric motorcycle.", features: ["Electric", "Automatic", "Fast Charge"], pricing: { hour: 3, day: 18, week: 100, month: 380, year: 0 }, available: true, rating: 4.9, trips: 34
+      images: ["/super_soco.jpg"], description: "Café racer style electric motorcycle.", features: ["Electric", "Automatic", "Fast Charge"], pricing: { hour: 3, day: 18, week: 100, month: 380, year: 3800 }, available: true, rating: 4.9, trips: 34
     }
   },
   {
     file: 'mg_zsev', query: 'MG ZS EV white background isolated car',
     data: {
       name: "MG ZS EV", brand: "MG", model: "ZS EV", year: 2023, type: "SUV", fuel: "Electric", transmission: "Automatic", seats: 5, location: "Phnom Penh",
-      images: ["/mg_zsev.jpg"], description: "Practical and affordable electric family SUV.", features: ["Electric", "Automatic", "AC", "Apple CarPlay"], pricing: { hour: 6, day: 40, week: 240, month: 900, year: 0 }, available: true, rating: 4.6, trips: 25
+      images: ["/mg_zsev.jpg"], description: "Practical and affordable electric family SUV.", features: ["Electric", "Automatic", "AC", "Apple CarPlay"], pricing: { hour: 6, day: 40, week: 240, month: 900, year: 9000 }, available: true, rating: 4.6, trips: 25
     }
   },
   {
     file: 'ebike_giant', query: 'Giant FastRoad E+ white background isolated e-bike profile',
     data: {
       name: "Giant FastRoad E+", brand: "Giant", model: "FastRoad E+", year: 2023, type: "E-Bike", fuel: "Electric", transmission: "Manual", seats: 1, location: "Siem Reap",
-      images: ["/ebike_giant.jpg"], description: "Premium electric commuter bike.", features: ["Electric", "Manual", "Pedal Assist"], pricing: { hour: 1, day: 10, week: 50, month: 180, year: 0 }, available: true, rating: 4.8, trips: 55
+      images: ["/ebike_giant.jpg"], description: "Premium electric commuter bike.", features: ["Electric", "Manual", "Pedal Assist"], pricing: { hour: 1, day: 10, week: 50, month: 180, year: 1800 }, available: true, rating: 4.8, trips: 55
     }
   }
 ];

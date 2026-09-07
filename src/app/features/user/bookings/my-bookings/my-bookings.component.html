@@ -1,11 +1,11 @@
-<div class="min-h-full pb-24 lg:px-12 lg:pb-32 font-sans">
+<div class="min-h-full pb-24 font-sans bg-[#f8f9fa]">
   <!-- Title -->
-  <div class="px-4 lg:px-0 pt-6 lg:pt-10 pb-2">
-    <h1 class="text-[1.7rem] lg:text-[2.2rem] font-bold text-[#111827] tracking-tight">My Bookings</h1>
+  <div class="px-4 lg:px-12 pt-6 lg:pt-10 pb-2">
+    <h1 class="text-[22px] lg:text-[2.2rem] font-bold text-[#0f172a] tracking-tight">My Bookings</h1>
   </div>
 
   <!-- Tabs -->
-  <div class="px-4 lg:px-0 flex gap-6 border-b border-gray-200 mt-2 lg:mt-4 overflow-x-auto" style="scrollbar-width: none">
+  <div class="px-4 lg:px-12 flex gap-6 border-b border-gray-200 mt-2 overflow-x-auto hide-scrollbar">
     @for (tab of tabs(); track tab.key) {
       <button type="button" (click)="setFilter(tab.key)"
               class="booking-tab-btn"
@@ -15,8 +15,8 @@
     }
   </div>
 
-  <div class="px-4 lg:px-0 mt-6 lg:mt-10">
-    <h2 class="text-[1.05rem] lg:text-[1.2rem] font-bold text-[#111827] mb-4 lg:mb-6">
+  <div class="px-4 lg:px-12 mt-6">
+    <h2 class="text-[16px] lg:text-[1.2rem] font-bold text-[#0f172a] mb-4">
       @if(filter() === 'pending') { Upcoming }
       @else if(filter() === 'confirmed') { Ongoing }
       @else if(filter() === 'completed') { Completed }
@@ -36,7 +36,7 @@
     } @else if (loading()) {
       <div class="flex flex-col gap-4">
         @for (i of [1, 2, 3]; track i) {
-          <div class="booking-card flex gap-4">
+          <div class="booking-card flex gap-4 p-4">
             <div class="w-[100px] h-[70px] shimmer-light flex-shrink-0"></div>
             <div class="flex-1 space-y-2">
               <div class="h-4 w-1/3 rounded shimmer-light"></div>
@@ -56,108 +56,73 @@
       <!-- Bookings List -->
       <div class="flex flex-col gap-4">
         @for (booking of filteredBookings(); track booking._id) {
-          <div class="booking-card lg:p-6">
-            <!-- Mobile Header -->
-            <div class="flex items-center justify-between mb-3 border-b border-gray-100 pb-3 lg:hidden">
-              <span class="status-pill {{booking.status.toLowerCase()}}">
-                @if(booking.status === 'pending') { Pending }
-                @else if(booking.status === 'confirmed') { Confirmed }
-                @else if(booking.status === 'completed') { Completed }
-                @else if(booking.status === 'cancelled') { Canceled }
-                @else { {{booking.status}} }
-              </span>
-              <span class="text-[0.75rem] font-medium text-[#6c757d]">Booking ID: #CRB{{ booking._id.substring(booking._id.length - 5) | uppercase }}</span>
-            </div>
-
-            <!-- Horizontal Desktop Container -->
-            <div class="flex flex-col lg:flex-row lg:items-center lg:gap-6">
+          <div class="booking-card">
+            
+            <!-- Mobile Layout (Mobile Only) -->
+            <div class="flex flex-col lg:hidden">
               
-              <!-- Image & Specs (Mobile Body) -->
-              <div class="flex gap-4 mb-3 lg:mb-0 lg:w-auto">
-                <img [src]="getVehicleImage(booking.vehicleId) || '/assets/images/default-car.png'" class="booking-thumb lg:!w-[160px] lg:!h-[110px]" alt="Vehicle">
-                
-                <div class="flex-1 min-w-0 pt-1 lg:hidden">
-                  <h3 class="font-bold text-[#111827] text-[1.05rem] mb-1.5 truncate">{{ getVehicleName(booking.vehicleId) }}</h3>
-                  <div class="icon-text text-[#495057]">
-                    <span class="material-symbols-outlined text-[1.1rem]">settings</span>
-                    <span>{{ getVehicleMeta(booking.vehicleId) || 'Automatic • Petrol' }}</span>
-                  </div>
-                  <div class="icon-text text-[#495057]">
-                    <span class="material-symbols-outlined text-[1.1rem]">person</span>
-                    <span>5 Seats</span>
-                  </div>
-                </div>
+              <!-- Top Row: Status & Booking ID -->
+              <div class="flex justify-between items-center mb-2.5">
+                <span class="status-pill {{booking.status.toLowerCase()}}">
+                  @if(booking.status === 'pending') { Pending }
+                  @else if(booking.status === 'pending_verification') { Verification Req. }
+                  @else if(booking.status === 'confirmed') { Confirmed }
+                  @else if(booking.status === 'completed') { Completed }
+                  @else if(booking.status === 'cancelled') { Canceled }
+                  @else { {{booking.status}} }
+                </span>
+                <span class="text-[11px] text-gray-500 font-medium">Booking ID: #CRB{{ booking._id.substring(booking._id.length - 5) | uppercase }}</span>
               </div>
 
-              <!-- Desktop Middle Content -->
-              <div class="hidden lg:flex flex-1 items-center justify-between min-w-0 pr-6">
-                <!-- Info Column -->
-                <div class="flex-1 pr-4 border-r border-gray-100">
-                  <div class="flex items-center gap-2 mb-2">
-                    <span class="status-pill {{booking.status.toLowerCase()}}">
-                      @if(booking.status === 'pending') { Pending }
-                      @else if(booking.status === 'confirmed') { Confirmed }
-                      @else if(booking.status === 'completed') { Completed }
-                      @else if(booking.status === 'cancelled') { Canceled }
-                      @else { {{booking.status}} }
-                    </span>
-                    <span class="text-[0.75rem] font-medium text-[#6c757d]">#CRB{{ booking._id.substring(booking._id.length - 5) | uppercase }}</span>
-                  </div>
-                  <h3 class="font-bold text-[#111827] text-[1.2rem] mb-2 truncate">{{ getVehicleName(booking.vehicleId) }}</h3>
-                  <div class="flex gap-4">
-                    <div class="icon-text text-[#495057]">
-                      <span class="material-symbols-outlined text-[1.1rem]">settings</span>
+              <!-- Middle Row: Image & Core Details -->
+              <div class="flex items-center gap-3 mb-2.5">
+                <!-- Image -->
+                <div class="w-[130px] h-[75px] shrink-0 flex justify-center items-center relative" [routerLink]="['/customer/explore', getVehicleIdStr(booking.vehicleId)]">
+                  <img [src]="getVehicleImage(booking.vehicleId) || '/assets/images/default-car.png'" 
+                       class="w-full h-full object-contain mix-blend-multiply scale-[1.4] origin-center" alt="Vehicle" style="filter: contrast(1.15) brightness(1.05);">
+                </div>
+                
+                <!-- Title & Specs -->
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-bold text-[#0f172a] text-[15px] leading-tight mb-1 truncate" [routerLink]="['/customer/explore', getVehicleIdStr(booking.vehicleId)]">
+                    {{ getVehicleName(booking.vehicleId) }}
+                  </h3>
+                  <div class="flex flex-col gap-0.5">
+                    <div class="icon-text !text-[11px]">
+                      <span class="material-symbols-outlined !text-[14px]">settings</span>
                       <span>{{ getVehicleMeta(booking.vehicleId) || 'Automatic • Petrol' }}</span>
                     </div>
-                    <div class="icon-text text-[#495057]">
-                      <span class="material-symbols-outlined text-[1.1rem]">person</span>
+                    <div class="icon-text !text-[11px]">
+                      <span class="material-symbols-outlined !text-[14px]">person</span>
                       <span>5 Seats</span>
                     </div>
                   </div>
                 </div>
-
-                <!-- Dates/Location Column -->
-                <div class="flex-1 pl-6 space-y-2">
-                  <div class="icon-text text-[#495057] text-[0.9rem]">
-                    <span class="material-symbols-outlined text-[1.2rem]">calendar_month</span>
-                    <span>{{ booking.startDate | date: 'MMM dd, yyyy' }} - {{ booking.endDate | date: 'MMM dd, yyyy' }}</span>
-                  </div>
-                  <div class="icon-text text-[#495057] text-[0.9rem]">
-                    <span class="material-symbols-outlined text-[1.2rem]">location_on</span>
-                    <span>{{ getVehicleLocation(booking.vehicleId) || 'Phnom Penh' }}</span>
-                  </div>
-                </div>
               </div>
 
-              <!-- Mobile Footer Dates/Location -->
-              <div class="mb-4 space-y-1.5 lg:hidden">
-                <div class="icon-text text-[#495057] text-[0.8rem]">
-                  <span class="material-symbols-outlined text-[1.1rem]">calendar_month</span>
+              <!-- Dates & Location -->
+              <div class="flex flex-col gap-1 mb-2.5">
+                <div class="icon-text dark !text-[12px]">
+                  <span class="material-symbols-outlined !text-[16px]">calendar_month</span>
                   <span>{{ booking.startDate | date: 'MMM dd, yyyy' }} - {{ booking.endDate | date: 'MMM dd, yyyy' }}</span>
                 </div>
-                <div class="icon-text text-[#495057] text-[0.8rem]">
-                  <span class="material-symbols-outlined text-[1.1rem]">location_on</span>
+                <div class="icon-text dark !text-[12px]">
+                  <span class="material-symbols-outlined !text-[16px]">location_on</span>
                   <span>{{ getVehicleLocation(booking.vehicleId) || 'Phnom Penh' }}</span>
                 </div>
               </div>
 
-              <!-- Action Footer -->
-              <div class="flex items-center justify-between border-t border-gray-100 pt-3 lg:border-t-0 lg:pt-0 lg:flex-col lg:items-end lg:justify-center lg:gap-3 lg:w-[160px]">
-                <div class="flex items-center gap-1 lg:flex-col lg:items-end lg:gap-0">
-                  <span class="font-bold text-[#111827] lg:text-gray-400 lg:text-[0.75rem] lg:uppercase lg:tracking-wide">Total Price</span>
-                  <span class="total-price lg:text-[1.4rem]">${{ booking.totalPrice | number:'1.2-2' }}</span>
+              <!-- Bottom Row: Price & Action -->
+              <div class="flex items-center justify-between mt-1 pt-2 border-t border-gray-100">
+                <div class="flex items-center gap-2">
+                  <span class="text-[14px] font-bold text-[#0f172a]">Total:</span>
+                  <span class="text-[15px] font-bold text-[#064022]">${{ booking.totalPrice | number:'1.2-2' }}</span>
                 </div>
                 
-                <div class="flex gap-2 w-full lg:justify-end">
-                  @if (booking.status === 'pending') {
-                    <button type="button" (click)="cancel(booking._id)" class="action-btn lg:w-full lg:justify-center">
-                      Cancel <span class="material-symbols-outlined text-lg ml-[-4px]">chevron_right</span>
-                    </button>
-                  } @else {
-                    <button type="button" class="action-btn lg:w-full lg:justify-center">
-                      Details <span class="material-symbols-outlined text-lg ml-[-4px]">chevron_right</span>
-                    </button>
-                  }
+                <div>
+                  <button type="button" [routerLink]="['/customer/explore', getVehicleIdStr(booking.vehicleId)]" class="action-btn !py-1 !px-3 !text-[12px]">
+                    View Details <span class="material-symbols-outlined !text-[14px]">chevron_right</span>
+                  </button>
                 </div>
               </div>
 
@@ -173,11 +138,11 @@
         <span class="material-symbols-outlined">support_agent</span>
       </div>
       <div class="flex-1 pr-2">
-        <h4 class="font-bold text-[#111827] text-[0.95rem]">Need Help?</h4>
-        <p class="text-[0.75rem] text-[#6c757d] mt-0.5 leading-snug">24/7 support is available for your booking related queries.</p>
+        <h4 class="font-bold text-[#0f172a] text-[15px]">Need Help?</h4>
+        <p class="text-[12px] text-[#64748b] mt-0.5 leading-snug">24/7 support is available for your booking related queries.</p>
       </div>
-      <button type="button" class="action-btn shadow-sm whitespace-nowrap">
-        Contact Support <span class="material-symbols-outlined text-lg ml-[-4px]">arrow_forward</span>
+      <button type="button" class="action-btn">
+        Contact Support <span class="material-symbols-outlined">arrow_forward</span>
       </button>
     </div>
 

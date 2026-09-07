@@ -18,7 +18,7 @@ const newVehicles = [
     images: ["/prius.jpg"],
     description: "The most popular hybrid car in Cambodia, very fuel efficient and perfect for city driving.",
     features: ["Automatic", "Hybrid", "5 Seats", "AC", "Bluetooth"],
-    pricing: { hour: 4, day: 25, week: 160, month: 600, year: 0 },
+    pricing: { hour: 4, day: 25, week: 160, month: 600, year: 6000 },
     available: true,
     rating: 4.7,
     trips: 124
@@ -36,7 +36,7 @@ const newVehicles = [
     images: ["/lexus.jpg"],
     description: "A premium and highly popular SUV for comfortable travel to provinces.",
     features: ["Automatic", "Petrol", "5 Seats", "AC", "Leather Seats", "Sunroof"],
-    pricing: { hour: 8, day: 45, week: 280, month: 1100, year: 0 },
+    pricing: { hour: 8, day: 45, week: 280, month: 1100, year: 11000 },
     available: true,
     rating: 4.9,
     trips: 89
@@ -54,7 +54,7 @@ const newVehicles = [
     images: ["/dream.jpg"],
     description: "The classic and most ubiquitous motorcycle in Cambodia. Extremely reliable.",
     features: ["125cc", "Manual/Semi-Auto", "2 Seats", "Kick Start"],
-    pricing: { hour: 2, day: 10, week: 60, month: 180, year: 0 },
+    pricing: { hour: 2, day: 10, week: 60, month: 180, year: 1800 },
     available: true,
     rating: 4.8,
     trips: 312
@@ -72,7 +72,7 @@ const newVehicles = [
     images: ["/giant.jpg"],
     description: "A premium mountain bike perfect for exploring Angkor Wat or rough terrains.",
     features: ["21 Speed", "Gear", "Disc Brake", "Front Suspension"],
-    pricing: { hour: 1, day: 8, week: 45, month: 120, year: 0 },
+    pricing: { hour: 1, day: 8, week: 45, month: 120, year: 1200 },
     available: true,
     rating: 4.7,
     trips: 56

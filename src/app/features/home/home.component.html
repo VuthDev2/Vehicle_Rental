@@ -4,7 +4,7 @@
          [style.transform]="'scale(' + getScrollScale() + ')'"
          [style.border-radius]="getScrollRadius()"
          style="overflow: hidden; transform-origin: center top;">
-      <video #heroVideo autoplay muted playsinline (ended)="onVideoEnded(heroVideo)" [src]="videos[currentVideoIndex()]"></video>
+      <video id="hero-video" #heroVideo autoplay muted playsinline (ended)="onVideoEnded(heroVideo)" [src]="videos[currentVideoIndex()]"></video>
       <div class="hero-overlay"></div>
     </div>
 
@@ -18,11 +18,11 @@
           Premium cars, motorcycles, and bicycles for every journey.
         </p>
         <div class="hero-cta-group">
-          <a routerLink="/register" class="btn-primary hero-btn-primary">
+          <a id="btn-hero-get-started" routerLink="/register" class="btn-primary hero-btn-primary">
             <span class="material-symbols-outlined">rocket_launch</span>
             Get Started
           </a>
-          <a routerLink="/customer/explore" class="hero-btn-secondary">
+          <a id="btn-hero-browse-fleet" routerLink="/customer/explore" class="hero-btn-secondary">
             <span class="material-symbols-outlined">directions_car</span>
             Browse Fleet
           </a>
@@ -42,7 +42,7 @@
           <span class="featured-price">From $35/day</span>
           <h2>Sedan & SUV</h2>
           <p>Perfect for family trips and long-distance travel. AC, comfortable seating, and spacious trunks.</p>
-          <a routerLink="/login" class="btn-primary landing-primary featured-cta">
+          <a id="btn-featured-browse" routerLink="/login" class="btn-primary landing-primary featured-cta">
             <span class="material-symbols-outlined">directions_car</span>
             Browse Cars
           </a>
@@ -61,7 +61,7 @@
 
       <div class="fleet-grid">
         @for (card of fleetCards; track card.title) {
-          <a routerLink="/login" class="fleet-card" [attr.aria-label]="'Sign in to browse ' + card.title">
+          <a [id]="'card-fleet-' + $index" routerLink="/login" class="fleet-card" [attr.aria-label]="'Sign in to browse ' + card.title">
             <img [src]="card.img" [alt]="card.title" />
             <div class="fleet-overlay"></div>
             <div class="fleet-price">From ${{ card.from }}/day</div>
@@ -187,11 +187,11 @@
         <h2>Ready to book your next ride?</h2>
         <p>Create an account to check availability, manage bookings, and pay with ABA PayWay QR.</p>
         <div class="hero-actions">
-          <a routerLink="/register" class="btn-primary landing-primary">
+          <a id="btn-cta-get-started" routerLink="/register" class="btn-primary landing-primary">
             <span class="material-symbols-outlined">rocket_launch</span>
             Get started
           </a>
-          <a routerLink="/login" class="landing-secondary">
+          <a id="btn-cta-login" routerLink="/login" class="landing-secondary">
             <span class="material-symbols-outlined">login</span>
             I already have an account
           </a>

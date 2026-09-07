@@ -3,12 +3,14 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { SearchService } from '../../core/services/search.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { MobileBottomNavComponent } from '../../shared/components/mobile-bottom-nav/mobile-bottom-nav.component';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-customer-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MobileBottomNavComponent, FormsModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MobileBottomNavComponent, FormsModule, DatePipe],
   templateUrl: './customer-layout.component.html',
   styleUrl: './customer-layout.component.css'
 })
@@ -16,10 +18,12 @@ export class CustomerLayoutComponent {
   readonly auth = inject(AuthService);
   readonly theme = inject(ThemeService);
   readonly searchService = inject(SearchService);
+  readonly notifications = inject(NotificationService);
   private readonly router = inject(Router);
   sidebarOpen = signal(false);
   sidebarCollapsed = signal(true);
   profileMenuOpen = signal(false);
+  notificationMenuOpen = signal(false);
 
   toggleCollapse(): void {
     this.sidebarCollapsed.update((v) => !v);
@@ -80,6 +84,16 @@ export class CustomerLayoutComponent {
 
   confirmLogout(): void {
     this.auth.logout();
+  }
+
+  handleNotificationClick(notif: any) {
+    if (!notif.read) {
+      this.notifications.markAsRead(notif._id).subscribe();
+    }
+    this.notificationMenuOpen.set(false);
+    if (notif.link) {
+      this.router.navigate([notif.link]);
+    }
   }
 
   onGlobalSearch(event: Event): void {

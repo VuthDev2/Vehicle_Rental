@@ -41,6 +41,13 @@ export class ManagePaymentsComponent implements OnInit {
   readonly total = signal(0);
   readonly searchTerm = signal('');
   readonly statusFilter = signal<PaymentStatusFilter>('all');
+  
+  readonly stats = signal({
+    totalRevenue: 0,
+    totalPending: 0,
+    totalFailed: 0,
+    totalRefunded: 0
+  });
   readonly pageSize = 20;
   readonly statusOptions: { value: PaymentStatusFilter; label: string }[] = [
     { value: 'all', label: 'All Status' },
@@ -51,16 +58,12 @@ export class ManagePaymentsComponent implements OnInit {
   ];
 
   readonly statCards = computed(() => {
-    const all = this.payments();
-    const succeeded = all.filter(p => p.status === 'succeeded').reduce((s, p) => s + p.amount, 0);
-    const pending = all.filter(p => p.status === 'pending').length;
-    const refunded = all.filter(p => p.status === 'refunded').length;
-    const failed = all.filter(p => p.status === 'failed').length;
+    const s = this.stats();
     return [
-      { label: 'Total Revenue', icon: 'payments', bg: '#E7F5ED', color: '#1E7B4C', value: () => '$' + succeeded.toLocaleString() },
-      { label: 'Pending', icon: 'schedule', bg: '#FFF8E1', color: '#8A6D00', value: () => String(pending) },
-      { label: 'Refunded', icon: 'undo', bg: '#E3E2E2', color: '#49454F', value: () => String(refunded) },
-      { label: 'Failed', icon: 'error', bg: '#FFDAD6', color: '#B3261E', value: () => String(failed) },
+      { label: 'Total Revenue', icon: 'payments', bg: '#E7F5ED', color: '#1E7B4C', value: () => '$' + s.totalRevenue.toLocaleString() },
+      { label: 'Pending', icon: 'schedule', bg: '#FFF8E1', color: '#8A6D00', value: () => String(s.totalPending) },
+      { label: 'Refunded', icon: 'undo', bg: '#E3E2E2', color: '#49454F', value: () => String(s.totalRefunded) },
+      { label: 'Failed', icon: 'error', bg: '#FFDAD6', color: '#B3261E', value: () => String(s.totalFailed) },
     ];
   });
 
@@ -111,6 +114,9 @@ export class ManagePaymentsComponent implements OnInit {
         this.payments.set(res.payments);
         this.totalPages.set(res.totalPages);
         this.total.set(res.total);
+        if (res.stats) {
+          this.stats.set(res.stats);
+        }
         this.loading.set(false);
       },
       error: () => this.loading.set(false),

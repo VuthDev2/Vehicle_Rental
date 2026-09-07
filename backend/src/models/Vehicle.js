@@ -17,7 +17,7 @@ const vehicleSchema = new mongoose.Schema(
     brand:        { type: String, required: true, trim: true },
     model:        { type: String, required: true, trim: true },
     year:         { type: Number, required: true },
-    type:         { type: String, required: true, enum: ['Car', 'SUV', 'Van', 'Truck', 'Motorcycle', 'Bike', 'E-Bike', 'Tuk-Tuk'] },
+    type:         { type: String, required: true, enum: ['Car', 'Sedan', 'SUV', 'Van', 'Truck', 'Motorcycle', 'Scooter', 'Bike', 'E-Bike', 'Tuk-Tuk'] },
     fuel:         { type: String, required: true, enum: ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'N/A'] },
     transmission: { type: String, required: true, enum: ['Automatic', 'Manual'] },
     seats:        { type: Number, required: true },

@@ -119,8 +119,8 @@ export class DashboardComponent implements OnInit {
       error: () => { /* keep defaults */ },
     });
 
-    // Also load featured vehicles (just grab first 3)
-    this.vehicleService.getVehicles({}, 1, 3).subscribe({
+    // Also load featured vehicles
+    this.vehicleService.getVehicles({}, 1, 12).subscribe({
       next: (res) => {
         this.featuredVehicles.set(res.vehicles || []);
       },
@@ -143,12 +143,7 @@ export class DashboardComponent implements OnInit {
       }
     }
     if (total > 0) return total;
-    const defaults: Record<string, number> = {
-      bicycle: 8,
-      scooter: 14,
-      sedan: 22,
-    };
-    return defaults[query.toLowerCase()] || 12;
+    return 0;
   }
 
   categoryCountLabel(query: string): string {

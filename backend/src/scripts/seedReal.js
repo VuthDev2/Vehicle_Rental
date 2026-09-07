@@ -18,7 +18,7 @@ const newVehicles = [
     images: ["/real_scoopy_1787625363105.jpg"],
     description: "The most commonly used automatic moto in Cambodia.",
     features: ["110cc", "Automatic", "2 Seats", "Storage"],
-    pricing: { hour: 2, day: 12, week: 65, month: 200, year: 0 },
+    pricing: { hour: 2, day: 12, week: 65, month: 200, year: 2000 },
     available: true,
     rating: 4.8,
     trips: 154
@@ -36,7 +36,7 @@ const newVehicles = [
     images: ["/real_ranger_1787625382087.jpg"],
     description: "A very popular and robust truck in Cambodia, perfect for heavy duty tasks.",
     features: ["Diesel", "Automatic", "5 Seats", "AC", "4x4", "Off-Road"],
-    pricing: { hour: 10, day: 60, week: 350, month: 1200, year: 0 },
+    pricing: { hour: 10, day: 60, week: 350, month: 1200, year: 12000 },
     available: true,
     rating: 4.9,
     trips: 121
@@ -54,7 +54,7 @@ const newVehicles = [
     images: ["/real_alphard_1787625423758.jpg"],
     description: "The premium choice for business executives and large families in Cambodia.",
     features: ["Petrol", "Automatic", "7 Seats", "AC", "Luxury Seats"],
-    pricing: { hour: 15, day: 90, week: 550, month: 1800, year: 0 },
+    pricing: { hour: 15, day: 90, week: 550, month: 1800, year: 18000 },
     available: true,
     rating: 5.0,
     trips: 65
@@ -72,7 +72,7 @@ const newVehicles = [
     images: ["/real_tuktuk_1787625401676.jpg"],
     description: "Experience the real Cambodia with an authentic Tuk Tuk.",
     features: ["Open Air", "4 Seats", "Driver Included"],
-    pricing: { hour: 5, day: 25, week: 120, month: 400, year: 0 },
+    pricing: { hour: 5, day: 25, week: 120, month: 400, year: 4000 },
     available: true,
     rating: 4.7,
     trips: 980
