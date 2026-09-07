@@ -12,6 +12,6 @@ const runtimeApiUrl =
 
 export const environment = {
   production: true,
-  apiUrl: runtimeApiUrl,
+  apiUrl: runtimeApiUrl !== 'http://localhost:5001/api/v1' ? runtimeApiUrl : 'https://vehicle-rental-csi1.onrender.com/api/v1',
   googleClientId: '344907331936-s3r6nq9vb28brtim1pml4qob36bvoh9h.apps.googleusercontent.com',
 };
