@@ -1,0 +1,20 @@
+<div #root class="scroll-expand" [class.scroll-expand--scroller]="!useWindowScroll">
+  <div #track class="scroll-expand__track">
+    <div #stage class="scroll-expand__stage">
+      
+      <div #frame class="scroll-expand__frame">
+        <div #mediaWrapper class="scroll-expand__media-wrapper">
+          <ng-content select="[media]"></ng-content>
+        </div>
+        <div #scrim class="scroll-expand__scrim"></div>
+        <div #overlay class="scroll-expand__overlay">
+          <ng-content></ng-content>
+        </div>
+      </div>
+      
+      <div #titleEl *ngIf="title" class="scroll-expand__title">{{ title }}</div>
+      <div #hintEl *ngIf="scrollHint" class="scroll-expand__hint">{{ scrollHint }}</div>
+      
+    </div>
+  </div>
+</div>

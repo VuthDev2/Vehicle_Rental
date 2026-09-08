@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   scrollY = 0;
   featuredProgress = 0; // 0 = off-screen below, 1 = fully revealed
   
-  videos = ['/premium.mp4', '/drive.mp4'];
+  videos = ['/pexels_car.mp4', '/pexels_moto.mp4'];
   currentVideoIndex = signal(0);
 
   onVideoEnded(videoElement: HTMLVideoElement) {
@@ -32,8 +32,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }, 0);
   }
   
+  @ViewChild('heroVideo') heroVideo?: ElementRef<HTMLVideoElement>;
+
   ngAfterViewInit() {
-    // Video initialized in template
+    if (this.heroVideo?.nativeElement?.play) {
+      this.heroVideo.nativeElement.muted = true;
+      this.heroVideo.nativeElement.play().catch((e: any) => console.log('Autoplay prevented:', e));
+    }
   }
 
   @HostListener('window:scroll')
@@ -65,15 +70,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return `${Math.min(1, this.featuredProgress * 1.5)}`;
   }
 
-  getScrollScale(): number {
-    // Shrink the video from 1.0 down to 0.8 as user scrolls down
-    return Math.max(0.8, 1 - this.scrollY * 0.0008);
+  getTextTransform(): string {
+    // Start way down offscreen (1500px).
+    // The user has to scroll significantly before the text even enters the bottom of the screen.
+    const offset = Math.max(0, 1500 - this.scrollY * 0.6);
+    return `translateY(${offset}px)`;
   }
 
-  getScrollRadius(): string {
-    // Increase border radius as it shrinks
-    const radius = Math.min(32, this.scrollY * 0.05);
-    return `${radius}px`;
+  getTextOpacity(): string {
+    // Wait until they've scrolled 1000px before starting to fade in
+    const activeScroll = Math.max(0, this.scrollY - 1000);
+    return `${Math.min(1, activeScroll / 800)}`;
+  }
+
+  getOverlayOpacity(): string {
+    // Fade in the dark gradient slowly later in the scroll
+    const activeScroll = Math.max(0, this.scrollY - 800);
+    return `${Math.min(1, activeScroll / 1000)}`;
   }
 
   readonly fleetCards = [

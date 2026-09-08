@@ -18,7 +18,7 @@ export class ThemeService {
     if (typeof window === 'undefined') return;
 
     const stored = window.localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
-    const preferred = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const preferred = stored || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     this.setTheme(preferred, false);
   }
 

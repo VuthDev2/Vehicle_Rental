@@ -17,14 +17,19 @@
 /* New Hero Styles */
 .landing-hero-new {
   position: relative;
-  min-height: 100vh;
+  height: 400vh; /* Extra 300vh creates a MASSIVE scroll "delay" */
+  background: #042412;
+}
+
+.hero-sticky-container {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: 80px;
-  padding-bottom: 40px;
-  background: #042412;
-  overflow: hidden;
 }
 
 .hero-video-bg {
@@ -45,7 +50,9 @@
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(4, 36, 18, 0.1) 0%, rgba(4, 36, 18, 0.3) 100%);
+  background: linear-gradient(180deg, rgba(4, 36, 18, 0.3) 0%, rgba(4, 36, 18, 0.6) 100%);
+  will-change: opacity;
+  transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .hero-container {
@@ -59,14 +66,11 @@
   text-align: center;
   max-width: 800px;
   margin: 0 auto;
+  position: relative;
   z-index: 5;
-  padding: 48px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 32px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  padding: 48px 24px;
+  will-change: transform, opacity;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .hero-title {
@@ -411,20 +415,22 @@
 /* ── Featured car parallax section ── */
 .featured-section {
   padding: 0 0 88px;
-  background: var(--color-background);
+  background: linear-gradient(180deg, #042412 0%, #02140a 100%);
 }
 
 .featured-card {
   position: relative;
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   border-radius: 24px;
   overflow: hidden;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 21 / 9;
   transform-origin: center bottom;
   will-change: transform, opacity;
   transition: transform 0.05s linear, opacity 0.05s linear;
+  box-shadow: 0 20px 60px rgba(4, 36, 18, 0.8), 0 0 40px rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .featured-img {
@@ -520,30 +526,31 @@
 
 .landing-section {
   padding: 100px 0;
-  background: #f8fafc;
+  background: #02140a;
 }
 
 .landing-section-muted {
-  background: #ffffff;
+  background: #061a10;
 }
 
 .section-heading {
   max-width: 720px;
-  margin-bottom: 36px;
+  margin-bottom: 56px;
 }
 
 .section-heading h2 {
-  margin-top: 10px;
+  margin-top: 16px;
   font-size: clamp(2rem, 4vw, 3.4rem);
   letter-spacing: -0.02em;
-  color: #0f172a;
+  color: #ffffff;
   font-weight: 900;
+  line-height: 1.1;
 }
 
 .section-heading p {
-  margin: 14px 0 0;
-  color: var(--color-on-surface-variant);
-  font-size: 1rem;
+  margin: 20px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
   line-height: 1.7;
 }
 
@@ -574,32 +581,35 @@
   position: relative;
   min-height: 340px;
   overflow: hidden;
-  border: 1px solid #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
-  background: #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
 }
 
 .fleet-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .fleet-card img {
   width: 100%;
   height: 180px;
   object-fit: contain;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 24px;
-  background: #f8fafc;
-  mix-blend-mode: multiply;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .fleet-card:hover img {
-  transform: scale(1.08);
+  transform: scale(1.08) rotate(-1deg);
 }
 
 .fleet-overlay {
@@ -608,16 +618,16 @@
 
 .fleet-price {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 2;
+  top: 20px;
+  right: 20px;
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
   padding: 6px 12px;
-  border-radius: 999px;
-  background: #064022;
-  color: #ffffff;
-  font-size: 0.8rem;
+  border-radius: 99px;
+  font-size: 0.85rem;
   font-weight: 800;
-  box-shadow: 0 4px 10px rgba(6, 64, 34, 0.2);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  backdrop-filter: blur(8px);
 }
 
 .fleet-content {
@@ -626,51 +636,51 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background: #ffffff;
 }
 
-.fleet-content span,
-.popular-label {
-  display: inline-flex;
-  width: fit-content;
-  border-radius: 999px;
-  background: rgba(16, 185, 129, 0.16);
+.fleet-content span {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: #34d399;
-  padding: 5px 10px;
-  font-size: 0.68rem;
-  font-weight: 900;
-  letter-spacing: 0.06em;
   text-transform: uppercase;
-}
-
-.fleet-content h3,
-.landing-card h3,
-.step-card h3,
-.pricing-card h3 {
-  margin: 14px 0 8px;
-  color: #0f172a;
-  font-size: 1.25rem;
-  font-weight: 900;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
 }
 
 .fleet-content h3 {
-  color: #0f172a;
+  margin: 0 0 8px;
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .fleet-content p {
-  color: #4b5563;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
-.fleet-content p,
 .landing-card p,
 .step-card p,
 .pricing-card p,
 .testimonial-card p,
 .cta-panel p {
   margin: 0;
-  color: #4b5563;
+  color: rgba(255, 255, 255, 0.7);
   line-height: 1.7;
   font-size: 0.95rem;
+}
+
+.landing-card h3,
+.step-card h3,
+.pricing-card h3 {
+  margin: 14px 0 8px;
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 900;
 }
 
 .landing-card,
@@ -678,31 +688,36 @@
 .pricing-card,
 .testimonial-card,
 .cta-panel {
-  border: 1px solid #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
-  background: #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .landing-card:hover,
 .step-card:hover,
 .pricing-card:hover,
 .testimonial-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .landing-card,
 .step-card,
 .pricing-card,
 .testimonial-card {
-  padding: 24px;
+  padding: 32px 24px;
 }
 
 .feature-icon,
 .price-icon {
-  font-size: 2rem;
+  font-size: 2.4rem;
+  text-shadow: 0 0 20px currentColor;
 }
 
 .step-card strong {

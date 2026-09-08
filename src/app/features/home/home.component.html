@@ -1,31 +1,33 @@
 <main class="landing-page">
   <section class="landing-hero-new">
-    <div class="hero-video-bg"
-         [style.transform]="'scale(' + getScrollScale() + ')'"
-         [style.border-radius]="getScrollRadius()"
-         style="overflow: hidden; transform-origin: center top;">
-      <video id="hero-video" #heroVideo autoplay muted playsinline (ended)="onVideoEnded(heroVideo)" [src]="videos[currentVideoIndex()]"></video>
-      <div class="hero-overlay"></div>
-    </div>
+    <div class="hero-sticky-container">
+      <div class="hero-video-bg"
+           style="overflow: hidden; transform-origin: center center;">
+        <video id="hero-video" #heroVideo autoplay [muted]="true" playsinline (ended)="onVideoEnded(heroVideo)" [src]="videos[currentVideoIndex()]"></video>
+        <div class="hero-overlay" [style.opacity]="getOverlayOpacity()"></div>
+      </div>
 
-    <div class="hero-container section-container">
-      <div class="hero-centered-content">
-        <h1 class="hero-title">
-          Explore Cambodia<br>
-          <span class="hero-highlight">Your Way</span>
-        </h1>
-        <p class="hero-subtitle">
-          Premium cars, motorcycles, and bicycles for every journey.
-        </p>
-        <div class="hero-cta-group">
-          <a id="btn-hero-get-started" routerLink="/register" class="btn-primary hero-btn-primary">
-            <span class="material-symbols-outlined">rocket_launch</span>
-            Get Started
-          </a>
-          <a id="btn-hero-browse-fleet" routerLink="/customer/explore" class="hero-btn-secondary">
-            <span class="material-symbols-outlined">directions_car</span>
-            Browse Fleet
-          </a>
+      <div class="hero-container section-container">
+        <div class="hero-centered-content" 
+             [style.transform]="getTextTransform()"
+             [style.opacity]="getTextOpacity()">
+          <h1 class="hero-title">
+            Explore Cambodia<br>
+            <span class="hero-highlight">Your Way</span>
+          </h1>
+          <p class="hero-subtitle">
+            Premium cars, motorcycles, and bicycles for every journey.
+          </p>
+          <div class="hero-cta-group">
+            <a id="btn-hero-get-started" routerLink="/register" class="btn-primary hero-btn-primary">
+              <span class="material-symbols-outlined">rocket_launch</span>
+              Get Started
+            </a>
+            <a id="btn-hero-browse-fleet" routerLink="/customer/explore" class="hero-btn-secondary">
+              <span class="material-symbols-outlined">directions_car</span>
+              Browse Fleet
+            </a>
+          </div>
         </div>
       </div>
     </div>
