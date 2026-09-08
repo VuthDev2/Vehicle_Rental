@@ -30,7 +30,7 @@ app.use(cookieParser());
 
 // CORS – allow Angular dev server
 app.use(cors({
-  origin: ['http://localhost:4200', 'http://localhost:4201', 'http://localhost:4000'],
+  origin: ['http://localhost:4200', 'http://localhost:4201', 'http://localhost:4000', 'https://rental-vehicles.netlify.app'],
   credentials: true,
 }));
 
