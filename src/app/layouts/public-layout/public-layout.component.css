@@ -162,48 +162,30 @@
   color: #059669;
 }
 
-footer {
-  border-top-color: var(--color-edge-deep) !important;
+.mobile-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  width: 100%;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f1f5f9;
 }
 
-footer .text-white,
-footer h4,
-footer .font-black {
-  color: var(--color-on-surface) !important;
+.mobile-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-:host-context(html.light) footer h4,
-:host-context(html.light) footer .font-black,
-:host-context(html.light) footer .text-white {
-  color: #0f172a !important;
+:host-context(html.light) .mobile-action-btn {
+  background: rgba(15, 23, 42, 0.05);
+  color: #0f172a;
 }
 
-:host-context(html.light) footer p,
-:host-context(html.light) footer a,
-:host-context(html.light) footer div,
-:host-context(html.light) footer span {
-  color: #334155 !important;
-}
-
-:host-context(html.light) footer a:hover,
-:host-context(html.light) footer .hover\:text-emerald-400:hover {
-  color: #047857 !important;
-}
-
-:host-context(html.light) footer .material-symbols-outlined {
-  color: #059669 !important;
-}
-
-footer p,
-footer a,
-footer span {
-  color: var(--color-on-surface-variant) !important;
-}
-
-footer .material-symbols-outlined {
-  color: var(--color-primary) !important;
-}
-
-footer .font-black {
-  color: var(--color-on-surface) !important;
+:host-context(html.light) .mobile-action-btn:hover {
+  background: rgba(15, 23, 42, 0.08);
 }

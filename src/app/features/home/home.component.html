@@ -33,63 +33,78 @@
     </div>
   </section>
 
-  <!-- Featured Car – parallax reveal -->
+  <!-- Scroll Velocity Marquee -->
+  <app-scroll-velocity 
+    text="PREMIUM VEHICLES • FLEXIBLE RENTALS • 24/7 SUPPORT • EXPLORE CAMBODIA •"
+    [velocity]="-100"
+    className="straight-marquee-text"
+  ></app-scroll-velocity>
+
+  <!-- Featured Car -->
   <section class="featured-section">
     <div class="section-container">
-      <div class="featured-card" [style.transform]="getFeaturedTransform()" [style.opacity]="getFeaturedOpacity()">
-        <div class="featured-badge">CARS</div>
-        <img src="/car_card.png" alt="Sedan & SUV rental" class="featured-img" />
-        <div class="featured-overlay"></div>
-        <div class="featured-content">
-          <span class="featured-price">From $35/day</span>
-          <h2>Sedan & SUV</h2>
-          <p>Perfect for family trips and long-distance travel. AC, comfortable seating, and spacious trunks.</p>
-          <a id="btn-featured-browse" routerLink="/login" class="btn-primary landing-primary featured-cta">
-            <span class="material-symbols-outlined">directions_car</span>
-            Browse Cars
+      <div class="featured-card reveal-on-scroll">
+        <div class="featured-content stagger-el">
+          <div class="featured-badge stagger-el">Featured Category</div>
+          <h2 class="stagger-el">Luxury Sports & SUV</h2>
+          <div class="featured-price stagger-el">From $85/day</div>
+          <p class="stagger-el">Perfect for thrilling drives and high-end comfort. Unmatched performance, premium interiors, and striking designs.</p>
+          <a id="btn-featured-browse" routerLink="/login" class="featured-cta stagger-el">
+            Browse your interest!
+            <span class="material-symbols-outlined">arrow_forward</span>
           </a>
+        </div>
+        <div class="featured-img-wrapper stagger-img">
+          <div class="decorative-shape"></div>
+          <div class="image-badge">
+            <span class="material-symbols-outlined">directions_car</span>
+            PREMIUM
+          </div>
+          @for (imgUrl of featuredImages; track imgUrl) {
+            <img [src]="imgUrl" alt="Luxury Sports & SUV rental" class="featured-img" [class.active]="$index === currentFeaturedIndex()" />
+          }
         </div>
       </div>
     </div>
   </section>
 
-  <section class="landing-section">
+  <section class="landing-section reveal-on-scroll">
     <div class="section-container">
       <div class="section-heading">
-        <span class="landing-kicker">Our fleet</span>
-        <h2>Choose the right ride for the day.</h2>
-        <p>Simple categories, transparent daily rates, and vehicles maintained for local roads.</p>
+        <span class="landing-kicker stagger-el">Our Fleet</span>
+        <h2 class="stagger-el">Choose the right ride for the day.</h2>
+        <p class="stagger-el">Simple categories, transparent daily rates, and vehicles maintained for local roads.</p>
       </div>
 
-      <div class="fleet-grid">
-        @for (card of fleetCards; track card.title) {
-          <a [id]="'card-fleet-' + $index" routerLink="/login" class="fleet-card" [attr.aria-label]="'Sign in to browse ' + card.title">
-            <img [src]="card.img" [alt]="card.title" />
-            <div class="fleet-overlay"></div>
-            <div class="fleet-price">From ${{ card.from }}/day</div>
-            <div class="fleet-content">
-              <span>{{ card.label }}</span>
-              <h3>{{ card.title }}</h3>
-              <p>{{ card.desc }}</p>
-            </div>
-          </a>
-        }
+      <div class="fleet-carousel-wrapper stagger-carousel" style="margin-top: 40px; width: 100%;" [style.height]="isMobile() ? '960px' : '600px'">
+        <app-accordion-gallery 
+          [items]="fleetCards"
+          [height]="600"
+          [radius]="24"
+          [gap]="24"
+          [parallax]="0.4"
+          [tilt]="6"
+          [stagger]="0.08"
+          [expandRatio]="0.5"
+          [orientation]="isMobile() ? 'vertical' : 'horizontal'"
+          [autoExpandOnScroll]="isMobile()"
+        ></app-accordion-gallery>
       </div>
     </div>
   </section>
 
-  <section class="landing-section landing-section-muted">
+  <section class="landing-section landing-section-muted reveal-on-scroll">
     <div class="section-container">
       <div class="section-heading">
-        <span class="landing-kicker">Why Cambo Rent</span>
-        <h2>Built for repeat rental workflows.</h2>
-        <p>Everything is designed to make booking, paying, and getting on the road straightforward.</p>
+        <span class="landing-kicker stagger-el">Why Cambo Rent</span>
+        <h2 class="stagger-el">Built for repeat rental workflows.</h2>
+        <p class="stagger-el">Everything is designed to make booking, paying, and getting on the road straightforward.</p>
       </div>
 
       <div class="feature-grid">
         @for (feature of features; track feature.title) {
-          <article class="landing-card">
-            <span class="feature-icon material-symbols-outlined" [style.color]="feature.iconColor">{{ feature.icon }}</span>
+          <article class="landing-card stagger-el">
+            <span class="feature-icon material-symbols-outlined" [style.color]="feature.iconColor" [style.background]="feature.iconBg">{{ feature.icon }}</span>
             <h3>{{ feature.title }}</h3>
             <p>{{ feature.desc }}</p>
           </article>
@@ -98,19 +113,19 @@
     </div>
   </section>
 
-  <section class="landing-section">
+  <section class="landing-section reveal-on-scroll">
     <div class="section-container">
       <div class="section-heading">
-        <span class="landing-kicker">Simple process</span>
-        <h2>Rent in three steps.</h2>
-        <p>Create an account, choose your vehicle, confirm payment, and go.</p>
+        <span class="landing-kicker stagger-el">Simple process</span>
+        <h2 class="stagger-el">Rent in three steps.</h2>
+        <p class="stagger-el">Create an account, choose your vehicle, confirm payment, and go.</p>
       </div>
 
       <div class="steps-grid">
         @for (step of steps; track step.step) {
-          <article class="step-card">
+          <article class="step-card stagger-el">
             <strong>{{ step.step }}</strong>
-            <span class="material-symbols-outlined" [style.color]="step.iconColor">{{ step.icon }}</span>
+            <span class="step-icon material-symbols-outlined" [style.color]="step.iconColor" [style.background]="step.iconBg">{{ step.icon }}</span>
             <h3>{{ step.title }}</h3>
             <p>{{ step.desc }}</p>
           </article>
@@ -119,21 +134,21 @@
     </div>
   </section>
 
-  <section class="landing-section landing-section-muted">
+  <section class="landing-section landing-section-muted reveal-on-scroll">
     <div class="section-container">
       <div class="section-heading">
-        <span class="landing-kicker">Pricing</span>
-        <h2>Clear starting prices.</h2>
-        <p>Browse by vehicle type and compare the essentials before you sign in.</p>
+        <span class="landing-kicker stagger-el">Pricing</span>
+        <h2 class="stagger-el">Clear starting prices.</h2>
+        <p class="stagger-el">Browse by vehicle type and compare the essentials before you sign in.</p>
       </div>
 
       <div class="pricing-grid">
         @for (price of pricing; track price.category) {
-          <article class="pricing-card">
+          <article class="pricing-card stagger-el" [style.border-top]="'4px solid ' + price.iconColor">
             @if ($index === 1) {
-              <span class="popular-label">Popular</span>
+              <span class="popular-label" style="position: absolute; top: -14px; right: 24px; background: #10b981; color: white; padding: 4px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 800;">Most Popular</span>
             }
-            <span class="material-symbols-outlined price-icon" [style.color]="price.iconColor">{{ price.icon }}</span>
+            <span class="material-symbols-outlined price-icon" [style.color]="price.iconColor" [style.background]="price.iconBg">{{ price.icon }}</span>
             <h3>{{ price.category }}</h3>
             <p>{{ price.desc }}</p>
             <div class="price-line">
@@ -154,16 +169,16 @@
     </div>
   </section>
 
-  <section class="landing-section">
+  <section class="landing-section reveal-on-scroll">
     <div class="section-container">
       <div class="section-heading">
-        <span class="landing-kicker">Customer notes</span>
-        <h2>Trusted by local riders and travelers.</h2>
+        <span class="landing-kicker stagger-el">Customer notes</span>
+        <h2 class="stagger-el">Trusted by local riders and travelers.</h2>
       </div>
 
       <div class="testimonial-grid">
         @for (review of testimonials; track review.name) {
-          <article class="testimonial-card">
+          <article class="testimonial-card stagger-el">
             <div class="stars">
               @for (s of [1, 2, 3, 4, 5]; track s) {
                 <span class="material-symbols-outlined">star</span>
@@ -183,22 +198,5 @@
     </div>
   </section>
 
-  <section class="landing-cta">
-    <div class="section-container">
-      <div class="cta-panel">
-        <h2>Ready to book your next ride?</h2>
-        <p>Create an account to check availability, manage bookings, and pay with ABA PayWay QR.</p>
-        <div class="hero-actions">
-          <a id="btn-cta-get-started" routerLink="/register" class="btn-primary landing-primary">
-            <span class="material-symbols-outlined">rocket_launch</span>
-            Get started
-          </a>
-          <a id="btn-cta-login" routerLink="/login" class="landing-secondary">
-            <span class="material-symbols-outlined">login</span>
-            I already have an account
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+
 </main>

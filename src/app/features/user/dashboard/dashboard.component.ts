@@ -89,6 +89,7 @@ export class DashboardComponent implements OnInit {
 
   readonly featuredVehicles = signal<Vehicle[]>([]);
 
+
   ngOnInit() {
     this.loadBookings();
     this.loadVehicleStats();
@@ -120,7 +121,7 @@ export class DashboardComponent implements OnInit {
     });
 
     // Also load featured vehicles
-    this.vehicleService.getVehicles({}, 1, 12).subscribe({
+    this.vehicleService.getVehicles({}, 1, 4).subscribe({
       next: (res) => {
         this.featuredVehicles.set(res.vehicles || []);
       },

@@ -142,8 +142,7 @@
           <a
             routerLink="/login"
             (click)="mobileOpen.set(false)"
-            class="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-center w-full transition-all hover:bg-white/5"
-            style="background: rgba(255, 255, 255, 0.06); color: #f1f5f9"
+            class="mobile-action-btn"
           >
             <span class="material-symbols-outlined text-lg">login</span> Sign In
           </a>
@@ -157,8 +156,7 @@
           <button
             type="button"
             (click)="theme.toggleTheme()"
-            class="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-center w-full transition-all hover:bg-white/10"
-            style="background: rgba(255, 255, 255, 0.08); color: #f1f5f9"
+            class="mobile-action-btn"
           >
             <span class="material-symbols-outlined text-lg">{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</span>
             {{ theme.isDark() ? 'Light Mode' : 'Dark Mode' }}
@@ -174,130 +172,54 @@
   </div>
 
   <!-- ======================== FOOTER ======================== -->
-  <footer style="background: var(--color-background)">
-    <div class="max-w-[1280px] mx-auto px-[clamp(20px,5vw,72px)] py-16">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-        <!-- Brand -->
-        <div class="md:col-span-2">
-          <div class="flex items-center gap-3 mb-4">
+  <footer class="mt-auto pt-12 pb-8" style="background: var(--color-primary, rgba(11, 61, 32, 1)); border-top: 1px solid rgba(255, 255, 255, 0.1);">
+    <div class="max-w-[1280px] mx-auto px-[clamp(20px,5vw,72px)] flex flex-col gap-8">
+      
+      <!-- Top Section -->
+      <div class="flex flex-col md:flex-row justify-between items-start gap-8">
+        <!-- Brand & Description -->
+        <div class="flex flex-col gap-4 max-w-sm">
+          <div class="flex items-center gap-3">
             <img
               src="/logo.jpg"
               alt="Cambo Rent"
               style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover"
-              onerror="
-                this.style.display = 'none';
-                this.nextElementSibling.style.display = 'flex';
-              "
+              onerror="this.style.display = 'none'; this.nextElementSibling.style.display = 'flex';"
             />
-            <div
-              style="
-                display: none;
-                width: 40px;
-                height: 40px;
-                border-radius: 10px;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-                background: linear-gradient(135deg, #10b981, #059669);
-              "
-            >
+            <div style="display: none; width: 40px; height: 40px; border-radius: 10px; align-items: center; justify-content: center; background: linear-gradient(135deg, #10b981, #059669);">
               <span class="material-symbols-outlined text-white text-xl">directions_car</span>
             </div>
-            <span class="text-lg font-black text-white">Cambo Rent</span>
+            <span class="text-2xl font-black" style="color: white; letter-spacing: -0.5px;">Cambo Rent</span>
           </div>
-          <p class="text-sm leading-relaxed max-w-xs" style="color: #94a3b8">
-            Your trusted vehicle rental partner in Cambodia. Cars, motorcycles, and bikes — premium
-            fleet with transparent pricing and 24/7 support.
+          <p class="text-sm leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
+            Your trusted vehicle rental partner in Cambodia. Premium fleet with transparent pricing and 24/7 support.
           </p>
-          <div class="flex gap-3 mt-6">
-            @for (social of socials; track social.icon) {
-              <div
-                class="w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all hover:-translate-y-0.5"
-                style="
-                  background: rgba(255, 255, 255, 0.06);
-                  border: 1px solid rgba(255, 255, 255, 0.08);
-                "
-              >
-                <span class="material-symbols-outlined text-base" style="color: #94a3b8">{{
-                  social.icon
-                }}</span>
-              </div>
-            }
-          </div>
         </div>
 
-        <!-- Links -->
-        <div>
-          <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4">Quick Links</h4>
-          <div class="flex flex-col gap-3">
-            <a
-              routerLink="/"
-              class="text-sm transition-colors hover:text-emerald-400"
-              style="color: #94a3b8"
-              >Home</a
-            >
-            <a
-              routerLink="/about"
-              class="text-sm transition-colors hover:text-emerald-400"
-              style="color: #94a3b8"
-              >About Us</a
-            >
-            <a
-              routerLink="/contact"
-              class="text-sm transition-colors hover:text-emerald-400"
-              style="color: #94a3b8"
-              >Contact</a
-            >
-            <a
-              routerLink="/login"
-              class="text-sm transition-colors hover:text-emerald-400"
-              style="color: #94a3b8"
-              >Sign In</a
-            >
-            <a
-              routerLink="/register"
-              class="text-sm transition-colors hover:text-emerald-400"
-              style="color: #94a3b8"
-              >Register</a
-            >
-          </div>
-        </div>
-
-        <!-- Contact -->
-        <div>
-          <h4 class="text-xs font-bold uppercase tracking-widest text-white mb-4">Contact Us</h4>
-          <div class="flex flex-col gap-3">
-            @for (contact of contacts; track contact.value) {
-              <div class="flex items-center gap-2 text-sm" style="color: #94a3b8">
-                <span class="material-symbols-outlined text-base" style="color: #10b981">{{
-                  contact.icon
-                }}</span>
-                {{ contact.value }}
-              </div>
-            }
-          </div>
+        <!-- Quick Links -->
+        <div class="flex flex-col gap-3">
+          <h4 class="text-sm font-bold text-white mb-2 uppercase tracking-wider">Quick Links</h4>
+          <a routerLink="/" class="text-sm transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.7);">Home</a>
+          <a routerLink="/about" class="text-sm transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.7);">About Us</a>
+          <a routerLink="/contact" class="text-sm transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.7);">Contact</a>
         </div>
       </div>
 
-      <!-- Bottom bar -->
-      <div
-        class="pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4"
-        style="border-color: rgba(255, 255, 255, 0.06)"
-      >
-        <p class="text-sm" style="color: #475569">© 2026 Cambo Rent. All rights reserved.</p>
+      <!-- Divider -->
+      <div style="width: 100%; height: 1px; background: rgba(255, 255, 255, 0.1);"></div>
+      
+      <!-- Bottom Section -->
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <!-- Copyright -->
+        <p class="text-sm" style="color: rgba(255, 255, 255, 0.5);">© 2026 Cambo Rent. All rights reserved.</p>
+        
+        <!-- Legal Links -->
         <div class="flex gap-6">
-          <span
-            class="text-sm cursor-pointer hover:text-emerald-400 transition-colors"
-            style="color: #475569"
-            >Privacy Policy</span
-          >
-          <span
-            class="text-sm cursor-pointer hover:text-emerald-400 transition-colors"
-            style="color: #475569"
-            >Terms of Service</span
-          >
+          <span class="text-sm cursor-pointer transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.5);">Privacy Policy</span>
+          <span class="text-sm cursor-pointer transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.5);">Terms of Service</span>
         </div>
       </div>
+      
     </div>
   </footer>
 </div>

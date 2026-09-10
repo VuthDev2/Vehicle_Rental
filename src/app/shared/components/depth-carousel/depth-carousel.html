@@ -1,0 +1,102 @@
+<div
+  #root
+  class="depth-carousel"
+  [class]="className"
+  [style.--dc-perspective]="perspective + 'px'"
+  role="group"
+  aria-roledescription="carousel"
+  aria-label="Depth carousel"
+  tabindex="0"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerEnd()"
+  (pointercancel)="onPointerEnd()"
+  (keydown)="onKeyDown($event)"
+>
+  <div class="depth-carousel__stage" #stage>
+    @for (item of data; track $index) {
+      <div
+        class="depth-carousel__card"
+        [class.is-active]="active === $index"
+        #card
+        [style.width.px]="cardWidth"
+        [style.height.px]="cardHeight"
+        [style.borderRadius.px]="radius"
+        aria-roledescription="slide"
+        [attr.aria-label]="($index + 1) + ' of ' + data.length"
+        [attr.aria-hidden]="active !== $index"
+        (click)="onCardClick($index)"
+      >
+        <img class="depth-carousel__img" [src]="item.image" [alt]="item.alt || ''" draggable="false" />
+        <span
+          class="depth-carousel__tint"
+          #overlay
+          [style.background]="tint"
+        ></span>
+        
+        <!-- Custom content slot if needed, or predefined -->
+        <ng-container *ngIf="item.custom">
+          <div class="carousel-custom-content">
+            <span [style.color]="item.accentColor">{{ item.label }}</span>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.desc }}</p>
+            <div class="fleet-price">From ${{ item.from }}/day</div>
+          </div>
+        </ng-container>
+      </div>
+    }
+  </div>
+
+  @if (showControls && data.length > 1) {
+    <button
+      type="button"
+      class="depth-carousel__arrow depth-carousel__arrow--prev"
+      aria-label="Previous slide"
+      (click)="navigateBy(-1)"
+    >
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path
+          d="M15 5l-7 7 7 7"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="depth-carousel__arrow depth-carousel__arrow--next"
+      aria-label="Next slide"
+      (click)="navigateBy(1)"
+    >
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path
+          d="M9 5l7 7-7 7"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+  }
+
+  @if (showIndicators && data.length > 1) {
+    <div class="depth-carousel__dots" role="tablist" aria-label="Slides">
+      @for (item of data; track $index) {
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="active === $index"
+          [attr.aria-label]="'Go to slide ' + ($index + 1)"
+          class="depth-carousel__dot"
+          [class.is-active]="active === $index"
+          (click)="setFocus($index, true)"
+        ></button>
+      }
+    </div>
+  }
+</div>

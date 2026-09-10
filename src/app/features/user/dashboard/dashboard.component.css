@@ -77,7 +77,7 @@
 
 @media (min-width: 1024px) {
   .hero-section {
-    padding: 24px 32px 60px;
+    padding: 0px 32px 60px;
   }
 }
 
@@ -89,6 +89,13 @@
   align-items: center;
   padding: 16px 16px 24px;
   gap: 12px;
+}
+
+@media (min-width: 1024px) {
+  .hero-content {
+    padding-top: 0px;
+    margin-top: -32px;
+  }
 }
 
 .hero-text-col {
@@ -342,6 +349,57 @@
     width: auto;
     padding: 0 32px;
     margin-top: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-search-card-wrapper {
+    margin-top: -30px; /* Floating overlap effect */
+    padding: 0 32px;
+  }
+  .hero-search-card {
+    border-radius: 24px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
+    padding: 24px 32px;
+  }
+  .search-card-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+  }
+  .search-card-inputs {
+    display: contents; /* Flattens the inputs so they participate in the grid directly */
+  }
+  .search-field {
+    flex: unset;
+    padding: 16px 20px;
+    border-radius: 16px;
+    height: 100%;
+    margin: 0;
+  }
+  .search-field .icon {
+    font-size: 24px;
+    margin-right: 8px;
+  }
+  .search-field .label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .search-field .value {
+    font-size: 15px;
+  }
+  .value-row .chevron {
+    font-size: 20px;
+  }
+  .search-action-btn {
+    padding: 0 40px;
+    height: 100%;
+    min-height: 56px;
+    font-size: 16px;
+    border-radius: 16px;
+    margin: 0;
   }
 }
 
@@ -709,45 +767,36 @@
    ============================================================ */
 .stats-strip-card {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  align-items: flex-start;
+  justify-content: space-between;
   background: #ffffff;
   border: 1px solid #f1f5f9;
   border-radius: 20px;
-  padding: 16px 20px;
+  padding: 16px 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-  gap: 24px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-}
-
-.stats-strip-card::-webkit-scrollbar {
-  display: none;
+  gap: 4px;
 }
 
 .stat-strip-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  scroll-snap-align: center;
-  flex-shrink: 0;
-}
-
-@media (min-width: 768px) {
-  .stats-strip-card {
-    justify-content: space-between;
-    padding: 24px;
-    gap: 16px;
-  }
+  text-align: center;
+  gap: 6px;
+  flex: 1;
 }
 
 .stat-circle-icon {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.stat-circle-icon .material-symbols-outlined {
+  font-size: 22px;
 }
 
 .stat-circle-icon.green {
@@ -769,7 +818,7 @@
 
 .stat-text-box strong {
   display: block;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 800;
   color: #0f172a;
   line-height: 1.1;
@@ -777,16 +826,48 @@
 
 .stat-text-box span {
   display: block;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   color: #64748b;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .stat-divider {
-  width: 1px;
-  height: 40px;
-  background: #e2e8f0;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .stats-strip-card {
+    align-items: center;
+    padding: 24px;
+    gap: 16px;
+  }
+  .stat-strip-item {
+    flex-direction: row;
+    text-align: left;
+    gap: 12px;
+    flex: auto;
+  }
+  .stat-circle-icon {
+    width: 48px;
+    height: 48px;
+  }
+  .stat-circle-icon .material-symbols-outlined {
+    font-size: 24px;
+  }
+  .stat-text-box strong {
+    font-size: 24px;
+  }
+  .stat-text-box span {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .stat-divider {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: #e2e8f0;
+  }
 }
 
 /* ============================================================
