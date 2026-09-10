@@ -33,4 +33,10 @@ const vehicleSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Performance Indices
+vehicleSchema.index({ type: 1, available: 1 });
+vehicleSchema.index({ 'pricing.day': 1 });
+vehicleSchema.index({ rating: -1 });
+vehicleSchema.index({ name: 'text', brand: 'text', model: 'text', location: 'text' });
+
 module.exports = mongoose.model('Vehicle', vehicleSchema);

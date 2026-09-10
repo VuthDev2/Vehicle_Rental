@@ -24,12 +24,15 @@
     "@angular/router": "22.0.4",
     "@angular/service-worker": "22.0.4",
     "@angular/ssr": "22.0.4",
+    "@ngx-translate/core": "^18.0.0",
+    "@ngx-translate/http-loader": "^18.0.0",
     "chart.js": "^4.5.1",
     "dayjs": "^1.11.21",
     "express": "^5.1.0",
     "gsap": "^3.15.0",
     "jwt-decode": "^4.0.0",
     "rxjs": "~7.8.0",
+    "socket.io-client": "^4.8.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

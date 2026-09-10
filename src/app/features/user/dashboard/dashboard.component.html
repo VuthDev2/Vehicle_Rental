@@ -17,7 +17,7 @@
 
       <!-- Hero Visual -->
       <div class="hero-visual">
-        <img src="/hero_perfect_fleet.png" alt="Cambo Rent Fleet" class="hero-banner-img" />
+        <img ngSrc="/hero_perfect_fleet.png" width="480" height="240" priority alt="Cambo Rent Fleet" class="hero-banner-img" />
       </div>
     </div>
     
@@ -161,7 +161,7 @@
             </button>
           </div>
           <div class="vcard-img-box">
-            <img [src]="getVehicleImage(vehicle)" [alt]="getVehicleName(vehicle)" />
+            <img [ngSrc]="getVehicleImage(vehicle)" width="400" height="250" [alt]="getVehicleName(vehicle)" />
           </div>
           <div class="vcard-body">
             <h3 class="vcard-title">{{ getVehicleName(vehicle) }}</h3>

@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { VehicleService } from '../../../../core/services/vehicle.service';
@@ -12,6 +12,7 @@ import { SeoService } from '../../../../core/services/seo.service';
   imports: [RouterLink, FormsModule],
   templateUrl: './vehicle-details.component.html',
   styleUrl: './vehicle-details.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VehicleDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

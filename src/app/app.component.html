@@ -1,1 +1,7 @@
+@if (!network.isOnline()) {
+  <div class="fixed top-0 left-0 w-full bg-amber-500 text-white text-center py-1.5 text-sm font-medium z-[9999] shadow-md flex items-center justify-center gap-2">
+    <span class="material-symbols-outlined text-[18px]">wifi_off</span>
+    You are currently offline. Viewing cached data.
+  </div>
+}
 <router-outlet />

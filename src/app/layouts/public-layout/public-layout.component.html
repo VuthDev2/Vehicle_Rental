@@ -54,7 +54,7 @@
             [routerLinkActiveOptions]="{ exact: link.exact }"
             class="nav-link"
           >
-            {{ link.label }}
+            {{ 'NAV.' + (link.label | uppercase) | translate }}
           </a>
         }
         <a
@@ -62,7 +62,7 @@
           routerLinkActive="active-nav-link"
           class="nav-link"
         >
-          Fleet
+          {{ 'NAV.FLEET' | translate }}
         </a>
       </div>
 
@@ -75,6 +75,14 @@
           [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
         >
           <span class="material-symbols-outlined">{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</span>
+        </button>
+        <button
+          type="button"
+          (click)="lang.cycleLang()"
+          class="theme-toggle-btn flex items-center justify-center transition-all hover:bg-white/10"
+          aria-label="Toggle Language"
+        >
+          <span class="font-bold text-sm" [style.color]="theme.isDark() ? 'white' : 'var(--color-primary)'">{{ lang.currentLang() | uppercase }}</span>
         </button>
         <a
           routerLink="/login"

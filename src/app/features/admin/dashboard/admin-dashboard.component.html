@@ -71,32 +71,9 @@
           </button>
         </div>
         <div class="space-y-5">
-          @for (v of vehicles(); track v.name) {
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <div>
-                  <p class="text-sm font-semibold text-slate-700">{{ v.name }}</p>
-                  <p class="text-[10px] text-slate-400 uppercase tracking-wider">{{ v.type }}</p>
-                </div>
-                <div class="text-right">
-                  <p class="text-sm font-bold text-slate-800">{{ v.bookings }}%</p>
-                  <p
-                    class="text-[10px] font-medium"
-                    [class]="v.trend > 0 ? 'text-emerald-600' : 'text-red-500'"
-                  >
-                    {{ v.trend > 0 ? '+' : '' }}{{ v.trend }}%
-                  </p>
-                </div>
-              </div>
-              <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  class="h-full rounded-full transition-all duration-700"
-                  [style.width.%]="v.bookings"
-                  style="background: #1e3326"
-                ></div>
-              </div>
-            </div>
-          }
+          <div style="height: 220px; position: relative">
+            <canvas #popularChart></canvas>
+          </div>
         </div>
       </div>
     </div>

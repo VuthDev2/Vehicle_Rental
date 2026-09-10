@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, OnInit } from '@angular/core';
+import { Component, computed, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe, UpperCasePipe, TitleCasePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BookingService } from '../../../../core/services/booking.service';
@@ -28,6 +28,7 @@ export type BookingFilter = 'all' | 'pending' | 'pending_verification' | 'confir
   imports: [DatePipe, UpperCasePipe, TitleCasePipe, DecimalPipe, RouterLink],
   templateUrl: './my-bookings.component.html',
   styleUrl: './my-bookings.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyBookingsComponent implements OnInit {
   private readonly bookingService = inject(BookingService);

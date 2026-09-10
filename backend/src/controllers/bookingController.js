@@ -59,6 +59,17 @@ const cancelBooking = async (req, res, next) => {
 const updateBookingStatus = async (req, res, next) => {
   try {
     const booking = await bookingService.updateBookingStatus(req.params.id, req.body.status);
+    
+    // Broadcast status change
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('booking_status_changed', { 
+        bookingId: booking._id, 
+        status: booking.status,
+        userId: booking.userId
+      });
+    }
+
     res.json({ booking });
   } catch (err) {
     if (err.message === 'Booking not found.') return res.status(404).json({ message: err.message });

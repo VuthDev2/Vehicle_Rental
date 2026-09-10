@@ -1,5 +1,5 @@
-import { Component, inject, signal, computed, effect, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, computed, effect, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { VehicleService } from '../../../../core/services/vehicle.service';
@@ -10,9 +10,10 @@ import { SeoService } from '../../../../core/services/seo.service';
 @Component({
   selector: 'app-vehicle-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, NgOptimizedImage],
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VehicleListComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
