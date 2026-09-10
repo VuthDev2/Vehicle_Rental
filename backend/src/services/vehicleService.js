@@ -141,8 +141,14 @@ class VehicleService {
 
   async _invalidateCache() {
     if (redisClient.isOpen) {
-      const keys = await redisClient.keys('vehicles:*');
-      if (keys.length > 0) await redisClient.del(keys);
+      let cursor = 0;
+      do {
+        const reply = await redisClient.scan(cursor, { MATCH: 'vehicles:*', COUNT: 100 });
+        cursor = reply.cursor;
+        if (reply.keys.length > 0) {
+          await redisClient.del(reply.keys);
+        }
+      } while (cursor !== 0);
     }
   }
 }

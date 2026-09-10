@@ -2,16 +2,20 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { LanguageService } from '../../core/services/language.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-public-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe, UpperCasePipe],
   templateUrl: './public-layout.component.html',
   styleUrl: './public-layout.component.css',
 })
 export class PublicLayoutComponent {
   readonly auth = inject(AuthService);
   readonly theme = inject(ThemeService);
+  readonly lang = inject(LanguageService);
   private readonly router = inject(Router);
   scrolled = false;
   mobileOpen = signal(false);

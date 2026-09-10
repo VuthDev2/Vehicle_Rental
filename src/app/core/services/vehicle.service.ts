@@ -2,6 +2,7 @@ import { environment } from '../../../environments/environment';
 
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, shareReplay, of, tap } from 'rxjs';
 import { Vehicle, VehicleFilter } from '../../models/vehicle.model';
 
 const API = environment.apiUrl;
@@ -16,6 +17,12 @@ export interface VehicleListResponse {
 @Injectable({ providedIn: 'root' })
 export class VehicleService {
   private readonly http = inject(HttpClient);
+
+  // Cache for stats
+  private statsCache$?: Observable<{ totalVehicles: number, availableVehicles: number, typeCounts: Record<string, number> }>;
+
+  // Cache for individual vehicles
+  private vehicleCache = new Map<string, Observable<{ vehicle: Vehicle }>>();
 
   getVehicles(filter?: Partial<VehicleFilter>, page = 1, limit = 12) {
     let params = new HttpParams().set('page', page).set('limit', limit);
@@ -32,11 +39,22 @@ export class VehicleService {
   }
 
   getVehicleStats() {
-    return this.http.get<{ totalVehicles: number, availableVehicles: number, typeCounts: Record<string, number> }>(`${API}/vehicles/stats`);
+    if (!this.statsCache$) {
+      this.statsCache$ = this.http.get<{ totalVehicles: number, availableVehicles: number, typeCounts: Record<string, number> }>(`${API}/vehicles/stats`).pipe(
+        shareReplay({ bufferSize: 1, refCount: true })
+      );
+    }
+    return this.statsCache$;
   }
 
   getVehicle(id: string) {
-    return this.http.get<{ vehicle: Vehicle }>(`${API}/vehicles/${id}`);
+    if (!this.vehicleCache.has(id)) {
+      const request$ = this.http.get<{ vehicle: Vehicle }>(`${API}/vehicles/${id}`).pipe(
+        shareReplay({ bufferSize: 1, refCount: true })
+      );
+      this.vehicleCache.set(id, request$);
+    }
+    return this.vehicleCache.get(id)!;
   }
 
   createVehicle(data: Partial<Vehicle>) {

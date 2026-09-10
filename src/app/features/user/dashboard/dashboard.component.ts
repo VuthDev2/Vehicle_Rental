@@ -1,5 +1,5 @@
-import { Component, computed, inject, signal, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { Component, computed, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BookingService } from '../../../core/services/booking.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -35,9 +35,10 @@ export interface FleetCategory {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgOptimizedImage],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements OnInit {
   private readonly bookingService = inject(BookingService);

@@ -8,7 +8,7 @@
         Find the perfect bike, moto, <br class="block sm:hidden" />or car for your next trip.
       </p>
     </div>
-    <img src="/hero_perfect_fleet.png" alt="Vehicles" class="absolute right-[-10px] sm:right-4 md:right-12 lg:right-[80px] bottom-[60px] sm:bottom-[25px] lg:bottom-[70px] w-[240px] sm:w-[380px] md:w-[480px] lg:w-[480px] object-contain z-10 mix-blend-multiply pointer-events-none" />
+    <img ngSrc="/hero_perfect_fleet.png" width="480" height="240" priority alt="Vehicles" class="absolute right-[-10px] sm:right-4 md:right-12 lg:right-[80px] bottom-[60px] sm:bottom-[25px] lg:bottom-[70px] w-[240px] sm:w-[380px] md:w-[480px] lg:w-[480px] object-contain z-10 mix-blend-multiply pointer-events-none" />
   </div>
 
   <!-- ===== DESKTOP UNIFIED TOOLBAR ===== -->
@@ -221,7 +221,7 @@
             <!-- Image -->
             <a [routerLink]="['/customer/explore', vehicle._id]" class="block relative h-[140px] sm:h-[210px] bg-slate-50/60 pt-10 pb-4 px-4 flex items-center justify-center transition-colors group-hover:bg-slate-100/50">
               @if (vehicle.images?.[0]) {
-                <img [src]="vehicle.images[0]" [alt]="vehicle.name" class="max-w-full max-h-[100px] sm:max-h-[160px] object-contain group-hover:scale-110 transition-transform duration-500 ease-out mix-blend-multiply" />
+                <img [ngSrc]="vehicle.images[0]" width="400" height="250" [alt]="vehicle.name" class="max-w-full max-h-[100px] sm:max-h-[160px] object-contain group-hover:scale-110 transition-transform duration-500 ease-out mix-blend-multiply" />
               } @else {
                 <span class="material-symbols-outlined text-[36px] sm:text-6xl text-slate-200">directions_car</span>
               }

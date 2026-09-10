@@ -21,6 +21,9 @@ const { authLimiter, apiLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 
+// Trust reverse proxy for rate limiting (Render/Netlify/Heroku)
+app.set('trust proxy', 1);
+
 // Security headers
 app.use(helmet({ 
   crossOriginResourcePolicy: { policy: 'cross-origin' },

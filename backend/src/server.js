@@ -18,6 +18,7 @@ connectDB().then(async () => {
   await connectRedis();
 
   const app = require('./app');
+  const { Server } = require('socket.io');
   const startCronJobs = require('./utils/cronJobs');
   
   // Start the background cron jobs
@@ -26,6 +27,23 @@ connectDB().then(async () => {
   server = app.listen(PORT, () => {
     console.log(`🚀 Cambo Rent API running on http://localhost:${PORT}`);
     console.log(`📄 Environment: ${process.env.NODE_ENV}`);
+  });
+
+  const io = new Server(server, {
+    cors: {
+      origin: ['http://localhost:4200', 'http://localhost:4000', 'https://rental-vehicles.netlify.app'],
+      methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+      credentials: true
+    }
+  });
+
+  app.set('io', io);
+
+  io.on('connection', (socket) => {
+    console.log(`🔌 Client connected to Socket: ${socket.id}`);
+    socket.on('disconnect', () => {
+      console.log(`🔌 Client disconnected from Socket: ${socket.id}`);
+    });
   });
 
   const gracefulShutdown = async () => {

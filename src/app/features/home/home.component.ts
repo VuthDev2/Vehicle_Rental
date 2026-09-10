@@ -1,4 +1,4 @@
-import { Component, signal, HostListener, ViewChild, ElementRef, AfterViewInit, OnInit, inject, OnDestroy, PLATFORM_ID } from '@angular/core';
+import { Component, signal, HostListener, ViewChild, ElementRef, AfterViewInit, OnInit, inject, OnDestroy, PLATFORM_ID, ChangeDetectionStrategy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SeoService } from '../../core/services/seo.service';
@@ -10,7 +10,8 @@ import { ScrollVelocityComponent } from '../../shared/components/scroll-velocity
   standalone: true,
   imports: [RouterLink, AccordionGalleryComponent, ScrollVelocityComponent],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly seoService = inject(SeoService);

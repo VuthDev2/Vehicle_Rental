@@ -21,6 +21,9 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('revenueChart') revenueChart?: ElementRef<HTMLCanvasElement>;
   private chartInstance?: Chart;
 
+  @ViewChild('popularChart') popularChart?: ElementRef<HTMLCanvasElement>;
+  private popularChartInstance?: Chart;
+
   readonly statCards = signal<any[]>([]);
   readonly vehicles = signal<any[]>([]);
   readonly recentBookings = signal<Booking[]>([]);
@@ -63,6 +66,11 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
           trend: 0 // Optional: Backend might not provide trend
         }));
         this.vehicles.set(mappedVehicles);
+        
+        // Render Doughnut chart
+        if (isPlatformBrowser(this.platformId)) {
+          setTimeout(() => this.updatePopularChart(res.vehicles), 100);
+        }
       },
       error: () => {}
     });
@@ -160,6 +168,41 @@ export class AdminDashboardComponent implements OnInit, AfterViewInit {
           },
         },
       },
+    });
+  }
+
+  updatePopularChart(vehicles: any[]): void {
+    if (!this.popularChart || !isPlatformBrowser(this.platformId)) return;
+
+    const canvas = this.popularChart.nativeElement;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const top5 = vehicles.slice(0, 5);
+    const labels = top5.map(v => v.name);
+    const data = top5.map(v => v.count);
+
+    if (this.popularChartInstance) {
+        this.popularChartInstance.destroy();
+    }
+
+    this.popularChartInstance = new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: ['#2d5a3d', '#10b981', '#3b82f6', '#f59e0b', '#ec4899'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'right' }
+        }
+      }
     });
   }
   
