@@ -1,0 +1,9 @@
+<div class="scroll-velocity-wrapper">
+  <div class="scroll-velocity-container" [ngClass]="className">
+    <div class="scroller" #scroller>
+      @for (item of copies; track $index) {
+        <span>{{ text }}&nbsp;</span>
+      }
+    </div>
+  </div>
+</div>

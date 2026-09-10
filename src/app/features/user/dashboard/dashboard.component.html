@@ -3,11 +3,12 @@
 
   <!-- ================= HERO SECTION ================= -->
   <section class="hero-section">
-    <div class="hero-content max-w-7xl mx-auto w-full">
+    <div class="hero-content w-full mx-auto">
       <div class="hero-text-col">
         <h1 class="hero-greeting">
-          <span class="whitespace-nowrap inline-block">Good morning,</span><br>
-          <span class="hero-name">{{ firstName }}</span>
+          <span class="whitespace-nowrap inline-block">{{ greeting() }},</span>
+          <br class="lg:hidden">
+          <span class="hero-name lg:ml-2">{{ firstName }}</span>
         </h1>
         <p class="hero-subtitle">
           Find the perfect vehicle for your journey.
@@ -21,7 +22,7 @@
     </div>
     
     <!-- ================= HERO SEARCH CARD ================= -->
-    <div class="hero-search-card-wrapper max-w-7xl mx-auto w-full">
+    <div class="hero-search-card-wrapper w-full mx-auto">
       <div class="hero-search-card">
         <div class="search-card-header">
           <div class="search-icon-circle">
@@ -76,7 +77,7 @@
   </section>
 
   <!-- ================= BROWSE BY TYPE ================= -->
-  <section class="section-container max-w-7xl mx-auto w-full mt-10">
+  <section class="section-container w-full mx-auto mt-10">
     <div class="section-top-bar">
       <h2 class="section-heading">Browse by Type</h2>
       <a routerLink="/customer/explore" class="section-link">
@@ -137,7 +138,7 @@
   </section>
 
   <!-- ================= FEATURED VEHICLES ================= -->
-  <section class="section-container max-w-7xl mx-auto w-full mt-8">
+  <section class="section-container w-full mx-auto mt-8">
     <div class="section-top-bar">
       <h2 class="section-heading">Featured Vehicles</h2>
       <a routerLink="/customer/explore" class="section-link">
@@ -195,7 +196,7 @@
   </section>
 
   <!-- ================= STATISTICS BAR ================= -->
-  <section class="section-container max-w-7xl mx-auto w-full mt-8">
+  <section class="section-container w-full mx-auto mt-8">
     <div class="stats-strip-card">
       <!-- Item 1: Vehicles In Fleet -->
       <div class="stat-strip-item">
@@ -253,7 +254,7 @@
   </section>
 
   <!-- ================= UPCOMING BOOKING & PROMOTION GRID ================= -->
-  <section class="section-container bottom-deals-section max-w-7xl mx-auto w-full mt-8 mb-12">
+  <section class="section-container bottom-deals-section w-full mx-auto mt-8 mb-12">
     <div class="bottom-deals-grid">
 
       <!-- 1. Upcoming Booking Card -->

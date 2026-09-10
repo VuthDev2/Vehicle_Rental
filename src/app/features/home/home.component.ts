@@ -1,18 +1,27 @@
-import { Component, signal, HostListener, ViewChild, ElementRef, AfterViewInit, OnInit, inject } from '@angular/core';
+import { Component, signal, HostListener, ViewChild, ElementRef, AfterViewInit, OnInit, inject, OnDestroy, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SeoService } from '../../core/services/seo.service';
+import { AccordionGalleryComponent } from '../../shared/components/accordion-gallery/accordion-gallery.component';
+import { ScrollVelocityComponent } from '../../shared/components/scroll-velocity/scroll-velocity.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AccordionGalleryComponent, ScrollVelocityComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit, AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly seoService = inject(SeoService);
+  private readonly platformId = inject(PLATFORM_ID);
+  private observer: IntersectionObserver | null = null;
+  public isMobile = signal(false);
 
   ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.checkScreenSize();
+    }
     this.seoService.updateSeoTags({
       title: 'Cambo Rent - Premium Vehicle Rental in Cambodia',
       description: 'Rent premium cars, motorcycles, and bicycles in Cambodia. Explore Phnom Penh and Siem Reap with Cambo Rent. Fully insured, 24/7 support, doorstep delivery.',
@@ -23,6 +32,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   
   videos = ['/pexels_car.mp4', '/pexels_moto.mp4'];
   currentVideoIndex = signal(0);
+  
+  featuredImages = [
+    '/luxury_suv.jpg',
+    '/premium_sports_car.jpg',
+    '/premium_motorcycle.jpg',
+    '/premium_bicycle.jpg'
+  ];
+  currentFeaturedIndex = signal(0);
+  private featuredInterval: any;
 
   onVideoEnded(videoElement: HTMLVideoElement) {
     this.currentVideoIndex.update(i => (i + 1) % this.videos.length);
@@ -35,9 +53,54 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('heroVideo') heroVideo?: ElementRef<HTMLVideoElement>;
 
   ngAfterViewInit() {
-    if (this.heroVideo?.nativeElement?.play) {
-      this.heroVideo.nativeElement.muted = true;
-      this.heroVideo.nativeElement.play().catch((e: any) => console.log('Autoplay prevented:', e));
+    if (isPlatformBrowser(this.platformId)) {
+      this.checkScreenSize();
+      
+      // Auto-slide featured images - slower transition
+      this.featuredInterval = setInterval(() => {
+        this.currentFeaturedIndex.update(i => (i + 1) % this.featuredImages.length);
+      }, 5000);
+      
+      if (this.heroVideo?.nativeElement?.play) {
+        this.heroVideo.nativeElement.muted = true;
+        this.heroVideo.nativeElement.play().catch((e: any) => console.log('Autoplay prevented:', e));
+      }
+      
+      // Intersection Observer for scroll animations (browser only)
+      if (typeof IntersectionObserver !== 'undefined') {
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            this.observer?.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+        this.observer?.observe(el);
+      });
+      }
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.checkScreenSize();
+    }
+  }
+
+  private checkScreenSize(): void {
+    this.isMobile.set(window.innerWidth <= 768);
+  }
+  
+  ngOnDestroy() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+    if (this.featuredInterval) {
+      clearInterval(this.featuredInterval);
     }
   }
 
@@ -58,19 +121,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.featuredProgress = Math.max(0, Math.min(1, raw));
   }
 
-  /** Parallax: image rises 80px → 0px as user scrolls into view */
+  /** Optional backup for non-js environments, removing parallax logic for Featured Section */
   getFeaturedTransform(): string {
-    const offset = (1 - this.featuredProgress) * 80;
-    const scale = 0.92 + this.featuredProgress * 0.08;
-    return `translateY(${offset}px) scale(${scale})`;
+    return 'none';
   }
 
-  /** Fade in as user scrolls */
   getFeaturedOpacity(): string {
-    return `${Math.min(1, this.featuredProgress * 1.5)}`;
+    return '1';
   }
 
   getTextTransform(): string {
+    if (this.isMobile()) return 'translateY(0)';
     // Start way down offscreen (1500px).
     // The user has to scroll significantly before the text even enters the bottom of the screen.
     const offset = Math.max(0, 1500 - this.scrollY * 0.6);
@@ -78,12 +139,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   getTextOpacity(): string {
+    if (this.isMobile()) return '1';
     // Wait until they've scrolled 1000px before starting to fade in
     const activeScroll = Math.max(0, this.scrollY - 1000);
     return `${Math.min(1, activeScroll / 800)}`;
   }
 
   getOverlayOpacity(): string {
+    if (this.isMobile()) return '0.4';
     // Fade in the dark gradient slowly later in the scroll
     const activeScroll = Math.max(0, this.scrollY - 800);
     return `${Math.min(1, activeScroll / 1000)}`;
@@ -91,7 +154,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   readonly fleetCards = [
     {
-      img: '/car_card.png',
+      image: '/car_card.png',
+      custom: true,
       title: 'Sedan & SUV',
       label: 'Cars',
       desc: 'Perfect for family trips and long-distance travel. AC, comfortable seating, and spacious trunks.',
@@ -101,7 +165,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       glowColor: '#10b981',
     },
     {
-      img: '/moto_card.png',
+      image: '/moto_card.png',
+      custom: true,
       title: 'Sport & Cruiser',
       label: 'Motorcycles',
       desc: 'Navigate Cambodia\'s streets effortlessly. Fuel-efficient, easy to park, thrilling to ride.',
@@ -111,7 +176,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       glowColor: '#3b82f6',
     },
     {
-      img: '/bike_card.png',
+      image: '/bike_card.png',
+      custom: true,
       title: 'City & Eco Bikes',
       label: 'Bicycles',
       desc: 'Eco-friendly and fun. Explore Phnom Penh\'s streets, parks, and riverside at your own pace.',
@@ -206,27 +272,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
       icon: 'person_add',
       title: 'Create an Account',
       desc: 'Sign up in 60 seconds. All we need is your name, email, and a password.',
-      color: '#10b981',
-      iconBg: 'rgba(16,185,129,0.12)',
-      iconColor: '#10b981',
+      color: '#064022',
+      iconBg: 'rgba(6, 64, 34, 0.06)',
+      iconColor: '#064022',
     },
     {
       step: '02',
       icon: 'search',
       title: 'Browse & Choose',
       desc: 'Filter by vehicle type, price, location, and availability. Pick what fits you best.',
-      color: '#3b82f6',
-      iconBg: 'rgba(59,130,246,0.12)',
-      iconColor: '#3b82f6',
+      color: '#064022',
+      iconBg: 'rgba(6, 64, 34, 0.06)',
+      iconColor: '#064022',
     },
     {
       step: '03',
       icon: 'key',
       title: 'Book & Ride',
       desc: 'Confirm your booking, complete payment, and enjoy your ride. It\'s that simple.',
-      color: '#8b5cf6',
-      iconBg: 'rgba(139,92,246,0.12)',
-      iconColor: '#8b5cf6',
+      color: '#064022',
+      iconBg: 'rgba(6, 64, 34, 0.06)',
+      iconColor: '#064022',
     },
   ];
 

@@ -112,9 +112,16 @@
         <span class="font-medium text-white text-[16px] tracking-tight">Cambo Rent</span>
       </div>
 
+      <!-- Left: Role Badge (Desktop Only) -->
+      <div class="hidden lg:flex items-center min-w-[150px]">
+        <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 font-semibold text-sm px-4 py-2 rounded-full border border-emerald-200 shadow-sm cursor-default select-none">
+          <span class="material-symbols-outlined text-[18px]">account_circle</span>
+          Customer
+        </div>
+      </div>
 
       <!-- Center: Search Bar (Desktop Only) -->
-      <div class="hidden lg:flex flex-1 max-w-2xl items-center mr-auto ml-4">
+      <div class="hidden lg:flex flex-1 max-w-2xl items-center mx-auto">
         <div class="relative w-full">
           <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" style="font-size: 20px;">search</span>
           <input type="text" (input)="onGlobalSearch($event)" placeholder="Search vehicles, locations, or bookings..." class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-[0.95rem] font-medium rounded-full focus:ring-2 focus:ring-[#10b981] focus:border-transparent block pl-12 pr-20 py-2.5 transition-all outline-none shadow-sm">

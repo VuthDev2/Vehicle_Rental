@@ -1,0 +1,49 @@
+<div
+  #root
+  class="accordion-gallery"
+  [class.accordion-gallery--vertical]="orientation === 'vertical'"
+  [class]="className"
+  [style.--ag-accent]="accentColor"
+  [style.--ag-overlay]="overlayColor"
+  [style.--ag-text]="textColor"
+  [style.--ag-gap]="gap + 'px'"
+  [style.--ag-radius]="radius + 'px'"
+  [style.height]="orientation === 'vertical' ? (height * 1.6) + 'px' : height + 'px'"
+  role="list"
+  aria-label="Image accordion gallery"
+>
+  @for (item of items; track $index) {
+    <a
+      #panel
+      class="ag-panel"
+      [class.ag-panel--active]="active === $index"
+      [style.borderRadius.px]="radius"
+      [attr.href]="item.link || null"
+      (click)="handleClick($index, $event)"
+      (mouseenter)="handleEnter($index)"
+      (focus)="setActive($index)"
+      (keydown)="handleKeyDown($index, $event)"
+      role="listitem"
+      tabindex="0"
+      [attr.aria-current]="active === $index ? 'true' : null"
+      [attr.aria-label]="item.title"
+    >
+      <span class="ag-panel__frame">
+        <span class="ag-panel__media" #media>
+          <img [src]="item.image" [alt]="item.alt || item.title || ''" draggable="false" />
+        </span>
+        <span class="ag-panel__overlay" aria-hidden="true"></span>
+      </span>
+      
+      @if (showLabels) {
+        <span class="ag-panel__label" aria-hidden="true">
+          <span class="ag-panel__bar" #bar></span>
+          <div>
+            <span class="ag-panel__text" #text>{{ item.title }}</span>
+            <span class="ag-panel__desc" #desc>{{ item.desc }}</span>
+          </div>
+        </span>
+      }
+    </a>
+  }
+</div>

@@ -1,0 +1,29 @@
+<div
+  class="curved-loop-jacket"
+  [style.opacity]="ready ? 1 : 0"
+  [style.cursor]="cursorStyle"
+  [style.height]="curveAmount == 0 ? '60px' : 'auto'"
+  [style.marginTop]="curveAmount == 0 ? '40px' : '0'"
+  [style.marginBottom]="curveAmount == 0 ? '40px' : '0'"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="endDrag()"
+  (pointerleave)="endDrag()"
+>
+  <svg class="curved-loop-svg" [attr.viewBox]="curveAmount == 0 ? '0 0 1440 60' : '0 0 1440 240'" [style.minWidth]="curveAmount == 0 ? '100%' : '800px'">
+    <text #measureText xml:space="preserve" style="visibility: hidden; opacity: 0; pointer-events: none;">
+      {{ text }}
+    </text>
+    <defs>
+      <path [attr.id]="pathId" [attr.d]="pathD" fill="none" stroke="transparent" />
+    </defs>
+    
+    @if (ready) {
+      <text font-weight="bold" xml:space="preserve" [class]="className">
+        <textPath #textPath [attr.href]="'#' + pathId" [attr.startOffset]="offset + 'px'" xml:space="preserve">
+          {{ totalText }}
+        </textPath>
+      </text>
+    }
+  </svg>
+</div>
