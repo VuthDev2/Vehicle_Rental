@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { PaymentService } from '../../../../core/services/payment.service';
+import { timeout } from 'rxjs';
 
 @Component({
   selector: 'app-payment-return',
@@ -56,14 +57,14 @@ import { PaymentService } from '../../../../core/services/payment.service';
             class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5"
             style="background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.22);"
           >
-            <span class="material-symbols-outlined text-5xl" style="color: #fbbf24;">hourglass_top</span>
+            <span class="material-symbols-outlined text-5xl" style="color: #fbbf24;">warning</span>
           </div>
           <p class="text-[11px] font-black uppercase tracking-widest text-amber-300 mb-2">
-            Processing
+            Verification Issue
           </p>
-          <h1 class="text-2xl font-black text-on-surface">Payment pending</h1>
+          <h1 class="text-2xl font-black text-on-surface">Payment unverified</h1>
           <p class="text-sm text-on-surface-variant mt-2 mb-7 leading-relaxed">
-            If you completed the payment, your booking will be updated shortly.
+            We couldn't verify your payment right now. Don't worry, if you completed the payment, your booking will be updated shortly automatically.
           </p>
           <div class="flex flex-col sm:flex-row gap-3 justify-center">
             <a routerLink="/" class="btn-primary text-sm px-6 py-2.5">
@@ -99,7 +100,9 @@ export class PaymentReturnComponent implements OnInit {
     }
 
     // Verify with ABA and mark the booking paid if approved.
-    this.payment.confirmPayway(tranId).subscribe({
+    this.payment.confirmPayway(tranId).pipe(
+      timeout(15000)
+    ).subscribe({
       next: (res) => {
         if (res.paid) {
           this.status.set('paid');

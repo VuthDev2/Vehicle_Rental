@@ -1,17 +1,22 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { catchError, throwError, EMPTY } from 'rxjs';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
+  const platformId = inject(PLATFORM_ID);
+  
   return next(req).pipe(
     catchError((err) => {
       if (err.status === 401) {
-        if (typeof localStorage !== 'undefined') {
-          localStorage.removeItem('cr_token');
+        if (isPlatformBrowser(platformId)) {
+          if (typeof localStorage !== 'undefined') {
+            localStorage.removeItem('cr_token');
+          }
+          router.navigateByUrl('/login');
         }
-        router.navigateByUrl('/login');
         return EMPTY;
       }
       return throwError(() => err);

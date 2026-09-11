@@ -20,6 +20,10 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "serviceWorker": "ngsw-config.json",
+            "allowedCommonJsDependencies": [
+              "socket.io-client",
+              "engine.io-client"
+            ],
             "assets": [
               {
                 "glob": "**/*",
@@ -38,10 +42,6 @@
               "src/app/features/auth/shared/auth.styles.css"
             ],
             "server": "src/main.server.ts",
-            "outputMode": "server",
-            "security": {
-              "allowedHosts": []
-            },
             "ssr": {
               "entry": "src/server.ts"
             },

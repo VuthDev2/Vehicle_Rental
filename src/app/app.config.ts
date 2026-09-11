@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
-    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+    provideHttpClient(withInterceptors([errorInterceptor, authInterceptor])),
     provideAnimationsAsync(),
     provideServiceWorker('ngsw-worker.js', { enabled: !isDevMode() }),
     provideTranslateService({
