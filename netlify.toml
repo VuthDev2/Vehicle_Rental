@@ -2,10 +2,6 @@
   publish = "dist/Vehicle_Rental/browser"
   command = "npm run build"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
 
 [[headers]]
   for = "/*"
