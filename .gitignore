@@ -10,6 +10,15 @@
 /node_modules
 npm-debug.log
 yarn-error.log
+*.log
+
+# Local dev data
+dump.rdb
+backend/dump.rdb
+
+# Local dev scratch and temp directories
+/scratch
+/tmp
 
 # IDEs and editors
 .idea/

@@ -1,7 +1,7 @@
 <div class="min-h-full pb-24 font-sans bg-[#f8f9fa]">
   <!-- Title -->
   <div class="px-4 lg:px-12 pt-6 lg:pt-10 pb-2">
-    <h1 class="text-[22px] lg:text-[2.2rem] font-bold text-[#0f172a] tracking-tight">My Bookings</h1>
+    <h1 class="text-[22px] lg:text-[2.2rem] font-bold text-[#0f172a] tracking-tight">{{ 'LAYOUT.MY_BOOKINGS' | translate }}</h1>
   </div>
 
   <!-- Tabs -->
@@ -10,25 +10,25 @@
       <button type="button" (click)="setFilter(tab.key)"
               class="booking-tab-btn"
               [class.active]="filter() === tab.key">
-        {{ tab.label }}
+        {{ 'BOOKING.' + tab.key.toUpperCase() | translate }}
       </button>
     }
   </div>
 
   <div class="px-4 lg:px-12 mt-6">
     <h2 class="text-[16px] lg:text-[1.2rem] font-bold text-[#0f172a] mb-4">
-      @if(filter() === 'pending') { Upcoming }
-      @else if(filter() === 'confirmed') { Ongoing }
-      @else if(filter() === 'completed') { Completed }
-      @else if(filter() === 'cancelled') { Canceled }
+      @if(filter() === 'pending') { {{ 'BOOKING.UPCOMING' | translate }} }
+      @else if(filter() === 'confirmed') { {{ 'BOOKING.ONGOING' | translate }} }
+      @else if(filter() === 'completed') { {{ 'BOOKING.COMPLETED' | translate }} }
+      @else if(filter() === 'cancelled') { {{ 'BOOKING.CANCELED' | translate }} }
       @else { {{ filter() | titlecase }} }
-      Bookings
+      {{ 'LAYOUT.BOOKINGS' | translate }}
     </h2>
 
     @if (loadError()) {
       <div class="bg-red-50 border border-red-100 rounded-xl p-8 text-center mt-4">
         <span class="material-symbols-outlined text-3xl text-red-400 mb-2">error</span>
-        <p class="text-sm font-bold text-red-500 mb-4">Unable to load your reservations.</p>
+        <p class="text-sm font-bold text-red-500 mb-4">{{ 'BOOKING.UNABLE_TO_LOAD' | translate }}</p>
         <button type="button" (click)="loadBookings()" class="action-btn">
           Retry Connection
         </button>
@@ -49,8 +49,8 @@
     } @else if (filteredBookings().length === 0) {
       <div class="text-center py-12">
         <span class="material-symbols-outlined text-4xl text-gray-300 mb-2">receipt_long</span>
-        <h3 class="text-lg font-bold text-slate-800">No bookings found</h3>
-        <p class="text-sm text-gray-500 mt-1">You don't have any reservations in this section.</p>
+        <h3 class="text-lg font-bold text-slate-800">{{ 'BOOKING.NO_BOOKINGS' | translate }}</h3>
+        <p class="text-sm text-gray-500 mt-1">{{ 'BOOKING.NO_RESERVATIONS' | translate }}</p>
       </div>
     } @else {
       <!-- Bookings List -->
@@ -64,14 +64,14 @@
               <!-- Top Row: Status & Booking ID -->
               <div class="flex justify-between items-center mb-2.5">
                 <span class="status-pill {{booking.status.toLowerCase()}}">
-                  @if(booking.status === 'pending') { Pending }
-                  @else if(booking.status === 'pending_verification') { Verification Req. }
-                  @else if(booking.status === 'confirmed') { Confirmed }
-                  @else if(booking.status === 'completed') { Completed }
-                  @else if(booking.status === 'cancelled') { Canceled }
+                  @if(booking.status === 'pending') { {{ 'BOOKING.PENDING' | translate }} }
+                  @else if(booking.status === 'pending_verification') { {{ 'BOOKING.VERIFICATION_REQ' | translate }} }
+                  @else if(booking.status === 'confirmed') { {{ 'BOOKING.CONFIRMED' | translate }} }
+                  @else if(booking.status === 'completed') { {{ 'BOOKING.COMPLETED' | translate }} }
+                  @else if(booking.status === 'cancelled') { {{ 'BOOKING.CANCELED' | translate }} }
                   @else { {{booking.status}} }
                 </span>
-                <span class="text-[11px] text-gray-500 font-medium">Booking ID: #CRB{{ booking._id.substring(booking._id.length - 5) | uppercase }}</span>
+                <span class="text-[11px] text-gray-500 font-medium">{{ 'BOOKING.BOOKING_ID' | translate }} #CRB{{ booking._id.substring(booking._id.length - 5) | uppercase }}</span>
               </div>
 
               <!-- Middle Row: Image & Core Details -->
@@ -94,7 +94,7 @@
                     </div>
                     <div class="icon-text !text-[11px]">
                       <span class="material-symbols-outlined !text-[14px]">person</span>
-                      <span>5 Seats</span>
+                      <span>5 {{ 'DASHBOARD.SEATS' | translate }}</span>
                     </div>
                   </div>
                 </div>
@@ -115,13 +115,13 @@
               <!-- Bottom Row: Price & Action -->
               <div class="flex items-center justify-between mt-1 pt-2 border-t border-gray-100">
                 <div class="flex items-center gap-2">
-                  <span class="text-[14px] font-bold text-[#0f172a]">Total:</span>
+                  <span class="text-[14px] font-bold text-[#0f172a]">{{ 'BOOKING.TOTAL' | translate }}:</span>
                   <span class="text-[15px] font-bold text-[#064022]">${{ booking.totalPrice | number:'1.2-2' }}</span>
                 </div>
                 
                 <div>
                   <button type="button" [routerLink]="['/customer/explore', getVehicleIdStr(booking.vehicleId)]" class="action-btn !py-1 !px-3 !text-[12px]">
-                    View Details <span class="material-symbols-outlined !text-[14px]">chevron_right</span>
+                    {{ 'DASHBOARD.VIEW_DETAILS' | translate }} <span class="material-symbols-outlined !text-[14px]">chevron_right</span>
                   </button>
                 </div>
               </div>
@@ -138,11 +138,11 @@
         <span class="material-symbols-outlined">support_agent</span>
       </div>
       <div class="flex-1 pr-2">
-        <h4 class="font-bold text-[#0f172a] text-[15px]">Need Help?</h4>
-        <p class="text-[12px] text-[#64748b] mt-0.5 leading-snug">24/7 support is available for your booking related queries.</p>
+        <h4 class="font-bold text-[#0f172a] text-[15px]">{{ 'BOOKING.NEED_HELP' | translate }}</h4>
+        <p class="text-[12px] text-[#64748b] mt-0.5 leading-snug">{{ 'BOOKING.SUPPORT_DESC' | translate }}</p>
       </div>
       <button type="button" class="action-btn">
-        Contact Support <span class="material-symbols-outlined">arrow_forward</span>
+        {{ 'BOOKING.CONTACT_SUPPORT' | translate }} <span class="material-symbols-outlined">arrow_forward</span>
       </button>
     </div>
 

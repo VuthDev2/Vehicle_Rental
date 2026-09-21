@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BookingService } from '../../../core/services/booking.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { VehicleService } from '../../../core/services/vehicle.service';
@@ -35,7 +36,7 @@ export interface FleetCategory {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, NgOptimizedImage],
+  imports: [RouterLink, NgOptimizedImage, TranslatePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -155,9 +156,9 @@ export class DashboardComponent implements OnInit {
 
   readonly greeting = computed(() => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return 'DASHBOARD.GOOD_MORNING';
+    if (hour < 18) return 'DASHBOARD.GOOD_AFTERNOON';
+    return 'DASHBOARD.GOOD_EVENING';
   });
 
   get todayLabel(): string {

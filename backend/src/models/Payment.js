@@ -14,4 +14,14 @@ const paymentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Performance Indexes
+// Fetch all payments for a user (payment history)
+paymentSchema.index({ userId: 1, createdAt: -1 });
+// Fetch payments for a specific booking
+paymentSchema.index({ bookingId: 1 });
+// Filter by payment status (admin reporting)
+paymentSchema.index({ status: 1 });
+// Filter by transaction ID (PayWay webhook lookups)
+paymentSchema.index({ transactionId: 1 }, { sparse: true });
+
 module.exports = mongoose.model('Payment', paymentSchema);

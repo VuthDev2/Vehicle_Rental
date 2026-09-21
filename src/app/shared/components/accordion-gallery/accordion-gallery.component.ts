@@ -16,6 +16,7 @@ import {
   NgZone
 } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import gsap from 'gsap';
 
 export interface AccordionItem {
@@ -29,7 +30,7 @@ export interface AccordionItem {
 @Component({
   selector: 'app-accordion-gallery',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './accordion-gallery.component.html',
   styleUrl: './accordion-gallery.component.css'
 })

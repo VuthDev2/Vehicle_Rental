@@ -1,8 +1,266 @@
 {
   "NAV": {
-    "HOME": "首页",
+    "HOME": "主页",
     "ABOUT": "关于我们",
     "CONTACT": "联系我们",
     "FLEET": "车队"
+  },
+  "AUTH": {
+    "SIGN_IN": "登录",
+    "SIGN_UP": "注册",
+    "LOGOUT": "退出登录"
+  },
+  "LAYOUT": {
+    "VEHICLE_RENTALS": "车辆租赁",
+    "CUSTOMER": "客户",
+    "ADMIN": "管理员",
+    "LIGHT_MODE": "日间模式",
+    "DARK_MODE": "夜间模式",
+    "SEARCH_PLACEHOLDER": "搜索车辆、地点或预订...",
+    "NOTIFICATIONS": "通知",
+    "MARK_ALL_READ": "全部标记为已读",
+    "NO_NOTIFICATIONS": "暂无通知",
+    "MY_PROFILE": "我的个人资料",
+    "MY_BOOKINGS": "我的预订",
+    "DASHBOARD": "仪表板",
+    "EXPLORE": "探索",
+    "BOOKINGS": "预订",
+    "PAYMENTS": "付款",
+    "PROFILE": "个人资料",
+    "VEHICLES": "车辆",
+    "CUSTOMERS": "客户",
+    "PROMOTIONS": "促销",
+    "REPORTS": "报告",
+    "SETTINGS": "设置"
+  },
+  "FOOTER": {
+    "DESC": "您在柬埔寨值得信赖的车辆租赁合作伙伴。高级车队，价格透明，24/7全天候支持。",
+    "QUICK_LINKS": "快速链接",
+    "HOME": "主页",
+    "ABOUT": "关于我们",
+    "CONTACT": "联系我们",
+    "COPYRIGHT": "© 2026 Cambo Rent。保留所有权利。",
+    "PRIVACY": "隐私政策",
+    "TERMS": "服务条款"
+  },
+  "HOME": {
+    "HERO": {
+      "TITLE1": "探索柬埔寨",
+      "TITLE2": "由你做主",
+      "SUBTITLE": "适合每段旅程的高级汽车、摩托车和自行车。",
+      "GET_STARTED": "开始使用",
+      "BROWSE_FLEET": "浏览车队"
+    },
+    "MARQUEE": "高级车辆 • 灵活租赁 • 24/7支持 • 探索柬埔寨 •",
+    "FEATURED": {
+      "BADGE": "精选类别",
+      "TITLE": "豪华跑车与SUV",
+      "PRICE": "起价 $85/天",
+      "DESC": "令人兴奋的驾驶体验和高端舒适感的完美结合。无与伦比的性能，高级内饰和醒目的设计。",
+      "CTA": "浏览您的最爱！"
+    },
+    "FLEET_SECTION": {
+      "KICKER": "我们的车队",
+      "TITLE": "为您的一天选择合适的座驾。",
+      "DESC": "简单的分类，透明的日租率，以及专为当地道路维护的车辆。"
+    },
+    "WHY_SECTION": {
+      "KICKER": "为什么选择 Cambo Rent",
+      "TITLE": "专为重复租赁流程而设计。",
+      "DESC": "一切都旨在使预订、支付和上路变得简单明了。"
+    },
+    "STEPS_SECTION": {
+      "KICKER": "简单流程",
+      "TITLE": "分三步租赁。",
+      "DESC": "创建一个帐户，选择您的车辆，确认付款，然后出发。"
+    },
+    "PRICING_SECTION": {
+      "KICKER": "价格",
+      "TITLE": "明确的起步价。",
+      "DESC": "在登录之前，按车辆类型浏览并比较基本要素。",
+      "POPULAR": "最受欢迎",
+      "PER_DAY": "/天"
+    },
+    "TESTIMONIALS_SECTION": {
+      "KICKER": "客户评价",
+      "TITLE": "受到当地骑手和旅行者的信任。"
+    },
+    "DYNAMIC": {
+      "FLEET": {
+        "CARS": {
+          "TITLE": "轿车与SUV",
+          "LABEL": "汽车",
+          "DESC": "适合家庭旅行和长途旅行。配有空调，舒适的座椅和宽敞的后备箱。"
+        },
+        "MOTO": {
+          "TITLE": "运动与巡航",
+          "LABEL": "摩托车",
+          "DESC": "轻松穿梭于柬埔寨的街道。省油，易于停车，骑行充满乐趣。"
+        },
+        "BIKE": {
+          "TITLE": "城市与环保自行车",
+          "LABEL": "自行车",
+          "DESC": "环保且有趣。按照您自己的节奏探索金边的街道、公园和河滨。"
+        }
+      },
+      "FEATURES": {
+        "1": {
+          "TITLE": "适合每次旅行的汽车",
+          "DESC": "从紧凑型轿车到宽敞的SUV，我们的汽车都配有空调，GPS和全面的保险覆盖。"
+        },
+        "2": {
+          "TITLE": "摩托车",
+          "DESC": "省油且灵活的摩托车，非常适合在城市街道和乡村道路上行驶。"
+        },
+        "3": {
+          "TITLE": "自行车与电动自行车",
+          "DESC": "环保的城市自行车和电动自行车 - 非常适合短途旅行、旅游和河滨骑行。"
+        },
+        "4": {
+          "TITLE": "送车上门",
+          "DESC": "将您的车辆直接送到您在金边的酒店，家中或任何地点。"
+        },
+        "5": {
+          "TITLE": "灵活的租赁计划",
+          "DESC": "按小时，按天，按周或按月租赁。我们灵活的计划适应您的旅行日程。"
+        },
+        "6": {
+          "TITLE": "全险车队",
+          "DESC": "每辆车都通过了50项安全检查。所有预订均包含全额保险。"
+        },
+        "7": {
+          "TITLE": "24/7 全天候客户支持",
+          "DESC": "我们的团队随时可以协助处理预订、道路紧急情况或任何问题。"
+        },
+        "8": {
+          "TITLE": "安全付款",
+          "DESC": "通过 ABA PayWay QR 使用加密结账和跟踪预订确认进行付款。"
+        },
+        "9": {
+          "TITLE": "多个取车枢纽",
+          "DESC": "在金边，暹粒和其他主要城市设有便利的取车点。"
+        }
+      },
+      "STEPS": {
+        "1": {
+          "TITLE": "创建账户",
+          "DESC": "在60秒内注册。我们只需要您的姓名、电子邮件和密码。"
+        },
+        "2": {
+          "TITLE": "浏览与选择",
+          "DESC": "按车辆类型、价格、位置和可用性进行筛选。选择最适合您的。"
+        },
+        "3": {
+          "TITLE": "预订与骑行",
+          "DESC": "确认您的预订，完成付款，享受您的旅程。就这么简单。"
+        }
+      },
+      "PRICING": {
+        "1": {
+          "CAT": "自行车",
+          "DESC": "非常适合短途旅行和观光",
+          "F1": "日租和周租",
+          "F2": "城市自行车和电动自行车",
+          "F3": "免费提供头盔",
+          "F4": "可选GPS"
+        },
+        "2": {
+          "CAT": "摩托车",
+          "DESC": "适合城市通勤和探险",
+          "F1": "125cc至500cc发动机",
+          "F2": "包含头盔和装备",
+          "F3": "保险覆盖",
+          "F4": "无限里程"
+        },
+        "3": {
+          "CAT": "汽车 / SUV",
+          "DESC": "每条道路的舒适与风格",
+          "F1": "空调和GPS导航",
+          "F2": "全面保险",
+          "F3": "提供机场接机",
+          "F4": "可应要求提供儿童座椅"
+        }
+      },
+      "TESTIMONIALS": {
+        "1": {
+          "LOCATION": "柬埔寨 金边",
+          "TEXT": "我租了一辆摩托车一个星期去探索金边。过程超级简单，自行车状况完美，价格无与伦比！"
+        },
+        "2": {
+          "LOCATION": "法国 巴黎 (游客)",
+          "TEXT": "我们租了一辆SUV去暹粒家庭旅行。车很干净，交车准时，客户支持随时可以联系到。强烈推荐！"
+        },
+        "3": {
+          "LOCATION": "新加坡",
+          "TEXT": "旅行期间每天早上都租自行车探索河滨。这是一种非常有趣且实惠的出行方式。肯定会再次使用 Cambo Rent！"
+        }
+      }
+    }
+  },
+  "DASHBOARD": {
+    "GOOD_MORNING": "早上好",
+    "GOOD_AFTERNOON": "下午好",
+    "GOOD_EVENING": "晚上好",
+    "HERO_SUBTITLE": "为您的旅程寻找完美的车辆。",
+    "FIND_RIDE": "寻找您的座驾",
+    "BOOK_STEPS": "只需几步即可预订汽车、自行车或摩托车。",
+    "PICKUP_LOCATION": "取车地点",
+    "PICKUP_DATE": "取车日期",
+    "RETURN_DATE": "还车日期",
+    "SEARCH_VEHICLES": "搜索车辆",
+    "BROWSE_BY_TYPE": "按类型浏览",
+    "VIEW_ALL": "查看全部",
+    "CARS": "汽车",
+    "MOTORBIKES": "摩托车",
+    "BICYCLES": "自行车",
+    "VEHICLES": "辆车",
+    "FEATURED_VEHICLES": "精选车辆",
+    "POPULAR": "热门",
+    "NEW": "新品",
+    "AUTOMATIC": "自动挡",
+    "SEATS": "座",
+    "PETROL": "汽油",
+    "DAY": "天",
+    "VIEW_DETAILS": "查看详情",
+    "VEHICLES_IN_FLEET": "车队车辆",
+    "AVAILABLE_NOW": "现可预订",
+    "CURRENTLY_BOOKED": "当前已订",
+    "YOUR_BOOKINGS": "您的预订",
+    "UPCOMING_BOOKING": "即将到来的预订",
+    "CONFIRMED": "已确认",
+    "TOTAL": "总计",
+    "VIEW_BOOKING": "查看预订",
+    "WEEKEND_SPECIAL": "周末特惠",
+    "10_OFF": "九折优惠",
+    "PROMO_DESC": "适用于周末租赁的所有汽车、自行车和摩托车。",
+    "EXPLORE_NOW": "立即探索"
+  },
+  "EXPLORE": {
+    "TITLE": "探索车辆",
+    "SUBTITLE": "为您下次旅行寻找完美的自行车、摩托车或汽车。",
+    "SEARCH_MODELS": "搜索型号...",
+    "SEARCH_ALL": "搜索车辆、品牌或型号...",
+    "EV_ONLY": "仅电动车",
+    "ALL_VEHICLES": "所有车辆",
+    "FILTERS": "筛选",
+    "SORT_RECOMMENDED": "排序: 推荐",
+    "PRICE_LOW_HIGH": "价格: 从低到高",
+    "PRICE_HIGH_LOW": "价格: 从高到低",
+    "TOP_RATED": "最高评价",
+    "VEHICLES_FOUND": "辆找到的车辆",
+    "GRID": "网格",
+    "LIST": "列表",
+    "MAP": "地图",
+    "NO_VEHICLES": "未找到车辆",
+    "TRY_CLEARING": "尝试清除或放宽搜索条件。",
+    "CLEAR_FILTERS": "清除所有筛选",
+    "SPEED": "速",
+    "GEAR": "齿轮",
+    "AUTO": "自动挡",
+    "SEATS": "座",
+    "DAY": "天",
+    "VIEW_DETAILS": "查看详情",
+    "LOAD_MORE": "加载更多车辆",
+    "LOADING": "加载中..."
   }
 }

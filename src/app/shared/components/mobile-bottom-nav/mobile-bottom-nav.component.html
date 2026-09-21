@@ -12,11 +12,11 @@
       #rla="routerLinkActive"
       class="app-bottom-tab"
       [class.is-active]="rla.isActive"
-      [attr.aria-label]="tab.label"
+      [attr.aria-label]="tab.labelKey"
       [attr.aria-current]="rla.isActive ? 'page' : null"
     >
       <span class="app-bottom-tab-icon material-symbols-outlined">{{ tab.icon }}</span>
-      <span class="app-bottom-tab-label">{{ tab.label }}</span>
+      <span class="app-bottom-tab-label">{{ tab.labelKey | translate }}</span>
     </a>
   }
 </nav>

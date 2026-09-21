@@ -12,6 +12,23 @@ class BookingService {
     if (!vehicle) throw new Error('Vehicle not found.');
     if (!vehicle.available) throw new Error('Vehicle is not available.');
 
+    const user = await require('../models/User').findById(userId);
+    if (!user) throw new Error('User not found.');
+    if (!user.phoneVerified) {
+      throw new Error('Phone verification required before booking.');
+    }
+
+    if (paymentMethod === 'pay_at_store') {
+      const activePayAtStoreCount = await Booking.countDocuments({
+        userId,
+        paymentMethod: 'pay_at_store',
+        status: { $in: ['pending', 'pending_verification', 'confirmed', 'active'] }
+      });
+      if (activePayAtStoreCount >= 3) {
+        throw new Error('You cannot have more than 3 active pay-at-store bookings. Please complete or cancel existing ones.');
+      }
+    }
+
     // Check for overlapping bookings
     const overlap = await Booking.findOne({
       vehicleId,

@@ -22,4 +22,18 @@ const bookingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Performance Indexes
+// Fetch all bookings for a user (dashboard, history)
+bookingSchema.index({ userId: 1, createdAt: -1 });
+// Fetch all bookings for a vehicle (admin, availability check)
+bookingSchema.index({ vehicleId: 1, status: 1 });
+// Filter bookings by status (admin panel)
+bookingSchema.index({ status: 1, createdAt: -1 });
+// Filter bookings by payment status
+bookingSchema.index({ paymentStatus: 1 });
+// Compound: user + status (user's active/pending bookings)
+bookingSchema.index({ userId: 1, status: 1 });
+// Date range queries (availability)
+bookingSchema.index({ startDate: 1, endDate: 1 });
+
 module.exports = mongoose.model('Booking', bookingSchema);

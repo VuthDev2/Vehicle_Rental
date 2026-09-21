@@ -1,7 +1,8 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const connectDB = require('./config/db');
-const { connectRedis, redisClient } = require('./config/redis');
+const redisConfig = require('./config/redis');
+const { connectRedis } = redisConfig;
 
 const PORT = process.env.PORT || 5000;
 
@@ -37,6 +38,12 @@ connectDB().then(async () => {
     }
   });
 
+  const { createAdapter } = require('@socket.io/redis-adapter');
+  if (redisConfig.isRedisAvailable()) {
+    io.adapter(createAdapter(redisConfig.getPubClient(), redisConfig.getSubClient()));
+    console.log('🔗 Socket.io Redis Adapter configured');
+  }
+
   app.set('io', io);
 
   io.on('connection', (socket) => {
@@ -54,8 +61,8 @@ connectDB().then(async () => {
         await mongoose.connection.close(false);
         console.log('MongoDB connection closed.');
       }
-      if (redisClient.isOpen) {
-        await redisClient.quit();
+      if (redisConfig.redisClient.isOpen) {
+        await redisConfig.redisClient.quit();
         console.log('Redis connection closed.');
       }
       process.exit(0);

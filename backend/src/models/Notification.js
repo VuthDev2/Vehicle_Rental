@@ -32,4 +32,12 @@ const notificationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Performance Indexes
+// Fetch all notifications for a user sorted by newest first
+notificationSchema.index({ userId: 1, createdAt: -1 });
+// Fetch only unread notifications for a user (notification badge count)
+notificationSchema.index({ userId: 1, read: 1 });
+// Fetch admin-wide notifications (userId: null)
+notificationSchema.index({ userId: 1, type: 1 });
+
 module.exports = mongoose.model('Notification', notificationSchema);

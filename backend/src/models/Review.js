@@ -11,4 +11,10 @@ const reviewSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Performance Indexes
+// Fetch all reviews for a vehicle (vehicle detail page)
+reviewSchema.index({ vehicleId: 1, createdAt: -1 });
+// Fetch all reviews by a user (user profile page)
+reviewSchema.index({ userId: 1 });
+
 module.exports = mongoose.model('Review', reviewSchema);

@@ -7,6 +7,9 @@ const redisClient = createClient({
   },
 });
 
+let pubClient = null;
+let subClient = null;
+
 let redisAvailable = false;
 
 redisClient.on('error', (err) => {
@@ -32,6 +35,9 @@ const connectRedis = async () => {
   if (!redisClient.isOpen) {
     try {
       await redisClient.connect();
+      pubClient = redisClient.duplicate();
+      subClient = redisClient.duplicate();
+      await Promise.all([pubClient.connect(), subClient.connect()]);
       redisAvailable = true;
     } catch (err) {
       console.warn('⚠️  Redis unavailable – running without cache/rate-limit store.');
@@ -43,4 +49,7 @@ const connectRedis = async () => {
 
 const isRedisAvailable = () => redisAvailable && redisClient.isOpen;
 
-module.exports = { redisClient, connectRedis, isRedisAvailable };
+const getPubClient = () => pubClient;
+const getSubClient = () => subClient;
+
+module.exports = { redisClient, getPubClient, getSubClient, connectRedis, isRedisAvailable };

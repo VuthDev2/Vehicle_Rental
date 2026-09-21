@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const Booking = require('../models/Booking');
 const Vehicle = require('../models/Vehicle');
+const User = require('../models/User');
 
 const startCronJobs = () => {
   // Run every hour
@@ -31,6 +32,33 @@ const startCronJobs = () => {
 
       for (const booking of activeBookings) {
         await Vehicle.findByIdAndUpdate(booking.vehicleId, { available: false });
+      }
+
+      // 3. Find no-show bookings (confirmed, but not picked up, 2 hours past start time)
+      const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+      const noShowBookings = await Booking.find({
+        status: 'confirmed',
+        startDate: { $lte: twoHoursAgo },
+        paymentStatus: 'unpaid'
+      });
+
+      for (const booking of noShowBookings) {
+        booking.status = 'cancelled';
+        booking.notes = (booking.notes ? booking.notes + '\n' : '') + 'Automatically cancelled due to no-show.';
+        await booking.save();
+        
+        await Vehicle.findByIdAndUpdate(booking.vehicleId, { available: true });
+
+        const user = await User.findById(booking.userId);
+        if (user) {
+          user.strikes += 1;
+          if (user.strikes >= 3) {
+            user.isActive = false;
+            console.log(`[CRON] User ${user._id} banned due to 3 strikes.`);
+          }
+          await user.save();
+        }
+        console.log(`[CRON] Booking ${booking._id} cancelled for no-show. User ${user ? user._id : 'unknown'} penalized.`);
       }
 
       console.log('[CRON] Vehicle availability check finished.');

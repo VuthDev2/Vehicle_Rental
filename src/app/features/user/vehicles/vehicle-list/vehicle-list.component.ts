@@ -1,7 +1,9 @@
 import { Component, inject, signal, computed, effect, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { VehicleService } from '../../../../core/services/vehicle.service';
 import { Vehicle, VehicleFilter } from '../../../../models/vehicle.model';
 import { SearchService } from '../../../../core/services/search.service';
@@ -10,7 +12,7 @@ import { SeoService } from '../../../../core/services/seo.service';
 @Component({
   selector: 'app-vehicle-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, NgOptimizedImage],
+  imports: [FormsModule, CommonModule, RouterLink, NgOptimizedImage, TranslatePipe],
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

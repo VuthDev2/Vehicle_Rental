@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe, UpperCasePipe, TitleCasePipe, DecimalPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
 import { BookingService } from '../../../../core/services/booking.service';
 import { Booking } from '../../../../models/booking.model';
@@ -25,7 +26,7 @@ export type BookingFilter = 'all' | 'pending' | 'pending_verification' | 'confir
 @Component({
   selector: 'app-my-bookings',
   standalone: true,
-  imports: [DatePipe, UpperCasePipe, TitleCasePipe, DecimalPipe, RouterLink],
+  imports: [DatePipe, UpperCasePipe, TitleCasePipe, DecimalPipe, RouterLink, TranslatePipe],
   templateUrl: './my-bookings.component.html',
   styleUrl: './my-bookings.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

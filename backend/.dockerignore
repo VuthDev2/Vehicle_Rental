@@ -1,0 +1,25 @@
+# Git
+.git
+.gitignore
+
+# Dependencies (installed fresh inside the container via npm ci)
+node_modules
+
+# Dev environment files
+.env
+.env.*
+
+# Dev scripts (one-time migration/seeding scripts, not needed at runtime)
+src/scripts
+
+# Test artifacts
+__tests__
+coverage
+
+# Local dev data
+dump.rdb
+uploads
+
+# OS artifacts
+.DS_Store
+Thumbs.db

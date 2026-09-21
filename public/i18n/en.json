@@ -4,5 +4,263 @@
     "ABOUT": "About",
     "CONTACT": "Contact",
     "FLEET": "Fleet"
+  },
+  "AUTH": {
+    "SIGN_IN": "Sign In",
+    "SIGN_UP": "Sign Up",
+    "LOGOUT": "Logout"
+  },
+  "LAYOUT": {
+    "VEHICLE_RENTALS": "Vehicle Rentals",
+    "CUSTOMER": "Customer",
+    "ADMIN": "Admin",
+    "LIGHT_MODE": "Light Mode",
+    "DARK_MODE": "Dark Mode",
+    "SEARCH_PLACEHOLDER": "Search vehicles, locations, or bookings...",
+    "NOTIFICATIONS": "Notifications",
+    "MARK_ALL_READ": "Mark all as read",
+    "NO_NOTIFICATIONS": "No notifications yet",
+    "MY_PROFILE": "My Profile",
+    "MY_BOOKINGS": "My Bookings",
+    "DASHBOARD": "Dashboard",
+    "EXPLORE": "Explore",
+    "BOOKINGS": "Bookings",
+    "PAYMENTS": "Payments",
+    "PROFILE": "Profile",
+    "VEHICLES": "Vehicles",
+    "CUSTOMERS": "Customers",
+    "PROMOTIONS": "Promotions",
+    "REPORTS": "Reports",
+    "SETTINGS": "Settings"
+  },
+  "FOOTER": {
+    "DESC": "Your trusted vehicle rental partner in Cambodia. Premium fleet with transparent pricing and 24/7 support.",
+    "QUICK_LINKS": "Quick Links",
+    "HOME": "Home",
+    "ABOUT": "About Us",
+    "CONTACT": "Contact",
+    "COPYRIGHT": "© 2026 Cambo Rent. All rights reserved.",
+    "PRIVACY": "Privacy Policy",
+    "TERMS": "Terms of Service"
+  },
+  "HOME": {
+    "HERO": {
+      "TITLE1": "Explore Cambodia",
+      "TITLE2": "Your Way",
+      "SUBTITLE": "Premium cars, motorcycles, and bicycles for every journey.",
+      "GET_STARTED": "Get Started",
+      "BROWSE_FLEET": "Browse Fleet"
+    },
+    "MARQUEE": "PREMIUM VEHICLES • FLEXIBLE RENTALS • 24/7 SUPPORT • EXPLORE CAMBODIA •",
+    "FEATURED": {
+      "BADGE": "Featured Category",
+      "TITLE": "Luxury Sports & SUV",
+      "PRICE": "From $85/day",
+      "DESC": "Perfect for thrilling drives and high-end comfort. Unmatched performance, premium interiors, and striking designs.",
+      "CTA": "Browse your interest!"
+    },
+    "FLEET_SECTION": {
+      "KICKER": "Our Fleet",
+      "TITLE": "Choose the right ride for the day.",
+      "DESC": "Simple categories, transparent daily rates, and vehicles maintained for local roads."
+    },
+    "WHY_SECTION": {
+      "KICKER": "Why Cambo Rent",
+      "TITLE": "Built for repeat rental workflows.",
+      "DESC": "Everything is designed to make booking, paying, and getting on the road straightforward."
+    },
+    "STEPS_SECTION": {
+      "KICKER": "Simple process",
+      "TITLE": "Rent in three steps.",
+      "DESC": "Create an account, choose your vehicle, confirm payment, and go."
+    },
+    "PRICING_SECTION": {
+      "KICKER": "Pricing",
+      "TITLE": "Clear starting prices.",
+      "DESC": "Browse by vehicle type and compare the essentials before you sign in.",
+      "POPULAR": "Most Popular",
+      "PER_DAY": "/day"
+    },
+    "TESTIMONIALS_SECTION": {
+      "KICKER": "Customer notes",
+      "TITLE": "Trusted by local riders and travelers."
+    },
+    "DYNAMIC": {
+      "FLEET": {
+        "CARS": {
+          "TITLE": "Sedan & SUV",
+          "LABEL": "Cars",
+          "DESC": "Perfect for family trips and long-distance travel. AC, comfortable seating, and spacious trunks."
+        },
+        "MOTO": {
+          "TITLE": "Sport & Cruiser",
+          "LABEL": "Motorcycles",
+          "DESC": "Navigate Cambodia's streets effortlessly. Fuel-efficient, easy to park, thrilling to ride."
+        },
+        "BIKE": {
+          "TITLE": "City & Eco Bikes",
+          "LABEL": "Bicycles",
+          "DESC": "Eco-friendly and fun. Explore Phnom Penh's streets, parks, and riverside at your own pace."
+        }
+      },
+      "FEATURES": {
+        "1": {
+          "TITLE": "Cars for Every Trip",
+          "DESC": "From compact sedans to spacious SUVs, our cars come with AC, GPS, and full insurance coverage."
+        },
+        "2": {
+          "TITLE": "Motorcycles & Motos",
+          "DESC": "Fuel-efficient and nimble motorcycles perfect for navigating city streets and countryside roads."
+        },
+        "3": {
+          "TITLE": "Bicycles & E-Bikes",
+          "DESC": "Eco-friendly city bikes and electric bikes — ideal for short trips, tourism, and riverside rides."
+        },
+        "4": {
+          "TITLE": "Doorstep Delivery",
+          "DESC": "Have your vehicle delivered directly to your hotel, home, or any location in Phnom Penh."
+        },
+        "5": {
+          "TITLE": "Flexible Rental Plans",
+          "DESC": "Rent by the hour, day, week, or month. Our flexible plans adapt to your travel schedule."
+        },
+        "6": {
+          "TITLE": "Fully Insured Fleet",
+          "DESC": "Every vehicle passes a 50-point safety inspection. Full insurance included on all bookings."
+        },
+        "7": {
+          "TITLE": "24/7 Customer Support",
+          "DESC": "Our team is always available to assist with bookings, roadside emergencies, or any issues."
+        },
+        "8": {
+          "TITLE": "Secure Payments",
+          "DESC": "Pay through ABA PayWay QR with encrypted checkout and tracked booking confirmation."
+        },
+        "9": {
+          "TITLE": "Multiple Pickup Hubs",
+          "DESC": "Conveniently located pickup points across Phnom Penh, Siem Reap, and other major cities."
+        }
+      },
+      "STEPS": {
+        "1": {
+          "TITLE": "Create an Account",
+          "DESC": "Sign up in 60 seconds. All we need is your name, email, and a password."
+        },
+        "2": {
+          "TITLE": "Browse & Choose",
+          "DESC": "Filter by vehicle type, price, location, and availability. Pick what fits you best."
+        },
+        "3": {
+          "TITLE": "Book & Ride",
+          "DESC": "Confirm your booking, complete payment, and enjoy your ride. It's that simple."
+        }
+      },
+      "PRICING": {
+        "1": {
+          "CAT": "Bicycle",
+          "DESC": "Perfect for short trips and sightseeing",
+          "F1": "Daily & weekly rates",
+          "F2": "City bikes & e-bikes",
+          "F3": "Free helmet included",
+          "F4": "GPS optional"
+        },
+        "2": {
+          "CAT": "Motorcycle",
+          "DESC": "For city commuting and adventuring",
+          "F1": "125cc to 500cc engines",
+          "F2": "Helmet & gear included",
+          "F3": "Insurance coverage",
+          "F4": "Unlimited mileage"
+        },
+        "3": {
+          "CAT": "Car / SUV",
+          "DESC": "Comfort and style for every road",
+          "F1": "AC & GPS navigation",
+          "F2": "Full insurance",
+          "F3": "Airport pickup available",
+          "F4": "Child seat on request"
+        }
+      },
+      "TESTIMONIALS": {
+        "1": {
+          "LOCATION": "Phnom Penh, Cambodia",
+          "TEXT": "I rented a motorcycle for a week to explore Phnom Penh. The process was super easy, the bike was in perfect condition, and the price was unbeatable!"
+        },
+        "2": {
+          "LOCATION": "Paris, France (Tourist)",
+          "TEXT": "We rented an SUV for our family trip to Siem Reap. The car was clean, delivery was on time, and customer support was always reachable. Highly recommend!"
+        },
+        "3": {
+          "LOCATION": "Singapore",
+          "TEXT": "Rented bikes every morning during my trip to explore the riverside. Such a fun and affordable way to get around. Will definitely use Cambo Rent again!"
+        }
+      }
+    }
+  },
+  "DASHBOARD": {
+    "GOOD_MORNING": "Good morning",
+    "GOOD_AFTERNOON": "Good afternoon",
+    "GOOD_EVENING": "Good evening",
+    "HERO_SUBTITLE": "Find the perfect vehicle for your journey.",
+    "FIND_RIDE": "Find Your Ride",
+    "BOOK_STEPS": "Book a car, bike or moto in just a few steps.",
+    "PICKUP_LOCATION": "Pick-up Location",
+    "PICKUP_DATE": "Pick-up Date",
+    "RETURN_DATE": "Return Date",
+    "SEARCH_VEHICLES": "Search Vehicles",
+    "BROWSE_BY_TYPE": "Browse by Type",
+    "VIEW_ALL": "View all",
+    "CARS": "Cars",
+    "MOTORBIKES": "Motorbikes",
+    "BICYCLES": "Bicycles",
+    "VEHICLES": "Vehicles",
+    "FEATURED_VEHICLES": "Featured Vehicles",
+    "POPULAR": "Popular",
+    "NEW": "New",
+    "AUTOMATIC": "Automatic",
+    "SEATS": "Seats",
+    "PETROL": "Petrol",
+    "DAY": "day",
+    "VIEW_DETAILS": "View Details",
+    "VEHICLES_IN_FLEET": "Vehicles<br>In Fleet",
+    "AVAILABLE_NOW": "Available<br>Now",
+    "CURRENTLY_BOOKED": "Currently<br>Booked",
+    "YOUR_BOOKINGS": "Your<br>Bookings",
+    "UPCOMING_BOOKING": "Upcoming Booking",
+    "CONFIRMED": "Confirmed",
+    "TOTAL": "Total",
+    "VIEW_BOOKING": "View Booking",
+    "WEEKEND_SPECIAL": "Weekend Special",
+    "10_OFF": "10% OFF",
+    "PROMO_DESC": "For all cars, bikes and motos<br>on weekend rentals.",
+    "EXPLORE_NOW": "Explore Now"
+  },
+  "EXPLORE": {
+    "TITLE": "Explore Vehicles",
+    "SUBTITLE": "Find the perfect bike, moto, or car for your next trip.",
+    "SEARCH_MODELS": "Search models...",
+    "SEARCH_ALL": "Search vehicles, brands, or models...",
+    "EV_ONLY": "EV Only",
+    "ALL_VEHICLES": "All Vehicles",
+    "FILTERS": "Filters",
+    "SORT_RECOMMENDED": "Sort: Recommended",
+    "PRICE_LOW_HIGH": "Price: Low to High",
+    "PRICE_HIGH_LOW": "Price: High to Low",
+    "TOP_RATED": "Top Rated",
+    "VEHICLES_FOUND": "Vehicles Found",
+    "GRID": "Grid",
+    "LIST": "List",
+    "MAP": "Map",
+    "NO_VEHICLES": "No vehicles found",
+    "TRY_CLEARING": "Try clearing or broadening your search criteria.",
+    "CLEAR_FILTERS": "Clear All Filters",
+    "SPEED": "Speed",
+    "GEAR": "Gear",
+    "AUTO": "Auto",
+    "SEATS": "Seats",
+    "DAY": "day",
+    "VIEW_DETAILS": "View Details",
+    "LOAD_MORE": "Load More Vehicles",
+    "LOADING": "Loading..."
   }
 }

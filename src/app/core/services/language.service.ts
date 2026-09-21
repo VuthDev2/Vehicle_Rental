@@ -1,10 +1,19 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
   private translate = inject(TranslateService);
   currentLang = signal<string>('en');
+
+  currentFlag = computed(() => {
+    switch (this.currentLang()) {
+      case 'en': return '🇬🇧';
+      case 'km': return '🇰🇭';
+      case 'zh': return '🇨🇳';
+      default: return '🇬🇧';
+    }
+  });
 
   readonly availableLangs = ['en', 'km', 'zh'];
 

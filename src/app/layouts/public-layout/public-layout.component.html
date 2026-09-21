@@ -82,16 +82,16 @@
           class="theme-toggle-btn flex items-center justify-center transition-all hover:bg-white/10"
           aria-label="Toggle Language"
         >
-          <span class="font-bold text-sm" [style.color]="theme.isDark() ? 'white' : 'var(--color-primary)'">{{ lang.currentLang() | uppercase }}</span>
+          <span class="text-xl leading-none" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">{{ lang.currentFlag() }}</span>
         </button>
         <a
           routerLink="/login"
           class="nav-link sign-in-link"
         >
-          Sign In
+          {{ 'AUTH.SIGN_IN' | translate }}
         </a>
         <a routerLink="/register" class="btn-primary public-signup-btn">
-          Sign Up
+          {{ 'AUTH.SIGN_UP' | translate }}
         </a>
       </div>
 
@@ -121,7 +121,7 @@
             (click)="mobileOpen.set(false)"
             class="mobile-nav-link"
           >
-            <span class="material-symbols-outlined text-lg">home</span> Home
+            <span class="material-symbols-outlined text-lg">home</span> {{ 'NAV.HOME' | translate }}
           </a>
           <a
             routerLink="/about"
@@ -129,7 +129,7 @@
             (click)="mobileOpen.set(false)"
             class="mobile-nav-link"
           >
-            <span class="material-symbols-outlined text-lg">info</span> About
+            <span class="material-symbols-outlined text-lg">info</span> {{ 'NAV.ABOUT' | translate }}
           </a>
           <a
             routerLink="/contact"
@@ -137,14 +137,14 @@
             (click)="mobileOpen.set(false)"
             class="mobile-nav-link"
           >
-            <span class="material-symbols-outlined text-lg">call</span> Contact
+            <span class="material-symbols-outlined text-lg">call</span> {{ 'NAV.CONTACT' | translate }}
           </a>
           <a
             [routerLink]="auth.isAuthenticated() ? '/customer/explore' : '/login'"
             (click)="mobileOpen.set(false)"
             class="mobile-nav-link"
           >
-            <span class="material-symbols-outlined text-lg">directions_car</span> Fleet
+            <span class="material-symbols-outlined text-lg">directions_car</span> {{ 'NAV.FLEET' | translate }}
           </a>
           <div class="border-t my-2" style="border-color: rgba(255, 255, 255, 0.07)"></div>
           <a
@@ -152,13 +152,13 @@
             (click)="mobileOpen.set(false)"
             class="mobile-action-btn"
           >
-            <span class="material-symbols-outlined text-lg">login</span> Sign In
+            <span class="material-symbols-outlined text-lg">login</span> {{ 'AUTH.SIGN_IN' | translate }}
           </a>
           <a
             routerLink="/register"
             (click)="mobileOpen.set(false)"
             class="btn-primary py-3 rounded-xl text-sm justify-center"
-            >Sign Up</a
+            >{{ 'AUTH.SIGN_UP' | translate }}</a
           >
           <div class="border-t mt-3" style="border-color: rgba(255, 255, 255, 0.07)"></div>
           <button
@@ -167,7 +167,7 @@
             class="mobile-action-btn"
           >
             <span class="material-symbols-outlined text-lg">{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</span>
-            {{ theme.isDark() ? 'Light Mode' : 'Dark Mode' }}
+            {{ theme.isDark() ? ('LAYOUT.LIGHT_MODE' | translate) : ('LAYOUT.DARK_MODE' | translate) }}
           </button>
         </div>
       </div>
@@ -200,16 +200,16 @@
             <span class="text-2xl font-black" style="color: white; letter-spacing: -0.5px;">Cambo Rent</span>
           </div>
           <p class="text-sm leading-relaxed" style="color: rgba(255, 255, 255, 0.7);">
-            Your trusted vehicle rental partner in Cambodia. Premium fleet with transparent pricing and 24/7 support.
+            {{ 'FOOTER.DESC' | translate }}
           </p>
         </div>
 
         <!-- Quick Links -->
         <div class="flex flex-col gap-3">
-          <h4 class="text-sm font-bold text-white mb-2 uppercase tracking-wider">Quick Links</h4>
-          <a routerLink="/" class="text-sm transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.7);">Home</a>
-          <a routerLink="/about" class="text-sm transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.7);">About Us</a>
-          <a routerLink="/contact" class="text-sm transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.7);">Contact</a>
+          <h4 class="text-sm font-bold text-white mb-2 uppercase tracking-wider">{{ 'FOOTER.QUICK_LINKS' | translate }}</h4>
+          <a routerLink="/" class="text-sm transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.7);">{{ 'FOOTER.HOME' | translate }}</a>
+          <a routerLink="/about" class="text-sm transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.7);">{{ 'FOOTER.ABOUT' | translate }}</a>
+          <a routerLink="/contact" class="text-sm transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.7);">{{ 'FOOTER.CONTACT' | translate }}</a>
         </div>
       </div>
 
@@ -219,12 +219,12 @@
       <!-- Bottom Section -->
       <div class="flex flex-col md:flex-row items-center justify-between gap-4">
         <!-- Copyright -->
-        <p class="text-sm" style="color: rgba(255, 255, 255, 0.5);">© 2026 Cambo Rent. All rights reserved.</p>
+        <p class="text-sm" style="color: rgba(255, 255, 255, 0.5);">{{ 'FOOTER.COPYRIGHT' | translate }}</p>
         
         <!-- Legal Links -->
         <div class="flex gap-6">
-          <span class="text-sm cursor-pointer transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.5);">Privacy Policy</span>
-          <span class="text-sm cursor-pointer transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.5);">Terms of Service</span>
+          <span class="text-sm cursor-pointer transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.5);">{{ 'FOOTER.PRIVACY' | translate }}</span>
+          <span class="text-sm cursor-pointer transition-colors hover:text-emerald-400" style="color: rgba(255, 255, 255, 0.5);">{{ 'FOOTER.TERMS' | translate }}</span>
         </div>
       </div>
       

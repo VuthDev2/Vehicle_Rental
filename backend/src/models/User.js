@@ -11,7 +11,11 @@ const userSchema = new mongoose.Schema(
     avatar: { type: String, default: '' },
     idDocumentUrl: { type: String, default: '' },
     idVerified: { type: Boolean, default: false },
+    phoneVerified: { type: Boolean, default: false },
+    phoneOtpCode: { type: String, default: undefined },
+    phoneOtpExpires: { type: Date, default: undefined },
     isActive: { type: Boolean, default: true },
+    strikes: { type: Number, default: 0 },
     emailVerified: { type: Boolean, default: false },
     emailVerificationToken: { type: String, default: undefined },
     emailVerificationExpires: { type: Date, default: undefined },
@@ -23,6 +27,16 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Performance Indexes
+// Admin: filter users by role
+userSchema.index({ role: 1 });
+// Admin: filter active/inactive users
+userSchema.index({ isActive: 1 });
+// Auth: look up email verification tokens quickly
+userSchema.index({ emailVerificationToken: 1 }, { sparse: true });
+// Auth: look up password reset tokens quickly
+userSchema.index({ resetPasswordToken: 1 }, { sparse: true });
 
 // Mongoose 8+ async pre-save without next()
 userSchema.pre('save', async function () {

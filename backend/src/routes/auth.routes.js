@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { register, login, getMe, verifyEmail, resendVerification, forgotPassword, verifyResetOtp, resetPassword, changePassword, googleLogin, refreshToken, logout } = require('../controllers/authController');
+const verificationController = require('../controllers/verificationController');
 const { protect } = require('../middleware/auth');
 const { authLimiter, loginLimiter, verificationLimiter } = require('../middleware/rateLimiter');
 const { registerRules, loginRules, verifyEmailRules, resendVerificationRules, forgotPasswordRules, verifyResetOtpRules, resetPasswordRules, changePasswordRules } = require('../middleware/validate');
@@ -17,5 +18,9 @@ router.post('/change-password', protect, changePasswordRules, changePassword);
 router.post('/google', authLimiter, googleLogin);
 router.get('/refresh', refreshToken);
 router.post('/logout', logout);
+
+// Phone Verification
+router.post('/send-otp', protect, verificationLimiter, verificationController.sendOtp);
+router.post('/verify-otp', protect, verificationLimiter, verificationController.verifyOtp);
 
 module.exports = router;

@@ -9,7 +9,9 @@ const createBooking = async (req, res, next) => {
     if (
       err.message === 'Vehicle not found.' ||
       err.message === 'Vehicle is not available.' ||
-      err.message === 'Vehicle is already booked for the selected period.'
+      err.message === 'Vehicle is already booked for the selected period.' ||
+      err.message === 'Phone verification required before booking.' ||
+      err.message === 'You already have a pending booking. Please complete or cancel it before booking another vehicle.'
     ) {
       return res.status(400).json({ message: err.message });
     }

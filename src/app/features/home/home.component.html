@@ -12,20 +12,20 @@
              [style.transform]="getTextTransform()"
              [style.opacity]="getTextOpacity()">
           <h1 class="hero-title">
-            Explore Cambodia<br>
-            <span class="hero-highlight">Your Way</span>
+            {{ 'HOME.HERO.TITLE1' | translate }}<br>
+            <span class="hero-highlight">{{ 'HOME.HERO.TITLE2' | translate }}</span>
           </h1>
           <p class="hero-subtitle">
-            Premium cars, motorcycles, and bicycles for every journey.
+            {{ 'HOME.HERO.SUBTITLE' | translate }}
           </p>
           <div class="hero-cta-group">
             <a id="btn-hero-get-started" routerLink="/register" class="btn-primary hero-btn-primary">
               <span class="material-symbols-outlined">rocket_launch</span>
-              Get Started
+              {{ 'HOME.HERO.GET_STARTED' | translate }}
             </a>
             <a id="btn-hero-browse-fleet" routerLink="/customer/explore" class="hero-btn-secondary">
               <span class="material-symbols-outlined">directions_car</span>
-              Browse Fleet
+              {{ 'HOME.HERO.BROWSE_FLEET' | translate }}
             </a>
           </div>
         </div>
@@ -45,12 +45,12 @@
     <div class="section-container">
       <div class="featured-card reveal-on-scroll">
         <div class="featured-content stagger-el">
-          <div class="featured-badge stagger-el">Featured Category</div>
-          <h2 class="stagger-el">Luxury Sports & SUV</h2>
-          <div class="featured-price stagger-el">From $85/day</div>
-          <p class="stagger-el">Perfect for thrilling drives and high-end comfort. Unmatched performance, premium interiors, and striking designs.</p>
+          <div class="featured-badge stagger-el">{{ 'HOME.FEATURED.BADGE' | translate }}</div>
+          <h2 class="stagger-el">{{ 'HOME.FEATURED.TITLE' | translate }}</h2>
+          <div class="featured-price stagger-el">{{ 'HOME.FEATURED.PRICE' | translate }}</div>
+          <p class="stagger-el">{{ 'HOME.FEATURED.DESC' | translate }}</p>
           <a id="btn-featured-browse" routerLink="/login" class="featured-cta stagger-el">
-            Browse your interest!
+            {{ 'HOME.FEATURED.CTA' | translate }}
             <span class="material-symbols-outlined">arrow_forward</span>
           </a>
         </div>
@@ -71,9 +71,9 @@
   <section class="landing-section reveal-on-scroll">
     <div class="section-container">
       <div class="section-heading">
-        <span class="landing-kicker stagger-el">Our Fleet</span>
-        <h2 class="stagger-el">Choose the right ride for the day.</h2>
-        <p class="stagger-el">Simple categories, transparent daily rates, and vehicles maintained for local roads.</p>
+        <span class="landing-kicker stagger-el">{{ 'HOME.FLEET_SECTION.KICKER' | translate }}</span>
+        <h2 class="stagger-el">{{ 'HOME.FLEET_SECTION.TITLE' | translate }}</h2>
+        <p class="stagger-el">{{ 'HOME.FLEET_SECTION.DESC' | translate }}</p>
       </div>
 
       <div class="fleet-carousel-wrapper stagger-carousel" style="margin-top: 40px; width: 100%;" [style.height]="isMobile() ? '960px' : '600px'">
@@ -96,17 +96,17 @@
   <section class="landing-section landing-section-muted reveal-on-scroll">
     <div class="section-container">
       <div class="section-heading">
-        <span class="landing-kicker stagger-el">Why Cambo Rent</span>
-        <h2 class="stagger-el">Built for repeat rental workflows.</h2>
-        <p class="stagger-el">Everything is designed to make booking, paying, and getting on the road straightforward.</p>
+        <span class="landing-kicker stagger-el">{{ 'HOME.WHY_SECTION.KICKER' | translate }}</span>
+        <h2 class="stagger-el">{{ 'HOME.WHY_SECTION.TITLE' | translate }}</h2>
+        <p class="stagger-el">{{ 'HOME.WHY_SECTION.DESC' | translate }}</p>
       </div>
 
       <div class="feature-grid">
         @for (feature of features; track feature.title) {
           <article class="landing-card stagger-el">
             <span class="feature-icon material-symbols-outlined" [style.color]="feature.iconColor" [style.background]="feature.iconBg">{{ feature.icon }}</span>
-            <h3>{{ feature.title }}</h3>
-            <p>{{ feature.desc }}</p>
+            <h3>{{ feature.title | translate }}</h3>
+            <p>{{ feature.desc | translate }}</p>
           </article>
         }
       </div>
@@ -116,9 +116,9 @@
   <section class="landing-section reveal-on-scroll">
     <div class="section-container">
       <div class="section-heading">
-        <span class="landing-kicker stagger-el">Simple process</span>
-        <h2 class="stagger-el">Rent in three steps.</h2>
-        <p class="stagger-el">Create an account, choose your vehicle, confirm payment, and go.</p>
+        <span class="landing-kicker stagger-el">{{ 'HOME.STEPS_SECTION.KICKER' | translate }}</span>
+        <h2 class="stagger-el">{{ 'HOME.STEPS_SECTION.TITLE' | translate }}</h2>
+        <p class="stagger-el">{{ 'HOME.STEPS_SECTION.DESC' | translate }}</p>
       </div>
 
       <div class="steps-grid">
@@ -126,8 +126,8 @@
           <article class="step-card stagger-el">
             <strong>{{ step.step }}</strong>
             <span class="step-icon material-symbols-outlined" [style.color]="step.iconColor" [style.background]="step.iconBg">{{ step.icon }}</span>
-            <h3>{{ step.title }}</h3>
-            <p>{{ step.desc }}</p>
+            <h3>{{ step.title | translate }}</h3>
+            <p>{{ step.desc | translate }}</p>
           </article>
         }
       </div>
@@ -149,8 +149,8 @@
               <span class="popular-label" style="position: absolute; top: -14px; right: 24px; background: #10b981; color: white; padding: 4px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 800;">Most Popular</span>
             }
             <span class="material-symbols-outlined price-icon" [style.color]="price.iconColor" [style.background]="price.iconBg">{{ price.icon }}</span>
-            <h3>{{ price.category }}</h3>
-            <p>{{ price.desc }}</p>
+            <h3>{{ price.category | translate }}</h3>
+            <p>{{ price.desc | translate }}</p>
             <div class="price-line">
               <strong [style.color]="price.iconColor">{{ price.from }}</strong>
               <span>/day</span>
@@ -159,7 +159,7 @@
               @for (feat of price.features; track feat) {
                 <li>
                   <span class="material-symbols-outlined" [style.color]="price.iconColor">check</span>
-                  {{ feat }}
+                  {{ feat | translate }}
                 </li>
               }
             </ul>
@@ -172,8 +172,8 @@
   <section class="landing-section reveal-on-scroll">
     <div class="section-container">
       <div class="section-heading">
-        <span class="landing-kicker stagger-el">Customer notes</span>
-        <h2 class="stagger-el">Trusted by local riders and travelers.</h2>
+        <span class="landing-kicker stagger-el">{{ 'HOME.TESTIMONIALS_SECTION.KICKER' | translate }}</span>
+        <h2 class="stagger-el">{{ 'HOME.TESTIMONIALS_SECTION.TITLE' | translate }}</h2>
       </div>
 
       <div class="testimonial-grid">
@@ -184,12 +184,12 @@
                 <span class="material-symbols-outlined">star</span>
               }
             </div>
-            <p>"{{ review.text }}"</p>
+            <p>"{{ review.text | translate }}"</p>
             <div class="reviewer">
               <div [style.background]="review.avatarBg">{{ review.name.charAt(0) }}</div>
               <span>
                 <strong>{{ review.name }}</strong>
-                <small>{{ review.location }}</small>
+                <small>{{ review.location | translate }}</small>
               </span>
             </div>
           </article>

@@ -6,12 +6,12 @@
     <div class="hero-content w-full mx-auto">
       <div class="hero-text-col">
         <h1 class="hero-greeting">
-          <span class="whitespace-nowrap inline-block">{{ greeting() }},</span>
+          <span class="whitespace-nowrap inline-block">{{ greeting() | translate }},</span>
           <br class="lg:hidden">
           <span class="hero-name lg:ml-2">{{ firstName }}</span>
         </h1>
         <p class="hero-subtitle">
-          Find the perfect vehicle for your journey.
+          {{ 'DASHBOARD.HERO_SUBTITLE' | translate }}
         </p>
       </div>
 
@@ -29,8 +29,8 @@
             <span class="material-symbols-outlined">search</span>
           </div>
           <div class="search-header-text">
-            <h3>Find Your Ride</h3>
-            <p>Book a car, bike or moto in just a few steps.</p>
+            <h3>{{ 'DASHBOARD.FIND_RIDE' | translate }}</h3>
+            <p>{{ 'DASHBOARD.BOOK_STEPS' | translate }}</p>
           </div>
         </div>
         <div class="search-card-body">
@@ -39,7 +39,7 @@
             <div class="search-field location">
               <span class="material-symbols-outlined icon">location_on</span>
               <div class="field-text">
-                <span class="label">Pick-up Location</span>
+                <span class="label">{{ 'DASHBOARD.PICKUP_LOCATION' | translate }}</span>
                 <div class="value-row">
                   <span class="value">Phnom Penh</span>
                   <span class="material-symbols-outlined chevron">expand_more</span>
@@ -52,7 +52,7 @@
               <div class="search-field">
                 <span class="material-symbols-outlined icon">calendar_month</span>
                 <div class="field-text">
-                  <span class="label">Pick-up Date</span>
+                  <span class="label">{{ 'DASHBOARD.PICKUP_DATE' | translate }}</span>
                   <span class="value">Aug 22, 2026</span>
                 </div>
               </div>
@@ -60,7 +60,7 @@
               <div class="search-field">
                 <span class="material-symbols-outlined icon">calendar_month</span>
                 <div class="field-text">
-                  <span class="label">Return Date</span>
+                  <span class="label">{{ 'DASHBOARD.RETURN_DATE' | translate }}</span>
                   <span class="value">Aug 25, 2026</span>
                 </div>
               </div>
@@ -68,7 +68,7 @@
           </div>
           <!-- Action -->
           <a routerLink="/customer/explore" class="search-action-btn">
-            <span>Search Vehicles</span>
+            <span>{{ 'DASHBOARD.SEARCH_VEHICLES' | translate }}</span>
             <span class="material-symbols-outlined">chevron_right</span>
           </a>
         </div>
@@ -79,9 +79,9 @@
   <!-- ================= BROWSE BY TYPE ================= -->
   <section class="section-container w-full mx-auto mt-10">
     <div class="section-top-bar">
-      <h2 class="section-heading">Browse by Type</h2>
+      <h2 class="section-heading">{{ 'DASHBOARD.BROWSE_BY_TYPE' | translate }}</h2>
       <a routerLink="/customer/explore" class="section-link">
-        <span>View all</span>
+        <span>{{ 'DASHBOARD.VIEW_ALL' | translate }}</span>
         <span class="material-symbols-outlined">chevron_right</span>
       </a>
     </div>
@@ -94,8 +94,8 @@
             <span class="material-symbols-outlined">directions_car</span>
           </div>
           <div class="type-text-group">
-            <h3>Cars</h3>
-            <p>{{ categoryCountLabel('Sedan') || '24 Vehicles' }}</p>
+            <h3>{{ 'DASHBOARD.CARS' | translate }}</h3>
+            <p>{{ getCategoryCount('Sedan') || 24 }} {{ 'DASHBOARD.VEHICLES' | translate }}</p>
           </div>
         </div>
         <div class="type-card-img-wrap">
@@ -110,8 +110,8 @@
             <span class="material-symbols-outlined">two_wheeler</span>
           </div>
           <div class="type-text-group">
-            <h3>Motorbikes</h3>
-            <p>{{ categoryCountLabel('Scooter') || '18 Vehicles' }}</p>
+            <h3>{{ 'DASHBOARD.MOTORBIKES' | translate }}</h3>
+            <p>{{ getCategoryCount('Scooter') || 18 }} {{ 'DASHBOARD.VEHICLES' | translate }}</p>
           </div>
         </div>
         <div class="type-card-img-wrap">
@@ -126,8 +126,8 @@
             <span class="material-symbols-outlined">pedal_bike</span>
           </div>
           <div class="type-text-group">
-            <h3>Bicycles</h3>
-            <p>{{ categoryCountLabel('Bicycle') || '15 Vehicles' }}</p>
+            <h3>{{ 'DASHBOARD.BICYCLES' | translate }}</h3>
+            <p>{{ getCategoryCount('Bicycle') || 15 }} {{ 'DASHBOARD.VEHICLES' | translate }}</p>
           </div>
         </div>
         <div class="type-card-img-wrap">
@@ -140,9 +140,9 @@
   <!-- ================= FEATURED VEHICLES ================= -->
   <section class="section-container w-full mx-auto mt-8">
     <div class="section-top-bar">
-      <h2 class="section-heading">Featured Vehicles</h2>
+      <h2 class="section-heading">{{ 'DASHBOARD.FEATURED_VEHICLES' | translate }}</h2>
       <a routerLink="/customer/explore" class="section-link">
-        <span>View all</span>
+        <span>{{ 'DASHBOARD.VIEW_ALL' | translate }}</span>
         <span class="material-symbols-outlined">chevron_right</span>
       </a>
     </div>
@@ -152,9 +152,9 @@
         <article class="vehicle-featured-card">
           <div class="vcard-top-badges">
             @if (vehicle.rating && vehicle.rating >= 4.8) {
-              <span class="vcard-badge popular">Popular</span>
+              <span class="vcard-badge popular">{{ 'DASHBOARD.POPULAR' | translate }}</span>
             } @else {
-              <span class="vcard-badge new">New</span>
+              <span class="vcard-badge new">{{ 'DASHBOARD.NEW' | translate }}</span>
             }
             <button type="button" class="vcard-fav-btn" aria-label="Favorite">
               <span class="material-symbols-outlined">favorite_border</span>
@@ -166,19 +166,19 @@
           <div class="vcard-body">
             <h3 class="vcard-title">{{ getVehicleName(vehicle) }}</h3>
             <div class="vcard-specs">
-              <span><span class="material-symbols-outlined">settings</span>{{ vehicle.transmission || 'Automatic' }}</span>
+              <span><span class="material-symbols-outlined">settings</span>{{ vehicle.transmission || ('DASHBOARD.AUTOMATIC' | translate) }}</span>
               <span class="spec-dot">•</span>
-              <span><span class="material-symbols-outlined">person</span>{{ vehicle.seats || 2 }} Seats</span>
+              <span><span class="material-symbols-outlined">person</span>{{ vehicle.seats || 2 }} {{ 'DASHBOARD.SEATS' | translate }}</span>
               <span class="spec-dot">•</span>
-              <span><span class="material-symbols-outlined">local_gas_station</span>{{ vehicle.fuel || 'Petrol' }}</span>
+              <span><span class="material-symbols-outlined">local_gas_station</span>{{ vehicle.fuel || ('DASHBOARD.PETROL' | translate) }}</span>
             </div>
             <div class="vcard-footer">
               <div class="vcard-price">
                 <strong>${{ vehicle.pricing?.day || 0 }}</strong>
-                <span>/ day</span>
+                <span>/ {{ 'DASHBOARD.DAY' | translate }}</span>
               </div>
               <a [routerLink]="['/customer/vehicles', vehicle._id]" class="vcard-btn">
-                <span>View Details</span>
+                <span>{{ 'DASHBOARD.VIEW_DETAILS' | translate }}</span>
                 <span class="material-symbols-outlined">chevron_right</span>
               </a>
             </div>
@@ -205,7 +205,7 @@
         </div>
         <div class="stat-text-box">
           <strong>{{ totalVehicles() || 0 }}</strong>
-          <span>Vehicles<br>In Fleet</span>
+          <span [innerHTML]="'DASHBOARD.VEHICLES_IN_FLEET' | translate"></span>
         </div>
       </div>
 
@@ -219,7 +219,7 @@
         </div>
         <div class="stat-text-box">
           <strong>{{ availableVehicles() || 0 }}</strong>
-          <span>Available<br>Now</span>
+          <span [innerHTML]="'DASHBOARD.AVAILABLE_NOW' | translate"></span>
         </div>
       </div>
 
@@ -233,7 +233,7 @@
         </div>
         <div class="stat-text-box">
           <strong>{{ stats[2].value }}</strong>
-          <span>Currently<br>Booked</span>
+          <span [innerHTML]="'DASHBOARD.CURRENTLY_BOOKED' | translate"></span>
         </div>
       </div>
 
@@ -247,7 +247,7 @@
         </div>
         <div class="stat-text-box">
           <strong>{{ stats[3].value }}</strong>
-          <span>Your<br>Bookings</span>
+          <span [innerHTML]="'DASHBOARD.YOUR_BOOKINGS' | translate"></span>
         </div>
       </div>
     </div>
@@ -260,7 +260,7 @@
       <!-- 1. Upcoming Booking Card -->
       <article class="deal-card upcoming-card">
         <div class="deal-card-header">
-          <h2>Upcoming Booking</h2>
+          <h2>{{ 'DASHBOARD.UPCOMING_BOOKING' | translate }}</h2>
         </div>
 
         <div class="upcoming-booking-body">
@@ -270,7 +270,7 @@
           <div class="upcoming-details-wrap">
             <div class="upcoming-title-row">
               <strong>Toyota Camry</strong>
-              <span class="status-pill confirmed">Confirmed</span>
+              <span class="status-pill confirmed">{{ 'DASHBOARD.CONFIRMED' | translate }}</span>
             </div>
             <p class="upcoming-meta">
               <span class="material-symbols-outlined">calendar_month</span>
@@ -284,9 +284,9 @@
         </div>
 
         <div class="upcoming-card-footer">
-          <span class="upcoming-total-price">Total: $105.00</span>
+          <span class="upcoming-total-price">{{ 'DASHBOARD.TOTAL' | translate }}: $105.00</span>
           <a routerLink="/customer/bookings" class="vcard-btn outline">
-            <span>View Booking</span>
+            <span>{{ 'DASHBOARD.VIEW_BOOKING' | translate }}</span>
             <span class="material-symbols-outlined">chevron_right</span>
           </a>
         </div>
@@ -301,11 +301,11 @@
         </div>
 
         <div class="promo-content-left">
-          <span class="promo-badge-tag">Weekend Special</span>
-          <h2 class="promo-discount-title">10% OFF</h2>
-          <p class="promo-desc">For all cars, bikes and motos<br>on weekend rentals.</p>
+          <span class="promo-badge-tag">{{ 'DASHBOARD.WEEKEND_SPECIAL' | translate }}</span>
+          <h2 class="promo-discount-title">{{ 'DASHBOARD.10_OFF' | translate }}</h2>
+          <p class="promo-desc" [innerHTML]="'DASHBOARD.PROMO_DESC' | translate"></p>
           <a routerLink="/customer/explore" class="promo-action-btn">
-            <span>Explore Now</span>
+            <span>{{ 'DASHBOARD.EXPLORE_NOW' | translate }}</span>
             <span class="material-symbols-outlined">chevron_right</span>
           </a>
         </div>

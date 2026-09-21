@@ -7,10 +7,12 @@ import { NotificationService } from '../../core/services/notification.service';
 import { MobileBottomNavComponent } from '../../shared/components/mobile-bottom-nav/mobile-bottom-nav.component';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-customer-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MobileBottomNavComponent, FormsModule, DatePipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MobileBottomNavComponent, FormsModule, DatePipe, TranslatePipe],
   templateUrl: './customer-layout.component.html',
   styleUrl: './customer-layout.component.css'
 })
@@ -19,6 +21,7 @@ export class CustomerLayoutComponent {
   readonly theme = inject(ThemeService);
   readonly searchService = inject(SearchService);
   readonly notifications = inject(NotificationService);
+  readonly lang = inject(LanguageService);
   private readonly router = inject(Router);
   sidebarOpen = signal(false);
   sidebarCollapsed = signal(true);
@@ -62,18 +65,18 @@ export class CustomerLayoutComponent {
 
 
   readonly navItems = [
-    { path: '/customer/dashboard', icon: 'home', label: 'Home' },
-    { path: '/customer/explore', icon: 'explore', label: 'Explore' },
-    { path: '/customer/bookings', icon: 'receipt_long', label: 'My Bookings' },
-    { path: '/customer/payments', icon: 'payments', label: 'Payments' },
-    { path: '/customer/profile', icon: 'manage_accounts', label: 'My Profile' },
+    { path: '/customer/dashboard', icon: 'home', label: 'Dashboard', labelKey: 'LAYOUT.DASHBOARD' },
+    { path: '/customer/explore', icon: 'explore', label: 'Explore', labelKey: 'LAYOUT.EXPLORE' },
+    { path: '/customer/bookings', icon: 'receipt_long', label: 'My Bookings', labelKey: 'LAYOUT.MY_BOOKINGS' },
+    { path: '/customer/payments', icon: 'payments', label: 'Payments', labelKey: 'LAYOUT.PAYMENTS' },
+    { path: '/customer/profile', icon: 'manage_accounts', label: 'My Profile', labelKey: 'LAYOUT.MY_PROFILE' },
   ];
 
   /** Derive page label from the current route for the header breadcrumb. */
   readonly pageLabel = computed(() => {
     const url = this.router.url;
     const match = this.navItems.find((n) => url.startsWith(n.path));
-    return match?.label || 'Dashboard';
+    return match ? this.lang.currentLang() && this.lang['translate'] ? this.lang['translate'].instant(match.labelKey) : match.label : 'Dashboard';
   });
 
   readonly pageIcon = computed(() => {
