@@ -16,6 +16,7 @@ const promotionRoutes = require('./routes/promotion.routes');
 const settingsRoutes = require('./routes/settings.routes');
 const adminRoutes = require('./routes/admin.routes');
 const notificationRoutes = require('./routes/notification.routes');
+const messageRoutes = require('./routes/message.routes');
 const errorHandler = require('./middleware/errorHandler');
 const { authLimiter, apiLimiter } = require('./middleware/rateLimiter');
 
@@ -69,6 +70,7 @@ app.use('/api/v1/promotions', promotionRoutes);
 app.use('/api/v1/settings', settingsRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/messages', messageRoutes);
 
 // Health check
 app.get('/api/v1/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));

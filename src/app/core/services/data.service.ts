@@ -36,7 +36,9 @@ export class DataService {
       rating: 4.9,
       trips: 84,
       pricing: { hour: 15, day: 109, week: 650, month: 2400, year: 24000 },
-      features: ['GPS', 'Autopilot', 'Supercharging']
+      features: ['GPS', 'Autopilot', 'Supercharging'],
+      stockCount: 2,
+      securityDeposit: 150
     },
     {
       _id: 'v2',
@@ -55,7 +57,9 @@ export class DataService {
       rating: 4.8,
       trips: 61,
       pricing: { hour: 12, day: 92, week: 550, month: 2000, year: 20000 },
-      features: ['Leather Seats', 'Sunroof', 'M Sport Package']
+      features: ['Leather Seats', 'Sunroof', 'M Sport Package'],
+      stockCount: 1,
+      securityDeposit: 100
     },
     {
       _id: 'v3',
@@ -74,7 +78,9 @@ export class DataService {
       rating: 4.7,
       trips: 128,
       pricing: { hour: 7, day: 48, week: 280, month: 1000, year: 10000 },
-      features: ['Apple CarPlay', 'Lane Assist']
+      features: ['Apple CarPlay', 'Lane Assist'],
+      stockCount: 3,
+      securityDeposit: 50
     },
     {
       _id: 'v4',
@@ -93,13 +99,15 @@ export class DataService {
       rating: 4.6,
       trips: 39,
       pricing: { hour: 20, day: 135, week: 800, month: 3000, year: 30000 },
-      features: ['Backup Camera', 'Tow Hitch']
+      features: ['Backup Camera', 'Tow Hitch'],
+      stockCount: 1,
+      securityDeposit: 200
     },
   ]);
 
   readonly bookings = signal<Booking[]>([
-    { _id: 'b1', userId: 'u1', vehicleId: 'v1', startDate: '2026-07-04', endDate: '2026-07-08', rentalType: 'day', quantity: 4, totalPrice: 436, discount: 0, status: 'confirmed', paymentStatus: 'paid' },
-    { _id: 'b2', userId: 'u1', vehicleId: 'v3', startDate: '2026-06-08', endDate: '2026-06-10', rentalType: 'day', quantity: 2, totalPrice: 96, discount: 0, status: 'completed', paymentStatus: 'paid' },
+    { _id: 'b1', userId: 'u1', vehicleId: 'v1', startDate: '2026-07-04', endDate: '2026-07-08', rentalType: 'day', durationUnits: 4, quantity: 4, totalPrice: 436, discount: 0, status: 'confirmed', paymentStatus: 'paid' },
+    { _id: 'b2', userId: 'u1', vehicleId: 'v3', startDate: '2026-06-08', endDate: '2026-06-10', rentalType: 'day', durationUnits: 2, quantity: 2, totalPrice: 96, discount: 0, status: 'completed', paymentStatus: 'paid' },
   ]);
 
   readonly payments = signal<Payment[]>([
@@ -135,6 +143,7 @@ export class DataService {
       startDate,
       endDate,
       rentalType: 'day',
+      durationUnits: days,
       quantity: days,
       totalPrice: days * (vehicle?.pricing.day ?? 0),
       discount: 0,

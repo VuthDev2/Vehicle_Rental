@@ -262,5 +262,102 @@
     "VIEW_DETAILS": "View Details",
     "LOAD_MORE": "Load More Vehicles",
     "LOADING": "Loading..."
+  },
+  "VEHICLE_DETAILS": {
+    "BACK_TO_EXPLORE": "Back to Explore Fleet",
+    "AVAILABLE_NOW": "Available Now",
+    "CURRENTLY_BOOKED": "Currently Booked",
+    "FULLY_INSURED": "Fully Insured",
+    "COMPREHENSIVE_COVERAGE": "Comprehensive coverage",
+    "FREE_CANCELLATION": "Free Cancellation",
+    "UP_TO_24H_PRIOR": "Up to 24h prior",
+    "SUPPORT_24_7": "24/7 Support",
+    "CONCIERGE_CARE": "Concierge roadside care",
+    "VEHICLE_OVERVIEW": "Vehicle Overview",
+    "KEY_FEATURES": "Key Features & Amenities",
+    "RESERVE_VEHICLE": "Reserve This Vehicle",
+    "UNAVAILABLE_WARNING": "This vehicle is currently unavailable for rent.",
+    "HOURLY": "Hourly",
+    "DAILY": "Daily",
+    "MONTHLY": "Monthly",
+    "YEARLY": "Yearly",
+    "START_DATE": "Start Date",
+    "END_DATE": "End Date",
+    "VEHICLE_QTY": "Vehicle Quantity",
+    "AVAILABLE_RATES": "Available Rates",
+    "ESTIMATED_TOTAL": "Estimated Total",
+    "PAYMENT_METHOD": "Payment Method",
+    "PAY_ONLINE": "Pay Online",
+    "PAY_AT_STORE": "Pay at Store",
+    "AGREEMENT_PREFIX": "I have read and digitally sign the ",
+    "RENTAL_AGREEMENT": "Rental Agreement",
+    "AGREEMENT_SUFFIX": ", acknowledging the terms, late fees, and damage policies.",
+    "PROCESSING": "Processing Reservation...",
+    "CURRENTLY_UNAVAILABLE": "Currently Unavailable",
+    "ACCEPT_AGREEMENT": "Accept Agreement to Book",
+    "BOOK_PROCEED": "Book & Proceed to Checkout",
+    "NOT_FOUND": "Vehicle Not Found",
+    "NOT_FOUND_DESC": "The vehicle you are looking for may have been retired or does not exist in our current fleet.",
+    "BROWSE_FLEET": "Browse Available Fleet",
+    "TRIPS": "trips",
+    "DAY": "day",
+    "HR": "hr",
+    "WK": "wk"
+  },
+  "ADMIN": {
+    "USERS": {
+      "TITLE": "Customers",
+      "SUBTITLE": "Manage all registered customers and administrators.",
+      "ADD_CUSTOMER": "Add Customer",
+      "SEARCH_PLACEHOLDER": "Search by name, email, phone...",
+      "ROLES": {
+        "ALL": "All Roles",
+        "CUSTOMER": "Customer",
+        "ADMIN": "Admin"
+      },
+      "STATUS": {
+        "ALL": "All Status",
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive"
+      },
+      "SORT": {
+        "NEWEST": "Newest",
+        "OLDEST": "Oldest",
+        "NAME_ASC": "Name A→Z",
+        "NAME_DESC": "Name Z→A"
+      },
+      "EXPORT": "Export",
+      "STATS": {
+        "TOTAL": "Total Users",
+        "ACTIVE": "Active",
+        "INACTIVE": "Inactive",
+        "ADMINS": "Admins",
+        "NEW_MONTH": "New This Month"
+      },
+      "TABLE": {
+        "CUSTOMER": "CUSTOMER",
+        "CONTACT": "CONTACT",
+        "ROLE": "ROLE",
+        "REGISTERED": "REGISTERED",
+        "STATUS": "STATUS",
+        "ACTIONS": "ACTIONS"
+      }
+    },
+    "DASHBOARD": {
+      "TITLE": "Dashboard",
+      "SUBTITLE": "Overview of your business performance.",
+      "REVENUE": "Revenue",
+      "BOOKINGS": "Bookings",
+      "ACTIVE_USERS": "Active Users",
+      "VEHICLES": "Vehicles"
+    },
+    "VEHICLES": {
+      "TITLE": "Vehicles",
+      "SUBTITLE": "Manage your rental fleet."
+    },
+    "BOOKINGS": {
+      "TITLE": "Bookings",
+      "SUBTITLE": "Manage all vehicle reservations."
+    }
   }
 }

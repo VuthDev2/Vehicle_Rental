@@ -1,31 +1,32 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { TranslatePipe, TranslateDirective } from '@ngx-translate/core';
 import { UserService } from '../../../core/services/user.service';
 import { User } from '../../../models/user.model';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 const STATUS_OPTIONS = [
-  { value: '', label: 'All Status' },
-  { value: 'active', label: 'Active' },
-  { value: 'inactive', label: 'Inactive' },
+  { value: '', label: 'ADMIN.USERS.STATUS.ALL' },
+  { value: 'active', label: 'ADMIN.USERS.STATUS.ACTIVE' },
+  { value: 'inactive', label: 'ADMIN.USERS.STATUS.INACTIVE' },
 ];
 const ROLE_OPTIONS = [
-  { value: '', label: 'All Roles' },
-  { value: 'customer', label: 'Customer' },
-  { value: 'admin', label: 'Admin' },
+  { value: '', label: 'ADMIN.USERS.ROLES.ALL' },
+  { value: 'customer', label: 'ADMIN.USERS.ROLES.CUSTOMER' },
+  { value: 'admin', label: 'ADMIN.USERS.ROLES.ADMIN' },
 ];
 const SORT_OPTIONS = [
-  { value: 'newest', label: 'Newest' },
-  { value: 'oldest', label: 'Oldest' },
-  { value: 'name_asc', label: 'Name A\u2192Z' },
-  { value: 'name_desc', label: 'Name Z\u2192A' },
+  { value: 'newest', label: 'ADMIN.USERS.SORT.NEWEST' },
+  { value: 'oldest', label: 'ADMIN.USERS.SORT.OLDEST' },
+  { value: 'name_asc', label: 'ADMIN.USERS.SORT.NAME_ASC' },
+  { value: 'name_desc', label: 'ADMIN.USERS.SORT.NAME_DESC' },
 ];
 
 @Component({
   selector: 'app-manage-users',
   standalone: true,
-  imports: [DatePipe, FormsModule, ReactiveFormsModule],
+  imports: [DatePipe, FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './manage-users.component.html',
 })
 export class ManageUsersComponent implements OnInit {

@@ -13,9 +13,6 @@ if (process.env.STRIPE_SECRET_KEY) {
   stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 }
 
-const generateTransactionId = () =>
-  `CR-${Date.now()}-${Math.floor(Math.random() * 9999)}`;
-
 // POST /api/payments
 const createPayment = async (req, res, next) => {
   try {
@@ -48,14 +45,10 @@ const createPayment = async (req, res, next) => {
       });
       status = 'succeeded';
       transactionId = paymentIntent.id;
-    } else if (stripe && method !== 'Cash') {
-      // Simulate other electronic methods
-      status = 'succeeded';
-      transactionId = generateTransactionId();
     } else {
-      // Cash or no Stripe key: mock mode
+      // Cash / mock mode (no Stripe key, or non-card method)
       status = 'succeeded';
-      transactionId = generateTransactionId();
+      transactionId = generateTranId();
     }
 
     const payment = await Payment.create({

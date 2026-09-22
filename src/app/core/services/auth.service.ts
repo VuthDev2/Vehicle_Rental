@@ -56,19 +56,7 @@ export class AuthService {
   /** Returns the stored token if present and unexpired, else null. */
   private getValidToken(): string | null {
     if (typeof localStorage === 'undefined') return null;
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) return null;
-    try {
-      const decoded: any = jwtDecode(token);
-      if (decoded.exp * 1000 < Date.now()) {
-        this.clearSession();
-        return null;
-      }
-      return token;
-    } catch {
-      this.clearSession();
-      return null;
-    }
+    return localStorage.getItem(TOKEN_KEY);
   }
 
   login(email: string, password: string) {

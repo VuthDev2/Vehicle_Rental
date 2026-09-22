@@ -4,13 +4,18 @@ const bookingService = require('../services/bookingService');
 const createBooking = async (req, res, next) => {
   try {
     const booking = await bookingService.createBooking(req.user._id, req.body);
+    
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('notification_created', { userId: 'admin', type: 'new_booking' });
+    }
+    
     res.status(201).json({ booking });
   } catch (err) {
     if (
       err.message === 'Vehicle not found.' ||
       err.message === 'Vehicle is not available.' ||
       err.message === 'Vehicle is already booked for the selected period.' ||
-      err.message === 'Phone verification required before booking.' ||
       err.message === 'You already have a pending booking. Please complete or cancel it before booking another vehicle.'
     ) {
       return res.status(400).json({ message: err.message });
@@ -48,6 +53,14 @@ const cancelBooking = async (req, res, next) => {
   try {
     const isAdmin = req.user.role === 'admin';
     const booking = await bookingService.cancelBooking(req.params.id, req.user._id, isAdmin);
+    
+    const io = req.app.get('io');
+    if (io) {
+      // If customer cancelled, alert admin. If admin cancelled, alert customer.
+      const targetUserId = isAdmin ? booking.userId : 'admin';
+      io.emit('notification_created', { userId: targetUserId, type: 'cancel_booking' });
+    }
+
     res.json({ booking });
   } catch (err) {
     if (err.message === 'Booking not found.') return res.status(404).json({ message: err.message });
@@ -93,11 +106,26 @@ const markBalancePaid = async (req, res, next) => {
   }
 };
 
+// POST /api/bookings/:id/documents (admin)
+const uploadBookingDocuments = async (req, res, next) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: 'No documents provided.' });
+    }
+    const booking = await bookingService.uploadBookingDocuments(req.params.id, req.files);
+    res.json({ booking, message: 'Documents uploaded successfully.' });
+  } catch (err) {
+    if (err.message === 'Booking not found.') return res.status(404).json({ message: err.message });
+    next(err);
+  }
+};
+
 module.exports = { 
   createBooking, 
   getBookings, 
   getBooking, 
   cancelBooking, 
   updateBookingStatus, 
-  markBalancePaid 
+  markBalancePaid,
+  uploadBookingDocuments
 };

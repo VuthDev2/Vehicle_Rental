@@ -29,6 +29,8 @@ const vehicleSchema = new mongoose.Schema(
     trips:        { type: Number, default: 0 },
     pricing:      { type: pricingSchema, required: true },
     features:     [{ type: String }],
+    stockCount:   { type: Number, default: 1 },
+    securityDeposit: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

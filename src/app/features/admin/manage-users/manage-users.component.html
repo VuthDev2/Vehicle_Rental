@@ -16,10 +16,10 @@
       <h1
         style="font-size: 26px; font-weight: 800; color: #1a1a2e; margin: 0; letter-spacing: -0.3px"
       >
-        Customers
+        {{ 'ADMIN.USERS.TITLE' | translate }}
       </h1>
       <p style="font-size: 14px; color: #6b7280; margin: 4px 0 0">
-        Manage all registered customers and administrators.
+        {{ 'ADMIN.USERS.SUBTITLE' | translate }}
       </p>
     </div>
     <button
@@ -51,7 +51,7 @@
       "
     >
       <span class="material-symbols-outlined" style="font-size: 18px">person_add</span>
-      Add Customer
+      {{ 'ADMIN.USERS.ADD_CUSTOMER' | translate }}
     </button>
   </div>
 
@@ -74,7 +74,7 @@
       <input
         #searchInput
         type="text"
-        placeholder="Search by name, email, phone..."
+        placeholder="{{ 'ADMIN.USERS.SEARCH_PLACEHOLDER' | translate }}"
         (input)="onSearch(searchInput.value)"
         style="
           width: 100%;
@@ -124,7 +124,7 @@
         "
       >
         @for (r of roleOptions; track r.value) {
-          <option [value]="r.value">{{ r.label }}</option>
+          <option [value]="r.value">{{ r.label | translate }}</option>
         }
       </select>
       <span
@@ -172,7 +172,7 @@
         "
       >
         @for (s of statusOptions; track s.value) {
-          <option [value]="s.value">{{ s.label }}</option>
+          <option [value]="s.value">{{ s.label | translate }}</option>
         }
       </select>
       <span
@@ -220,7 +220,7 @@
         "
       >
         @for (s of sortOptions; track s.value) {
-          <option [value]="s.value">{{ s.label }}</option>
+          <option [value]="s.value">{{ s.label | translate }}</option>
         }
       </select>
       <span
@@ -740,7 +740,7 @@
                 letter-spacing: 0.6px;
               "
             >
-              Customer
+              {{ 'ADMIN.USERS.TABLE.CUSTOMER' | translate }}
             </th>
             <th
               style="
@@ -753,7 +753,7 @@
                 letter-spacing: 0.6px;
               "
             >
-              Contact
+              {{ 'ADMIN.USERS.TABLE.CONTACT' | translate }}
             </th>
             <th
               style="
@@ -766,7 +766,7 @@
                 letter-spacing: 0.6px;
               "
             >
-              Role
+              {{ 'ADMIN.USERS.TABLE.ROLE' | translate }}
             </th>
             <th
               style="
@@ -779,7 +779,7 @@
                 letter-spacing: 0.6px;
               "
             >
-              Registered
+              {{ 'ADMIN.USERS.TABLE.REGISTERED' | translate }}
             </th>
             <th
               style="
@@ -792,7 +792,7 @@
                 letter-spacing: 0.6px;
               "
             >
-              Status
+              {{ 'ADMIN.USERS.TABLE.STATUS' | translate }}
             </th>
             <th
               style="
@@ -806,7 +806,7 @@
                 width: 100px;
               "
             >
-              Actions
+              {{ 'ADMIN.USERS.TABLE.ACTIONS' | translate }}
             </th>
           </tr>
         </thead>

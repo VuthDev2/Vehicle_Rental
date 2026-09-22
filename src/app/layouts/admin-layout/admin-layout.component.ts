@@ -47,6 +47,7 @@ export class AdminLayoutComponent {
     { path: '/admin/vehicles', icon: 'directions_car', label: 'Vehicles', labelKey: 'LAYOUT.VEHICLES' },
     { path: '/admin/users', icon: 'group', label: 'Customers', labelKey: 'LAYOUT.CUSTOMERS' },
     { path: '/admin/bookings', icon: 'receipt_long', label: 'Bookings', labelKey: 'LAYOUT.BOOKINGS' },
+    { path: '/admin/messages', icon: 'chat', label: 'Messages', labelKey: 'LAYOUT.MESSAGES' },
     { path: '/admin/payments', icon: 'payments', label: 'Payments', labelKey: 'LAYOUT.PAYMENTS' },
     { path: '/admin/promotions', icon: 'local_offer', label: 'Promotions', labelKey: 'LAYOUT.PROMOTIONS' },
     { path: '/admin/reports', icon: 'bar_chart', label: 'Reports', labelKey: 'LAYOUT.REPORTS' },

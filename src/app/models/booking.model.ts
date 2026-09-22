@@ -9,6 +9,7 @@ export interface Booking {
   startDate: string;
   endDate: string;
   rentalType: RentalType;
+  durationUnits: number;
   quantity: number;
   totalPrice: number;
   discount: number;

@@ -18,6 +18,7 @@ export interface CreateBookingPayload {
   startDate: string;
   endDate: string;
   rentalType: string;
+  durationUnits?: number;
   quantity: number;
   notes?: string;
   promoCode?: string;
@@ -52,5 +53,13 @@ export class BookingService {
 
   markBalancePaid(id: string) {
     return this.http.patch<{ booking: Booking }>(`${API}/bookings/${id}/mark-balance-paid`, {});
+  }
+
+  uploadBookingDocuments(id: string, files: File[]) {
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append('documents', file);
+    }
+    return this.http.post<{ booking: Booking, message: string }>(`${API}/bookings/${id}/documents`, formData);
   }
 }

@@ -24,6 +24,8 @@ export interface Vehicle {
   trips: number;
   pricing: VehiclePricing;
   features: string[];
+  stockCount: number;
+  securityDeposit: number;
 }
 
 export interface VehicleFilter {

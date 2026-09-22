@@ -17,7 +17,8 @@
 
 @media (max-width: 768px) {
   .details-wrapper {
-    padding: 1rem 1rem 2rem 1rem;
+    /* Extra bottom padding so content clears the fixed mobile bottom nav bar (~72px tall) */
+    padding: 1rem 1rem 6rem 1rem;
   }
 }
 

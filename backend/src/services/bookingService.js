@@ -6,7 +6,7 @@ const { calculatePrice } = require('../utils/pricingCalculator');
 
 class BookingService {
   async createBooking(userId, data) {
-    const { vehicleId, startDate, endDate, rentalType, quantity, notes, promoCode, paymentMethod } = data;
+    const { vehicleId, startDate, endDate, rentalType, durationUnits, quantity, notes, promoCode, paymentMethod } = data;
 
     const vehicle = await Vehicle.findById(vehicleId);
     if (!vehicle) throw new Error('Vehicle not found.');
@@ -14,9 +14,6 @@ class BookingService {
 
     const user = await require('../models/User').findById(userId);
     if (!user) throw new Error('User not found.');
-    if (!user.phoneVerified) {
-      throw new Error('Phone verification required before booking.');
-    }
 
     if (paymentMethod === 'pay_at_store') {
       const activePayAtStoreCount = await Booking.countDocuments({
@@ -29,19 +26,35 @@ class BookingService {
       }
     }
 
-    // Check for overlapping bookings
-    const overlap = await Booking.findOne({
-      vehicleId,
-      status: { $in: ['pending', 'pending_verification', 'confirmed'] },
-      $or: [
-        { startDate: { $lte: new Date(endDate) }, endDate: { $gte: new Date(startDate) } },
-      ],
-    });
-    if (overlap) {
-      throw new Error('Vehicle is already booked for the selected period.');
+    // Check for overlapping bookings using aggregation to sum quantities
+    const overlapPipeline = [
+      {
+        $match: {
+          vehicleId: vehicle._id,
+          status: { $in: ['pending', 'pending_verification', 'confirmed'] },
+          $or: [
+            { startDate: { $lte: new Date(endDate) }, endDate: { $gte: new Date(startDate) } },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalBooked: { $sum: '$quantity' },
+        },
+      },
+    ];
+
+    const overlapResult = await Booking.aggregate(overlapPipeline);
+    const totalCurrentlyBooked = overlapResult.length > 0 ? overlapResult[0].totalBooked : 0;
+
+    if (totalCurrentlyBooked + quantity > vehicle.stockCount) {
+      throw new Error(`Only ${vehicle.stockCount - totalCurrentlyBooked} vehicles available for the selected period.`);
     }
 
-    let totalPrice = calculatePrice(vehicle.pricing, rentalType, quantity);
+    let totalPrice = calculatePrice(vehicle.pricing, rentalType, durationUnits, quantity);
+    // Add security deposit
+    totalPrice += (vehicle.securityDeposit || 0) * quantity;
     let discount = 0;
 
     if (promoCode) {
@@ -90,6 +103,7 @@ class BookingService {
       startDate,
       endDate,
       rentalType,
+      durationUnits,
       quantity,
       totalPrice: totalPrice - discount,
       discount,
@@ -223,6 +237,21 @@ class BookingService {
     booking.amountPaid = booking.totalPrice;
     booking.balanceDue = 0;
     booking.paymentStatus = 'paid';
+    await booking.save();
+
+    return booking;
+  }
+
+  async uploadBookingDocuments(id, files) {
+    const booking = await Booking.findById(id);
+    if (!booking) throw new Error('Booking not found.');
+
+    const newDocs = files.map(file => ({
+      url: `/uploads/${file.filename}`,
+      originalName: file.originalname,
+    }));
+
+    booking.documents.push(...newDocs);
     await booking.save();
 
     return booking;

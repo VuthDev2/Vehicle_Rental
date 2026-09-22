@@ -48,6 +48,30 @@ connectDB().then(async () => {
 
   io.on('connection', (socket) => {
     console.log(`🔌 Client connected to Socket: ${socket.id}`);
+
+    // Join a specific room (user ID or "admin")
+    socket.on('join_chat', (room) => {
+      socket.join(room);
+      console.log(`Socket ${socket.id} joined room ${room}`);
+    });
+
+    // Handle incoming chat messages
+    socket.on('send_message', (data) => {
+      // data: { message: MessageObject, receiverId: String | "admin" }
+      const { message, receiverId } = data;
+      // Emit to the receiver (admin or specific user)
+      io.to(receiverId).emit('receive_message', message);
+      
+      // If a customer sends to admin, also emit back to customer's own room 
+      // in case they have multiple tabs open.
+      if (receiverId === 'admin') {
+        io.to(message.userId).emit('receive_message', message);
+      } else {
+        // Admin replying to user, also emit to admin room for other admins to see
+        io.to('admin').emit('receive_message', message);
+      }
+    });
+
     socket.on('disconnect', () => {
       console.log(`🔌 Client disconnected from Socket: ${socket.id}`);
     });

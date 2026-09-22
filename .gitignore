@@ -1,26 +1,43 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files
 
-# Compiled output
+# ─── Compiled output ────────────────────────────────────────────────────────
 /dist
 /tmp
 /out-tsc
 /bazel-out
 
-# Node
+# ─── Node ───────────────────────────────────────────────────────────────────
 /node_modules
+backend/node_modules
 npm-debug.log
 yarn-error.log
 *.log
 
-# Local dev data
+# ─── Environment / Secrets ──────────────────────────────────────────────────
+# Never commit .env — only .env.example is safe to commit.
+backend/.env
+.env
+*.txt
+*.sh
+
+# ─── Database dumps ─────────────────────────────────────────────────────────
+*.rdb
 dump.rdb
 backend/dump.rdb
 
-# Local dev scratch and temp directories
+# ─── Dev scratch & temp ─────────────────────────────────────────────────────
 /scratch
 /tmp
+backend/test-*.js
+backend/query_*.js
 
-# IDEs and editors
+# ─── Python virtual environments ────────────────────────────────────────────
+venv/
+venv_rembg/
+__pycache__/
+*.pyc
+
+# ─── IDEs and editors ───────────────────────────────────────────────────────
 .idea/
 .project
 .classpath
@@ -29,7 +46,7 @@ backend/dump.rdb
 .settings/
 *.sublime-workspace
 
-# Visual Studio Code
+# ─── Visual Studio Code ─────────────────────────────────────────────────────
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -38,19 +55,19 @@ backend/dump.rdb
 !.vscode/mcp.json
 .history/*
 
-# Miscellaneous
+# ─── Angular ────────────────────────────────────────────────────────────────
 /.angular/cache
 .sass-cache/
-/connect.lock
 /coverage
-/libpeerconnection.log
-testem.log
 /typings
 __screenshots__/
+/connect.lock
+/libpeerconnection.log
+testem.log
 
-# System files
+# ─── System files ───────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 
-# Local Netlify folder
+# ─── Deployment ─────────────────────────────────────────────────────────────
 .netlify

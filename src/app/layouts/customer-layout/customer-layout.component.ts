@@ -9,10 +9,11 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
+import { CustomerChatWidgetComponent } from '../../shared/components/customer-chat-widget/customer-chat-widget.component';
 
 @Component({
   selector: 'app-customer-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MobileBottomNavComponent, FormsModule, DatePipe, TranslatePipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MobileBottomNavComponent, CustomerChatWidgetComponent, FormsModule, DatePipe, TranslatePipe],
   templateUrl: './customer-layout.component.html',
   styleUrl: './customer-layout.component.css'
 })

@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { VehicleService } from '../../../../core/services/vehicle.service';
 import { BookingService } from '../../../../core/services/booking.service';
 import { Vehicle } from '../../../../models/vehicle.model';
@@ -9,7 +10,7 @@ import { SeoService } from '../../../../core/services/seo.service';
 @Component({
   selector: 'app-vehicle-details',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, TranslatePipe],
   templateUrl: './vehicle-details.component.html',
   styleUrl: './vehicle-details.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,17 +34,18 @@ export class VehicleDetailsComponent implements OnInit {
   readonly submitting = signal(false);
   readonly bookingError = signal('');
   readonly agreementAccepted = signal(false);
+  readonly showTermsModal = signal(false);
   readonly paymentMethod = signal<'online' | 'pay_at_store'>('online');
 
   get today(): string {
     const d = new Date();
-    return d.toISOString().slice(0, 10);
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
   }
 
   get tomorrow(): string {
     const d = new Date();
     d.setDate(d.getDate() + 1);
-    return d.toISOString().slice(0, 10);
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
   }
 
   ngOnInit() {
@@ -113,25 +115,33 @@ export class VehicleDetailsComponent implements OnInit {
     return (fuel && map[fuel]) || 'local_gas_station';
   }
 
-  /** Days between the selected dates (min 1). */
-  get rentalDays(): number {
+  /** Duration between selected dates in ms. */
+  get durationMs(): number {
     const start = this.startDate();
     const end = this.endDate();
-    if (start && end && end >= start) {
-      const ms = new Date(end).getTime() - new Date(start).getTime();
-      const d = Math.round(ms / 86_400_000);
-      return Math.max(1, d);
+    if (start && end && new Date(end) >= new Date(start)) {
+      return new Date(end).getTime() - new Date(start).getTime();
     }
-    return 1;
+    return 0;
   }
 
-  /** Number of billable units (days, or hours when hourly, months, years) used for the estimate & API. */
+  /** Number of billable units (hours, days, weeks, months, years) used for the estimate & API. */
   get estimateUnits(): number {
+    const ms = this.durationMs;
+    if (ms <= 0) return 1;
+    
     const rt = this.rentalType();
-    if (rt === 'hourly') return this.rentalDays * 8; // naive fallback for hourly calculation
-    if (rt === 'monthly') return Math.max(1, Math.round(this.rentalDays / 30));
-    if (rt === 'yearly') return Math.max(1, Math.round(this.rentalDays / 365));
-    return this.rentalDays;
+    const hours = ms / 3600_000;
+    const days = ms / 86_400_000;
+    
+    if (rt === 'hourly') return Math.max(1, Math.ceil(hours));
+    if (rt === 'monthly') return Math.max(1, Math.ceil(days / 30));
+    if (rt === 'yearly') return Math.max(1, Math.ceil(days / 365));
+    return Math.max(1, Math.ceil(days));
+  }
+
+  get depositAmount(): number {
+    return (this.vehicle()?.securityDeposit || 0) * this.qty();
   }
 
   get estimate(): number {
@@ -144,6 +154,10 @@ export class VehicleDetailsComponent implements OnInit {
     else if (rt === 'yearly') rate = v.pricing?.year || ((v.pricing?.month || ((v.pricing?.day || 0) * 30)) * 12);
     else rate = v.pricing?.day || 0;
     return rate * this.estimateUnits * this.qty();
+  }
+
+  get totalWithDeposit(): number {
+    return this.estimate + this.depositAmount;
   }
 
   get rates() {
@@ -195,7 +209,8 @@ export class VehicleDetailsComponent implements OnInit {
         startDate: start,
         endDate: end,
         rentalType: rtForApi,
-        quantity: Math.max(1, this.estimateUnits) * this.qty(),
+        durationUnits: Math.max(1, this.estimateUnits),
+        quantity: this.qty(),
         paymentMethod: this.paymentMethod(),
       })
       .subscribe({

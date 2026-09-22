@@ -1703,9 +1703,14 @@
 
         <!-- Actions -->
         <div style="display: flex; flex-direction: column; gap: 8px">
-          @if (booking.status === 'pending_verification') {
+          @if (booking.status === 'pending_verification' || booking.status === 'pending') {
+            <div style="background: #F9FAFB; padding: 12px; border-radius: 10px; border: 1px dashed #D1D5DB; margin-bottom: 8px;">
+              <p style="font-size: 12px; font-weight: 600; color: #4B5563; margin: 0 0 8px;">Upload Customer Documents (ID, License)</p>
+              <input type="file" multiple accept="image/*" (change)="onFileSelect($event)" style="font-size: 12px; width: 100%;" />
+            </div>
             <button
-              (click)="quickStatus(booking._id, 'active'); showBookingDrawer.set(null)"
+              (click)="uploadDocumentsAndApprove(booking._id)"
+              [disabled]="uploadingDocuments() || selectedDocuments().length === 0"
               style="
                 display: flex;
                 align-items: center;
@@ -1722,10 +1727,13 @@
                 cursor: pointer;
                 transition: all 0.15s ease;
               "
-              onmouseover="this.style.background = '#047857'"
-              onmouseout="this.style.background = '#059669'"
+              [style.opacity]="(uploadingDocuments() || selectedDocuments().length === 0) ? '0.5' : '1'"
             >
-              <span class="material-symbols-outlined" style="font-size: 18px">how_to_reg</span> Verify Docs & Handover
+              @if (uploadingDocuments()) {
+                <span class="material-symbols-outlined animate-spin" style="font-size: 18px">progress_activity</span> Uploading...
+              } @else {
+                <span class="material-symbols-outlined" style="font-size: 18px">how_to_reg</span> Upload & Handover
+              }
             </button>
           }
           @if (booking.status === 'pending') {

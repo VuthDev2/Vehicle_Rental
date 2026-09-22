@@ -16,6 +16,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((err) => {
       if (err.status === 401) {
+        console.error('401 Error in error.interceptor for URL:', req.url);
         if (isPlatformBrowser(platformId)) {
           if (typeof localStorage !== 'undefined') {
             localStorage.removeItem('cr_token');

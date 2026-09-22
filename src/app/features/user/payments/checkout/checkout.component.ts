@@ -1,6 +1,8 @@
-import { Component, inject, signal, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
+import { Subscription, interval, of } from 'rxjs';
+import { switchMap, filter, catchError } from 'rxjs/operators';
 import { PaymentService, PaywayForm } from '../../../../core/services/payment.service';
 import { BookingService } from '../../../../core/services/booking.service';
 import { Booking } from '../../../../models/booking.model';
@@ -138,34 +140,63 @@ import { UserService } from '../../../../core/services/user.service';
 
           <div class="flex items-center justify-center p-6 sm:p-10">
             <div class="w-full max-w-md text-center">
-              @if (qrImage()) {
-                <div class="rounded-3xl border border-edge-deep bg-white p-8 shadow-sm">
-                  <h3 class="text-xl font-black text-slate-800">Scan to Pay with ABA</h3>
-                  <p class="mt-1 text-sm font-bold text-slate-500">Amount: {{ qrAmount() | currency }}</p>
+              @if (paymentSuccess()) {
+                <div class="rounded-3xl border border-primary/30 bg-primary/5 p-8 shadow-sm">
+                  <div
+                    class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5"
+                    style="background: rgba(123,160,91,0.12); border: 1px solid rgba(123,160,91,0.22);"
+                  >
+                    <span class="material-symbols-outlined text-5xl text-primary">check_circle</span>
+                  </div>
+                  <h3 class="text-xl font-black text-slate-800">Payment Successful!</h3>
+                  <p class="mt-2 text-sm text-slate-500 mb-6">Your payment has been received and verified.</p>
                   
-                  <div class="my-6 flex justify-center">
-                    <img [src]="'data:image/png;base64,' + qrImage()" alt="ABA KHQR" class="w-64 h-64 rounded-xl border border-slate-200 shadow-sm" />
+                  <a routerLink="/customer/bookings" class="btn-primary w-full py-3 inline-block">
+                    Return to My Bookings
+                  </a>
+                </div>
+              } @else if (qrImage()) {
+                <div class="rounded-3xl border border-edge-deep bg-white p-6 sm:p-8 shadow-sm">
+                  <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xl font-black text-slate-800">Scan to Pay</h3>
                   </div>
                   
-                  <p class="mb-6 text-xs text-slate-500 px-4">
-                    Open your ABA Mobile app or any Bakong-supported app to scan this KHQR code and complete your payment.
-                  </p>
+                  <div class="rounded-2xl bg-slate-50 border border-slate-100 p-6 my-6 text-center">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Total Amount</p>
+                    <p class="text-3xl font-black text-primary">{{ qrAmount() | currency }}</p>
+                    
+                    <div class="mt-6 flex justify-center">
+                      <div class="relative rounded-2xl bg-white p-3 shadow-sm border border-slate-200">
+                        <img [src]="qrImage()" alt="ABA KHQR" class="w-56 h-56 rounded-lg mix-blend-multiply" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="mb-6 space-y-3">
+                    <div class="flex items-start gap-3">
+                      <div class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">1</div>
+                      <p class="text-sm text-slate-600 pt-0.5">Open your <span class="font-bold text-slate-800">ABA Mobile</span> or any Bakong app</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                      <div class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">2</div>
+                      <p class="text-sm text-slate-600 pt-0.5">Scan the QR code to proceed</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                      <div class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">3</div>
+                      <p class="text-sm text-slate-600 pt-0.5">Confirm the transaction on your phone</p>
+                    </div>
+                  </div>
+                  
+                  <div class="mb-2 flex items-center justify-center gap-3 rounded-full bg-primary/5 py-2.5 px-5 border border-primary/10">
+                    <span class="relative flex h-2.5 w-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+                    </span>
+                    <span class="text-[13px] font-bold text-primary">Awaiting payment transfer...</span>
+                  </div>
                   
                   <button 
-                    (click)="confirmPayment()"
-                    [disabled]="isProcessing()"
-                    class="btn-primary w-full py-3"
-                  >
-                    @if (isProcessing()) {
-                      <span class="material-symbols-outlined animate-spin">progress_activity</span>
-                      Checking...
-                    } @else {
-                      I have paid
-                    }
-                  </button>
-                  
-                  <button 
-                    (click)="qrImage.set('')"
+                    (click)="cancelQr()"
                     [disabled]="isProcessing()"
                     class="mt-3 w-full text-sm font-bold text-slate-500 hover:text-slate-800 disabled:opacity-50"
                   >
@@ -226,13 +257,16 @@ import { UserService } from '../../../../core/services/user.service';
     </div>
   `,
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly payment = inject(PaymentService);
   private readonly bookingService = inject(BookingService);
   private readonly userService = inject(UserService);
   private readonly platformId = inject(PLATFORM_ID);
+
+  private pollSubscription?: Subscription;
+  private isPolling = signal(false);
 
   readonly error = signal('');
   readonly isProcessing = signal(false);
@@ -245,6 +279,7 @@ export class CheckoutComponent implements OnInit {
   readonly qrString = signal('');
   readonly tranId = signal('');
   readonly qrAmount = signal(0);
+  readonly paymentSuccess = signal(false);
 
   uploadIdDocument(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -264,6 +299,43 @@ export class CheckoutComponent implements OnInit {
         this.error.set(err.error?.message || 'Failed to upload ID document. Please try again.');
       }
     });
+  }
+
+  cancelQr() {
+    this.stopPolling();
+    this.qrImage.set('');
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling();
+  }
+
+  private startPolling() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    this.isPolling.set(true);
+    this.pollSubscription = interval(3000)
+      .pipe(
+        filter(() => this.isPolling()),
+        switchMap(() => this.payment.confirmPayway(this.tranId()).pipe(
+          catchError(() => of({ paid: false }))
+        ))
+      )
+      .subscribe({
+        next: (res) => {
+          if (res.paid) {
+            this.stopPolling();
+            this.paymentSuccess.set(true);
+          }
+        }
+      });
+  }
+
+  private stopPolling() {
+    this.isPolling.set(false);
+    if (this.pollSubscription) {
+      this.pollSubscription.unsubscribe();
+      this.pollSubscription = undefined;
+    }
   }
 
   ngOnInit(): void {
@@ -301,6 +373,7 @@ export class CheckoutComponent implements OnInit {
           this.tranId.set(payload.tranId);
           this.qrAmount.set(payload.amount);
           this.isProcessing.set(false);
+          this.startPolling();
         },
         error: (err) => {
           this.error.set(err.error?.message || 'Unable to generate ABA KHQR.');
@@ -316,24 +389,6 @@ export class CheckoutComponent implements OnInit {
         },
       });
     }
-  }
-
-  confirmPayment() {
-    const tId = this.tranId();
-    if (!tId) return;
-    this.isProcessing.set(true);
-    
-    this.payment.markPaywayPaid(tId).subscribe({
-      next: () => {
-        this.isProcessing.set(false);
-        this.router.navigate(['/customer/payment/return'], { queryParams: { tran_id: tId } });
-      },
-      error: () => {
-        // Even on error during dev demo, we route to return so it can check status again
-        this.isProcessing.set(false);
-        this.router.navigate(['/customer/payment/return'], { queryParams: { tran_id: tId } });
-      }
-    });
   }
 
   /** Build a hidden form from the signed fields and POST it to ABA's checkout. */

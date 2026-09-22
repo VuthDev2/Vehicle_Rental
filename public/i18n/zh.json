@@ -262,5 +262,102 @@
     "VIEW_DETAILS": "查看详情",
     "LOAD_MORE": "加载更多车辆",
     "LOADING": "加载中..."
+  },
+  "VEHICLE_DETAILS": {
+    "BACK_TO_EXPLORE": "返回探索车队",
+    "AVAILABLE_NOW": "现在可用",
+    "CURRENTLY_BOOKED": "目前已预订",
+    "FULLY_INSURED": "全险覆盖",
+    "COMPREHENSIVE_COVERAGE": "全面保障",
+    "FREE_CANCELLATION": "免费取消",
+    "UP_TO_24H_PRIOR": "最多提前24小时",
+    "SUPPORT_24_7": "24/7全天候支持",
+    "CONCIERGE_CARE": "礼宾道路救援",
+    "VEHICLE_OVERVIEW": "车辆概述",
+    "KEY_FEATURES": "主要功能与设施",
+    "RESERVE_VEHICLE": "预订此车",
+    "UNAVAILABLE_WARNING": "该车辆目前无法租赁。",
+    "HOURLY": "每小时",
+    "DAILY": "每天",
+    "MONTHLY": "每月",
+    "YEARLY": "每年",
+    "START_DATE": "开始日期",
+    "END_DATE": "结束日期",
+    "VEHICLE_QTY": "车辆数量",
+    "AVAILABLE_RATES": "可用价格",
+    "ESTIMATED_TOTAL": "预计总额",
+    "PAYMENT_METHOD": "支付方式",
+    "PAY_ONLINE": "在线支付",
+    "PAY_AT_STORE": "到店支付",
+    "AGREEMENT_PREFIX": "我已阅读并以数字方式签署了",
+    "RENTAL_AGREEMENT": "租赁协议",
+    "AGREEMENT_SUFFIX": "，并确认了解相关条款、滞纳金和损坏政策。",
+    "PROCESSING": "正在处理预订...",
+    "CURRENTLY_UNAVAILABLE": "目前不可用",
+    "ACCEPT_AGREEMENT": "接受协议以预订",
+    "BOOK_PROCEED": "预订并继续结账",
+    "NOT_FOUND": "未找到车辆",
+    "NOT_FOUND_DESC": "您寻找的车辆可能已退役或不存在于我们当前的车队中。",
+    "BROWSE_FLEET": "浏览可用车队",
+    "TRIPS": "次行程",
+    "DAY": "天",
+    "HR": "小时",
+    "WK": "周"
+  },
+  "ADMIN": {
+    "USERS": {
+      "TITLE": "客户",
+      "SUBTITLE": "管理所有注册客户和管理员。",
+      "ADD_CUSTOMER": "添加客户",
+      "SEARCH_PLACEHOLDER": "按姓名、电子邮件、电话搜索...",
+      "ROLES": {
+        "ALL": "所有角色",
+        "CUSTOMER": "客户",
+        "ADMIN": "管理员"
+      },
+      "STATUS": {
+        "ALL": "所有状态",
+        "ACTIVE": "活跃",
+        "INACTIVE": "不活跃"
+      },
+      "SORT": {
+        "NEWEST": "最新",
+        "OLDEST": "最旧",
+        "NAME_ASC": "姓名 A→Z",
+        "NAME_DESC": "姓名 Z→A"
+      },
+      "EXPORT": "导出",
+      "STATS": {
+        "TOTAL": "总用户",
+        "ACTIVE": "活跃",
+        "INACTIVE": "不活跃",
+        "ADMINS": "管理员",
+        "NEW_MONTH": "本月新增"
+      },
+      "TABLE": {
+        "CUSTOMER": "客户",
+        "CONTACT": "联系方式",
+        "ROLE": "角色",
+        "REGISTERED": "注册时间",
+        "STATUS": "状态",
+        "ACTIONS": "操作"
+      }
+    },
+    "DASHBOARD": {
+      "TITLE": "仪表板",
+      "SUBTITLE": "您的业务绩效概览。",
+      "REVENUE": "收入",
+      "BOOKINGS": "预订",
+      "ACTIVE_USERS": "活跃用户",
+      "VEHICLES": "车辆"
+    },
+    "VEHICLES": {
+      "TITLE": "车辆",
+      "SUBTITLE": "管理您的租赁车队。"
+    },
+    "BOOKINGS": {
+      "TITLE": "预订",
+      "SUBTITLE": "管理所有车辆预订。"
+    }
   }
 }

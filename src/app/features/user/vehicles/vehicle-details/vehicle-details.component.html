@@ -3,7 +3,7 @@
   <!-- ====================== BACK TO FLEET BUTTON ====================== -->
   <a routerLink="/customer/explore" class="back-btn">
     <span class="material-symbols-outlined">chevron_left</span>
-    <span>Back to Explore Fleet</span>
+    <span>{{ 'VEHICLE_DETAILS.BACK_TO_EXPLORE' | translate }}</span>
   </a>
 
   <!-- ====================== LOADING STATE ====================== -->
@@ -56,7 +56,7 @@
               [class.booked]="!vehicle()!.available"
             >
               <span class="avail-dot" [class.green]="vehicle()!.available" [class.gray]="!vehicle()!.available"></span>
-              {{ vehicle()!.available ? 'Available Now' : 'Currently Booked' }}
+              {{ vehicle()!.available ? ('VEHICLE_DETAILS.AVAILABLE_NOW' | translate) : ('VEHICLE_DETAILS.CURRENTLY_BOOKED' | translate) }}
             </span>
 
             @if (vehicle()!.images?.length > 1) {
@@ -91,8 +91,8 @@
               <span class="material-symbols-outlined text-lg">verified_user</span>
             </div>
             <div>
-              <div class="trust-title">Fully Insured</div>
-              <div class="trust-sub">Comprehensive coverage</div>
+              <div class="trust-title">{{ 'VEHICLE_DETAILS.FULLY_INSURED' | translate }}</div>
+              <div class="trust-sub">{{ 'VEHICLE_DETAILS.COMPREHENSIVE_COVERAGE' | translate }}</div>
             </div>
           </div>
 
@@ -101,8 +101,8 @@
               <span class="material-symbols-outlined text-lg">event_available</span>
             </div>
             <div>
-              <div class="trust-title">Free Cancellation</div>
-              <div class="trust-sub">Up to 24h prior</div>
+              <div class="trust-title">{{ 'VEHICLE_DETAILS.FREE_CANCELLATION' | translate }}</div>
+              <div class="trust-sub">{{ 'VEHICLE_DETAILS.UP_TO_24H_PRIOR' | translate }}</div>
             </div>
           </div>
 
@@ -111,8 +111,8 @@
               <span class="material-symbols-outlined text-lg">support_agent</span>
             </div>
             <div>
-              <div class="trust-title">24/7 Support</div>
-              <div class="trust-sub">Concierge roadside care</div>
+              <div class="trust-title">{{ 'VEHICLE_DETAILS.SUPPORT_24_7' | translate }}</div>
+              <div class="trust-sub">{{ 'VEHICLE_DETAILS.CONCIERGE_CARE' | translate }}</div>
             </div>
           </div>
         </div>
@@ -121,7 +121,7 @@
         <div class="info-section-card">
           <h2 class="section-heading">
             <span class="material-symbols-outlined">info</span>
-            Vehicle Overview
+            {{ 'VEHICLE_DETAILS.VEHICLE_OVERVIEW' | translate }}
           </h2>
           <p class="desc-text">
             {{ vehicle()!.description || 'Experience comfort, prestige, and peak performance with this premium vehicle. Ideal for urban getaways, VIP airport transfers, and long-distance road trips across Cambodia.' }}
@@ -133,7 +133,7 @@
           <div class="info-section-card">
             <h2 class="section-heading">
               <span class="material-symbols-outlined">checklist</span>
-              Key Features & Amenities
+              {{ 'VEHICLE_DETAILS.KEY_FEATURES' | translate }}
             </h2>
             <div class="features-cloud">
               @for (feat of vehicle()!.features; track feat) {
@@ -161,7 +161,7 @@
             <div class="rating-badge">
               <span class="material-symbols-outlined">star</span>
               <span>{{ vehicle()!.rating ? vehicle()!.rating.toFixed(1) : '5.0' }}</span>
-              <span style="font-weight: normal; color: #64748b;">({{ vehicle()!.trips || 12 }} trips)</span>
+              <span style="font-weight: normal; color: #64748b;">({{ vehicle()!.trips || 12 }} {{ 'VEHICLE_DETAILS.TRIPS' | translate }})</span>
             </div>
 
             @if (vehicle()!.location) {
@@ -177,19 +177,19 @@
             <div>
               <div class="price-main">
                 ${{ vehicle()!.pricing?.day ?? 0 }}
-                <span class="price-period">/ day</span>
+                <span class="price-period">/ {{ 'VEHICLE_DETAILS.DAY' | translate }}</span>
               </div>
             </div>
 
             <div class="rate-pills-list">
               @if (vehicle()!.pricing?.hour) {
                 <div class="rate-pill">
-                  <span>${{ vehicle()!.pricing?.hour }}</span>/hr
+                  <span>${{ vehicle()!.pricing?.hour }}</span>/{{ 'VEHICLE_DETAILS.HR' | translate }}
                 </div>
               }
               @if (vehicle()!.pricing?.week) {
                 <div class="rate-pill">
-                  <span>${{ vehicle()!.pricing?.week }}</span>/wk
+                  <span>${{ vehicle()!.pricing?.week }}</span>/{{ 'VEHICLE_DETAILS.WK' | translate }}
                 </div>
               }
             </div>
@@ -212,13 +212,13 @@
           <div class="widget-header">
             <h2 class="widget-title">
               <span class="material-symbols-outlined">calendar_today</span>
-              Reserve This Vehicle
+              {{ 'VEHICLE_DETAILS.RESERVE_VEHICLE' | translate }}
             </h2>
 
             @if (!vehicle()!.available) {
               <div style="background-color: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; margin-bottom: 1rem;">
                 <span class="material-symbols-outlined text-xl">error</span>
-                <span style="font-weight: 600;">This vehicle is currently unavailable for rent.</span>
+                <span style="font-weight: 600;">{{ 'VEHICLE_DETAILS.UNAVAILABLE_WARNING' | translate }}</span>
               </div>
             } @else {
               <!-- Segmented Daily / Hourly Switcher -->
@@ -229,7 +229,7 @@
                 class="segment-btn"
                 [class.active]="rentalType() === 'hourly'"
               >
-                Hourly
+                {{ 'VEHICLE_DETAILS.HOURLY' | translate }}
               </button>
               <button
                 type="button"
@@ -237,7 +237,7 @@
                 class="segment-btn"
                 [class.active]="rentalType() === 'daily'"
               >
-                Daily
+                {{ 'VEHICLE_DETAILS.DAILY' | translate }}
               </button>
               <button
                 type="button"
@@ -245,7 +245,7 @@
                 class="segment-btn"
                 [class.active]="rentalType() === 'monthly'"
               >
-                Monthly
+                {{ 'VEHICLE_DETAILS.MONTHLY' | translate }}
               </button>
               <button
                 type="button"
@@ -253,7 +253,7 @@
                 class="segment-btn"
                 [class.active]="rentalType() === 'yearly'"
               >
-                Yearly
+                {{ 'VEHICLE_DETAILS.YEARLY' | translate }}
               </button>
             </div>
             }
@@ -262,11 +262,11 @@
           <!-- Dates Grid -->
           <div class="form-group-grid">
             <div>
-              <label class="input-label" for="startDateInput">Start Date</label>
+              <label class="input-label" for="startDateInput">{{ 'VEHICLE_DETAILS.START_DATE' | translate }}</label>
               <div class="date-input-wrap">
                 <input
                   id="startDateInput"
-                  type="date"
+                  type="datetime-local"
                   [ngModel]="startDate()"
                   (ngModelChange)="setStartDate($event)"
                   [min]="today"
@@ -276,11 +276,11 @@
             </div>
 
             <div>
-              <label class="input-label" for="endDateInput">End Date</label>
+              <label class="input-label" for="endDateInput">{{ 'VEHICLE_DETAILS.END_DATE' | translate }}</label>
               <div class="date-input-wrap">
                 <input
                   id="endDateInput"
-                  type="date"
+                  type="datetime-local"
                   [ngModel]="endDate()"
                   (ngModelChange)="setEndDate($event)"
                   [min]="startDate() || today"
@@ -293,7 +293,7 @@
           <!-- Quantity and Rates -->
           <div class="form-group-grid">
             <div>
-              <label class="input-label">Vehicle Quantity</label>
+              <label class="input-label">{{ 'VEHICLE_DETAILS.VEHICLE_QTY' | translate }}</label>
               <div class="stepper-box">
                 <button
                   type="button"
@@ -316,7 +316,7 @@
             </div>
 
             <div>
-              <label class="input-label">Available Rates</label>
+              <label class="input-label">{{ 'VEHICLE_DETAILS.AVAILABLE_RATES' | translate }}</label>
               <div class="rates-strip">
                 @for (rate of rates; track rate.label) {
                   <span class="rate-item">
@@ -336,22 +336,45 @@
           }
 
           <!-- Estimated Total Box -->
-          <div class="estimation-box">
-            <div>
-              <div class="est-label">Estimated Total</div>
-              <div class="est-breakdown">
-                {{ estimateUnits }} {{ rentalType() === 'hourly' ? 'hours' : (rentalType() === 'monthly' ? 'months' : (rentalType() === 'yearly' ? 'years' : 'days')) }} × {{ qty() }} {{ qty() > 1 ? 'vehicles' : 'vehicle' }}
+          <div class="estimation-box" style="flex-direction: column; align-items: stretch; gap: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div class="est-label">Rental Cost</div>
+                <div class="est-breakdown">
+                  {{ estimateUnits }} {{ rentalType() === 'hourly' ? 'hours' : (rentalType() === 'monthly' ? 'months' : (rentalType() === 'yearly' ? 'years' : 'days')) }} × {{ qty() }} {{ qty() > 1 ? 'vehicles' : 'vehicle' }}
+                </div>
+              </div>
+              <div class="est-amount" style="font-size: 1.25rem;">
+                ${{ estimate }}
               </div>
             </div>
-            <div class="est-amount">
-              ${{ estimate }}
+            
+            @if (depositAmount > 0) {
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div class="est-label">Security Deposit (Refundable)</div>
+                  <div class="est-breakdown">
+                    ${{ vehicle()?.securityDeposit }} × {{ qty() }} {{ qty() > 1 ? 'vehicles' : 'vehicle' }}
+                  </div>
+                </div>
+                <div class="est-amount" style="font-size: 1.25rem; color: #0284c7;">
+                  ${{ depositAmount }}
+                </div>
+              </div>
+            }
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 0.75rem;">
+              <div class="est-label" style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">{{ 'VEHICLE_DETAILS.ESTIMATED_TOTAL' | translate }}</div>
+              <div class="est-amount">
+                ${{ totalWithDeposit }}
+              </div>
             </div>
           </div>
 
           <!-- Payment Method Selector -->
           <div class="form-group-grid" style="margin-bottom: 1.5rem;">
             <div style="grid-column: 1 / -1;">
-              <label class="input-label">Payment Method</label>
+              <label class="input-label">{{ 'VEHICLE_DETAILS.PAYMENT_METHOD' | translate }}</label>
               <div class="segmented-control">
                 <button
                   type="button"
@@ -360,7 +383,7 @@
                   [class.active]="paymentMethod() === 'online'"
                 >
                   <span class="material-symbols-outlined text-[18px]">credit_card</span>
-                  Pay Online
+                  {{ 'VEHICLE_DETAILS.PAY_ONLINE' | translate }}
                 </button>
                 <button
                   type="button"
@@ -369,7 +392,7 @@
                   [class.active]="paymentMethod() === 'pay_at_store'"
                 >
                   <span class="material-symbols-outlined text-[18px]">storefront</span>
-                  Pay at Store
+                  {{ 'VEHICLE_DETAILS.PAY_AT_STORE' | translate }}
                 </button>
               </div>
             </div>
@@ -386,7 +409,7 @@
                 style="margin-top: 0.25rem; accent-color: var(--color-primary); width: 1.25rem; height: 1.25rem; cursor: pointer;"
               />
               <span style="font-size: 0.875rem; color: var(--color-on-surface-variant); line-height: 1.4;">
-                I have read and digitally sign the <a href="#" style="color: var(--color-primary); font-weight: bold; text-decoration: underline;" (click)="$event.preventDefault()">Rental Agreement</a>, acknowledging the terms, late fees, and damage policies.
+                {{ 'VEHICLE_DETAILS.AGREEMENT_PREFIX' | translate }}<a href="#" style="color: var(--color-primary); font-weight: bold; text-decoration: underline;" (click)="$event.preventDefault(); showTermsModal.set(true)">{{ 'VEHICLE_DETAILS.RENTAL_AGREEMENT' | translate }}</a>{{ 'VEHICLE_DETAILS.AGREEMENT_SUFFIX' | translate }}
               </span>
             </label>
           </div>
@@ -401,16 +424,16 @@
           >
             @if (submitting()) {
               <span class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
-              <span>Processing Reservation...</span>
+              <span>{{ 'VEHICLE_DETAILS.PROCESSING' | translate }}</span>
             } @else if (!vehicle()!.available) {
               <span class="material-symbols-outlined text-lg">block</span>
-              <span>Currently Unavailable</span>
+              <span>{{ 'VEHICLE_DETAILS.CURRENTLY_UNAVAILABLE' | translate }}</span>
             } @else if (!agreementAccepted()) {
               <span class="material-symbols-outlined text-lg">edit_document</span>
-              <span>Accept Agreement to Book</span>
+              <span>{{ 'VEHICLE_DETAILS.ACCEPT_AGREEMENT' | translate }}</span>
             } @else {
               <span class="material-symbols-outlined text-lg">shopping_cart_checkout</span>
-              <span>Book & Proceed to Checkout</span>
+              <span>{{ 'VEHICLE_DETAILS.BOOK_PROCEED' | translate }}</span>
             }
           </button>
         </div>
@@ -425,16 +448,59 @@
         <span class="material-symbols-outlined" style="font-size: 2.5rem;">directions_car</span>
       </div>
       <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">
-        Vehicle Not Found
+        {{ 'VEHICLE_DETAILS.NOT_FOUND' | translate }}
       </h2>
       <p style="color: #64748b; font-size: 0.9rem; max-width: 400px; margin: 0 auto;">
-        The vehicle you are looking for may have been retired or does not exist in our current fleet.
+        {{ 'VEHICLE_DETAILS.NOT_FOUND_DESC' | translate }}
       </p>
       <a routerLink="/customer/explore" class="btn-browse-fleet">
         <span class="material-symbols-outlined">search</span>
-        <span>Browse Available Fleet</span>
+        <span>{{ 'VEHICLE_DETAILS.BROWSE_FLEET' | translate }}</span>
       </a>
     </div>
   }
 
 </div>
+
+@if (showTermsModal()) {
+  <div style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); padding: 1rem;">
+    <div style="background: var(--color-bg-deep); border-radius: 1rem; width: 100%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+      <div style="padding: 1.5rem; border-bottom: 1px solid var(--color-edge-deep); display: flex; align-items: center; justify-content: space-between;">
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--color-on-surface); margin: 0;">Rental Terms & Conditions</h3>
+        <button (click)="showTermsModal.set(false)" style="background: none; border: none; cursor: pointer; color: var(--color-on-surface-variant);">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div style="padding: 1.5rem; overflow-y: auto; flex: 1; color: var(--color-on-surface-variant); font-size: 0.95rem; line-height: 1.6;">
+        <h4 style="font-weight: 700; color: var(--color-on-surface); margin-bottom: 0.5rem; margin-top: 0;">1. Customer Responsibility</h4>
+        <p style="margin-top: 0; margin-bottom: 1.25rem;">
+          The Customer is fully responsible for the rented vehicle from the moment of pickup until it is returned to the Store Owner (Admin). 
+          The Customer must return the vehicle in the exact same condition it was received, ordinary wear and tear excepted.
+        </p>
+
+        <h4 style="font-weight: 700; color: var(--color-on-surface); margin-bottom: 0.5rem;">2. Damages and Issues</h4>
+        <p style="margin-top: 0; margin-bottom: 1.25rem;">
+          If there are any issues, damages, or broken parts on the vehicle during the rental period, the Customer is <strong>fully responsible</strong> for covering all repair and replacement costs. The store reserves the right to deduct these costs from the security deposit or charge the Customer directly if the costs exceed the deposit amount.
+        </p>
+
+        <h4 style="font-weight: 700; color: var(--color-on-surface); margin-bottom: 0.5rem;">3. Verification and Documents</h4>
+        <p style="margin-top: 0; margin-bottom: 1.25rem;">
+          When picking up the vehicle at the store, the Customer must provide physical, valid original documents including an ID card or Passport, and a valid Driving License. The Admin will verify and upload these documents to the system before releasing the vehicle.
+        </p>
+
+        <h4 style="font-weight: 700; color: var(--color-on-surface); margin-bottom: 0.5rem;">4. Prohibited Uses</h4>
+        <p style="margin-top: 0; margin-bottom: 0;">
+          The vehicle must not be used for illegal activities, off-roading, or subleased to third parties. Only the registered Customer is authorized to drive the vehicle.
+        </p>
+      </div>
+      <div style="padding: 1.5rem; border-top: 1px solid var(--color-edge-deep); display: flex; justify-content: flex-end; gap: 1rem;">
+        <button (click)="showTermsModal.set(false)" style="padding: 0.75rem 1.5rem; border-radius: 0.5rem; border: 1px solid var(--color-edge-deep); background: transparent; color: var(--color-on-surface); font-weight: 600; cursor: pointer;">
+          Close
+        </button>
+        <button (click)="agreementAccepted.set(true); showTermsModal.set(false)" style="padding: 0.75rem 1.5rem; border-radius: 0.5rem; border: none; background: var(--color-primary); color: white; font-weight: 600; cursor: pointer;">
+          I Agree
+        </button>
+      </div>
+    </div>
+  </div>
+}

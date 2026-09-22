@@ -184,9 +184,8 @@ async function checkTransaction(tranId) {
 
   const raw = await resp.json().catch(() => ({}));
   const approved =
-    raw?.status?.code === '00' ||
-    raw?.payment_status === 'APPROVED' ||
-    raw?.payment_status_code === 0;
+    raw?.data?.payment_status === 'APPROVED' ||
+    raw?.data?.payment_status_code === 0;
 
   return { approved, raw };
 }

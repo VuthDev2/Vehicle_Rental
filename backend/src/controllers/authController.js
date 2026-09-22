@@ -27,7 +27,7 @@ const sendTokenResponse = async (user, statusCode, res, extraData = {}) => {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
   };
 
   res.cookie('refreshToken', refreshToken, cookieOptions);
@@ -347,8 +347,12 @@ const googleLogin = async (req, res, next) => {
 // GET /api/auth/refresh
 const refreshToken = async (req, res, next) => {
   try {
+    console.log('REFRESH TOKEN REQUEST COOKIES:', req.cookies);
     const token = req.cookies.refreshToken;
-    if (!token) return res.status(401).json({ message: 'Not authenticated. No refresh token.' });
+    if (!token) {
+      console.log('NO REFRESH TOKEN COOKIE FOUND');
+      return res.status(401).json({ message: 'Not authenticated. No refresh token.' });
+    }
 
     let decoded;
     try {

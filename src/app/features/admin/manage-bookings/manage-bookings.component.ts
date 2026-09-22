@@ -82,6 +82,9 @@ export class ManageBookingsComponent implements OnInit {
   readonly quickFilters = QUICK_FILTERS;
   readonly sortOptions = SORT_OPTIONS;
 
+  readonly selectedDocuments = signal<File[]>([]);
+  readonly uploadingDocuments = signal(false);
+
   constructor() {
     this.searchSubject.pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(() => { this.currentPage.set(1); this.loadBookings(); });
@@ -247,6 +250,34 @@ export class ManageBookingsComponent implements OnInit {
 
   quickStatus(id: string, status: BookingStatus) {
     this.bookingService.updateBookingStatus(id, status).subscribe(() => this.loadBookings());
+  }
+
+  onFileSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.selectedDocuments.set(Array.from(input.files));
+    }
+  }
+
+  uploadDocumentsAndApprove(bookingId: string) {
+    const files = this.selectedDocuments();
+    if (files.length === 0) return;
+
+    this.uploadingDocuments.set(true);
+    this.bookingService.uploadBookingDocuments(bookingId, files).subscribe({
+      next: () => {
+        this.uploadingDocuments.set(false);
+        this.selectedDocuments.set([]);
+        // Auto approve
+        this.quickStatus(bookingId, 'active');
+        this.showBookingDrawer.set(null);
+      },
+      error: (err) => {
+        console.error(err);
+        this.uploadingDocuments.set(false);
+        alert('Failed to upload documents.');
+      }
+    });
   }
 
   cancelBooking(id: string) {

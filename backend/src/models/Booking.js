@@ -7,7 +7,8 @@ const bookingSchema = new mongoose.Schema(
     startDate:     { type: Date, required: true },
     endDate:       { type: Date, required: true },
     rentalType:    { type: String, enum: ['hour', 'day', 'week', 'month', 'year'], required: true },
-    quantity:      { type: Number, required: true, min: 1 },
+    durationUnits: { type: Number, required: true, min: 1 },
+    quantity:      { type: Number, required: true, min: 1 }, // number of vehicles
     totalPrice:    { type: Number, required: true, min: 0 },
     status:        { type: String, enum: ['pending', 'pending_approval', 'pending_verification', 'confirmed', 'active', 'cancelled', 'completed'], default: 'pending' },
     paymentMethod: { type: String, enum: ['online', 'pay_at_store'], default: 'online' },
@@ -18,6 +19,10 @@ const bookingSchema = new mongoose.Schema(
     notes:         { type: String, default: '' },
     promoCode:     { type: String, default: '' },
     discount:      { type: Number, default: 0 },
+    documents:     [{
+      url: { type: String, required: true },
+      originalName: { type: String, required: true },
+    }],
   },
   { timestamps: true }
 );
