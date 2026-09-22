@@ -32,11 +32,28 @@ app.use(helmet({
 }));
 app.use(cookieParser());
 
-// CORS – allow Angular dev server
+// CORS — origins are driven by env vars, never hardcoded.
+// FRONTEND_URL can be a comma-separated list for multi-domain setups.
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://localhost:4201',
+  'http://localhost:4000',
+  ...(process.env.FRONTEND_URL
+    ? process.env.FRONTEND_URL.split(',').map((u) => u.trim())
+    : []),
+];
 app.use(cors({
-  origin: ['http://localhost:4200', 'http://localhost:4201', 'http://localhost:4000', 'https://rental-vehicles.netlify.app'],
+  origin: function(origin, callback) {
+    // Allow server-to-server calls (no origin) and listed origins.
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS: Origin "${origin}" is not allowed.`));
+    }
+  },
   credentials: true,
 }));
+
 
 // Body parser — keep JSON limit small; file uploads are handled by multer separately.
 app.use(express.json({ limit: '100kb' }));

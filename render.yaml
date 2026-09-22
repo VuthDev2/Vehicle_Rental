@@ -1,0 +1,82 @@
+# =============================================================
+# Render Blueprint — Cambo Rent
+# Docs: https://render.com/docs/blueprint-spec
+#
+# IMPORTANT: After creating services from this blueprint,
+# add the following environment variables in the Render dashboard
+# for each service (marked with `sync: false`).
+# =============================================================
+
+services:
+  # ─── 1. Backend: Node.js API ────────────────────────────────
+  - type: web
+    name: cambo-rent-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    # All secrets are configured in the Render dashboard.
+    # Never hardcode values here.
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000       # Render's default internal port
+      - key: MONGO_URI
+        sync: false        # Set in Render dashboard
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: FRONTEND_URL
+        sync: false        # e.g. https://cambo-rent-frontend.onrender.com
+      - key: BACKEND_URL
+        sync: false        # e.g. https://cambo-rent-backend.onrender.com
+      - key: REDIS_URI
+        sync: false        # Optional: leave empty to disable Redis
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: PAYWAY_MERCHANT_ID
+        sync: false
+      - key: PAYWAY_API_KEY
+        sync: false
+      - key: PAYWAY_API_URL
+        sync: false
+      - key: PAYWAY_CHECK_TX_URL
+        sync: false
+      - key: PAYWAY_CURRENCY
+        value: USD
+
+  # ─── 2. Frontend: Angular Static Site ───────────────────────
+  - type: web
+    name: cambo-rent-frontend
+    env: static
+    plan: free
+    buildCommand: npm install && npm run build:prod
+    staticPublishPath: dist/Vehicle_Rental/browser
+    # Angular routing — rewrite all paths to index.html
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    # Injected into the build by scripts/set-env.js
+    envVars:
+      - key: API_URL
+        sync: false        # e.g. https://cambo-rent-backend.onrender.com/api/v1
+      - key: GOOGLE_CLIENT_ID
+        sync: false

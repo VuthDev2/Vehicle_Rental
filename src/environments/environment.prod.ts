@@ -1,17 +1,14 @@
 // ============================================================
 // PRODUCTION ENVIRONMENT
-// The API base URL is a placeholder: set the real https domain
-// here before deploying, OR override it at runtime by defining
-// `window.__API_URL__` (e.g. from a config endpoint / CDN script)
-// so no rebuild is required per environment.
+// Values are injected by the CI/CD build pipeline via the
+// build command:
+//   npm run build:prod
+// which calls the `set-env.js` prebuild script to write the
+// real values from process.env into this file before compiling.
+// NEVER hardcode real URLs or credentials here.
 // ============================================================
-const runtimeApiUrl =
-  typeof window !== 'undefined' && (window as any).__API_URL__
-    ? (window as any).__API_URL__
-    : 'http://localhost:5001/api/v1';
-
 export const environment = {
   production: true,
-  apiUrl: runtimeApiUrl !== 'http://localhost:5001/api/v1' ? runtimeApiUrl : 'https://vehicle-rental-csi1.onrender.com/api/v1',
-  googleClientId: '344907331936-s3r6nq9vb28brtim1pml4qob36bvoh9h.apps.googleusercontent.com',
+  apiUrl: 'PLACEHOLDER_API_URL',
+  googleClientId: 'PLACEHOLDER_GOOGLE_CLIENT_ID',
 };

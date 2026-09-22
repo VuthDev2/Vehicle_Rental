@@ -30,13 +30,27 @@ connectDB().then(async () => {
     console.log(`📄 Environment: ${process.env.NODE_ENV}`);
   });
 
+  const allowedOrigins = [
+    'http://localhost:4200',
+    'http://localhost:4000',
+    ...(process.env.FRONTEND_URL
+      ? process.env.FRONTEND_URL.split(',').map((u) => u.trim())
+      : []),
+  ];
   const io = new Server(server, {
     cors: {
-      origin: ['http://localhost:4200', 'http://localhost:4000', 'https://rental-vehicles.netlify.app'],
+      origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error(`CORS: Origin "${origin}" is not allowed.`));
+        }
+      },
       methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
       credentials: true
     }
   });
+
 
   const { createAdapter } = require('@socket.io/redis-adapter');
   if (redisConfig.isRedisAvailable()) {
