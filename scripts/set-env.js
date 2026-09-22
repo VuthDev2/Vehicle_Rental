@@ -15,8 +15,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const apiUrl = process.env.API_URL;
-const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const apiUrl = (process.env.API_URL || '').trim();
+const googleClientId = (process.env.GOOGLE_CLIENT_ID || '').trim();
 
 if (!apiUrl) {
   console.error('[set-env] ❌ Missing required environment variable: API_URL');
