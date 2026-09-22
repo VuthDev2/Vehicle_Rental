@@ -48,10 +48,11 @@ export class ChatService {
 
   private connectSocket() {
     if (!isPlatformBrowser(this.platformId)) return;
-    
-    // In production, connect to the same origin, in dev use environment URL
-    const socketUrl = environment.production ? window.location.origin : environment.apiUrl.split('/api')[0];
-    
+
+    // Derive the socket server URL from the configured API URL.
+    // This ensures Socket.IO always connects to the BACKEND, never the frontend.
+    const socketUrl = environment.apiUrl.split('/api')[0];
+
     this.socket = io(socketUrl, {
       withCredentials: true,
       transports: ['websocket', 'polling']
