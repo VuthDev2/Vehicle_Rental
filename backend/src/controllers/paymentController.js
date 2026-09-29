@@ -374,6 +374,7 @@ const createPaywayQr = async (req, res, next) => {
       phone: booking.userId.phone || '',
     });
 
+    console.error('PAYWAY REJECTED:', JSON.stringify(data));
     if (!data.qrImage && !data.qrString) {
       return res.status(502).json({
         message: data?.status?.message || 'Could not generate a QR from PayWay.',
