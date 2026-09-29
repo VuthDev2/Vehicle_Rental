@@ -10,15 +10,15 @@
  */
 const crypto = require('crypto');
 
-const MERCHANT_ID = process.env.PAYWAY_MERCHANT_ID;
-const API_KEY = process.env.PAYWAY_API_KEY;
+const MERCHANT_ID = (process.env.PAYWAY_MERCHANT_ID || '').trim();
+const API_KEY = (process.env.PAYWAY_API_KEY || '').trim();
 const PURCHASE_URL =
-  process.env.PAYWAY_API_URL ||
+  (process.env.PAYWAY_API_URL || '').trim() ||
   'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/purchase';
 const CHECK_TX_URL =
-  process.env.PAYWAY_CHECK_TX_URL ||
+  (process.env.PAYWAY_CHECK_TX_URL || '').trim() ||
   'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/check-transaction-2';
-const CURRENCY = process.env.PAYWAY_CURRENCY || 'USD';
+const CURRENCY = (process.env.PAYWAY_CURRENCY || '').trim() || 'USD';
 
 // UTC timestamp: YYYYMMDDHHmmss
 const reqTime = () => new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);

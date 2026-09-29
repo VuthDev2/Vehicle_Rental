@@ -11,16 +11,8 @@ const startCronJobs = () => {
       const now = new Date();
 
       // 1. Find bookings that have ended and mark them as completed + make vehicle available
-      const expiredBookings = await Booking.find({
-        status: 'confirmed',
-        endDate: { $lte: now }
-      });
-
-      for (const booking of expiredBookings) {
-        await Booking.updateOne({ _id: booking._id }, { $set: { status: 'completed' } });
-        await Vehicle.findByIdAndUpdate(booking.vehicleId, { available: true });
-        console.log(`[CRON] Booking ${booking._id} completed, Vehicle ${booking.vehicleId} now available.`);
-      }
+      // The requirement changed: it should stay in confirmed until the admin manually marks it as completed when the vehicle is returned.
+      // We no longer automatically complete bookings based on endDate.
 
       // 2. Find confirmed bookings that have started and make vehicle unavailable
       const activeBookings = await Booking.find({

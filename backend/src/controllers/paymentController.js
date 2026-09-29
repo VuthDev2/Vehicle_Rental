@@ -244,8 +244,8 @@ const createPaywayForm = async (req, res, next) => {
     const firstname = nameParts[0] || 'Customer';
     const lastname = nameParts.slice(1).join(' ') || '-';
 
-    const frontend = process.env.FRONTEND_URL || 'http://localhost:4200';
-    const backend = process.env.BACKEND_URL || 'http://localhost:5001';
+    const frontend = (process.env.FRONTEND_URL || 'http://localhost:4200').trim();
+    const backend = (process.env.BACKEND_URL || 'http://localhost:5001').trim();
 
     const payload = buildPurchase({
       tranId,

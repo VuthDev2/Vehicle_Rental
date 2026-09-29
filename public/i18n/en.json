@@ -197,6 +197,22 @@
       }
     }
   },
+  "BOOKING": {
+    "PENDING": "Upcoming",
+    "CONFIRMED": "Ongoing",
+    "COMPLETED": "Completed",
+    "CANCELED": "Canceled",
+    "ONGOING": "Ongoing",
+    "UPCOMING": "Upcoming",
+    "NO_BOOKINGS": "No bookings found",
+    "NO_RESERVATIONS": "You do not have any reservations in this category.",
+    "NEED_HELP": "Need Help?",
+    "SUPPORT_DESC": "Our support team is here for you 24/7.",
+    "CONTACT_SUPPORT": "Contact Support",
+    "BOOKING_ID": "Booking ID",
+    "TOTAL": "Total",
+    "UNABLE_TO_LOAD": "Unable to load bookings."
+  },
   "DASHBOARD": {
     "GOOD_MORNING": "Good morning",
     "GOOD_AFTERNOON": "Good afternoon",
