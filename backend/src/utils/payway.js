@@ -10,8 +10,8 @@
  */
 const crypto = require('crypto');
 
-const MERCHANT_ID = (process.env.PAYWAY_MERCHANT_ID || '').trim();
-const API_KEY = (process.env.PAYWAY_API_KEY || '').trim();
+const MERCHANT_ID = (process.env.PAYWAY_MERCHANT_ID || '').trim().replace(/^"|"$/g, '');
+const API_KEY = (process.env.PAYWAY_API_KEY || '').trim().replace(/^"|"$/g, '');
 const PURCHASE_URL =
   (process.env.PAYWAY_API_URL || '').trim() ||
   'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/purchase';
