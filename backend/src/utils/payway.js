@@ -10,15 +10,19 @@
  */
 const crypto = require('crypto');
 
-const MERCHANT_ID = (process.env.PAYWAY_MERCHANT_ID || '').trim().replace(/^"|"$/g, '');
-const API_KEY = (process.env.PAYWAY_API_KEY || '').trim().replace(/^"|"$/g, '');
+// Hosting dashboards (e.g. Render) keep quotes/whitespace pasted into env values
+// literally, which breaks signing and URL parsing — so clean every value.
+const env = (key) => (process.env[key] || '').trim().replace(/^['"]|['"]$/g, '').trim();
+
+const MERCHANT_ID = env('PAYWAY_MERCHANT_ID');
+const API_KEY = env('PAYWAY_API_KEY');
 const PURCHASE_URL =
-  (process.env.PAYWAY_API_URL || '').trim() ||
+  env('PAYWAY_API_URL') ||
   'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/purchase';
 const CHECK_TX_URL =
-  (process.env.PAYWAY_CHECK_TX_URL || '').trim() ||
+  env('PAYWAY_CHECK_TX_URL') ||
   'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/check-transaction-2';
-const CURRENCY = (process.env.PAYWAY_CURRENCY || '').trim() || 'USD';
+const CURRENCY = env('PAYWAY_CURRENCY') || 'USD';
 
 // UTC timestamp: YYYYMMDDHHmmss
 const reqTime = () => new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
@@ -196,4 +200,4 @@ async function checkTransaction(tranId) {
   return { approved, raw };
 }
 
-module.exports = { buildPurchase, requestKhqr, checkTransaction, generateTranId };
+module.exports = { buildPurchase, requestKhqr, checkTransaction, generateTranId, env };

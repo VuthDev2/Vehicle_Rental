@@ -6,6 +6,7 @@ const {
   requestKhqr,
   checkTransaction,
   generateTranId,
+  env,
 } = require('../utils/payway');
 
 let stripe = null;
@@ -244,8 +245,8 @@ const createPaywayForm = async (req, res, next) => {
     const firstname = nameParts[0] || 'Customer';
     const lastname = nameParts.slice(1).join(' ') || '-';
 
-    const frontend = (process.env.FRONTEND_URL || 'http://localhost:4200').trim();
-    const backend = (process.env.BACKEND_URL || 'http://localhost:5001').trim();
+    const frontend = (env('FRONTEND_URL') || 'http://localhost:4200').replace(/\/+$/, '');
+    const backend = (env('BACKEND_URL') || 'http://localhost:5001').replace(/\/+$/, '');
 
     const payload = buildPurchase({
       tranId,
@@ -261,7 +262,7 @@ const createPaywayForm = async (req, res, next) => {
       lastname,
       email: booking.userId.email || '',
       phone: booking.userId.phone || '',
-      returnUrl: `${backend}/api/payments/payway/callback`,
+      returnUrl: `${backend}/api/v1/payments/payway/callback`,
       continueSuccessUrl: `${frontend}/payment/return?tran_id=${tranId}`,
       cancelUrl: `${frontend}/customer/bookings`,
     });
@@ -374,8 +375,8 @@ const createPaywayQr = async (req, res, next) => {
       phone: booking.userId.phone || '',
     });
 
-    console.error('PAYWAY REJECTED:', JSON.stringify(data));
     if (!data.qrImage && !data.qrString) {
+      console.error('PAYWAY REJECTED:', JSON.stringify(data));
       return res.status(502).json({
         message: data?.status?.message || 'Could not generate a QR from PayWay.',
       });
