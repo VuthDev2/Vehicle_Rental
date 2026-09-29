@@ -1,10 +1,13 @@
-import { Component, computed, inject, signal, OnInit } from '@angular/core';
+import { Component, computed, inject, signal, OnInit, AfterViewInit, NgZone } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { AuthLayoutComponent } from '../shared/auth-layout.component';
+import { environment } from '../../../../environments/environment';
 import { SeoService } from '../../../core/services/seo.service';
+
+declare var google: any;
 
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value;
@@ -18,10 +21,11 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
   imports: [ReactiveFormsModule, RouterLink, AuthLayoutComponent],
   templateUrl: './register.component.html',
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly ngZone = inject(NgZone);
   private readonly seoService = inject(SeoService);
 
   ngOnInit() {
@@ -70,15 +74,66 @@ export class RegisterComponent implements OnInit {
       })
     ).subscribe((res) => {
       if (!res) return;
-      this.router.navigate(['/verify-email'], {
-        queryParams: { email },
-        state: { devCode: res.devCode },
-      });
+      this.router.navigate(['/customer/dashboard']);
     });
   }
 
   isFieldInvalid(fieldName: string): boolean {
     const field = this.form.get(fieldName);
     return !!(field?.invalid && field?.touched);
+  }
+
+  ngAfterViewInit(): void {
+    const initGsi = (attempts = 0) => {
+      if (typeof google === 'undefined' || !google.accounts) {
+        if (attempts < 10) {
+          setTimeout(() => initGsi(attempts + 1), 200);
+        } else {
+          console.warn('Google Identity Services not loaded after 2 seconds.');
+        }
+        return;
+      }
+      
+      if (!(window as any)._gsiInitialized) {
+        google.accounts.id.initialize({
+          client_id: environment.googleClientId,
+          callback: this.handleCredentialResponse.bind(this),
+          locale: 'en'
+        });
+        (window as any)._gsiInitialized = true;
+      }
+
+      google.accounts.id.renderButton(
+        document.getElementById('googleBtn'),
+        { theme: 'outline', size: 'large', type: 'standard', text: 'continue_with', width: 400 }
+      );
+    };
+    
+    initGsi();
+  }
+
+  handleCredentialResponse(response: any): void {
+    this.loading.set(true);
+    this.error.set('');
+    
+    // Google returns the ID token in response.credential
+    this.auth.googleLogin(response.credential).pipe(
+      finalize(() => {
+        // Must use NgZone because Google's callback is outside Angular's zone
+        this.ngZone.run(() => this.loading.set(false));
+      }),
+      catchError((err) => {
+        this.ngZone.run(() => {
+          this.error.set(err.error?.message || 'Google authentication failed.');
+        });
+        return of(null);
+      })
+    ).subscribe((res) => {
+      if (!res) return;
+      this.ngZone.run(() => {
+        const targetRoute = res.user.role === 'admin' ? '/admin/dashboard' : '/customer/dashboard';
+        this.router.navigateByUrl(targetRoute);
+      });
+    });
   }
 }

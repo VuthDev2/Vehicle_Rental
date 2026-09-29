@@ -21,7 +21,7 @@ const createIssue = async (req, res, next) => {
       return res.status(403).json({ message: 'Access denied.' });
     }
 
-    const reportableStatuses = ['confirmed', 'active', 'completed', 'pending_verification'];
+    const reportableStatuses = ['confirmed', 'active', 'completed'];
     if (!reportableStatuses.includes(booking.status)) {
       return res.status(400).json({
         message: `Issues can only be reported for active or completed bookings. Current status: ${booking.status}`,

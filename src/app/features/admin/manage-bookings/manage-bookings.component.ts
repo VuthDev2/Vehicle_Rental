@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { BookingService } from '../../../core/services/booking.service';
 import { Booking, BookingStatus } from '../../../models/booking.model';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 const STATUS_STYLE: Record<string, { bg: string; color: string; border: string; dot: string }> = {
   pending:    { bg: '#FFFBEB', color: '#D97706', border: '#FDE68A', dot: '#F59E0B' },
-  pending_verification: { bg: '#FFFBEB', color: '#EA580C', border: '#FDE68A', dot: '#EA580C' },
   confirmed:  { bg: '#EFF6FF', color: '#005DAC', border: '#DBEAFE', dot: '#3980F4' },
   active:     { bg: '#ECFDF5', color: '#059669', border: '#A7F3D0', dot: '#10B981' },
   completed:  { bg: '#F0FDF4', color: '#16A34A', border: '#BBF7D0', dot: '#22C55E' },
@@ -26,7 +26,6 @@ const PAYMENT_STYLE: Record<string, { bg: string; color: string; border: string;
 const QUICK_FILTERS = [
   { key: null, label: 'All' },
   { key: 'pending', label: 'Pending' },
-  { key: 'pending_verification', label: 'Verification' },
   { key: 'confirmed', label: 'Confirmed' },
   { key: 'active', label: 'Active' },
   { key: 'completed', label: 'Completed' },
@@ -60,6 +59,7 @@ const CUSTOMER_AVATARS = ['#005DAC', '#7C3AED', '#059669', '#DC2626', '#D97706',
 export class ManageBookingsComponent implements OnInit {
   private readonly bookingService = inject(BookingService);
   private readonly searchSubject = new Subject<string>();
+  readonly backendUrl = environment.apiUrl.replace('/api/v1', '');
 
   readonly bookings = signal<Booking[]>([]);
   readonly loading = signal(true);
@@ -259,23 +259,24 @@ export class ManageBookingsComponent implements OnInit {
     }
   }
 
-  uploadDocumentsAndApprove(bookingId: string) {
+  uploadDocuments(bookingId: string) {
     const files = this.selectedDocuments();
     if (files.length === 0) return;
 
     this.uploadingDocuments.set(true);
     this.bookingService.uploadBookingDocuments(bookingId, files).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.uploadingDocuments.set(false);
         this.selectedDocuments.set([]);
-        // Auto approve
-        this.quickStatus(bookingId, 'active');
-        this.showBookingDrawer.set(null);
+        // Update the drawer with the new booking data that includes the documents
+        this.showBookingDrawer.set(res.booking);
+        this.loadBookings(); // refresh list in background
       },
       error: (err) => {
         console.error(err);
         this.uploadingDocuments.set(false);
-        alert('Failed to upload documents.');
+        const msg = err.error?.message || 'Failed to upload documents.';
+        alert(`Upload Error: ${msg}`);
       }
     });
   }
@@ -310,7 +311,6 @@ export class ManageBookingsComponent implements OnInit {
     const s = STATUS_STYLE[status];
     if (!s) return null;
     let label = status.charAt(0).toUpperCase() + status.slice(1);
-    if (status === 'pending_verification') label = 'Verification Req.';
     return { ...s, label };
   }
 

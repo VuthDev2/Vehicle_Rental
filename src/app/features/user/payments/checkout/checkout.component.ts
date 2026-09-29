@@ -151,6 +151,21 @@ import { UserService } from '../../../../core/services/user.service';
                   <h3 class="text-xl font-black text-slate-800">Payment Successful!</h3>
                   <p class="mt-2 text-sm text-slate-500 mb-6">Your payment has been received and verified.</p>
                   
+                  <div class="mb-6 rounded-xl border border-slate-200 bg-white p-4 text-left shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+                    <div class="flex items-center gap-2 mb-3 border-b border-slate-100 pb-2">
+                      <span class="material-symbols-outlined text-slate-500 text-[18px]">storefront</span>
+                      <h4 class="font-bold text-slate-700 text-sm">Pickup Instructions</h4>
+                    </div>
+                    <div class="flex items-start gap-3">
+                      <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-slate-500 text-[16px]">badge</span>
+                      </div>
+                      <p class="text-[13px] text-slate-600 leading-relaxed pt-0.5">
+                        Please remember to bring your <span class="font-bold text-slate-800">ID card</span> and <span class="font-bold text-slate-800">driver's license</span> to the store for verification.
+                      </p>
+                    </div>
+                  </div>
+
                   <a routerLink="/customer/bookings" class="btn-primary w-full py-3 inline-block">
                     Return to My Bookings
                   </a>

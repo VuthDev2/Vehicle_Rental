@@ -77,28 +77,6 @@
 
   <!-- ============ MAIN CONTENT ============ -->
   <div class="customer-main flex-1 flex flex-col min-h-screen transition-all duration-300" style="min-width: 0">
-    <!-- Email verification banner -->
-    @if (showVerifyBanner()) {
-    <div class="flex items-center gap-3 px-4 md:px-8 py-3 text-sm" style="
-          background: rgba(245, 158, 11, 0.1);
-          border-bottom: 1px solid rgba(245, 158, 11, 0.25);
-          color: #fbbf24;
-        ">
-      <span class="material-symbols-outlined text-xl" style="color: #fbbf24">mark_email_unread</span>
-      <p class="flex-1 leading-snug">
-        Please verify your email address to unlock the full Cambo Rent experience.
-      </p>
-      <a routerLink="/verify-email" [queryParams]="{ email: auth.user()?.email }"
-        class="font-bold whitespace-nowrap underline underline-offset-2 transition-opacity hover:opacity-80"
-        style="color: #fbbf24">
-        Verify now
-      </a>
-      <button type="button" (click)="dismissVerifyBanner()" aria-label="Dismiss email verification reminder"
-        class="rounded-lg p-1 opacity-70 transition-opacity hover:opacity-100">
-        <span class="material-symbols-outlined text-lg">close</span>
-      </button>
-    </div>
-    }
 
     <!-- ============ TOP HEADER ============ -->
     <header

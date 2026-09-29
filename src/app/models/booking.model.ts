@@ -1,4 +1,4 @@
-export type BookingStatus = 'pending' | 'pending_approval' | 'pending_verification' | 'confirmed' | 'active' | 'cancelled' | 'completed';
+export type BookingStatus = 'pending' | 'pending_approval' | 'confirmed' | 'active' | 'cancelled' | 'completed';
 export type PaymentStatus = 'unpaid' | 'partially_paid' | 'paid' | 'refunded';
 export type RentalType = 'hour' | 'day' | 'week' | 'month' | 'year';
 
@@ -22,4 +22,5 @@ export interface Booking {
   notes?: string;
   promoCode?: string;
   createdAt?: string;
+  documents?: { url: string; originalName: string }[];
 }

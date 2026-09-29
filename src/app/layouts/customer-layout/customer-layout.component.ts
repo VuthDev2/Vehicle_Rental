@@ -39,22 +39,6 @@ export class CustomerLayoutComponent {
 
 
 
-  /** Show a dismissible banner (per user) prompting unverified accounts to verify their email. */
-  readonly showVerifyBanner = computed(() => {
-    const user = this.auth.user();
-    if (!user || user.emailVerified) return false;
-    if (typeof localStorage !== 'undefined' && localStorage.getItem(`cr_verify_dismissed_${user._id}`)) {
-      return false;
-    }
-    return true;
-  });
-
-  dismissVerifyBanner(): void {
-    const user = this.auth.user();
-    if (user && typeof localStorage !== 'undefined') {
-      localStorage.setItem(`cr_verify_dismissed_${user._id}`, '1');
-    }
-  }
 
   get userName(): string {
     const user = this.auth.user();

@@ -4,7 +4,7 @@ const Notification = require('../models/Notification');
 // Gets notifications for the currently logged-in user or admin
 const getNotifications = async (req, res, next) => {
   try {
-    const filter = req.user.role === 'admin' ? { userId: null } : { userId: req.user._id };
+    const filter = req.user.role === 'admin' ? {} : { userId: req.user._id };
     
     const notifications = await Notification.find(filter)
       .sort({ createdAt: -1 })
@@ -22,7 +22,7 @@ const getNotifications = async (req, res, next) => {
 // Mark a specific notification as read
 const markAsRead = async (req, res, next) => {
   try {
-    const filter = req.user.role === 'admin' ? { _id: req.params.id, userId: null } : { _id: req.params.id, userId: req.user._id };
+    const filter = req.user.role === 'admin' ? { _id: req.params.id } : { _id: req.params.id, userId: req.user._id };
     
     const notification = await Notification.findOneAndUpdate(
       filter,
@@ -44,7 +44,7 @@ const markAsRead = async (req, res, next) => {
 // Mark all notifications as read
 const markAllAsRead = async (req, res, next) => {
   try {
-    const filter = req.user.role === 'admin' ? { userId: null, read: false } : { userId: req.user._id, read: false };
+    const filter = req.user.role === 'admin' ? { read: false } : { userId: req.user._id, read: false };
     
     await Notification.updateMany(filter, { read: true });
 

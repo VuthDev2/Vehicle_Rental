@@ -36,7 +36,7 @@ export class SocketService {
 
       this.socket.on('notification_created', (data: any) => {
         const user = this.authService.user();
-        if (user && (data.userId === user._id || (data.userId === 'admin' && user.role === 'admin'))) {
+        if (user && (user.role === 'admin' || data.userId === user._id || data.userId === 'admin')) {
             this.notificationService.fetchNotifications();
             
             if ('Notification' in window && window.Notification.permission === 'granted') {

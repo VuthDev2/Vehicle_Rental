@@ -26,8 +26,8 @@ const sendTokenResponse = async (user, statusCode, res, extraData = {}) => {
   const cookieOptions = {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    secure: true,
+    sameSite: 'none',
   };
 
   res.cookie('refreshToken', refreshToken, cookieOptions);
@@ -59,18 +59,9 @@ const register = async (req, res, next) => {
       return res.status(400).json({ message: 'Email already registered.' });
     }
 
-    const user = await User.create({ name, email, phone, passwordHash: password });
+    const user = await User.create({ name, email, phone, passwordHash: password, emailVerified: true });
 
-    // Issue a 6-digit email verification code (non-fatal if email cannot be sent).
-    const { code, hash } = generateVerificationCode();
-    user.emailVerificationToken = hash;
-    user.emailVerificationExpires = Date.now() + VERIFICATION_CODE_TTL_MS;
-    await user.save({ validateBeforeSave: false });
-    const mailResult = await sendVerificationEmail(user.email, user.name, code);
-
-    await sendTokenResponse(user, 201, res, {
-      ...(mailResult.sent ? {} : { devCode: code }),
-    });
+    await sendTokenResponse(user, 201, res);
   } catch (err) {
     next(err);
   }
@@ -115,29 +106,23 @@ const getMe = async (req, res) => {
 // POST /api/auth/verify-email
 const verifyEmail = async (req, res, next) => {
   try {
-    const { email, code } = req.body;
+    const { token } = req.body;
 
-    const user = await User.findOne({ email });
+    if (!token) return res.status(400).json({ message: 'Missing token.' });
+    const hash = crypto.createHash('sha256').update(String(token)).digest('hex');
+
+    const user = await User.findOne({ emailVerificationToken: hash });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid verification code.' });
+      return res.status(400).json({ message: 'Invalid or expired verification link.' });
     }
     if (user.emailVerified) {
       return res.json({ message: 'Email already verified.', user });
     }
 
-    const hash = crypto.createHash('sha256').update(String(code)).digest('hex');
-    const stored = user.emailVerificationToken;
-    if (
-      !stored ||
-      stored.length !== hash.length ||
-      !crypto.timingSafeEqual(Buffer.from(stored, 'hex'), Buffer.from(hash, 'hex'))
-    ) {
-      return res.status(400).json({ message: 'Invalid verification code.' });
-    }
     if (user.emailVerificationExpires && user.emailVerificationExpires < Date.now()) {
       return res
         .status(400)
-        .json({ message: 'Verification code has expired. Please request a new one.' });
+        .json({ message: 'Verification link has expired. Please request a new one.' });
     }
 
     user.emailVerified = true;
@@ -145,7 +130,8 @@ const verifyEmail = async (req, res, next) => {
     user.emailVerificationExpires = undefined;
     await user.save({ validateBeforeSave: false });
 
-    res.json({ message: 'Email verified successfully.', user });
+    // Automatically log the user in
+    await sendTokenResponse(user, 200, res, { message: 'Email verified successfully.' });
   } catch (err) {
     next(err);
   }
@@ -158,14 +144,15 @@ const resendVerification = async (req, res, next) => {
 
     const user = await User.findOne({ email });
     if (user && !user.emailVerified) {
-      const { code, hash } = generateVerificationCode();
+      const token = crypto.randomBytes(32).toString('hex');
+      const hash = crypto.createHash('sha256').update(token).digest('hex');
       user.emailVerificationToken = hash;
       user.emailVerificationExpires = Date.now() + VERIFICATION_CODE_TTL_MS;
       await user.save({ validateBeforeSave: false });
-      const mailResult = await sendVerificationEmail(user.email, user.name, code);
+      const mailResult = await sendVerificationEmail(user.email, user.name, token);
 
       if (!mailResult.sent) {
-        return res.json({ message: 'Verification code sent.', devCode: code });
+        return res.json({ message: 'Verification link sent.', devCode: token });
       }
     }
 
@@ -347,10 +334,8 @@ const googleLogin = async (req, res, next) => {
 // GET /api/auth/refresh
 const refreshToken = async (req, res, next) => {
   try {
-    console.log('REFRESH TOKEN REQUEST COOKIES:', req.cookies);
     const token = req.cookies.refreshToken;
     if (!token) {
-      console.log('NO REFRESH TOKEN COOKIE FOUND');
       return res.status(401).json({ message: 'Not authenticated. No refresh token.' });
     }
 

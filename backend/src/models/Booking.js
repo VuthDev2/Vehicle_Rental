@@ -7,10 +7,9 @@ const bookingSchema = new mongoose.Schema(
     startDate:     { type: Date, required: true },
     endDate:       { type: Date, required: true },
     rentalType:    { type: String, enum: ['hour', 'day', 'week', 'month', 'year'], required: true },
-    durationUnits: { type: Number, required: true, min: 1 },
     quantity:      { type: Number, required: true, min: 1 }, // number of vehicles
     totalPrice:    { type: Number, required: true, min: 0 },
-    status:        { type: String, enum: ['pending', 'pending_approval', 'pending_verification', 'confirmed', 'active', 'cancelled', 'completed'], default: 'pending' },
+    status:        { type: String, enum: ['pending', 'pending_approval', 'confirmed', 'active', 'cancelled', 'completed'], default: 'pending' },
     paymentMethod: { type: String, enum: ['online', 'pay_at_store'], default: 'online' },
     paymentStatus: { type: String, enum: ['unpaid', 'partially_paid', 'paid', 'refunded'], default: 'unpaid' },
     paymentType:   { type: String, enum: ['full', 'deposit'], default: 'full' },

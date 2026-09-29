@@ -5,6 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { IMAGE_CONFIG } from '@angular/common';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
@@ -24,6 +25,12 @@ export const appConfig: ApplicationConfig = {
     provideTranslateHttpLoader({
       prefix: '/i18n/',
       suffix: '.json',
-    })
+    }),
+    {
+      provide: IMAGE_CONFIG,
+      useValue: {
+        domains: ['loremflickr.com', 'picsum.photos', 'images.unsplash.com', 'upload.wikimedia.org']
+      }
+    }
   ],
 };

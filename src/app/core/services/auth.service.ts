@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { Injectable, computed, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, of, tap, map, catchError, shareReplay } from 'rxjs';
+import { Observable, of, tap, map, catchError, shareReplay, retry, timer } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { User, UserRole } from '../../models/user.model';
 
@@ -41,6 +41,10 @@ export class AuthService {
 
     if (!this.restore$) {
       this.restore$ = this.http.get<{ user: User }>(`${API}/auth/me`).pipe(
+        retry({
+          count: 3,
+          delay: (error, retryCount) => timer(2000 * retryCount) // Wait 2s, 4s, 6s for Render to wake up
+        }),
         tap(({ user }) => this.sessionUser.set(user)),
         map(() => true),
         catchError(() => {
@@ -110,10 +114,15 @@ export class AuthService {
     );
   }
 
-  verifyEmail(email: string, code: string) {
+  verifyEmail(token: string) {
     return this.http
-      .post<{ message: string; user: User }>(`${API}/auth/verify-email`, { email, code })
-      .pipe(tap(({ user }) => this.updateUser(user)));
+      .post<{ message: string; token: string; user: User }>(`${API}/auth/verify-email`, { token })
+      .pipe(tap(({ token, user }) => {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(TOKEN_KEY, token);
+        }
+        this.sessionUser.set(user);
+      }));
   }
 
   resendVerification(email: string) {
@@ -133,6 +142,10 @@ export class AuthService {
 
   refreshToken(): Observable<string> {
     return this.http.get<{ token: string }>(`${API}/auth/refresh`).pipe(
+      retry({
+        count: 3,
+        delay: (error, retryCount) => timer(2000 * retryCount)
+      }),
       tap((res) => {
         if (typeof localStorage !== 'undefined') {
           localStorage.setItem(TOKEN_KEY, res.token);

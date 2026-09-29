@@ -6,7 +6,7 @@
  * @param {number} quantity - number of vehicles
  * @returns {number}
  */
-const calculatePrice = (pricing, rentalType, durationUnits, quantity) => {
+const calculatePrice = (pricing, rentalType, durationUnits, quantity = 1) => {
   const rate = pricing[rentalType] || 0;
   return rate * durationUnits * quantity;
 };

@@ -31,6 +31,15 @@ export class VehicleListComponent implements OnInit {
 
   readonly loading = signal(true);
   readonly vehicles = signal<Vehicle[]>([]);
+  readonly uniqueVehicles = computed(() => {
+    const unique = new Map<string, Vehicle>();
+    for (const v of this.vehicles()) {
+      if (!unique.has(v.name)) {
+        unique.set(v.name, v);
+      }
+    }
+    return Array.from(unique.values());
+  });
   readonly totalPages = signal(1);
   readonly totalItems = signal(0);
   
@@ -94,11 +103,7 @@ export class VehicleListComponent implements OnInit {
 
     this.vehicleService.getVehicles(filter, pageNum, this.pageSize).subscribe({
       next: (res) => {
-        if (pageNum === 1) {
-          this.vehicles.set(res.vehicles || []);
-        } else {
-          this.vehicles.update(prev => [...prev, ...(res.vehicles || [])]);
-        }
+        this.vehicles.set(res.vehicles || []);
         this.totalPages.set(res.totalPages || 1);
         this.totalItems.set(res.total || 0);
         this.loading.set(false);
@@ -122,9 +127,14 @@ export class VehicleListComponent implements OnInit {
     this.openSections.set(s);
   }
 
-  loadMore() {
-    if (this.page() < this.totalPages()) {
-      this.page.update(p => p + 1);
+  getPagesArray(): number[] {
+    return Array.from({ length: this.totalPages() }, (_, i) => i + 1);
+  }
+
+  goToPage(p: number) {
+    if (p >= 1 && p <= this.totalPages() && p !== this.page()) {
+      this.page.set(p);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 

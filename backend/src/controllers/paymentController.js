@@ -65,7 +65,7 @@ const createPayment = async (req, res, next) => {
       const newAmountPaid = (booking.amountPaid || 0) + amountToCharge;
       const balanceDue = booking.totalPrice - newAmountPaid;
       const newPaymentStatus = newAmountPaid >= booking.totalPrice ? 'paid' : 'partially_paid';
-      const newBookingStatus = (booking.rentalType === 'month' || booking.rentalType === 'year') ? 'pending_verification' : 'confirmed';
+      const newBookingStatus = 'pending';
 
       await Booking.findByIdAndUpdate(bookingId, {
         paymentStatus: newPaymentStatus,
@@ -170,7 +170,7 @@ const markPaid = async (tranId) => {
   const newAmountPaid = (existingBooking.amountPaid || 0) + payment.amount;
   const balanceDue = existingBooking.totalPrice - newAmountPaid;
   const newPaymentStatus = newAmountPaid >= existingBooking.totalPrice ? 'paid' : 'partially_paid';
-  const newBookingStatus = (existingBooking.rentalType === 'month' || existingBooking.rentalType === 'year') ? 'pending_verification' : 'confirmed';
+  const newBookingStatus = 'pending';
 
   const booking = await Booking.findByIdAndUpdate(
     payment.bookingId,

@@ -1062,33 +1062,7 @@
                           >
                           View Details
                         </button>
-                        @if (booking.status === 'pending_verification') {
-                          <button
-                            (click)="quickStatus(booking._id, 'active'); showQuickMenu.set(null)"
-                            style="
-                              display: flex;
-                              align-items: center;
-                              gap: 10px;
-                              width: 100%;
-                              padding: 9px 12px;
-                              border: none;
-                              border-radius: 7px;
-                              background: transparent;
-                              font-size: 13px;
-                              font-weight: 500;
-                              color: #059669;
-                              cursor: pointer;
-                              text-align: left;
-                            "
-                            onmouseover="this.style.background = '#ECFDF5'"
-                            onmouseout="this.style.background = 'transparent'"
-                          >
-                            <span class="material-symbols-outlined" style="font-size: 16px"
-                              >how_to_reg</span
-                            >
-                            Verify Docs
-                          </button>
-                        }
+
                         @if (booking.status === 'pending') {
                           <button
                             (click)="quickStatus(booking._id, 'confirmed'); showQuickMenu.set(null)"
@@ -1656,6 +1630,68 @@
           </div>
         }
 
+        <!-- Documents -->
+        @if (booking.documents && booking.documents.length > 0) {
+          <div style="margin-bottom: 20px">
+            <p
+              style="
+                font-size: 11px;
+                font-weight: 700;
+                color: #9ca3af;
+                text-transform: uppercase;
+                letter-spacing: 0.6px;
+                margin: 0 0 10px;
+              "
+            >
+              Uploaded Documents
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              @for (doc of booking.documents; track doc.url) {
+                <a
+                  [href]="backendUrl + doc.url"
+                  target="_blank"
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 12px;
+                    background: #f9fafb;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 10px;
+                    text-decoration: none;
+                    transition: all 0.2s ease;
+                  "
+                  onmouseover="this.style.background = '#F3F4F6'; this.style.borderColor = '#D1D5DB';"
+                  onmouseout="this.style.background = '#F9FAFB'; this.style.borderColor = '#E5E7EB';"
+                >
+                  <div
+                    style="
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 6px;
+                      background: #e0e7ff;
+                      color: #4f46e5;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      flex-shrink: 0;
+                    "
+                  >
+                    <span class="material-symbols-outlined" style="font-size: 18px">description</span>
+                  </div>
+                  <div style="flex: 1; min-width: 0;">
+                    <p style="font-size: 13px; font-weight: 600; color: #1a1a2e; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      {{ doc.originalName || 'Document' }}
+                    </p>
+                    <p style="font-size: 11px; color: #6b7280; margin: 2px 0 0">Click to view file</p>
+                  </div>
+                  <span class="material-symbols-outlined" style="font-size: 16px; color: #9ca3af">open_in_new</span>
+                </a>
+              }
+            </div>
+          </div>
+        }
+
         <!-- Timeline -->
         <div style="margin-bottom: 20px">
           <p
@@ -1703,13 +1739,13 @@
 
         <!-- Actions -->
         <div style="display: flex; flex-direction: column; gap: 8px">
-          @if (booking.status === 'pending_verification' || booking.status === 'pending') {
+          @if (booking.status === 'pending' || booking.status === 'confirmed') {
             <div style="background: #F9FAFB; padding: 12px; border-radius: 10px; border: 1px dashed #D1D5DB; margin-bottom: 8px;">
               <p style="font-size: 12px; font-weight: 600; color: #4B5563; margin: 0 0 8px;">Upload Customer Documents (ID, License)</p>
               <input type="file" multiple accept="image/*" (change)="onFileSelect($event)" style="font-size: 12px; width: 100%;" />
             </div>
             <button
-              (click)="uploadDocumentsAndApprove(booking._id)"
+              (click)="uploadDocuments(booking._id)"
               [disabled]="uploadingDocuments() || selectedDocuments().length === 0"
               style="
                 display: flex;
@@ -1720,7 +1756,7 @@
                 padding: 12px;
                 border-radius: 10px;
                 border: none;
-                background: #059669;
+                background: #005DAC;
                 font-size: 14px;
                 font-weight: 700;
                 color: #ffffff;
@@ -1732,13 +1768,14 @@
               @if (uploadingDocuments()) {
                 <span class="material-symbols-outlined animate-spin" style="font-size: 18px">progress_activity</span> Uploading...
               } @else {
-                <span class="material-symbols-outlined" style="font-size: 18px">how_to_reg</span> Upload & Handover
+                <span class="material-symbols-outlined" style="font-size: 18px">upload_file</span> Upload Documents
               }
             </button>
           }
           @if (booking.status === 'pending') {
             <button
               (click)="quickStatus(booking._id, 'confirmed'); showBookingDrawer.set(null)"
+              [disabled]="!booking.documents || booking.documents.length === 0"
               style="
                 display: flex;
                 align-items: center;
@@ -1755,8 +1792,10 @@
                 cursor: pointer;
                 transition: all 0.15s ease;
               "
-              onmouseover="this.style.background = '#047857'"
-              onmouseout="this.style.background = '#059669'"
+              [style.opacity]="(!booking.documents || booking.documents.length === 0) ? '0.5' : '1'"
+              [attr.title]="(!booking.documents || booking.documents.length === 0) ? 'You must upload Customer Documents first' : ''"
+              onmouseover="if(this.style.opacity === '1') this.style.background = '#047857'"
+              onmouseout="if(this.style.opacity === '1') this.style.background = '#059669'"
             >
               <span class="material-symbols-outlined" style="font-size: 18px">check</span> Approve
               Booking

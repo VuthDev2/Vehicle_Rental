@@ -19,7 +19,7 @@ class BookingService {
       const activePayAtStoreCount = await Booking.countDocuments({
         userId,
         paymentMethod: 'pay_at_store',
-        status: { $in: ['pending', 'pending_verification', 'confirmed', 'active'] }
+        status: { $in: ['pending', 'confirmed', 'active'] }
       });
       if (activePayAtStoreCount >= 3) {
         throw new Error('You cannot have more than 3 active pay-at-store bookings. Please complete or cancel existing ones.');
@@ -31,7 +31,7 @@ class BookingService {
       {
         $match: {
           vehicleId: vehicle._id,
-          status: { $in: ['pending', 'pending_verification', 'confirmed'] },
+          status: { $in: ['pending', 'confirmed'] },
           $or: [
             { startDate: { $lte: new Date(endDate) }, endDate: { $gte: new Date(startDate) } },
           ],
@@ -94,9 +94,6 @@ class BookingService {
       }
     }
 
-    const isPayAtStore = paymentMethod === 'pay_at_store';
-    const initialStatus = isPayAtStore ? 'pending_verification' : 'pending';
-
     const booking = await Booking.create({
       userId,
       vehicleId,
@@ -110,7 +107,7 @@ class BookingService {
       notes: notes || '',
       promoCode: promoCode || '',
       paymentMethod: paymentMethod || 'online',
-      status: initialStatus,
+      status: 'pending',
     });
 
     await Notification.create({
@@ -167,7 +164,7 @@ class BookingService {
       throw new Error('Access denied.');
     }
 
-    if (!['pending', 'pending_verification', 'confirmed'].includes(booking.status)) {
+    if (!['pending', 'confirmed'].includes(booking.status)) {
       throw new Error('Cannot cancel this booking.');
     }
 

@@ -1,653 +1,457 @@
-import { Component, inject, signal, computed, ViewChildren, QueryList, ElementRef, AfterViewInit, OnInit, OnDestroy, PLATFORM_ID } from '@angular/core';
+import { Component, inject, signal, computed, ViewChildren, QueryList, ElementRef, AfterViewInit, OnInit, OnDestroy, PLATFORM_ID, HostListener } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Chart } from 'chart.js/auto';
-import { ReportService } from '../../../core/services/report.service';
-import { BookingService } from '../../../core/services/booking.service';
-import { VehicleService } from '../../../core/services/vehicle.service';
-import { PaymentService } from '../../../core/services/payment.service';
-import { UserService } from '../../../core/services/user.service';
-import { Booking } from '../../../models/booking.model';
+import { ReportService, OwnerSummary, FleetVehicle, BookingAnalytics, CustomerInsights, VehicleRevenue, CategoryRevenue, BookingDetail, MonthlyRevenue, ExpenseItem, ExpenseSummary } from '../../../core/services/report.service';
 
 type Period = 'daily' | 'weekly' | 'monthly' | 'yearly';
 type Metric = 'revenue' | 'bookings' | 'profit' | 'expenses';
 type RevenueChartType = 'line' | 'bar' | 'area';
-type DoughnutType = 'doughnut' | 'pie';
-
-interface ChartDataPoint {
-  label: string;
-  value: number;
-  secondary?: number;
-}
+type DrawerType = 'category' | 'revenue-monthly' | 'booking-status' | null;
 
 @Component({
   selector: 'app-reports',
   standalone: true,
   imports: [FormsModule],
   templateUrl: './reports.component.html',
+  styleUrls: ['./reports.component.css'],
 })
 export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly reportService = inject(ReportService);
-  private readonly bookingService = inject(BookingService);
-  private readonly vehicleService = inject(VehicleService);
-  private readonly paymentService = inject(PaymentService);
-  private readonly userService = inject(UserService);
   private readonly platformId = inject(PLATFORM_ID);
+  readonly Math = Math;
 
-  @ViewChildren('revenueChart') revenueChartRef!: QueryList<ElementRef<HTMLCanvasElement>>;
-  @ViewChildren('bookingChart') bookingChartRef!: QueryList<ElementRef<HTMLCanvasElement>>;
-  @ViewChildren('customerChart') customerChartRef!: QueryList<ElementRef<HTMLCanvasElement>>;
-  @ViewChildren('categoryChart') categoryChartRef!: QueryList<ElementRef<HTMLCanvasElement>>;
+  @ViewChildren('mainChart')      mainChartRef!:      QueryList<ElementRef<HTMLCanvasElement>>;
+  @ViewChildren('expenseChart')   expenseChartRef!:   QueryList<ElementRef<HTMLCanvasElement>>;
+  @ViewChildren('categoryChart')  categoryChartRef!:  QueryList<ElementRef<HTMLCanvasElement>>;
+  @ViewChildren('peakDaysChart')  peakDaysChartRef!:  QueryList<ElementRef<HTMLCanvasElement>>;
 
-  readonly loading = signal(true);
-  readonly selectedPeriod = signal('30');
+  // ─── UI state ─────────────────────────────────────────────────────────────
+  readonly loading       = signal(true);
+  readonly dateRange     = signal('30');
+  
   readonly selectedMetric = signal<Metric>('revenue');
   readonly selectedChartType = signal<RevenueChartType>('line');
   readonly chartPeriod = signal<Period>('monthly');
-  readonly doughnutType = signal<DoughnutType>('doughnut');
 
-  readonly periods: Period[] = ['daily', 'weekly', 'monthly', 'yearly'];
   readonly metrics: Metric[] = ['revenue', 'bookings', 'profit', 'expenses'];
   readonly chartTypes: RevenueChartType[] = ['line', 'bar', 'area'];
+  readonly periods: Period[] = ['daily', 'weekly', 'monthly'];
+
+  // ─── Data signals ──────────────────────────────────────────────────────────
+  readonly ownerSummary      = signal<OwnerSummary | null>(null);
+  readonly fleetVehicles     = signal<FleetVehicle[]>([]);
+  readonly bookingAnalytics  = signal<BookingAnalytics | null>(null);
+  readonly monthlyRevenue    = signal<MonthlyRevenue[]>([]);
+  readonly categoryRevenue   = signal<CategoryRevenue[]>([]);
+  readonly categoryGrandTotal = signal(0);
+  readonly topVehicles       = signal<VehicleRevenue[]>([]);
+  readonly customerInsights  = signal<CustomerInsights | null>(null);
+
+  // ─── Expense Ledger ────────────────────────────────────────────────────────
+  readonly expenseEntries    = signal<ExpenseItem[]>([]);
+  readonly expenseSummary    = signal<ExpenseSummary[]>([]);
+  readonly expenseGrandTotal = signal(0);
+  readonly expenseTotal      = signal(0);
+  readonly expensePage       = signal(1);
+  readonly expensePages      = signal(1);
+  readonly expenseCatFilter  = signal('all');
+  readonly addingExpense     = signal(false);
+  readonly showAddForm       = signal(false);
+  readonly deletingId        = signal('');
+
+  readonly EXPENSE_CATEGORIES = [
+    { label: 'Vehicle Acquisition', color: '#3B82F6' },
+    { label: 'Repairs & Parts',     color: '#EF4444' },
+    { label: 'Maintenance',         color: '#F59E0B' },
+    { label: 'Insurance',           color: '#8B5CF6' },
+    { label: 'Fuel / Charging',     color: '#06B6D4' },
+    { label: 'Cleaning',            color: '#10B981' },
+    { label: 'Marketing',           color: '#EC4899' },
+    { label: 'Staff Salaries',      color: '#F97316' },
+    { label: 'Rent / Utilities',    color: '#14B8A6' },
+    { label: 'Other',               color: '#6B7280' },
+  ];
+
+  newExpense = {
+    category: 'Repairs & Parts',
+    amount: 0,
+    description: '',
+    vehicleId: '',
+    date: new Date().toISOString().split('T')[0],
+  };
+
+  // ─── Detail drawer ────────────────────────────────────────────────────────
+  readonly drawerOpen          = signal(false);
+  readonly drawerType          = signal<DrawerType>(null);
+  readonly drawerTitle         = signal('');
+  readonly drawerSubtitle      = signal('');
+  readonly drawerLoading       = signal(false);
+  readonly drawerBookings      = signal<BookingDetail[]>([]);
+  readonly drawerMonthly       = signal<MonthlyRevenue[]>([]);
+  readonly drawerTotal         = signal(0);
+  readonly drawerPages         = signal(1);
+  readonly drawerPage          = signal(1);
+  readonly drawerStatusFilter  = signal('completed');
+
+  @HostListener('document:keydown.escape') onEsc() { this.closeDrawer(); }
 
   private charts: Chart[] = [];
 
-  // Raw data signals
-  private allBookings = signal<Booking[]>([]);
-  private allVehicles = signal<any[]>([]);
-  private allPayments = signal<any[]>([]);
-  private allUsers = signal<any[]>([]);
-  private summaryData = signal<any>(null);
-  private revenueRaw = signal<ChartDataPoint[]>([]);
+  // ─── Computed ─────────────────────────────────────────────────────────────
 
-  readonly executiveInsights = computed(() => [
-    {
-      label: 'Revenue',
-      icon: 'trending_up',
-      text: `Revenue increased by ${this.revenueGrowth()}% compared to last ${this.selectedPeriod() < '60' ? 'week' : 'month'}.`,
-      bg: '#E7F5ED',
-      border: '#D1FAE5',
-      badgeBg: '#D1FAE5',
-      color: '#059669',
-    },
-    {
-      label: 'Top Category',
-      icon: 'directions_car',
-      text: `${this.topCategory()}s generated the highest revenue this period.`,
-      bg: '#E5EEFF',
-      border: '#DBEAFE',
-      badgeBg: '#DBEAFE',
-      color: '#005DAC',
-    },
-    {
-      label: 'Fleet',
-      icon: 'local_shipping',
-      text: `Fleet utilization reached ${this.fleetUtilizationPercent()}%, indicating strong vehicle demand.`,
-      bg: '#FFF3E0',
-      border: '#FEEABC',
-      badgeBg: '#FEEABC',
-      color: '#E65100',
-    },
-    {
-      label: 'Bookings',
-      icon: 'receipt_long',
-      text: `${this.bookingStatusData()[2]?.value || 0} bookings are awaiting approval.`,
-      bg: '#F3F0FF',
-      border: '#E9DFFF',
-      badgeBg: '#E9DFFF',
-      color: '#7C3AED',
-    },
-  ]);
-
-  readonly kpiCards = computed(() => {
-    const s = this.summaryData();
-    const totalRev = s?.totalRevenue || 0;
-    const totalBook = s?.totalBookings || 0;
-    const totalVeh = s?.totalVehicles || 0;
-    const activeRentals = this.allBookings().filter(b => b.status === 'confirmed').length;
-    return [
-      { label: 'Total Revenue', icon: 'payments', value: '$' + totalRev.toLocaleString(), bg: '#E7F5ED', color: '#059669', trend: '+18%', trendColor: '#059669', trendIcon: 'trending_up' },
-      { label: 'Total Bookings', icon: 'receipt_long', value: totalBook.toLocaleString(), bg: '#E5EEFF', color: '#005DAC', trend: '+12%', trendColor: '#059669', trendIcon: 'trending_up' },
-      { label: 'Fleet Utilization', icon: 'local_shipping', value: this.fleetUtilizationPercent() + '%', bg: '#FFF3E0', color: '#E65100', trend: '+5%', trendColor: '#059669', trendIcon: 'trending_up' },
-      { label: 'Active Rentals', icon: 'key', value: activeRentals.toString(), bg: '#FFEAEA', color: '#DC2626', trend: 'Live', trendColor: '#059669', trendIcon: 'fiber_manual_record' },
-      { label: 'Avg. Booking', icon: 'receipt', value: '$' + (totalBook > 0 ? Math.round(totalRev / totalBook) : 0).toLocaleString(), bg: '#F3F0FF', color: '#7C3AED', trend: '+8%', trendColor: '#059669', trendIcon: 'trending_up' },
-      { label: 'Rev. per Booking', icon: 'trending_up', value: '$' + (totalBook > 0 ? Math.round(totalRev / totalBook) : 0).toLocaleString(), bg: '#E7F5ED', color: '#059669', trend: '+6%', trendColor: '#059669', trendIcon: 'trending_up' },
-      { label: 'Customer Growth', icon: 'group_add', value: '+34', bg: '#E5EEFF', color: '#005DAC', trend: 'This Month', trendColor: '#6B7280', trendIcon: 'schedule' },
-    ];
+  readonly topExpenseCategory = computed(() => {
+    const data = this.expenseSummary();
+    return data.length > 0 ? data[0] : null;
   });
 
-  readonly revenueBreakdown = computed(() => {
-    const s = this.summaryData();
-    const total = s?.totalRevenue || 0;
-    return [
-      { label: "Today's Revenue", value: Math.round(total * 0.03) },
-      { label: 'This Week', value: Math.round(total * 0.18) },
-      { label: 'This Month', value: Math.round(total * 0.65) },
-      { label: 'This Year', value: total },
-    ];
+  readonly expenseRatio = computed(() => {
+    const rev = this.ownerSummary()?.revenueThisYear || 1;
+    return Math.round((this.expenseGrandTotal() / rev) * 100);
   });
 
-  readonly fleetData = computed(() => {
-    const vehicles = this.allVehicles();
-    const bookings = this.allBookings();
-    const types = ['SUV', 'Sedan', 'Motorbike', 'Van', 'Truck'];
-    const colors = ['#059669', '#005DAC', '#7C3AED', '#E65100', '#DC2626'];
-    const counts: Record<string, number> = {};
-    vehicles.forEach(v => {
-      const t = v.type || 'Other';
-      counts[t] = (counts[t] || 0) + 1;
-    });
-    return types.map((t, i) => {
-      const total = counts[t] || 1;
-      const booked = bookings.filter(b => {
-        const vid = typeof b.vehicleId === 'object' ? b.vehicleId?._id : b.vehicleId;
-        const v = vehicles.find(ve => ve._id === vid);
-        return v?.type === t && (b.status === 'confirmed' || b.status === 'completed');
-      }).length;
-      const percent = Math.min(100, Math.round((booked / Math.max(total, 1)) * 100));
-      return { label: t, percent, count: total, color: colors[i] };
-    });
+  readonly realNetProfit = computed(() => {
+    return (this.ownerSummary()?.revenueThisYear || 0) - this.expenseGrandTotal();
   });
 
-  readonly fleetUtilizationPercent = computed(() => {
-    const items = this.fleetData();
-    const total = items.reduce((s, i) => s + i.percent, 0);
-    return items.length > 0 ? Math.round(total / items.length) : 0;
+  readonly avgRevenuePerBooking = computed(() => {
+    const s = this.ownerSummary();
+    if (!s || s.totalBookings === 0) return 0;
+    return Math.round(s.revenueThisYear / s.totalBookings);
   });
 
-  readonly bookingStatusData = computed(() => {
-    const bookings = this.allBookings();
-    const statuses = ['completed', 'confirmed', 'pending', 'cancelled'];
-    const labels = ['Completed', 'Active', 'Pending', 'Cancelled'];
-    const colors = ['#059669', '#005DAC', '#F59E0B', '#DC2626'];
-    return statuses.map((s, i) => ({
-      label: labels[i],
-      value: bookings.filter(b => b.status === s).length,
-      color: colors[i],
-    }));
+  readonly quickInsights = computed(() => {
+    const s = this.ownerSummary();
+    const ba = this.bookingAnalytics();
+    const cats = this.categoryRevenue();
+    const ci = this.customerInsights();
+    const v = this.fleetVehicles();
+    const insights: string[] = [];
+    if (s) { insights.push(`Revenue ${s.revenueGrowth >= 0 ? 'increased' : 'decreased'} by ${Math.abs(s.revenueGrowth)}% compared to last month.`); }
+    if (cats.length > 0) { insights.push(`${cats[0].category}s generated the highest revenue at $${cats[0].totalRevenue.toLocaleString()}.`); }
+    if (ba) { insights.push(`Average rental duration is ${ba.avgDuration} days per booking.`); insights.push(`Completion rate is ${ba.completionRate}%, cancellation rate is ${ba.cancellationRate}%.`); }
+    if (ci) { insights.push(`${ci.repeatRate}% of customers are repeat renters. Average rating is ${ci.avgRating}/5.`); }
+    const idleCount = v.filter(veh => veh.utilization === 0).length;
+    if (idleCount > 0) { insights.push(`${idleCount} vehicles have had zero bookings — consider promotions or retiring them.`); }
+    if (s) { insights.push(`Fleet utilization is at ${s.occupancyRate}% with ${s.rentedVehicles} vehicles currently rented.`); }
+    return insights.length > 0 ? insights : ['Loading insights...'];
   });
 
-  readonly topVehicles = computed(() => this.popularVehiclesCache());
+  readonly fleetTableData = computed(() => this.fleetVehicles().map(v => ({ ...v, expenses: 0, netProfit: v.revenue })));
 
-  readonly customerData = computed(() => {
-    const users = this.allUsers();
-    const bookings = this.allBookings();
-    const total = Math.max(users.length, 1);
-    const customerUsers = users.filter(u => u.role === 'customer');
-    const activeCustomers = new Set(bookings.map(b => typeof b.userId === 'object' ? b.userId?._id : b.userId));
-    const newC = Math.round(customerUsers.length * 0.15);
-    const returning = activeCustomers.size;
-    const vip = Math.round(customerUsers.length * 0.08);
-    const inactive = customerUsers.length - returning;
-    return [
-      { label: 'New Customers', value: newC, percent: Math.round((newC / total) * 100), color: '#059669' },
-      { label: 'Returning', value: returning, percent: Math.round((returning / total) * 100), color: '#005DAC' },
-      { label: 'VIP', value: vip, percent: Math.round((vip / total) * 100), color: '#7C3AED' },
-      { label: 'Inactive', value: inactive, percent: Math.round((inactive / total) * 100), color: '#D1D5DB' },
-    ];
-  });
-
-  readonly monthlyData = computed(() => {
-    const raw = this.revenueRaw();
-    if (raw.length === 0) {
-      const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return MONTHS.slice(0, 6).map((m, i) => ({
-        month: m,
-        bookings: Math.round(100 + Math.random() * 80),
-        revenue: Math.round(5000 + Math.random() * 8000),
-        growth: i > 0 ? Math.round((Math.random() * 20) - 2) : 12,
-      }));
-    }
-    return raw.map((r, i) => ({
-      month: r.label,
-      bookings: r.secondary || 0,
-      revenue: r.value,
-      growth: i > 0 ? Math.round(((r.value - raw[i - 1].value) / (raw[i - 1].value || 1)) * 100) : 12,
-    }));
-  });
-
-  private readonly popularVehiclesCache = signal<any[]>([]);
-
-  readonly recentActivity = computed(() => {
-    const bookings = this.allBookings();
-    const recent = [...bookings].sort((a, b) => new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime()).slice(0, 5);
-    const activities = recent.map(b => {
-      const time = b.createdAt ? this.timeAgo(b.createdAt) : 'Recently';
-      const status = b.status;
-      const map: Record<string, { icon: string; bg: string; color: string; label: string }> = {
-        completed: { icon: 'check_circle', bg: '#E7F5ED', color: '#059669', label: 'Booking Completed' },
-        confirmed: { icon: 'how_to_reg', bg: '#E5EEFF', color: '#005DAC', label: 'Booking Confirmed' },
-        pending: { icon: 'schedule', bg: '#FFF3E0', color: '#E65100', label: 'Booking Pending' },
-        cancelled: { icon: 'cancel', bg: '#FFEAEA', color: '#DC2626', label: 'Booking Cancelled' },
-      };
-      const m = map[status] || { icon: 'receipt_long', bg: '#F3F4F6', color: '#6B7280', label: 'Booking ' + status };
-      const vehicleName = typeof b.vehicleId === 'object' ? b.vehicleId?.name || 'Vehicle' : 'Vehicle';
-      return { ...m, detail: `${vehicleName} · ${this.getUserName(b)}`, time };
-    });
-    return activities;
-  });
-
-  private getUserName(b: Booking): string {
-    if (typeof b.userId === 'object' && b.userId?.name) return b.userId.name;
-    return 'Customer';
-  }
-
-  readonly quickInsights = computed(() => [
-    {
-      icon: '📈',
-      text: `Revenue increased by ${this.revenueGrowth()}% compared to last ${this.selectedPeriod() < '60' ? 'week' : 'month'}.`,
-      bg: '#F0FDF4',
-      border: '#DCFCE7',
-      color: '#059669',
-    },
-    {
-      icon: '🚗',
-      text: `${this.topCategory()}s generated the highest income this period.`,
-      bg: '#EFF6FF',
-      border: '#DBEAFE',
-      color: '#005DAC',
-    },
-    {
-      icon: '📅',
-      text: 'Weekend bookings are 35% higher than weekdays on average.',
-      bg: '#FFF7ED',
-      border: '#FFEDD5',
-      color: '#E65100',
-    },
-    {
-      icon: '⏱️',
-      text: 'Average booking duration is stable at 3.2 days per rental.',
-      bg: '#F5F3FF',
-      border: '#EDE9FE',
-      color: '#7C3AED',
-    },
-    {
-      icon: '📊',
-      text: `Fleet utilization reached ${this.fleetUtilizationPercent()}%, indicating strong vehicle demand.`,
-      bg: '#FEF2F2',
-      border: '#FEE2E2',
-      color: '#DC2626',
-    },
-  ]);
-
-  ngOnInit() {
-    this.loadAllData();
-  }
-
-  ngAfterViewInit() {
-    this.charts = [];
-  }
-
-  ngOnDestroy() {
-    this.charts.forEach(c => c.destroy());
-    this.charts = [];
-  }
+  // ─── Init ─────────────────────────────────────────────────────────────────
+  ngOnInit() { this.loadAllData(); }
+  ngAfterViewInit() { this.charts = []; }
+  ngOnDestroy() { this.charts.forEach(c => { try { c.destroy(); } catch {} }); }
 
   private loadAllData() {
     this.loading.set(true);
+    let loaded = 0;
+    const total = 7;
+    const done = () => { if (++loaded >= total) { this.loading.set(false); setTimeout(() => this.initCharts(), 200); } };
 
-    this.reportService.getDashboard().subscribe({
-      next: (res) => {
-        this.summaryData.set(res.summary);
-        this.allBookings.set([]);
-        this.allVehicles.set([]);
-        this.allPayments.set([]);
-        this.allUsers.set([]);
-        this.popularVehiclesCache.set([]);
-        this.setupChartData();
+    const handle = { next: (v: any, setFn: any) => { setFn(v); done(); }, error: () => done(), complete: () => done() };
+
+    this.reportService.getOwnerSummary().subscribe({ next: v => { this.ownerSummary.set(v); done(); }, error: () => done() });
+    this.reportService.getFleetPerformance().subscribe({ next: v => { this.fleetVehicles.set(v.vehicles); done(); }, error: () => done() });
+    this.reportService.getBookingAnalytics().subscribe({ next: v => { this.bookingAnalytics.set(v); done(); }, error: () => done() });
+    this.reportService.getRevenueMonthly(12).subscribe({ next: v => { this.monthlyRevenue.set(v.months); done(); }, error: () => done() });
+    this.reportService.getCategoryRevenue().subscribe({ next: v => { this.categoryRevenue.set(v.categories); this.categoryGrandTotal.set(v.grandTotal); done(); }, error: () => done() });
+    this.reportService.getRevenueByVehicle().subscribe({ next: v => { this.topVehicles.set(v.vehicles.slice(0, 10)); done(); }, error: () => done() });
+    this.reportService.getCustomerInsights().subscribe({ next: v => { this.customerInsights.set(v); done(); }, error: () => done() });
+    this.loadExpenses();
+  }
+
+  loadExpenses() {
+    this.reportService.getExpenses(this.expensePage(), 50, this.expenseCatFilter()).subscribe({
+      next: r => {
+        this.expenseEntries.set(r.expenses);
+        this.expenseSummary.set(r.summary);
+        this.expenseGrandTotal.set(r.grandTotal);
+        this.expenseTotal.set(r.total);
+        this.expensePages.set(r.pages);
+        setTimeout(() => this.rebuildExpenseChart(), 100);
       },
-      error: () => { this.fallbackLoad(); },
+      error: () => {},
     });
+  }
 
-    this.reportService.getRevenue(12).subscribe({
-      next: (res) => {
-        const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const sorted = [...res.revenue].sort((a, b) => {
-          if (a._id.year !== b._id.year) return a._id.year - b._id.year;
-          return a._id.month - b._id.month;
-        });
-        this.revenueRaw.set(sorted.map(r => ({
-          label: MONTHS[r._id.month - 1],
-          value: Math.round(r.total),
-          secondary: r.count,
-        })));
-        this.setupChartData();
+  onRefresh() { this.charts.forEach(c => { try { c.destroy(); } catch {} }); this.charts = []; this.loadAllData(); }
+
+  // ─── Formatters ───────────────────────────────────────────────────────────
+  fmt(v: number | undefined | null): string {
+    if (v == null || isNaN(v)) return '$0';
+    return '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+  fmtDate(d: string): string { return d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
+
+  getStatusStyle(status: string) {
+    const m: Record<string, { bg: string; color: string; label: string }> = {
+      available: { bg: '#E7F5ED', color: '#059669', label: 'Available' }, rented: { bg: '#E5EEFF', color: '#005DAC', label: 'Rented' },
+      maintenance: { bg: '#FFF3E0', color: '#E65100', label: 'Maintenance' }, completed: { bg: '#E7F5ED', color: '#059669', label: 'Completed' },
+      confirmed: { bg: '#E5EEFF', color: '#005DAC', label: 'Ongoing' }, pending: { bg: '#FFF3E0', color: '#E65100', label: 'Awaiting' },
+      cancelled: { bg: '#FFEAEA', color: '#DC2626', label: 'Cancelled' },
+    };
+    return m[status] ?? { bg: '#F9FAFB', color: '#6B7280', label: status };
+  }
+
+  getCatMeta(cat: string) {
+    const m: Record<string, { icon: string; color: string; bg: string }> = {
+      'Car': { icon: 'directions_car', color: '#005DAC', bg: '#E5EEFF' }, 'Sedan': { icon: 'airport_shuttle', color: '#0891B2', bg: '#E0F7FA' },
+      'SUV': { icon: 'rv_hookup', color: '#059669', bg: '#E7F5ED' }, 'Van': { icon: 'airport_shuttle', color: '#7C3AED', bg: '#F3F0FF' },
+      'Truck': { icon: 'local_shipping', color: '#E65100', bg: '#FFF3E0' }, 'Motorcycle': { icon: 'two_wheeler', color: '#DC2626', bg: '#FFEAEA' },
+      'Scooter': { icon: 'electric_scooter', color: '#D97706', bg: '#FFFBEB' },
+    };
+    return m[cat] ?? { icon: 'commute', color: '#6B7280', bg: '#F9FAFB' };
+  }
+
+  getExpenseCatColor(category: string): string {
+    return this.EXPENSE_CATEGORIES.find(c => c.label === category)?.color || '#6B7280';
+  }
+
+  // ─── Expense CRUD ─────────────────────────────────────────────────────────
+
+  toggleAddForm() { this.showAddForm.update(v => !v); }
+
+  submitExpense() {
+    if (!this.newExpense.amount || this.newExpense.amount <= 0) return;
+    this.addingExpense.set(true);
+    this.reportService.addExpense({
+      category: this.newExpense.category,
+      amount: this.newExpense.amount,
+      color: this.getExpenseCatColor(this.newExpense.category),
+      description: this.newExpense.description,
+      vehicleId: this.newExpense.vehicleId || undefined,
+      date: this.newExpense.date,
+    }).subscribe({
+      next: () => {
+        this.addingExpense.set(false);
+        this.showAddForm.set(false);
+        this.newExpense = { category: 'Repairs & Parts', amount: 0, description: '', vehicleId: '', date: new Date().toISOString().split('T')[0] };
+        this.loadExpenses();
       },
-      error: () => { this.setupChartData(); },
-    });
-
-    this.reportService.getPopularVehicles().subscribe({
-      next: (res) => this.popularVehiclesCache.set(res.vehicles),
+      error: () => this.addingExpense.set(false),
     });
   }
 
-  private fallbackLoad() {
-    this.reportService.getSummary().subscribe({
-      next: (res) => { this.summaryData.set(res); this.setupChartData(); },
-      error: () => { this.setupChartData(); },
-    });
-    this.bookingService.getBookings().subscribe({
-      next: (res) => { this.allBookings.set(res.bookings); this.setupChartData(); },
-      error: () => { this.setupChartData(); },
-    });
-    this.vehicleService.getVehicles().subscribe({
-      next: (res) => this.allVehicles.set(res.vehicles),
-    });
-    this.paymentService.getPayments(1, 100).subscribe({
-      next: (res) => this.allPayments.set(res.payments),
-    });
-    this.userService.getUsers().subscribe({
-      next: (res) => this.allUsers.set(res.users),
+  deleteExpenseEntry(id: string) {
+    this.deletingId.set(id);
+    this.reportService.deleteExpense(id).subscribe({
+      next: () => { this.deletingId.set(''); this.loadExpenses(); },
+      error: () => this.deletingId.set(''),
     });
   }
 
-  private dataLoadedCount = 0;
-  private setupChartData() {
-    this.dataLoadedCount++;
-    if (this.dataLoadedCount >= 2) {
-      this.loading.set(false);
-      setTimeout(() => this.initAllCharts(), 100);
+  filterExpenseCat(cat: string) {
+    this.expenseCatFilter.set(cat);
+    this.expensePage.set(1);
+    this.loadExpenses();
+  }
+
+  expensePagePrev() { if (this.expensePage() > 1) { this.expensePage.update(p => p - 1); this.loadExpenses(); } }
+  expensePageNext() { if (this.expensePage() < this.expensePages()) { this.expensePage.update(p => p + 1); this.loadExpenses(); } }
+
+  // ─── Drawer ───────────────────────────────────────────────────────────────
+
+  openMonthlyDrawer() {
+    this.drawerType.set('revenue-monthly');
+    this.drawerTitle.set('Monthly Revenue Report');
+    this.drawerSubtitle.set('Detailed month-by-month breakdown');
+    this.drawerOpen.set(true);
+    this.drawerLoading.set(true);
+    this.reportService.getRevenueMonthly(12).subscribe({ next: r => { this.drawerMonthly.set(r.months); this.drawerLoading.set(false); }, error: () => this.drawerLoading.set(false) });
+  }
+
+  openStatusDrawer(status: string, label: string) {
+    this.drawerType.set('booking-status');
+    this.drawerTitle.set(label + ' Bookings');
+    this.drawerSubtitle.set('Detailed list of ' + label.toLowerCase() + ' bookings');
+    this.drawerStatusFilter.set(status);
+    this.drawerPage.set(1);
+    this.drawerOpen.set(true);
+    this.loadDrawerStatus();
+  }
+
+  closeDrawer() { this.drawerOpen.set(false); setTimeout(() => this.drawerType.set(null), 300); }
+  drawerNext() { if (this.drawerPage() < this.drawerPages()) { this.drawerPage.update(p => p + 1); this.loadDrawerStatus(); } }
+  drawerPrev() { if (this.drawerPage() > 1) { this.drawerPage.update(p => p - 1); this.loadDrawerStatus(); } }
+
+  private loadDrawerStatus() {
+    this.drawerLoading.set(true);
+    this.reportService.getBookingStatusDetails(this.drawerStatusFilter(), this.drawerPage()).subscribe({
+      next: r => { this.drawerBookings.set(r.bookings); this.drawerTotal.set(r.total); this.drawerPages.set(r.pages); this.drawerLoading.set(false); },
+      error: () => this.drawerLoading.set(false),
+    });
+  }
+
+  // ─── Export ────────────────────────────────────────────────────────────────
+
+  exportCSV() {
+    const s = this.ownerSummary();
+    const ba = this.bookingAnalytics();
+    const ci = this.customerInsights();
+    const lines: string[] = [];
+    lines.push('CAMBO RENT — FINANCIAL REPORT');
+    lines.push(`Generated,${new Date().toLocaleString()}`);
+    lines.push('');
+    lines.push('=== FINANCIAL SUMMARY ===');
+    lines.push('Metric,Value');
+    if (s) {
+      lines.push(`Revenue This Month,$${s.revenueThisMonth}`);
+      lines.push(`Revenue This Year,$${s.revenueThisYear}`);
+      lines.push(`Total Expenses,$${this.expenseGrandTotal()}`);
+      lines.push(`Net Profit,$${this.realNetProfit()}`);
+      lines.push(`Revenue Growth,${s.revenueGrowth}%`);
+      lines.push(`Fleet Utilization,${s.occupancyRate}%`);
+      lines.push(`Total Bookings,${s.totalBookings}`);
     }
-  }
-
-  isEmpty(): boolean {
-    const s = this.summaryData();
-    return !this.loading() && (!s || (s.totalBookings === 0 && s.totalRevenue === 0 && s.totalVehicles === 0));
-  }
-
-  hoverBtn(e: MouseEvent) {
-    (e.currentTarget as HTMLElement).style.color = '#1A1A2E';
-  }
-
-  unhoverBtn(e: MouseEvent, isActive: boolean) {
-    if (!isActive) {
-      (e.currentTarget as HTMLElement).style.color = '#6B7280';
+    lines.push('');
+    lines.push('=== EXPENSE ENTRIES ===');
+    lines.push('Date,Category,Amount,Description,Vehicle');
+    this.expenseEntries().forEach(e => {
+      const vName = e.vehicleId?.name || '—';
+      lines.push(`${this.fmtDate(e.createdAt || '')},${e.category},$${e.amount},${e.description || ''},${vName}`);
+    });
+    lines.push('');
+    lines.push('=== EXPENSE SUMMARY BY CATEGORY ===');
+    lines.push('Category,Total,Entries');
+    this.expenseSummary().forEach(s => lines.push(`${s.category},$${s.total},${s.count}`));
+    lines.push(`Grand Total,$${this.expenseGrandTotal()}`);
+    lines.push('');
+    lines.push('=== REVENUE BY VEHICLE TYPE ===');
+    lines.push('Type,Revenue,Bookings,Vehicles,Percentage');
+    this.categoryRevenue().forEach(c => lines.push(`${c.category},$${c.totalRevenue},${c.totalBookings},${c.vehicleCount},${c.percentage}%`));
+    lines.push('');
+    lines.push('=== TOP EARNING VEHICLES ===');
+    lines.push('Vehicle,Type,Revenue,Trips,Avg Per Trip');
+    this.topVehicles().forEach(v => lines.push(`${v.name},${v.type},$${v.revenue},${v.bookings},$${v.avgPerBooking}`));
+    lines.push('');
+    lines.push('=== FLEET PERFORMANCE ===');
+    lines.push('Vehicle,Brand,Type,Revenue,Bookings,Utilization,Status');
+    this.fleetVehicles().forEach(v => lines.push(`${v.name},${v.brand},${v.type},$${v.revenue},${v.totalBookings},${v.utilization}%,${v.status}`));
+    if (ci) {
+      lines.push('');
+      lines.push('=== CUSTOMER INSIGHTS ===');
+      lines.push(`Total Customers,${ci.totalCustomers}`);
+      lines.push(`Repeat Rate,${ci.repeatRate}%`);
+      lines.push(`Average Rating,${ci.avgRating}`);
+      lines.push('');
+      lines.push('Top Customers');
+      lines.push('Name,Email,Spending,Bookings');
+      ci.topCustomers.forEach(c => lines.push(`${c.name},${c.email},$${c.spending},${c.bookings}`));
     }
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cambo_rent_report_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
-  onFilterChange() {
-    this.loadAllData();
-  }
+  downloadPDF() { window.print(); }
 
-  setMetric(m: Metric) { this.selectedMetric.set(m); this.rebuildRevenueChart(); }
-  setChartType(ct: RevenueChartType) { this.selectedChartType.set(ct); this.rebuildRevenueChart(); }
-  setChartPeriod(p: Period) { this.chartPeriod.set(p); this.rebuildRevenueChart(); }
-  setDoughnutType(dt: DoughnutType) { this.doughnutType.set(dt); this.rebuildBookingChart(); }
-
-  toggleLegendItem(_idx: number) {}
-
-  private revenueGrowth(): number {
-    const data = this.revenueRaw();
-    if (data.length < 2) return 18;
-    const last = data[data.length - 1]?.value || 0;
-    const prev = data[data.length - 2]?.value || 1;
-    return Math.round(((last - prev) / prev) * 100);
-  }
-
-  private topCategory(): string {
-    const fleet = this.fleetData();
-    if (fleet.length === 0) return 'SUV';
-    return fleet.reduce((max, f) => f.percent > max.percent ? f : max, fleet[0]).label;
-  }
-
-  private timeAgo(dateStr: string): string {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'Just now';
-    if (mins < 60) return mins + 'm ago';
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return hours + 'h ago';
-    const days = Math.floor(hours / 24);
-    return days + 'd ago';
-  }
-
-  private initAllCharts() {
-    // Chart.js needs a real canvas — skip during server-side rendering.
+  // ─── Charts ───────────────────────────────────────────────────────────────
+  private initCharts() {
     if (!isPlatformBrowser(this.platformId)) return;
-    this.rebuildRevenueChart();
-    this.rebuildBookingChart();
-    this.rebuildCustomerChart();
+    this.rebuildMainChart();
+    this.rebuildExpenseChart();
     this.rebuildCategoryChart();
+    this.rebuildPeakDaysChart();
   }
 
-  private rebuildRevenueChart() {
-    if (!this.revenueChartRef?.length) return;
+  setMetric(m: Metric) { this.selectedMetric.set(m); this.rebuildMainChart(); }
+  setChartType(t: RevenueChartType) { this.selectedChartType.set(t); this.rebuildMainChart(); }
+  setChartPeriod(p: Period) { this.chartPeriod.set(p); this.rebuildMainChart(); }
+
+  private rebuildMainChart() {
+    if (!this.mainChartRef?.length) return;
     this.destroyChart(0);
-    const canvas = this.revenueChartRef.first.nativeElement;
-    const data = this.revenueRaw();
-    const labels = data.length > 0 ? data.map(d => d.label) : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-    const values = data.length > 0 ? data.map(d => Math.round(d.value / 1000)) : [8, 12, 9, 15, 11, 14];
-    const prev = values.map(v => Math.round(v * (0.8 + Math.random() * 0.15)));
+    const canvas = this.mainChartRef.first.nativeElement;
+    const monthly = this.monthlyRevenue();
+    const labels = monthly.length > 0 ? monthly.map(m => m.label) : ['Jan','Feb','Mar','Apr','May','Jun'];
+    let values: number[] = [], mainColor = '#005DAC', label = '', isCurrency = false;
 
-    const type = this.selectedChartType() === 'area' ? 'line' : this.selectedChartType();
-    const gradient = canvas.getContext('2d')?.createLinearGradient(0, 0, 0, 300);
-    if (gradient) {
-      gradient.addColorStop(0, 'rgba(0,93,172,0.3)');
-      gradient.addColorStop(1, 'rgba(0,93,172,0)');
+    if (this.selectedMetric() === 'revenue') {
+      values = monthly.length > 0 ? monthly.map(m => m.revenue || 0) : [8000,12000,9000,15000,11000,14000];
+      mainColor = '#059669'; label = 'Revenue ($)'; isCurrency = true;
+    } else if (this.selectedMetric() === 'profit') {
+      const monthlyExp = Math.round(this.expenseGrandTotal() / 12);
+      values = monthly.length > 0 ? monthly.map(m => (m.revenue || 0) - monthlyExp) : [5000,8000,6000,10000,7000,9000];
+      mainColor = '#7C3AED'; label = 'Net Profit ($)'; isCurrency = true;
+    } else if (this.selectedMetric() === 'expenses') {
+      const perMonth = Math.round(this.expenseGrandTotal() / 12);
+      values = monthly.length > 0 ? monthly.map(() => perMonth) : [3000,4000,3000,5000,4000,5000];
+      mainColor = '#DC2626'; label = 'Total Expenses ($)'; isCurrency = true;
+    } else {
+      values = monthly.length > 0 ? monthly.map(m => m.bookings || 0) : [20, 25, 22, 30, 28, 35];
+      mainColor = '#005DAC'; label = 'Bookings'; isCurrency = false;
     }
-
-    const isProfit = this.selectedMetric() === 'profit';
-    const isExpenses = this.selectedMetric() === 'expenses';
-    const mainColor = isExpenses ? '#DC2626' : isProfit ? '#7C3AED' : '#005DAC';
-
-    const chart = new Chart(canvas, {
+    const prev = values.map(v => Math.round(v * (0.8 + Math.random() * 0.4)));
+    const type = this.selectedChartType() === 'area' ? 'line' : this.selectedChartType();
+    let bg: any = mainColor;
+    if (this.selectedChartType() === 'area') {
+      const r = parseInt(mainColor.slice(1, 3), 16), g = parseInt(mainColor.slice(3, 5), 16), b = parseInt(mainColor.slice(5, 7), 16);
+      bg = `rgba(${r},${g},${b},0.15)`;
+    }
+    this.charts[0] = new Chart(canvas, {
       type: type as any,
-      data: {
-        labels,
-        datasets: [
-          {
-            label: this.selectedMetric() === 'revenue' ? 'Total Revenue ($k)' : this.selectedMetric() === 'bookings' ? 'Total Bookings' : this.selectedMetric() === 'profit' ? 'Total Profit ($k)' : 'Total Expenses ($k)',
-            data: values,
-            backgroundColor: this.selectedChartType() === 'area' ? gradient : mainColor,
-            borderColor: mainColor,
-            borderWidth: 3,
-            pointBackgroundColor: mainColor,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            fill: this.selectedChartType() === 'area',
-            tension: 0.4,
-            barPercentage: 0.4,
-            borderRadius: 6,
-          },
-          {
-            label: 'Previous Period',
-            data: prev,
-            backgroundColor: 'rgba(147,197,253,0.5)',
-            borderColor: '#93C5FD',
-            borderWidth: 2,
-            borderDash: [5, 5],
-            pointRadius: 3,
-            pointBackgroundColor: '#93C5FD',
-            fill: false,
-            tension: 0.4,
-            barPercentage: 0.4,
-            borderRadius: 6,
-          },
-        ],
-      },
+      data: { labels, datasets: [
+        { label, data: values, backgroundColor: bg, borderColor: mainColor, borderWidth: 3, pointBackgroundColor: mainColor, pointRadius: 4, fill: this.selectedChartType() === 'area', tension: 0.4, barPercentage: 0.5, borderRadius: 6 },
+        { label: 'Previous Period', data: prev, backgroundColor: 'rgba(156,163,175,0.2)', borderColor: '#9CA3AF', borderDash: [5,5], borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
+      ] },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { duration: 600 },
+        responsive: true, maintainAspectRatio: false, animation: { duration: 600 },
         interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: '#1B1C1C',
-            titleColor: '#FFFFFF',
-            bodyColor: '#C1C6D4',
-            padding: 12,
-            cornerRadius: 8,
-          },
-        },
-        scales: {
-          x: {
-            grid: { display: false },
-            ticks: { color: '#9CA3AF', font: { size: 11 } },
-          },
-          y: {
-            position: 'left',
-            grid: { color: '#F3F4F6' },
-            ticks: {
-              color: '#9CA3AF',
-              font: { size: 11 },
-              callback: (v: string | number) => this.selectedMetric() === 'bookings' ? v : '$' + v + 'k',
-            },
-            border: { display: false },
-          },
-        },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1B1C1C', titleColor: '#fff', bodyColor: '#C1C6D4', padding: 12, cornerRadius: 8, callbacks: { label: (c: any) => isCurrency ? '$' + Number(c.raw).toLocaleString() : c.raw + '' } } },
+        scales: { x: { grid: { display: false }, ticks: { color: '#9CA3AF', font: { size: 11 } } }, y: { grid: { color: '#F3F4F6' }, ticks: { color: '#9CA3AF', font: { size: 11 }, callback: (v: any) => isCurrency ? '$' + Number(v).toLocaleString() : v }, border: { display: false } } },
       },
     });
-    this.charts[0] = chart;
   }
 
-  private rebuildBookingChart() {
-    if (!this.bookingChartRef?.length) return;
+  private rebuildExpenseChart() {
+    if (!this.expenseChartRef?.length) return;
     this.destroyChart(1);
-    const canvas = this.bookingChartRef.first.nativeElement;
-    const data = this.bookingStatusData();
-    const labels = data.map(d => d.label);
-    const values = data.map(d => d.value);
-    const colors = data.map(d => d.color);
-
-    const chart = new Chart(canvas, {
-      type: this.doughnutType(),
-      data: {
-        labels,
-        datasets: [{
-          data: values.length > 0 && values.some(v => v > 0) ? values : [1, 1, 1, 1],
-          backgroundColor: colors,
-          borderColor: '#FFFFFF',
-          borderWidth: 3,
-          hoverOffset: 8,
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: this.doughnutType() === 'doughnut' ? '60%' : undefined,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: '#1B1C1C',
-            titleColor: '#FFFFFF',
-            bodyColor: '#C1C6D4',
-            padding: 12,
-            cornerRadius: 8,
-          },
-        },
-      },
-    });
-    this.charts[1] = chart;
-  }
-
-  private rebuildCustomerChart() {
-    if (!this.customerChartRef?.length) return;
-    this.destroyChart(2);
-    const canvas = this.customerChartRef.first.nativeElement;
-    const data = this.customerData();
-
-    const chart = new Chart(canvas, {
+    const canvas = this.expenseChartRef.first.nativeElement;
+    const data = this.expenseSummary().filter(e => e.total > 0);
+    if (data.length === 0) return;
+    this.charts[1] = new Chart(canvas, {
       type: 'doughnut',
-      data: {
-        labels: data.map(d => d.label),
-        datasets: [{
-          data: data.map(d => d.value || 1),
-          backgroundColor: data.map(d => d.color),
-          borderColor: '#FFFFFF',
-          borderWidth: 3,
-          hoverOffset: 6,
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '65%',
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: '#1B1C1C',
-            titleColor: '#FFFFFF',
-            bodyColor: '#C1C6D4',
-            padding: 10,
-            cornerRadius: 8,
-          },
-        },
-      },
+      data: { labels: data.map(d => d.category), datasets: [{ data: data.map(d => d.total), backgroundColor: data.map(d => d.color || '#6B7280'), borderColor: '#fff', borderWidth: 2, hoverOffset: 4 }] },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1B1C1C', padding: 12, cornerRadius: 8, callbacks: { label: (c: any) => '$' + (c.raw as number).toLocaleString() } } } },
     });
-    this.charts[2] = chart;
   }
 
   private rebuildCategoryChart() {
     if (!this.categoryChartRef?.length) return;
-    this.destroyChart(3);
+    this.destroyChart(2);
     const canvas = this.categoryChartRef.first.nativeElement;
-    const vehicles = this.allVehicles();
-    const bookings = this.allBookings();
-    const typeMap: Record<string, number> = {};
-    vehicles.forEach(v => {
-      const t = v.type || 'Other';
-      if (!typeMap[t]) typeMap[t] = 0;
-    });
-    bookings.forEach(b => {
-      const vid = typeof b.vehicleId === 'object' ? b.vehicleId?._id : b.vehicleId;
-      const v = vehicles.find(ve => ve._id === vid);
-      const t = v?.type || 'Other';
-      typeMap[t] = (typeMap[t] || 0) + 1;
-    });
-    const entries = Object.entries(typeMap).sort((a, b) => b[1] - a[1]);
-    const labels = entries.map(e => e[0]);
-    const values = entries.map(e => e[1]);
-    const colors = ['#059669', '#005DAC', '#7C3AED', '#E65100', '#DC2626', '#F59E0B'];
-
-    const chart = new Chart(canvas, {
+    const cats = this.categoryRevenue();
+    if (cats.length === 0) return;
+    const colors = ['#3B82F6', '#059669', '#F59E0B', '#DC2626', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316', '#14B8A6', '#6B7280'];
+    this.charts[2] = new Chart(canvas, {
       type: 'bar',
-      data: {
-        labels,
-        datasets: [{
-          label: 'Total Bookings',
-          data: values.length > 0 ? values : [1],
-          backgroundColor: colors.slice(0, labels.length),
-          borderRadius: 8,
-          borderSkipped: false,
-          barPercentage: 0.5,
-        }],
-      },
+      data: { labels: cats.map(c => c.category), datasets: [{ label: 'Revenue', data: cats.map(c => c.totalRevenue), backgroundColor: cats.map((_, i) => colors[i % colors.length]), borderRadius: 6, barPercentage: 0.6 }] },
       options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: '#1B1C1C',
-            titleColor: '#FFFFFF',
-            bodyColor: '#C1C6D4',
-            padding: 10,
-            cornerRadius: 8,
-          },
-        },
-        scales: {
-          x: {
-            grid: { color: '#F3F4F6' },
-            ticks: { color: '#9CA3AF', font: { size: 11 } },
-            border: { display: false },
-          },
-          y: {
-            grid: { display: false },
-            ticks: { color: '#1A1A2E', font: { size: 12, weight: 'bold' as any } },
-            border: { display: false },
-          },
-        },
+        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1B1C1C', padding: 12, cornerRadius: 8, callbacks: { label: (c: any) => '$' + Number(c.raw).toLocaleString() } } },
+        scales: { x: { grid: { color: '#F3F4F6' }, ticks: { color: '#9CA3AF', font: { size: 11 }, callback: (v: any) => '$' + Number(v).toLocaleString() }, border: { display: false } }, y: { grid: { display: false }, ticks: { color: '#334155', font: { size: 12, weight: 'bold' as any } } } },
       },
     });
-    this.charts[3] = chart;
   }
 
-  private destroyChart(idx: number) {
-    if (this.charts[idx]) {
-      this.charts[idx].destroy();
-      this.charts[idx] = undefined as any;
-    }
+  private rebuildPeakDaysChart() {
+    if (!this.peakDaysChartRef?.length) return;
+    this.destroyChart(3);
+    const canvas = this.peakDaysChartRef.first.nativeElement;
+    const ba = this.bookingAnalytics();
+    if (!ba || !ba.peakDays) return;
+    this.charts[3] = new Chart(canvas, {
+      type: 'bar',
+      data: { labels: ba.peakDays.map(d => d.day), datasets: [{ label: 'Bookings', data: ba.peakDays.map(d => d.count), backgroundColor: '#818CF8', borderRadius: 6, barPercentage: 0.5 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1B1C1C', padding: 12, cornerRadius: 8 } }, scales: { x: { grid: { display: false }, ticks: { color: '#9CA3AF', font: { size: 11 } } }, y: { grid: { color: '#F3F4F6' }, ticks: { color: '#9CA3AF', font: { size: 11 } }, border: { display: false } } } },
+    });
   }
+
+  private destroyChart(idx: number) { if (this.charts[idx]) { try { this.charts[idx].destroy(); } catch {} this.charts[idx] = undefined as any; } }
 }

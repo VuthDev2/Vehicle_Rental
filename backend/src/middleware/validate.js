@@ -125,7 +125,7 @@ const updateUserRules = [
 ];
 
 const updateBookingStatusRules = [
-  body('status').isIn(['pending', 'pending_approval', 'pending_verification', 'confirmed', 'active', 'cancelled', 'completed']).withMessage('Invalid status'),
+  body('status').isIn(['pending', 'pending_approval', 'confirmed', 'active', 'cancelled', 'completed']).withMessage('Invalid status'),
   handleValidation,
 ];
 

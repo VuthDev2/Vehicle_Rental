@@ -100,15 +100,19 @@ const getEmailTemplate = (title, name, bodyContent, otp = null) => `
 </html>
 `;
 
-const sendVerificationEmail = (to, name, code) => {
+const sendVerificationEmail = (to, name, token) => {
+  const link = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
   return sendEmail({
     to,
-    subject: 'Verify your Cambo Rent email address',
+    subject: 'Activate your Cambo Rent account',
     html: getEmailTemplate(
-      'Verify your Email',
+      'Activate your Account',
       name,
-      '<p style="margin: 0;">Welcome to Cambo Rent! Use the 6-digit security code below to verify your email address. For your security, this code will expire in 10 minutes.</p>',
-      code
+      `<p style="margin: 0;">Welcome to Cambo Rent! Please click the button below to activate your account. For your security, this link will expire in 10 minutes.</p>
+       <div style="text-align: center; margin: 32px 0;">
+         <a href="${link}" style="background-color: #0ea776; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block;">Activate Account</a>
+       </div>
+       <p style="margin: 0; font-size: 14px; color: #64748b;">Or copy this link: <a href="${link}">${link}</a></p>`
     ),
   });
 };

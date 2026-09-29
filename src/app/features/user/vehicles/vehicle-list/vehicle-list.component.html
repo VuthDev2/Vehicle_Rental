@@ -8,7 +8,7 @@
         <span [innerHTML]="'EXPLORE.SUBTITLE' | translate"></span>
       </p>
     </div>
-    <img ngSrc="/hero_perfect_fleet.png" width="480" height="240" priority alt="Vehicles" class="absolute right-[-10px] sm:right-4 md:right-12 lg:right-[80px] bottom-[60px] sm:bottom-[25px] lg:bottom-[70px] w-[240px] sm:w-[380px] md:w-[480px] lg:w-[480px] object-contain z-10 mix-blend-multiply pointer-events-none" />
+    <img ngSrc="/hero_perfect_fleet.png" width="752" height="356" priority alt="Vehicles" class="absolute right-[-10px] sm:right-4 md:right-12 lg:right-[80px] bottom-[60px] sm:bottom-[25px] lg:bottom-[70px] w-[240px] sm:w-[380px] md:w-[480px] lg:w-[480px] object-contain z-10 mix-blend-multiply pointer-events-none" />
   </div>
 
   <!-- ===== DESKTOP UNIFIED TOOLBAR ===== -->
@@ -185,7 +185,7 @@
       </div>
 
     <!-- Empty State -->
-    } @else if (vehicles().length === 0) {
+    } @else if (uniqueVehicles().length === 0) {
       <div class="bg-white rounded-3xl border border-slate-100 p-12 text-center shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
         <div class="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto mb-4">
           <span class="material-symbols-outlined text-2xl text-slate-400">search_off</span>
@@ -200,7 +200,7 @@
     <!-- Vehicle Cards {{ 'EXPLORE.GRID' | translate }} -->
     } @else {
       <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
-        @for (vehicle of vehicles(); track vehicle._id) {
+        @for (vehicle of uniqueVehicles(); track vehicle._id) {
           <div class="bg-white rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-sm hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col relative group border border-slate-100/60">
             
             <!-- Heart Icon -->
@@ -219,17 +219,28 @@
             </span>
 
             <!-- Image -->
-            <a [routerLink]="['/customer/explore', vehicle._id]" class="block relative h-[140px] sm:h-[210px] bg-slate-50/60 pt-10 pb-4 px-4 flex items-center justify-center transition-colors group-hover:bg-slate-100/50">
-              @if (vehicle.images?.[0]) {
-                <img [ngSrc]="vehicle.images[0]" width="400" height="250" [alt]="vehicle.name" class="max-w-full max-h-[100px] sm:max-h-[160px] object-contain group-hover:scale-110 transition-transform duration-500 ease-out mix-blend-multiply" />
-              } @else {
-                <span class="material-symbols-outlined text-[36px] sm:text-6xl text-slate-200">directions_car</span>
-              }
+            <a [routerLink]="['/customer/explore', vehicle._id]" class="block relative h-[140px] sm:h-[210px] bg-slate-50/60 transition-colors group-hover:bg-slate-100/50">
+              <div class="absolute inset-0 pt-10 pb-4 px-4 flex items-center justify-center">
+                @if (vehicle.images?.[0]) {
+                  <div class="relative w-full h-full">
+                    <img [ngSrc]="vehicle.images[0]" fill [alt]="vehicle.name" class="object-contain group-hover:scale-110 transition-transform duration-500 ease-out mix-blend-multiply" />
+                  </div>
+                } @else {
+                  <span class="material-symbols-outlined text-[36px] sm:text-6xl text-slate-200">directions_car</span>
+                }
+              </div>
             </a>
 
             <!-- Card body -->
             <div class="p-4 sm:p-5 flex flex-col flex-1 bg-white">
-              <h3 class="text-[14px] sm:text-[18px] font-bold text-slate-900 mb-1 sm:mb-1.5 leading-tight line-clamp-1">{{ vehicle.name }}</h3>
+              <div class="flex justify-between items-start mb-1 sm:mb-1.5">
+                <h3 class="text-[14px] sm:text-[18px] font-bold text-slate-900 leading-tight line-clamp-1 flex-1 pr-2">{{ vehicle.name }}</h3>
+                <span class="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-md shrink-0 flex items-center gap-1"
+                      [ngClass]="vehicle.available ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'">
+                  <span class="w-1.5 h-1.5 rounded-full" [ngClass]="vehicle.available ? 'bg-green-600' : 'bg-red-600'"></span>
+                  {{ vehicle.available ? 'Available' : 'Not Available' }}
+                </span>
+              </div>
               
               <!-- Specs row -->
               <p class="text-[11px] sm:text-[12px] text-slate-500 font-medium mb-3 sm:mb-4 flex items-center gap-1 flex-wrap">
@@ -264,20 +275,17 @@
         }
       </div>
 
-      <!-- Pagination (Load More) -->
-      @if (page() < totalPages()) {
-        <div class="flex items-center justify-center mt-10 sm:mt-12">
-          <button type="button" (click)="loadMore()" [disabled]="loading()" class="group relative inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white border-2 border-[#166534]/20 rounded-full font-black text-[#166534] tracking-wide shadow-sm hover:bg-[#f0fdf4] hover:border-[#166534]/30 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:bg-white overflow-hidden">
-            <span class="relative z-10 flex items-center gap-2">
-              @if (loading()) {
-                <span class="material-symbols-outlined animate-spin text-[1.2rem]">progress_activity</span>
-                {{ 'EXPLORE.LOADING' | translate }}
-              } @else {
-                {{ 'EXPLORE.LOAD_MORE' | translate }}
-                <span class="material-symbols-outlined text-[1.2rem] transition-transform group-hover:translate-y-1">expand_more</span>
-              }
-            </span>
-          </button>
+      <!-- Dot Pagination -->
+      @if (totalPages() > 1) {
+        <div class="flex items-center justify-center gap-2 mt-10 sm:mt-12">
+          @for (p of getPagesArray(); track p) {
+            <button
+              (click)="goToPage(p)"
+              class="h-3 rounded-full transition-all duration-300 shadow-sm"
+              [class]="p === page() ? 'bg-[#166534] w-8' : 'bg-slate-300 w-3 hover:bg-slate-400'"
+              [attr.aria-label]="'Page ' + p"
+            ></button>
+          }
         </div>
       }
     }

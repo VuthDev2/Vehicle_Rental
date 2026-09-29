@@ -241,7 +241,7 @@
   overflow: hidden;
   border-right: 0.12em solid rgba(10, 25, 48, 0.8);
   width: 0;
-  max-width: 100%;
+  max-width: min(100%, 320px);
   animation:
     typewriter 3.2s steps(13, end) infinite alternate,
     caret 0.8s step-end infinite;

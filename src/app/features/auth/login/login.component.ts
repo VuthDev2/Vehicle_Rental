@@ -60,24 +60,32 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (typeof google === 'undefined' || !google.accounts) {
-      console.warn('Google Identity Services not loaded.');
-      return;
-    }
-    
-    if (!(window as any)._gsiInitialized) {
-      google.accounts.id.initialize({
-        client_id: environment.googleClientId,
-        callback: this.handleCredentialResponse.bind(this),
-        locale: 'en'
-      });
-      (window as any)._gsiInitialized = true;
-    }
+    const initGsi = (attempts = 0) => {
+      if (typeof google === 'undefined' || !google.accounts) {
+        if (attempts < 10) {
+          setTimeout(() => initGsi(attempts + 1), 200);
+        } else {
+          console.warn('Google Identity Services not loaded after 2 seconds.');
+        }
+        return;
+      }
+      
+      if (!(window as any)._gsiInitialized) {
+        google.accounts.id.initialize({
+          client_id: environment.googleClientId,
+          callback: this.handleCredentialResponse.bind(this),
+          locale: 'en'
+        });
+        (window as any)._gsiInitialized = true;
+      }
 
-    google.accounts.id.renderButton(
-      document.getElementById('googleBtn'),
-      { theme: 'outline', size: 'large', type: 'standard', text: 'continue_with', width: 400 }
-    );
+      google.accounts.id.renderButton(
+        document.getElementById('googleBtn'),
+        { theme: 'outline', size: 'large', type: 'standard', text: 'continue_with', width: 400 }
+      );
+    };
+    
+    initGsi();
   }
 
   handleCredentialResponse(response: any): void {

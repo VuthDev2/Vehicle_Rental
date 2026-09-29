@@ -1,315 +1,683 @@
-<div class="reports-page bg-slate-50 min-h-screen px-8 py-7 font-sans text-slate-800">
-  <!-- ==================== HEADER ==================== -->
-  <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
-    <div>
-      <div class="flex items-center gap-3">
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight m-0">
-          Reports & Analytics
-        </h1>
-        <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold">v2.0</span>
+<div class="reports-root font-sans bg-slate-50 min-h-screen text-slate-800 pb-12 print-root">
+
+  <!-- ══════════════════ 1. PAGE HEADER ══════════════════ -->
+  <div class="bg-white border-b border-slate-100 px-8 py-5 sticky top-0 z-30 shadow-sm no-print">
+    <div class="flex items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-white text-[20px]">analytics</span>
+        </div>
+        <div>
+          <h1 class="text-xl font-extrabold text-slate-900 m-0">Reports &amp; Analytics</h1>
+          <p class="text-xs text-slate-400 font-medium m-0">Monitor business performance with real-time insights</p>
+        </div>
       </div>
-      <p class="text-sm text-slate-500 mt-1">
-        Monitor business performance with real-time insights
-      </p>
-    </div>
-    <div class="flex items-center gap-2 flex-wrap">
-      <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-lg p-1 pr-3 shadow-sm">
-        <span class="material-symbols-outlined text-slate-400 text-base ml-2">calendar_month</span>
-        <select
-          [(ngModel)]="selectedPeriod"
-          (ngModelChange)="onFilterChange()"
-          class="border-none bg-transparent text-sm font-semibold text-slate-800 outline-none cursor-pointer focus:ring-0 py-1"
-        >
-          <option value="7">Last 7 Days</option>
-          <option value="30">Last 30 Days</option>
-          <option value="90">Last 90 Days</option>
-          <option value="180">Last 6 Months</option>
-          <option value="365">Last Year</option>
-          <option value="all">All Time</option>
-        </select>
+      <!-- Actions (right side) -->
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
+          <span class="material-symbols-outlined text-slate-400 text-base">calendar_month</span>
+          <select [(ngModel)]="dateRange" (ngModelChange)="onRefresh()" class="bg-transparent border-none text-sm font-semibold text-slate-700 outline-none cursor-pointer">
+            <option value="7">Last 7 Days</option>
+            <option value="30">Last 30 Days</option>
+            <option value="90">This Month</option>
+            <option value="365">This Year</option>
+            <option value="all">All Time</option>
+          </select>
+        </div>
+        <button (click)="openMonthlyDrawer()" class="border border-slate-200 bg-white rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 flex items-center gap-1.5 cursor-pointer hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition-colors">
+          <span class="material-symbols-outlined text-base">table_chart</span>
+          Monthly Report
+        </button>
+        <button (click)="exportCSV()" class="border border-slate-200 bg-white rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 flex items-center gap-1.5 cursor-pointer hover:bg-slate-50 transition-colors">
+          <span class="material-symbols-outlined text-base">file_download</span>
+          Export CSV
+        </button>
+        <button (click)="downloadPDF()" class="border border-indigo-200 bg-indigo-50 rounded-lg px-3 py-2 text-sm font-semibold text-indigo-600 flex items-center gap-1.5 cursor-pointer hover:bg-indigo-100 transition-colors">
+          <span class="material-symbols-outlined text-base">picture_as_pdf</span>
+          Download PDF
+        </button>
       </div>
-      <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-lg p-1 pr-3 shadow-sm">
-        <span class="material-symbols-outlined text-slate-400 text-base ml-2">compare_arrows</span>
-        <select
-          class="border-none bg-transparent text-sm font-semibold text-slate-800 outline-none cursor-pointer focus:ring-0 py-1"
-        >
-          <option>Compare Period</option>
-          <option>Previous Period</option>
-          <option>Same Period Last Year</option>
-        </select>
-      </div>
-      <button
-        class="border border-slate-200 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-700 cursor-pointer flex items-center gap-2 transition-all duration-200 hover:bg-slate-50 hover:shadow-sm"
-      >
-        <span class="material-symbols-outlined text-base">file_download</span>
-        Export
-      </button>
-      <button
-        class="border border-slate-200 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-slate-700 cursor-pointer flex items-center gap-2 transition-all duration-200 hover:bg-slate-50 hover:shadow-sm"
-      >
-        <span class="material-symbols-outlined text-base">picture_as_pdf</span>
-        Download PDF
-      </button>
     </div>
   </div>
 
   @if (loading()) {
-    <!-- ==================== LOADING ==================== -->
-    <div class="grid grid-cols-4 gap-6 mb-8">
-      @for (i of [1, 2, 3, 4]; track i) {
-        <div class="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
-          <div class="skeleton h-3 w-1/2 rounded mb-2.5"></div>
-          <div class="skeleton h-7 w-2/5 rounded-md mb-2"></div>
-          <div class="skeleton h-3 w-1/3 rounded"></div>
+    <div class="px-8 py-8 grid grid-cols-4 gap-5">
+      @for (i of [1,2,3,4]; track i) {
+        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+          <div class="skeleton h-3 w-2/3 rounded mb-3"></div>
+          <div class="skeleton h-8 w-1/2 rounded-lg mb-2"></div>
+          <div class="skeleton h-2.5 w-1/3 rounded"></div>
         </div>
       }
-    </div>
-    <div class="grid grid-cols-12 gap-6 mb-8">
-      <div class="col-span-8 bg-white rounded-xl border border-slate-100 p-6 shadow-sm">
-        <div class="skeleton h-4 w-1/3 rounded mb-5"></div>
-        <div class="skeleton h-[300px] w-full rounded-lg"></div>
-      </div>
-      <div class="col-span-4 bg-white rounded-xl border border-slate-100 p-6 shadow-sm">
-        <div class="skeleton h-4 w-1/2 rounded mb-5"></div>
-        <div class="skeleton h-[300px] w-full rounded-lg"></div>
-      </div>
-    </div>
-  } @else if (isEmpty()) {
-    <!-- ==================== EMPTY STATE ==================== -->
-    <div class="bg-white rounded-2xl border border-slate-100 text-center py-24 px-5 shadow-sm">
-      <div class="w-24 h-24 rounded-full bg-slate-50 flex items-center justify-center mx-auto mb-6">
-        <span class="material-symbols-outlined text-5xl text-slate-400">analytics</span>
-      </div>
-      <p class="text-2xl font-extrabold text-slate-900 m-0 mb-2">No report data available yet</p>
-      <p class="text-sm text-slate-500 max-w-md mx-auto mb-8">
-        Analytics will appear after bookings and payments are recorded. Start by adding vehicles and processing customer bookings.
-      </p>
-      <div class="flex items-center justify-center gap-3">
-        <span class="flex items-center gap-1.5 text-sm font-semibold text-slate-500 bg-slate-50 px-4 py-2 rounded-lg">
-          <span class="material-symbols-outlined text-lg">directions_car</span>
-          Add Vehicles
-        </span>
-        <span class="flex items-center gap-1.5 text-sm font-semibold text-slate-500 bg-slate-50 px-4 py-2 rounded-lg">
-          <span class="material-symbols-outlined text-lg">receipt_long</span>
-          Create Booking
-        </span>
-      </div>
     </div>
   } @else {
-    <!-- ==================== ROW 1: EXECUTIVE SUMMARY ==================== -->
-    <div class="grid grid-cols-4 gap-6 mb-8">
-      @for (insight of executiveInsights(); track insight.label) {
-        <div
-          class="rounded-xl border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-default"
-          [style.background]="'linear-gradient(135deg, ' + insight.bg + ' 0%, #ffffff 100%)'"
-          [style.borderColor]="insight.border"
-        >
-          <div class="flex items-center gap-2.5 mb-3">
-            <span
-              class="w-8 h-8 rounded-lg flex items-center justify-center"
-              [style.background]="insight.badgeBg"
-            >
-              <span
-                class="material-symbols-outlined text-[18px]"
-                [style.color]="insight.color"
-                >{{ insight.icon }}</span
-              >
-            </span>
-            <span
-              class="text-xs font-bold uppercase tracking-wide"
-              [style.color]="insight.color"
-              >{{ insight.label }}</span
-            >
-          </div>
-          <p class="text-[15px] font-bold text-slate-900 m-0 leading-relaxed">
-            {{ insight.text }}
-          </p>
-        </div>
-      }
-    </div>
 
-    <!-- ==================== ROW 2: REVENUE CHART + QUICK INSIGHTS ==================== -->
-    <div class="grid grid-cols-12 gap-6 mb-8">
-      <div class="col-span-8 bg-white rounded-xl border border-slate-100 p-6 shadow-sm h-full">
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h3 class="text-lg font-extrabold text-slate-900 m-0 flex items-center gap-2">
-              Revenue Analytics
-              <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Interactive</span>
-            </h3>
+    <div class="px-8 py-8">
+
+      <!-- ══════════════════ 2. FINANCIAL KPI CARDS ══════════════════ -->
+      <div class="grid grid-cols-4 gap-5 mb-8">
+        <!-- Revenue This Year -->
+        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-emerald-50">
+              <span class="material-symbols-outlined text-[18px] text-emerald-600">payments</span>
+            </div>
+            @if ((ownerSummary()?.revenueGrowth || 0) >= 0) {
+              <span class="flex items-center gap-0.5 text-[11px] font-bold rounded-full px-2 py-0.5 bg-green-100 text-green-700">
+                <span class="material-symbols-outlined text-[12px]">arrow_upward</span>{{ ownerSummary()?.revenueGrowth }}%
+              </span>
+            } @else {
+              <span class="flex items-center gap-0.5 text-[11px] font-bold rounded-full px-2 py-0.5 bg-red-100 text-red-600">
+                <span class="material-symbols-outlined text-[12px]">arrow_downward</span>{{ Math.abs(ownerSummary()?.revenueGrowth || 0) }}%
+              </span>
+            }
           </div>
-          <div class="flex items-center gap-3">
-            <div class="flex bg-slate-100 rounded-lg p-1">
-              @for (m of metrics; track m) {
-                <button
-                  (click)="setMetric(m)"
-                  [class.bg-white]="selectedMetric() === m"
-                  [class.text-slate-900]="selectedMetric() === m"
-                  [class.shadow-sm]="selectedMetric() === m"
-                  [class.text-slate-500]="selectedMetric() !== m"
-                  class="border-none rounded-md px-3 py-1.5 text-xs font-bold capitalize cursor-pointer transition-all duration-200 hover:text-slate-900"
-                >
-                  {{ m }}
-                </button>
-              }
-            </div>
-            <div class="flex bg-slate-100 rounded-lg p-1">
-              @for (ct of chartTypes; track ct) {
-                <button
-                  (click)="setChartType(ct)"
-                  [class.bg-white]="selectedChartType() === ct"
-                  [class.text-slate-900]="selectedChartType() === ct"
-                  [class.shadow-sm]="selectedChartType() === ct"
-                  [class.text-slate-500]="selectedChartType() !== ct"
-                  class="border-none rounded-md px-3 py-1.5 text-xs font-bold capitalize cursor-pointer flex items-center gap-1 transition-all duration-200 hover:text-slate-900"
-                >
-                  <span class="material-symbols-outlined text-[14px]">{{ ct === 'line' ? 'show_chart' : ct === 'bar' ? 'bar_chart' : 'stacked_line_chart' }}</span>
-                  {{ ct }}
-                </button>
-              }
-            </div>
-            <div class="flex bg-slate-100 rounded-lg p-1">
-              @for (p of periods; track p) {
-                <button
-                  (click)="setChartPeriod(p)"
-                  [class.bg-white]="chartPeriod() === p"
-                  [class.text-slate-900]="chartPeriod() === p"
-                  [class.shadow-sm]="chartPeriod() === p"
-                  [class.text-slate-500]="chartPeriod() !== p"
-                  class="border-none rounded-md px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wide cursor-pointer transition-all duration-200 hover:text-slate-900"
-                >
-                  {{ p }}
-                </button>
-              }
-            </div>
-          </div>
+          <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider m-0">Total Revenue</p>
+          <p class="text-2xl font-extrabold m-0 mt-1 text-slate-900">{{ fmt(ownerSummary()?.revenueThisYear || 0) }}</p>
+          <p class="text-[11px] text-slate-400 font-medium m-0 mt-1">This month: {{ fmt(ownerSummary()?.revenueThisMonth || 0) }}</p>
         </div>
-        <div class="relative h-[300px] w-full">
-          <canvas #revenueChart></canvas>
+
+        <!-- Net Profit (Revenue - Expenses) -->
+        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-indigo-50">
+              <span class="material-symbols-outlined text-[18px] text-indigo-600">account_balance</span>
+            </div>
+            @if (realNetProfit() >= 0) {
+              <span class="flex items-center gap-0.5 text-[11px] font-bold rounded-full px-2 py-0.5 bg-green-100 text-green-700">Profit</span>
+            } @else {
+              <span class="flex items-center gap-0.5 text-[11px] font-bold rounded-full px-2 py-0.5 bg-red-100 text-red-600">Loss</span>
+            }
+          </div>
+          <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider m-0">Net Profit</p>
+          <p class="text-2xl font-extrabold m-0 mt-1" [class.text-emerald-600]="realNetProfit() >= 0" [class.text-red-600]="realNetProfit() < 0">{{ fmt(realNetProfit()) }}</p>
+          <p class="text-[11px] text-slate-400 font-medium m-0 mt-1">Revenue minus expenses</p>
         </div>
-        <div class="flex items-center gap-6 mt-4 pl-4">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
-            <span class="text-xs font-bold text-slate-500 capitalize">Total {{ selectedMetric() }}</span>
+
+        <!-- Fleet Utilization -->
+        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-purple-50">
+              <span class="material-symbols-outlined text-[18px] text-purple-600">speed</span>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-blue-200"></span>
-            <span class="text-xs font-bold text-slate-500">Previous Period</span>
+          <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider m-0">Fleet Utilization</p>
+          <p class="text-2xl font-extrabold m-0 mt-1 text-slate-900">{{ ownerSummary()?.occupancyRate || 0 }}%</p>
+          <p class="text-[11px] text-slate-400 font-medium m-0 mt-1">{{ ownerSummary()?.rentedVehicles || 0 }} of {{ ownerSummary()?.totalVehicles || 0 }} vehicles rented</p>
+        </div>
+
+        <!-- Avg Revenue Per Booking -->
+        <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-50">
+              <span class="material-symbols-outlined text-[18px] text-blue-600">receipt_long</span>
+            </div>
           </div>
+          <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider m-0">Avg Revenue / Booking</p>
+          <p class="text-2xl font-extrabold m-0 mt-1 text-slate-900">{{ fmt(avgRevenuePerBooking()) }}</p>
+          <p class="text-[11px] text-slate-400 font-medium m-0 mt-1">{{ ownerSummary()?.totalBookings || 0 }} total bookings</p>
         </div>
       </div>
 
-      <!-- Quick Insights -->
-      <div class="col-span-4 bg-white rounded-xl border border-slate-100 p-6 shadow-sm h-full">
-        <div class="flex items-center justify-between mb-5">
-          <div>
-            <h3 class="text-base font-extrabold text-slate-900 m-0">
-              Quick Insights
-            </h3>
-            <p class="text-[11px] font-medium text-slate-500 m-0 mt-0.5">
-              AI-generated business intelligence
-            </p>
-          </div>
-          <span class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[18px] text-indigo-600">auto_awesome</span>
-          </span>
-        </div>
-        <div class="flex flex-col gap-3">
-          @for (insight of quickInsights(); track insight.text) {
-            <div
-              class="flex items-start gap-3 p-4 rounded-xl border"
-              [style.background]="insight.bg"
-              [style.border-color]="insight.border"
-            >
-              <span class="text-base" [style.color]="insight.color">{{ insight.icon }}</span>
-              <p class="text-sm font-semibold text-slate-800 m-0 leading-relaxed">
-                {{ insight.text }}
-              </p>
-            </div>
-          }
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== ROW 3: TOP VEHICLES + RECENT ACTIVITY ==================== -->
-    <div class="grid grid-cols-12 gap-6 mb-8">
-      <!-- Top Performing Vehicles -->
-      <div class="col-span-6 bg-white rounded-xl border border-slate-100 p-6 shadow-sm h-full">
-        <div class="flex items-center justify-between mb-5">
-          <div>
-            <h3 class="text-base font-extrabold text-slate-900 m-0">
-              Top Performing Vehicles
-            </h3>
-            <p class="text-[11px] font-medium text-slate-500 m-0 mt-0.5">
-              By booking count & revenue
-            </p>
-          </div>
-          <span class="text-[11px] font-bold text-indigo-600 cursor-pointer hover:text-indigo-800 transition-colors">View All</span>
-        </div>
-        <div class="flex flex-col gap-1">
-          @for (v of topVehicles(); track v._id; let i = $index) {
-            <div class="flex items-center gap-3 py-2 border-b border-slate-50 last:border-0">
-              <span
-                class="w-6 h-6 rounded-md flex items-center justify-center text-[11px] font-bold shrink-0"
-                [class.bg-indigo-50]="i < 3"
-                [class.text-indigo-600]="i < 3"
-                [class.bg-slate-50]="i >= 3"
-                [class.text-slate-500]="i >= 3"
-                >{{ i + 1 }}</span
-              >
-              <div class="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-slate-100 flex items-center justify-center">
-                @if (v.images?.[0]) {
-                  <img [src]="v.images[0]" class="w-full h-full object-cover" />
-                } @else {
-                  <span class="material-symbols-outlined text-[20px] text-slate-400">directions_car</span>
+      <!-- ══════════════════ 3. MAIN CHART & QUICK INSIGHTS ══════════════════ -->
+      <div class="grid grid-cols-12 gap-6 mb-8">
+        <!-- Main Chart -->
+        <div class="col-span-8 bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-base font-extrabold text-slate-900 m-0">Performance Analytics</h3>
+            <div class="flex items-center gap-3">
+              <!-- Metric Tabs -->
+              <div class="flex bg-slate-100 rounded-lg p-1">
+                @for (m of metrics; track m) {
+                  <button (click)="setMetric(m)" class="border-none rounded-md px-3 py-1.5 text-xs font-bold capitalize cursor-pointer transition-all duration-200" [class.bg-white]="selectedMetric() === m" [class.shadow-sm]="selectedMetric() === m" [class.text-slate-900]="selectedMetric() === m" [class.text-slate-500]="selectedMetric() !== m">{{ m }}</button>
                 }
               </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-slate-900 m-0 truncate">
-                  {{ v.name }}
-                </p>
-                <p class="text-[11px] font-medium text-slate-500 m-0 mt-0.5">
-                  {{ v.count }} bookings · \${{ v.revenue.toLocaleString() }} revenue
-                </p>
+              <!-- Chart Type -->
+              <div class="flex bg-slate-100 rounded-lg p-1">
+                @for (t of chartTypes; track t) {
+                  <button (click)="setChartType(t)" class="border-none rounded-md px-2 py-1.5 text-xs font-bold capitalize cursor-pointer transition-all duration-200 flex items-center justify-center" [class.bg-white]="selectedChartType() === t" [class.shadow-sm]="selectedChartType() === t" [class.text-slate-900]="selectedChartType() === t" [class.text-slate-500]="selectedChartType() !== t">
+                    <span class="material-symbols-outlined text-[16px]">{{ t === 'line' ? 'show_chart' : t === 'bar' ? 'bar_chart' : 'stacked_line_chart' }}</span>
+                  </button>
+                }
               </div>
             </div>
-          }
+          </div>
+          <div class="h-[300px] w-full"><canvas #mainChart></canvas></div>
+        </div>
+
+        <!-- Quick Insights -->
+        <div class="col-span-4 bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900 m-0">Quick Insights</h3>
+              <p class="text-[11px] font-medium text-slate-500 m-0 mt-0.5">Data-driven business intelligence</p>
+            </div>
+            <span class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[18px] text-indigo-600">lightbulb</span>
+            </span>
+          </div>
+          <div class="flex flex-col gap-3">
+            @for (insight of quickInsights(); track $index) {
+              <div class="flex items-start gap-3 bg-slate-50 rounded-xl px-3 py-2.5">
+                <span class="material-symbols-outlined text-indigo-500 text-[16px] shrink-0 mt-0.5">tips_and_updates</span>
+                <p class="text-[12px] font-medium text-slate-700 m-0 leading-relaxed">{{ insight }}</p>
+              </div>
+            }
+          </div>
         </div>
       </div>
 
-      <!-- Recent Activity -->
-      <div class="col-span-6 bg-white rounded-xl border border-slate-100 p-6 shadow-sm h-full">
-        <h3 class="text-base font-extrabold text-slate-900 mb-5 m-0">
-          Recent Activity
-        </h3>
-        <div class="flex flex-col">
-          @for (activity of recentActivity(); track activity.label) {
-            <div class="flex items-start gap-3 py-3 border-b border-slate-50 last:border-0">
-              <div
-                class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-                [style.background]="activity.bg"
-              >
-                <span
-                  class="material-symbols-outlined text-[18px]"
-                  [style.color]="activity.color"
-                  >{{ activity.icon }}</span
-                >
+      <!-- ══════════════════ 4. REVENUE BY VEHICLE TYPE ══════════════════ -->
+      <div class="grid grid-cols-12 gap-6 mb-8">
+        <div class="col-span-7 bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+          <h3 class="text-base font-extrabold text-slate-900 m-0 mb-5">Revenue by Vehicle Type</h3>
+          @if (categoryRevenue().length > 0) {
+            <div class="h-[240px]"><canvas #categoryChart></canvas></div>
+          } @else {
+            <div class="flex items-center justify-center h-[240px]">
+              <p class="text-sm text-slate-400">No category data available yet</p>
+            </div>
+          }
+        </div>
+        <div class="col-span-5 bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+          <h3 class="text-base font-extrabold text-slate-900 m-0 mb-4">Type Breakdown</h3>
+          <div class="flex flex-col gap-3 max-h-[240px] overflow-y-auto">
+            @for (cat of categoryRevenue(); track cat.category) {
+              <div class="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg flex items-center justify-center" [style.background]="getCatMeta(cat.category).bg">
+                    <span class="material-symbols-outlined text-[18px]" [style.color]="getCatMeta(cat.category).color">{{ getCatMeta(cat.category).icon }}</span>
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-slate-900 m-0">{{ cat.category }}</p>
+                    <p class="text-[11px] text-slate-400 m-0">{{ cat.totalBookings }} bookings · {{ cat.vehicleCount }} vehicles</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-extrabold text-emerald-600 m-0">{{ fmt(cat.totalRevenue) }}</p>
+                  <p class="text-[10px] font-bold text-slate-400 m-0">{{ cat.percentage }}%</p>
+                </div>
               </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-slate-900 m-0 truncate">
-                  {{ activity.label }}
-                </p>
-                <p class="text-xs font-medium text-slate-500 m-0 mt-1 truncate">
-                  {{ activity.detail }}
-                </p>
+            }
+            @if (categoryRevenue().length === 0) {
+              <p class="text-sm text-slate-400 text-center py-6">No data available</p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════ 5. TOP EARNING VEHICLES ══════════════════ -->
+      <div class="mb-8">
+        <h3 class="text-lg font-extrabold text-slate-900 mb-4">Top Earning Vehicles</h3>
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-100">
+                <th class="text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider px-6 py-4">#</th>
+                <th class="text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-4">Vehicle</th>
+                <th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-4">Revenue</th>
+                <th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-4">Trips</th>
+                <th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-4">Avg / Trip</th>
+                <th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-6 py-4">Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (v of topVehicles(); track v._id; let i = $index) {
+                <tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
+                  <td class="px-6 py-4"><span class="text-sm font-extrabold text-slate-300">{{ i + 1 }}</span></td>
+                  <td class="px-4 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center shrink-0">
+                        @if (v.image) { <img [src]="v.image" class="w-full h-full object-cover" /> }
+                        @else { <span class="material-symbols-outlined text-[18px] text-slate-300">{{ getCatMeta(v.type).icon }}</span> }
+                      </div>
+                      <div>
+                        <p class="text-sm font-bold text-slate-900 m-0">{{ v.name }}</p>
+                        <p class="text-[11px] text-slate-400 m-0">{{ v.brand }} &bull; {{ v.type }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 text-right"><span class="text-sm font-extrabold text-emerald-600">{{ fmt(v.revenue) }}</span></td>
+                  <td class="px-4 py-4 text-right"><span class="text-sm font-bold text-slate-700">{{ v.bookings }}</span></td>
+                  <td class="px-4 py-4 text-right"><span class="text-sm font-bold text-slate-700">{{ fmt(v.avgPerBooking) }}</span></td>
+                  <td class="px-6 py-4 text-right">
+                    <div class="flex items-center justify-end gap-1">
+                      <span class="material-symbols-outlined text-[14px] text-amber-400">star</span>
+                      <span class="text-sm font-bold text-slate-700">{{ v.rating }}</span>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @if (topVehicles().length === 0) {
+                <tr><td colspan="6" class="text-center py-8 text-sm text-slate-400">No revenue data available</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <!-- ══════════════════ 6. EXPENSE LEDGER ══════════════════ -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-extrabold text-slate-900 m-0">Expense Ledger</h3>
+            <p class="text-xs text-slate-400 m-0 mt-0.5">Track and manage individual operational costs</p>
+          </div>
+          <button (click)="toggleAddForm()" class="border border-indigo-200 bg-indigo-50 rounded-lg px-4 py-2 text-sm font-bold text-indigo-700 flex items-center gap-1.5 cursor-pointer hover:bg-indigo-100 transition-colors">
+            <span class="material-symbols-outlined text-base">{{ showAddForm() ? 'close' : 'add' }}</span>
+            {{ showAddForm() ? 'Cancel' : 'Add Expense' }}
+          </button>
+        </div>
+
+        @if (showAddForm()) {
+          <div class="bg-white rounded-2xl border border-indigo-100 p-6 shadow-sm mb-6 animate-in slide-in-from-top-2">
+            <h4 class="text-sm font-extrabold text-slate-900 mb-4">Record New Expense</h4>
+            <div class="grid grid-cols-5 gap-4 mb-4">
+              <div class="col-span-1">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Date</label>
+                <input type="date" [(ngModel)]="newExpense.date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
               </div>
-              <span class="text-[11px] font-bold text-slate-400 whitespace-nowrap shrink-0">{{
-                activity.time
-              }}</span>
+              <div class="col-span-1">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Category</label>
+                <select [(ngModel)]="newExpense.category" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                  @for (cat of EXPENSE_CATEGORIES; track cat.label) {
+                    <option [value]="cat.label">{{ cat.label }}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-span-1">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Amount ($)</label>
+                <input type="number" [(ngModel)]="newExpense.amount" placeholder="0.00" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+              </div>
+              <div class="col-span-1">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Vehicle (Optional)</label>
+                <select [(ngModel)]="newExpense.vehicleId" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                  <option value="">-- None --</option>
+                  @for (v of fleetVehicles(); track v._id) {
+                    <option [value]="v._id">{{ v.name }}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-span-1">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Description</label>
+                <input type="text" [(ngModel)]="newExpense.description" placeholder="Optional details..." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <button (click)="submitExpense()" [disabled]="addingExpense() || !newExpense.amount || newExpense.amount <= 0" class="bg-indigo-600 text-white rounded-lg px-6 py-2 text-sm font-bold cursor-pointer hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2 transition-colors">
+                @if (addingExpense()) { <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> }
+                Save Expense
+              </button>
+            </div>
+          </div>
+        }
+
+        <div class="grid grid-cols-12 gap-6">
+          <!-- Main Ledger Table -->
+          <div class="col-span-8 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
+              <h4 class="text-sm font-extrabold text-slate-900 m-0">Recent Transactions</h4>
+              <select [ngModel]="expenseCatFilter()" (ngModelChange)="filterExpenseCat($event)" class="border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 outline-none">
+                <option value="all">All Categories</option>
+                @for (cat of EXPENSE_CATEGORIES; track cat.label) {
+                  <option [value]="cat.label">{{ cat.label }}</option>
+                }
+              </select>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto max-h-[400px]">
+              <table class="w-full">
+                <thead class="sticky top-0 bg-white shadow-sm z-10">
+                  <tr class="border-b border-slate-100">
+                    <th class="text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider px-6 py-3">Date</th>
+                    <th class="text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-3">Category</th>
+                    <th class="text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-3">Description / Vehicle</th>
+                    <th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-3">Amount</th>
+                    <th class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-3">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (entry of expenseEntries(); track entry._id) {
+                    <tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors group">
+                      <td class="px-6 py-3 text-xs font-bold text-slate-500 whitespace-nowrap">{{ fmtDate(entry.createdAt || '') }}</td>
+                      <td class="px-4 py-3">
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded-full border" [style.color]="entry.color" [style.borderColor]="entry.color + '40'" [style.backgroundColor]="entry.color + '10'">{{ entry.category }}</span>
+                      </td>
+                      <td class="px-4 py-3">
+                        <p class="text-xs font-medium text-slate-900 m-0 truncate max-w-[200px]">{{ entry.description || '—' }}</p>
+                        @if (entry.vehicleId) {
+                          <p class="text-[10px] text-slate-400 m-0 mt-0.5 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[12px]">directions_car</span>
+                            {{ entry.vehicleId.name }}
+                          </p>
+                        }
+                      </td>
+                      <td class="px-4 py-3 text-right text-sm font-extrabold text-slate-900">{{ fmt(entry.amount) }}</td>
+                      <td class="px-4 py-3 text-center">
+                        <button (click)="deleteExpenseEntry(entry._id!)" [disabled]="deletingId() === entry._id" class="w-7 h-7 rounded bg-red-50 text-red-600 border-none flex items-center justify-center mx-auto cursor-pointer hover:bg-red-100 opacity-0 group-hover:opacity-100 transition-all disabled:opacity-50">
+                          @if (deletingId() === entry._id) {
+                            <div class="w-3 h-3 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin"></div>
+                          } @else {
+                            <span class="material-symbols-outlined text-[16px]">delete</span>
+                          }
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                  @if (expenseEntries().length === 0) {
+                    <tr><td colspan="5" class="text-center py-12 text-sm text-slate-400">No expense records found.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            @if (expensePages() > 1) {
+              <div class="flex items-center justify-between px-6 py-3 border-t border-slate-100 bg-slate-50 shrink-0">
+                <span class="text-[11px] font-bold text-slate-400">Showing {{ expenseEntries().length }} of {{ expenseTotal() }}</span>
+                <div class="flex items-center gap-2">
+                  <button (click)="expensePagePrev()" [disabled]="expensePage() <= 1" class="w-7 h-7 rounded border border-slate-200 flex items-center justify-center bg-white cursor-pointer hover:bg-slate-100 disabled:opacity-50"><span class="material-symbols-outlined text-[16px]">chevron_left</span></button>
+                  <span class="text-xs font-bold text-slate-600">{{ expensePage() }} / {{ expensePages() }}</span>
+                  <button (click)="expensePageNext()" [disabled]="expensePage() >= expensePages()" class="w-7 h-7 rounded border border-slate-200 flex items-center justify-center bg-white cursor-pointer hover:bg-slate-100 disabled:opacity-50"><span class="material-symbols-outlined text-[16px]">chevron_right</span></button>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Summary & Chart side -->
+          <div class="col-span-4 flex flex-col gap-6">
+            <!-- Summary Card -->
+            <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex flex-col items-center text-center">
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider m-0">Total Expenses</p>
+              <p class="text-3xl font-extrabold text-red-600 m-0 mt-2">{{ fmt(expenseGrandTotal()) }}</p>
+              @if (expenseRatio() > 0) {
+                <p class="text-[11px] font-bold text-slate-500 m-0 mt-2 bg-slate-100 px-3 py-1 rounded-full">{{ expenseRatio() }}% of Revenue</p>
+              }
+            </div>
+            
+            <!-- Pie Chart -->
+            <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm flex-1">
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Cost Breakdown</p>
+              @if (expenseSummary().length > 0) {
+                <div class="h-[200px] mb-6 relative">
+                  <canvas #expenseChart></canvas>
+                </div>
+                <div class="flex flex-col gap-2 max-h-[140px] overflow-y-auto pr-1">
+                  @for (s of expenseSummary(); track s.category) {
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full" [style.background]="s.color"></span>
+                        <span class="text-xs font-bold text-slate-600">{{ s.category }}</span>
+                      </div>
+                      <span class="text-xs font-extrabold text-slate-900">{{ fmt(s.total) }}</span>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="h-full flex items-center justify-center"><p class="text-sm text-slate-400">No data</p></div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ══════════════════ 7. CUSTOMER ANALYTICS ══════════════════ -->
+      <div class="mb-8">
+        <h3 class="text-lg font-extrabold text-slate-900 mb-4">Customer Analytics</h3>
+        <div class="grid grid-cols-12 gap-6">
+          <!-- Customer Stats -->
+          <div class="col-span-3 flex flex-col gap-4">
+            <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider m-0">Total Customers</p>
+              <p class="text-2xl font-extrabold text-slate-900 m-0 mt-1">{{ customerInsights()?.totalCustomers || 0 }}</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider m-0">Repeat Rate</p>
+              <p class="text-2xl font-extrabold text-indigo-600 m-0 mt-1">{{ customerInsights()?.repeatRate || 0 }}%</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider m-0">Avg Rating</p>
+              <div class="flex items-center gap-2 mt-1">
+                <p class="text-2xl font-extrabold text-amber-500 m-0">{{ customerInsights()?.avgRating || 0 }}</p>
+                <span class="material-symbols-outlined text-amber-400 text-[20px]">star</span>
+              </div>
+              <p class="text-[11px] text-slate-400 m-0 mt-0.5">{{ customerInsights()?.reviewCount || 0 }} reviews</p>
+            </div>
+          </div>
+          <!-- Top Customers -->
+          <div class="col-span-5 bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Top Customers by Spending</p>
+            <div class="flex flex-col gap-3 max-h-[280px] overflow-y-auto">
+              @for (c of (customerInsights()?.topCustomers || []); track c.email; let i = $index) {
+                <div class="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                      <span class="text-xs font-extrabold text-indigo-600">{{ i + 1 }}</span>
+                    </div>
+                    <div>
+                      <p class="text-sm font-bold text-slate-900 m-0">{{ c.name }}</p>
+                      <p class="text-[11px] text-slate-400 m-0">{{ c.bookings }} bookings</p>
+                    </div>
+                  </div>
+                  <span class="text-sm font-extrabold text-emerald-600">{{ fmt(c.spending) }}</span>
+                </div>
+              }
+              @if ((customerInsights()?.topCustomers || []).length === 0) {
+                <p class="text-sm text-slate-400 text-center py-6">No customer data</p>
+              }
+            </div>
+          </div>
+          <!-- Peak Days + Rating Distribution -->
+          <div class="col-span-4 flex flex-col gap-4">
+            <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm flex-1">
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">Peak Booking Days</p>
+              <div class="h-[120px]"><canvas #peakDaysChart></canvas></div>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+              <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">Rating Distribution</p>
+              <div class="flex flex-col gap-1.5">
+                @for (r of (customerInsights()?.ratingDist || []); track r.star) {
+                  <div class="flex items-center gap-2">
+                    <span class="text-[11px] font-bold text-slate-500 w-3">{{ r.star }}</span>
+                    <span class="material-symbols-outlined text-amber-400 text-[13px]">star</span>
+                    <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div class="h-full rounded-full bg-amber-400" [style.width]="((r.count / Math.max(customerInsights()?.reviewCount || 1, 1)) * 100) + '%'"></div>
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-400 w-6 text-right">{{ r.count }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════ 8. FLEET PERFORMANCE TABLE ══════════════════ -->
+      <div class="mb-8">
+        <h3 class="text-lg font-extrabold text-slate-900 mb-4">Fleet Performance</h3>
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-100">
+                <th class="text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider px-6 py-4">Vehicle</th>
+                <th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-4">Revenue</th>
+                <th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-4">Bookings</th>
+                <th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-4">Completed</th>
+                <th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-4">Utilization %</th>
+                <th class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider px-6 py-4">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (v of fleetTableData(); track v._id) {
+                <tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center shrink-0">
+                        @if (v.image) { <img [src]="v.image" class="w-full h-full object-cover" /> }
+                        @else { <span class="material-symbols-outlined text-[18px] text-slate-300">{{ getCatMeta(v.type).icon }}</span> }
+                      </div>
+                      <div>
+                        <p class="text-sm font-bold text-slate-900 m-0">{{ v.name }}</p>
+                        <p class="text-[11px] text-slate-400 m-0">{{ v.brand }} &bull; {{ v.type }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4 text-right"><span class="text-sm font-extrabold text-emerald-600">{{ fmt(v.revenue) }}</span></td>
+                  <td class="px-4 py-4 text-right"><span class="text-sm font-bold text-slate-700">{{ v.totalBookings }}</span></td>
+                  <td class="px-4 py-4 text-right"><span class="text-sm font-bold text-slate-700">{{ v.completedBookings }}</span></td>
+                  <td class="px-4 py-4 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                      <div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full" [style.width]="v.utilization + '%'" [style.background]="v.utilization > 60 ? '#059669' : v.utilization > 30 ? '#F59E0B' : '#DC2626'"></div>
+                      </div>
+                      <span class="text-xs font-bold text-slate-600">{{ v.utilization }}%</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <span class="text-[11px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap" [style.background]="getStatusStyle(v.status).bg" [style.color]="getStatusStyle(v.status).color">{{ getStatusStyle(v.status).label }}</span>
+                  </td>
+                </tr>
+              }
+              @if (fleetTableData().length === 0) {
+                <tr><td colspan="6" class="text-center py-8 text-sm text-slate-400">No fleet data available</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════════ 9. BOOKING STATUS OVERVIEW ══════════════════ -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-extrabold text-slate-900 m-0">Booking Status Overview</h3>
+          <span class="text-[11px] font-bold text-slate-400">Click any card to view detailed bookings</span>
+        </div>
+        <div class="grid grid-cols-5 gap-4">
+          @for (s of [
+            { id: 'completed', label: 'Completed', value: bookingAnalytics()?.completed || 0, color: '#059669', bg: '#E7F5ED', icon: 'check_circle' },
+            { id: 'confirmed', label: 'Ongoing',   value: bookingAnalytics()?.active || 0,    color: '#005DAC', bg: '#E5EEFF', icon: 'play_circle' },
+            { id: 'pending',   label: 'Awaiting Approval', value: bookingAnalytics()?.pending || 0, color: '#F59E0B', bg: '#FEF3C7', icon: 'schedule' },
+            { id: 'cancelled', label: 'Cancelled', value: bookingAnalytics()?.cancelled || 0, color: '#DC2626', bg: '#FFEAEA', icon: 'cancel' },
+            { id: 'late',      label: 'Late Returns', value: 0,                               color: '#E65100', bg: '#FFF3E0', icon: 'warning' }
+          ]; track s.id) {
+            <div class="bg-white rounded-xl border border-slate-100 p-5 shadow-sm cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all group" (click)="openStatusDrawer(s.id, s.label)">
+              <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center" [style.background]="s.bg">
+                  <span class="material-symbols-outlined text-[20px]" [style.color]="s.color">{{ s.icon }}</span>
+                </div>
+              </div>
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider m-0">{{ s.label }}</p>
+              <p class="text-2xl font-extrabold m-0 mt-1" [style.color]="s.color">{{ s.value }}</p>
+              <div class="flex items-center gap-1 text-[11px] font-bold opacity-0 group-hover:opacity-100 transition-opacity mt-2" [style.color]="s.color">
+                <span class="material-symbols-outlined text-[13px]">open_in_new</span> View
+              </div>
             </div>
           }
         </div>
       </div>
     </div>
   }
+</div>
+
+<!-- ══════════════════ DETAIL DRAWER ══════════════════ -->
+@if (drawerOpen()) {
+  <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40" (click)="closeDrawer()"></div>
+}
+<div class="drawer-panel fixed top-0 right-0 h-full w-[680px] max-w-[95vw] bg-white shadow-2xl z-50 flex flex-col" [class.open]="drawerOpen()">
+  <!-- Drawer header -->
+  <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+        <span class="material-symbols-outlined text-indigo-600 text-[20px]">{{ drawerType() === 'revenue-monthly' ? 'table_chart' : 'receipt_long' }}</span>
+      </div>
+      <div>
+        <h2 class="text-base font-extrabold text-slate-900 m-0">{{ drawerTitle() }}</h2>
+        <p class="text-[11px] font-medium text-slate-400 m-0 mt-0.5">{{ drawerSubtitle() }}</p>
+      </div>
+    </div>
+    <button (click)="closeDrawer()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center border-none cursor-pointer transition-colors">
+      <span class="material-symbols-outlined text-[18px] text-slate-600">close</span>
+    </button>
+  </div>
+
+  <!-- Drawer body -->
+  <div class="flex-1 overflow-y-auto">
+    @if (drawerLoading()) {
+      <div class="flex items-center justify-center h-64"><div class="flex flex-col items-center gap-3"><div class="drawer-spinner"></div><p class="text-sm font-semibold text-slate-400">Loading...</p></div></div>
+    } @else if (drawerType() === 'revenue-monthly') {
+      <div class="p-6">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-slate-50"><th class="text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-3">Month</th><th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-3">Revenue</th><th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-3">Bookings</th><th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-3">Completed</th><th class="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-3">Cancelled</th></tr></thead>
+          <tbody>
+            @for (m of drawerMonthly(); track m.label) {
+              <tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
+                <td class="px-4 py-3.5 font-bold text-slate-900">{{ m.label }}</td>
+                <td class="px-4 py-3.5 text-right font-extrabold text-emerald-600">{{ fmt(m.revenue || 0) }}</td>
+                <td class="px-4 py-3.5 text-right font-bold text-slate-700">{{ m.bookings || 0 }}</td>
+                <td class="px-4 py-3.5 text-right"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700">{{ m.completed || 0 }}</span></td>
+                <td class="px-4 py-3.5 text-right"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">{{ m.cancelled || 0 }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else if (drawerType() === 'booking-status') {
+      <div class="p-6">
+        @if (drawerBookings().length === 0) {
+          <div class="text-center py-16"><span class="material-symbols-outlined text-4xl text-slate-200 block mb-3">receipt_long</span><p class="text-sm text-slate-400">No bookings found.</p></div>
+        } @else {
+          <div class="flex items-center gap-4 mb-5 p-4 bg-slate-50 rounded-xl">
+            <span class="text-sm font-bold text-slate-700">{{ drawerTotal() }} total</span>
+            <span class="ml-auto text-[11px] font-bold text-slate-400">Page {{ drawerPage() }} of {{ drawerPages() }}</span>
+          </div>
+          <div class="flex flex-col gap-3">
+            @for (b of drawerBookings(); track b._id) {
+              <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 shrink-0 flex items-center justify-center">
+                      @if (b.vehicle.image) { <img [src]="b.vehicle.image" class="w-full h-full object-cover" /> }
+                      @else { <span class="material-symbols-outlined text-[22px] text-slate-300">{{ getCatMeta(b.vehicle.type).icon }}</span> }
+                    </div>
+                    <div>
+                      <p class="text-sm font-extrabold text-slate-900 m-0">{{ b.vehicle.name }}</p>
+                      <p class="text-[11px] font-medium text-slate-400 m-0">{{ b.vehicle.brand }} · {{ b.vehicle.type }}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[11px] font-bold px-2.5 py-1 rounded-full" [style.background]="getStatusStyle(b.status).bg" [style.color]="getStatusStyle(b.status).color">{{ getStatusStyle(b.status).label }}</span>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                  <div class="bg-slate-50 rounded-xl p-3">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider m-0 mb-1">Customer</p>
+                    <p class="text-sm font-bold text-slate-900 m-0">{{ b.customer.name }}</p>
+                    <p class="text-[11px] text-slate-400 m-0">{{ b.customer.email }}</p>
+                  </div>
+                  <div class="bg-slate-50 rounded-xl p-3">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider m-0 mb-1">Rental Period</p>
+                    <p class="text-sm font-bold text-slate-900 m-0">{{ fmtDate(b.startDate) }}</p>
+                    <p class="text-[11px] text-slate-400 m-0">→ {{ fmtDate(b.endDate) }}</p>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3">
+                  <div><p class="text-[9px] font-bold text-slate-400 uppercase m-0">Total</p><p class="text-base font-extrabold text-slate-900 m-0">${{ b.totalPrice.toLocaleString() }}</p></div>
+                  <div><p class="text-[9px] font-bold text-slate-400 uppercase m-0">Paid</p><p class="text-base font-extrabold text-emerald-600 m-0">${{ b.amountPaid.toLocaleString() }}</p></div>
+                </div>
+              </div>
+            }
+          </div>
+          @if (drawerPages() > 1) {
+            <div class="flex items-center justify-between mt-6 pt-4 border-t border-slate-100">
+              <button (click)="drawerPrev()" [disabled]="drawerPage() <= 1" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-sm font-bold text-slate-600 cursor-pointer hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"><span class="material-symbols-outlined text-[16px]">chevron_left</span> Previous</button>
+              <span class="text-sm font-bold text-slate-500">{{ drawerPage() }} / {{ drawerPages() }}</span>
+              <button (click)="drawerNext()" [disabled]="drawerPage() >= drawerPages()" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-sm font-bold text-slate-600 cursor-pointer hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Next <span class="material-symbols-outlined text-[16px]">chevron_right</span></button>
+            </div>
+          }
+        }
+      </div>
+    }
+  </div>
 </div>

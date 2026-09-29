@@ -65,7 +65,6 @@
               <div class="flex justify-between items-center mb-2.5">
                 <span class="status-pill {{booking.status.toLowerCase()}}">
                   @if(booking.status === 'pending') { {{ 'BOOKING.PENDING' | translate }} }
-                  @else if(booking.status === 'pending_verification') { {{ 'BOOKING.VERIFICATION_REQ' | translate }} }
                   @else if(booking.status === 'confirmed') { {{ 'BOOKING.CONFIRMED' | translate }} }
                   @else if(booking.status === 'completed') { {{ 'BOOKING.COMPLETED' | translate }} }
                   @else if(booking.status === 'cancelled') { {{ 'BOOKING.CANCELED' | translate }} }
@@ -111,6 +110,16 @@
                   <span>{{ getVehicleLocation(booking.vehicleId) || 'Phnom Penh' }}</span>
                 </div>
               </div>
+
+              <!-- Required Documents Notice -->
+              @if (booking.status === 'pending' || booking.status === 'confirmed') {
+                <div class="flex items-start gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200 mb-2.5">
+                  <span class="material-symbols-outlined text-slate-400 text-[16px] mt-0.5">badge</span>
+                  <p class="text-[12px] text-slate-600 leading-tight m-0">
+                    <span class="font-semibold text-slate-700">Pickup Requirement:</span> Please bring your ID card and driver's license to the store.
+                  </p>
+                </div>
+              }
 
               <!-- Bottom Row: Price & Action -->
               <div class="flex items-center justify-between mt-1 pt-2 border-t border-gray-100">

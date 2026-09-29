@@ -17,8 +17,7 @@ const startCronJobs = () => {
       });
 
       for (const booking of expiredBookings) {
-        booking.status = 'completed';
-        await booking.save();
+        await Booking.updateOne({ _id: booking._id }, { $set: { status: 'completed' } });
         await Vehicle.findByIdAndUpdate(booking.vehicleId, { available: true });
         console.log(`[CRON] Booking ${booking._id} completed, Vehicle ${booking.vehicleId} now available.`);
       }
@@ -43,22 +42,48 @@ const startCronJobs = () => {
       });
 
       for (const booking of noShowBookings) {
-        booking.status = 'cancelled';
-        booking.notes = (booking.notes ? booking.notes + '\n' : '') + 'Automatically cancelled due to no-show.';
-        await booking.save();
+        await Booking.updateOne(
+          { _id: booking._id },
+          { $set: { 
+              status: 'cancelled', 
+              notes: (booking.notes ? booking.notes + '\n' : '') + 'Automatically cancelled due to no-show.' 
+            } 
+          }
+        );
         
         await Vehicle.findByIdAndUpdate(booking.vehicleId, { available: true });
 
         const user = await User.findById(booking.userId);
         if (user) {
-          user.strikes += 1;
-          if (user.strikes >= 3) {
-            user.isActive = false;
+          const newStrikes = (user.strikes || 0) + 1;
+          const update = { strikes: newStrikes };
+          if (newStrikes >= 3) {
+            update.isActive = false;
             console.log(`[CRON] User ${user._id} banned due to 3 strikes.`);
           }
-          await user.save();
+          await User.updateOne({ _id: user._id }, { $set: update });
         }
         console.log(`[CRON] Booking ${booking._id} cancelled for no-show. User ${user ? user._id : 'unknown'} penalized.`);
+      }
+
+      // 4. Find pending bookings that are 2 days past their start date (abandoned)
+      const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+      const abandonedPendingBookings = await Booking.find({
+        status: { $in: ['pending', 'pending_approval'] },
+        startDate: { $lte: twoDaysAgo },
+        paymentStatus: 'unpaid'
+      });
+
+      for (const booking of abandonedPendingBookings) {
+        await Booking.updateOne(
+          { _id: booking._id },
+          { $set: { 
+              status: 'cancelled', 
+              notes: (booking.notes ? booking.notes + '\n' : '') + 'Automatically cancelled because it was not picked up and paid within 2 days of start date.' 
+            } 
+          }
+        );
+        console.log(`[CRON] Pending Booking ${booking._id} cancelled automatically after 2 days.`);
       }
 
       console.log('[CRON] Vehicle availability check finished.');
