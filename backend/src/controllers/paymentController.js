@@ -377,8 +377,9 @@ const createPaywayQr = async (req, res, next) => {
 
     if (!data.qrImage && !data.qrString) {
       console.error('PAYWAY REJECTED:', JSON.stringify(data));
+      const code = data?.status?.code ? ` (code ${data.status.code})` : '';
       return res.status(502).json({
-        message: data?.status?.message || 'Could not generate a QR from PayWay.',
+        message: `${data?.status?.message || 'Could not generate a QR from PayWay.'}${code}`,
       });
     }
 

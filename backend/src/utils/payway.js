@@ -164,10 +164,20 @@ async function requestKhqr(opts) {
   const resp = await fetch(actionUrl, { 
     method: 'POST', 
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: form.toString() 
+    body: form.toString()
   });
-  const data = await resp.json().catch(() => ({}));
-  return data;
+  // Read as text first: when ABA's firewall blocks the caller it answers with an
+  // HTML page, which would otherwise be swallowed as an empty object.
+  const text = await resp.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {
+      status: {
+        message: `PayWay returned HTTP ${resp.status} (non-JSON): ${text.replace(/\s+/g, ' ').slice(0, 200)}`,
+      },
+    };
+  }
 }
 
 /**
