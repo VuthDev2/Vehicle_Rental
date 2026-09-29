@@ -6,7 +6,6 @@ import { switchMap, filter, catchError } from 'rxjs/operators';
 import { PaymentService, PaywayForm } from '../../../../core/services/payment.service';
 import { BookingService } from '../../../../core/services/booking.service';
 import { Booking } from '../../../../models/booking.model';
-import { UserService } from '../../../../core/services/user.service';
 
 @Component({
   selector: 'app-checkout',
@@ -46,47 +45,6 @@ import { UserService } from '../../../../core/services/user.service';
               }
 
               <div class="mt-8 grid gap-4">
-                @if (!idVerified()) {
-                  <div class="rounded-xl border border-blue-500/30 bg-blue-500/10 p-5 text-center">
-                    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/20 text-blue-400">
-                      <span class="material-symbols-outlined text-3xl">badge</span>
-                    </div>
-                    <h3 class="text-lg font-bold text-on-surface">Identity Verification Required</h3>
-                    <p class="mt-2 text-sm text-on-surface-variant">
-                      To ensure security, please verify your identity by uploading a valid driver's license or passport.
-                    </p>
-                    <div class="mt-5 relative w-full max-w-[200px] mx-auto">
-                      <input 
-                        type="file" 
-                        (change)="uploadIdDocument($event)" 
-                        accept="image/jpeg, image/png, image/webp"
-                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        [disabled]="isVerifyingId()"
-                      />
-                      <button
-                        type="button"
-                        [disabled]="isVerifyingId()"
-                        class="btn-primary px-6 py-2.5 text-sm w-full"
-                      >
-                        @if (isVerifyingId()) {
-                          <span class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
-                          <span>Uploading...</span>
-                        } @else {
-                          <span class="material-symbols-outlined text-lg">upload_file</span>
-                          <span>Upload ID Document</span>
-                        }
-                      </button>
-                    </div>
-                  </div>
-                } @else {
-                  <div class="rounded-xl border border-green-500/30 bg-green-500/10 p-4 mb-4 flex items-center gap-3">
-                    <span class="material-symbols-outlined text-green-500">verified</span>
-                    <div>
-                      <h3 class="font-bold text-green-500">Identity Verified</h3>
-                      <p class="text-xs text-green-500/80">You can now proceed with the payment.</p>
-                    </div>
-                  </div>
-
                   <div class="mb-4 rounded-xl border border-edge-deep bg-white/[0.02] p-1 flex items-center">
                     <button 
                       (click)="paymentMethod.set('khqr')"
@@ -129,7 +87,6 @@ import { UserService } from '../../../../core/services/user.service';
                     </div>
                     <p class="text-sm text-on-surface-variant">Pay half now to secure it, and pay the rest at pickup.</p>
                   </button>
-                }
               </div>
             } @else if (!error()) {
               <div class="mt-8 flex justify-center py-10">
@@ -277,7 +234,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly payment = inject(PaymentService);
   private readonly bookingService = inject(BookingService);
-  private readonly userService = inject(UserService);
   private readonly platformId = inject(PLATFORM_ID);
 
   private pollSubscription?: Subscription;
@@ -286,35 +242,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   readonly error = signal('');
   readonly isProcessing = signal(false);
   readonly booking = signal<Booking | null>(null);
-  readonly idVerified = signal(false);
-  readonly isVerifyingId = signal(false);
-  
+
   readonly paymentMethod = signal<'khqr' | 'hosted'>('khqr');
   readonly qrImage = signal('');
   readonly qrString = signal('');
   readonly tranId = signal('');
   readonly qrAmount = signal(0);
   readonly paymentSuccess = signal(false);
-
-  uploadIdDocument(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-
-    const file = input.files[0];
-    this.isVerifyingId.set(true);
-    this.error.set('');
-
-    this.userService.uploadIdDocument(file).subscribe({
-      next: (res) => {
-        this.isVerifyingId.set(false);
-        this.idVerified.set(true);
-      },
-      error: (err) => {
-        this.isVerifyingId.set(false);
-        this.error.set(err.error?.message || 'Failed to upload ID document. Please try again.');
-      }
-    });
-  }
 
   cancelQr() {
     this.stopPolling();
@@ -363,12 +297,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
 
     this.bookingService.getBooking(bookingId).subscribe({
-      next: (res) => {
-        this.booking.set(res.booking);
-        if (res.booking.userId && (res.booking.userId as any).idVerified) {
-          this.idVerified.set(true);
-        }
-      },
+      next: (res) => this.booking.set(res.booking),
       error: () => this.error.set('Could not load booking details.')
     });
   }
