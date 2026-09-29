@@ -152,10 +152,16 @@ async function requestKhqr(opts) {
     paymentGate: '',
   });
 
-  const form = new FormData();
-  for (const [k, v] of Object.entries(fields)) form.set(k, v ?? '');
+  const form = new URLSearchParams();
+  for (const [k, v] of Object.entries(fields)) {
+    form.set(k, v ?? '');
+  }
 
-  const resp = await fetch(actionUrl, { method: 'POST', body: form });
+  const resp = await fetch(actionUrl, { 
+    method: 'POST', 
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: form.toString() 
+  });
   const data = await resp.json().catch(() => ({}));
   return data;
 }
